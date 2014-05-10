@@ -17,6 +17,12 @@ namespace Surrogates.Expressions.Methods
             return new AndExpression<TBase>(Mapper);
         }
 
+        public virtual AndExpression<TBase> This(Func<TInstance, Action> action)
+        {
+            this.RegisterAction(action);
+            return And();
+        }
+
         public virtual AndExpression<TBase> This<T0>(Func<TInstance, Action<T0>> action)
         {
             this.RegisterAction(action);
