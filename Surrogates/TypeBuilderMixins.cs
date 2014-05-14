@@ -24,6 +24,12 @@ namespace Surrogates
 
         internal static ILGenerator EmitOverride(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField)
         {
+            LocalBuilder @return = null;
+            return EmitOverride(typeBuilder, newMethod, baseMethod, interceptorField, out @return);
+        }
+
+        internal static ILGenerator EmitOverride(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, out LocalBuilder returnValue)
+        {
             var builder = typeBuilder.DefineMethod(
                 baseMethod.Name,
                 MethodAttributes.Public | MethodAttributes.Virtual,
@@ -31,6 +37,10 @@ namespace Surrogates
                 baseMethod.GetParameters().Select(p => p.ParameterType).ToArray());
 
             var gen = builder.GetILGenerator();
+
+            returnValue = baseMethod.ReturnType != typeof(void) ?
+                gen.DeclareLocal(baseMethod.ReturnType) : 
+                null;
 
             gen.Emit(OpCodes.Nop);
             gen.Emit(OpCodes.Ldarg_0);

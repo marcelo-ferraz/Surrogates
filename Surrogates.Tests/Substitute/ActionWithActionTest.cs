@@ -83,8 +83,7 @@ namespace Surrogates.Tests.Substitute
                 m.Throughout<Dummy>()
                 .Substitute.This<string, DateTime, Dummy.EvenMore>(d => d.Void_VariousParameters)
                 .With<ReplacementObj>()
-                .This<string, Dummy, DateTime, string, Dummy.EvenMore>(r => r.Void_VariousParametersWithDifferentNames))
-                .Save();
+                .This<string, Dummy, DateTime, string, Dummy.EvenMore>(r => r.Void_VariousParametersWithDifferentNames));
             
             var dummy =
                 new Dummy();

@@ -2,10 +2,6 @@
 using NUnit.Framework;
 using Surrogates.Tests.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Surrogates.Tests.Substitute
 {
@@ -81,8 +77,7 @@ namespace Surrogates.Tests.Substitute
                 m.Throughout<Dummy>()
                 .Substitute.This<string, DateTime, Dummy.EvenMore>(d => d.Void_VariousParameters)
                 .With<ReplacementObj>()
-                .This<string, Dummy, DateTime, string, Dummy.EvenMore, int>(r => r.Int_2_VariousParametersWithDifferentNames))
-                .Save();
+                .This<string, Dummy, DateTime, string, Dummy.EvenMore, int>(r => r.Int_2_VariousParametersWithDifferentNames));
 
             var dummy =
                 new Dummy();

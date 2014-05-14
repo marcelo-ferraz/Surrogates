@@ -34,11 +34,27 @@ namespace Surrogates.Tests.Entities
             return first.CompareTo(second);
         }
 
-        public int nhonho2() { return 2; }
+        public virtual int Int_1_ParameterLess()
+        {
+            Void_ParameterLess();
+            return 1;
+        }
+
+
+        public int nhonho2() {
+            nhonho();
+            return 0; 
+        }
 
         public void nhonho()
         {
-            nhonho2();
+        }
+
+        ReplacementObj _interceptor0;
+        public virtual int Int_1_VariousParameters(string text, DateTime date, EvenMore someInstance)
+        {
+            Void_VariousParameters(null, new DateTime(), null);
+            return 1;
         }
     }
 }
