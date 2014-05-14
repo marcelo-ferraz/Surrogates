@@ -42,10 +42,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SubstitutionTests.cs" />
-    <Compile Include="Dummy.cs" />
+    <Compile Include="Entities\Dummy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Replacement.cs" />
+    <Compile Include="Entities\ReplacementObj.cs" />
+    <Compile Include="Substitute\ActionWithActionTest.cs" />
+    <Compile Include="IInterferenceTest.cs" />
+    <Compile Include="Substitute\FuncWithActionTest.cs" />
+    <Compile Include="Substitute\FuncWithFuncTest.cs" />
+    <Compile Include="Substitute\ActionWtihFunctionTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Surrogates\Surrogates.csproj">

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Surrogates.Expressions.Methods
 {
-    public enum InterceptionKind
+    public enum InterferenceKind
     {
         Visitation,
         Substitution

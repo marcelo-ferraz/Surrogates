@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Expressions\Classes\ProxyAlreadyMadeException.cs" />
     <Compile Include="SurrogatesContainer.cs" />
     <Compile Include="Expressions\Classes\ClassMappingExpression.cs" />
     <Compile Include="Expressions\Classes\IMappingExpression.cs" />
@@ -47,7 +48,7 @@
     <Compile Include="Expressions\Methods\FluentExpression.cs" />
     <Compile Include="Expressions\Methods\InterceptionKind.cs" />
     <Compile Include="Expressions\Methods\MethodDisableExpression.cs" />
-    <Compile Include="Expressions\Methods\MethodInterceptionExpression.cs" />
+    <Compile Include="Expressions\Methods\MethodInterferenceExpression.cs" />
     <Compile Include="Expressions\Methods\MethodSubstitutionExpression.cs" />
     <Compile Include="Expressions\Methods\MethodVisitationExpression.cs" />
     <Compile Include="Expressions\Methods\VoidExpression.cs" />

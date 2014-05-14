@@ -46,10 +46,11 @@ namespace Surrogates.Expressions.Methods
 
             foreach (var baseMethod in State.Methods)
             {
-                State.TypeBuilder.EmitOverride(
+                var gen = State.TypeBuilder.EmitOverride(
                     substituteMethod, baseMethod, GetInterceptorField<TSubstitutor>());
+                gen.Emit(OpCodes.Ret);
             }
-            State.Fields.Clear();
+            State.Methods.Clear();
         }
 
         protected override void RegisterFunction(Func<TSubstitutor, Delegate> function)
@@ -64,7 +65,11 @@ namespace Surrogates.Expressions.Methods
                 var gen = State.TypeBuilder.EmitOverride(
                     substituteMethod, baseMethod, GetInterceptorField<TSubstitutor>());
 
-                if (!substituteMethod.ReturnType.IsAssignableFrom(baseMethod.ReturnType))
+                if (baseMethod.ReturnType == typeof(void))
+                {
+                    gen.Emit(OpCodes.Pop);
+                }
+                else if (!substituteMethod.ReturnType.IsAssignableFrom(baseMethod.ReturnType))
                 {                
                     gen.Emit(OpCodes.Ldarg_0);
                     gen.EmitDefaultValue(substituteMethod.ReturnType); 
@@ -72,7 +77,7 @@ namespace Surrogates.Expressions.Methods
 
                 gen.Emit(OpCodes.Ret);
             }
-            State.Fields.Clear();
+            State.Methods.Clear();
         }
     }
 }

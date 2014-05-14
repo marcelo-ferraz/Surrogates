@@ -15,25 +15,32 @@ namespace Surrogates.Expressions.Classes
             get { return new MethodDisableExpression<T>(this, State); }
         }
 
-        public MethodInterceptionExpression<T> Substitute
+        public MethodInterferenceExpression<T> Substitute
         {
-            get { return new MethodInterceptionExpression<T>(this, State, InterceptionKind.Substitution); }
+            get { return new MethodInterferenceExpression<T>(this, State, InterferenceKind.Substitution); }
         }
 
-        public MethodInterceptionExpression<T> Visit
+        public MethodInterferenceExpression<T> Visit
         {
-            get { return new MethodInterceptionExpression<T>(this, State, InterceptionKind.Visitation); }
+            get { return new MethodInterferenceExpression<T>(this, State, InterferenceKind.Visitation); }
         }
 
         internal ClassMappingExpression(string name, MappingState state)
         {
             if (string.IsNullOrEmpty(name))
             { name = DefaultMapper.CreateName4<T>(); }
-            
+
             State = state;
 
-            State.TypeBuilder = this.State.ModuleBuilder.DefineType(
-                name, TypeAttributes.Public, typeof(T));
+            try
+            {
+                State.TypeBuilder = this.State.ModuleBuilder.DefineType(
+                    name, TypeAttributes.Public, typeof(T));
+            }
+            catch (ArgumentException argEx)
+            {
+                throw new ProxyAlreadyMadeException(typeof(T), name, argEx);
+            }
         }
 
         public Type Flush()

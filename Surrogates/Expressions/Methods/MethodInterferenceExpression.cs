@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace Surrogates.Expressions.Methods
 {
-    public class MethodInterceptionExpression<TBase>
-        : FluentExpression<MethodInterceptionExpression<TBase>, TBase, TBase>
+    public class MethodInterferenceExpression<TBase>
+        : FluentExpression<MethodInterferenceExpression<TBase>, TBase, TBase>
     {
         protected TypeBuilder Typebuilder;
-        protected InterceptionKind Kind;
+        protected InterferenceKind Kind;
 
-        internal MethodInterceptionExpression(
-            IMappingExpression<TBase> mapper, MappingState state, InterceptionKind kind)
+        internal MethodInterferenceExpression(
+            IMappingExpression<TBase> mapper, MappingState state, InterferenceKind kind)
             : base(mapper, state)
         {
             Kind = kind;
@@ -25,7 +25,7 @@ namespace Surrogates.Expressions.Methods
 
         public IMappingExpression<TBase> And { get { return Mapper; } }
 
-        public virtual MethodInterceptionExpression<TBase> AllPublic()
+        public virtual MethodInterferenceExpression<TBase> AllPublic()
         {
             var @public = typeof(TBase)
                 .GetMethods(BindingFlags.Instance | BindingFlags.Public);
@@ -37,7 +37,7 @@ namespace Surrogates.Expressions.Methods
             return this;
         }
 
-        public virtual MethodInterceptionExpression<TBase> AllProtectedMethods()
+        public virtual MethodInterferenceExpression<TBase> AllProtectedMethods()
         {
             var methods = typeof(TBase)
                 .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic);
@@ -52,7 +52,7 @@ namespace Surrogates.Expressions.Methods
             return this;
         }
 
-        public virtual MethodInterceptionExpression<TBase> AllInternalMethods()
+        public virtual MethodInterferenceExpression<TBase> AllInternalMethods()
         {
             var methods = typeof(TBase)
                 .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic);
@@ -67,7 +67,7 @@ namespace Surrogates.Expressions.Methods
             return this;
         }
 
-        public virtual MethodInterceptionExpression<TBase> Where(Func<MethodInfo, bool> predicate)
+        public virtual MethodInterferenceExpression<TBase> Where(Func<MethodInfo, bool> predicate)
         {
             var methods = typeof(TBase)
                 .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
@@ -87,7 +87,7 @@ namespace Surrogates.Expressions.Methods
         public virtual VoidExpression<TBase, TInterceptor> With<TInterceptor>()
         {
             return 
-                this.Kind == InterceptionKind.Substitution ?
+                this.Kind == InterferenceKind.Substitution ?
                 (VoidExpression<TBase, TInterceptor>)new MethodSubstitutionExpression<TBase, TInterceptor>(Mapper, State) :
                 new MethodVisitationExpression<TBase, TInterceptor>(Mapper, State);
         }
