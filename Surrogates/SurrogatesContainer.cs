@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
 
-namespace DynamicProxy 
+namespace Surrogates 
 {
     /// <summary>
     /// 

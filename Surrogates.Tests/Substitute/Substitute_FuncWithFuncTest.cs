@@ -1,4 +1,4 @@
-﻿using DynamicProxy;
+﻿using Surrogates;
 using NUnit.Framework;
 using Surrogates.Tests.Entities;
 using System;

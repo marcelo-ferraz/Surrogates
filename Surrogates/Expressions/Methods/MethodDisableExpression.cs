@@ -87,11 +87,11 @@ namespace Surrogates.Expressions.Methods
 
             var gen = builder.GetILGenerator();
 
-            if (method.ReflectedType != typeof(void))
+            if (method.ReturnType != typeof(void))
             {
-                //gen.Emit(OpCodes.Nop);
                 gen.EmitDefaultValue(method.ReturnType);
             }
+            gen.Emit(OpCodes.Ret);
         }
     }
 }
