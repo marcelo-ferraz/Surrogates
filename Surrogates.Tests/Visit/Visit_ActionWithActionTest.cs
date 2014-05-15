@@ -8,10 +8,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Surrogates.Tests.Substitute
+namespace Surrogates.Tests.Visit
 {
     [TestFixture]
-    public class ActionWithActionTest : IInterferenceTest
+    public class Visit_ActionWithActionTest : IInterferenceTest
     {
         [Test]
         public void BothParameterLess()
@@ -20,9 +20,9 @@ namespace Surrogates.Tests.Substitute
 
             container.Map(m => m
                 .Throughout<Dummy>()
-                .Substitute
+                .Visit
                 .This(d => d.Void_ParameterLess)
-                .With<ReplacementObj>()
+                .With<InterferenceObject>()
                 .This(r => r.Void_ParameterLess));
 
             var dummy =
@@ -35,7 +35,7 @@ namespace Surrogates.Tests.Substitute
             proxy.Void_ParameterLess();
 
             Assert.AreEqual("simple", dummy.Text);
-            Assert.IsNullOrEmpty(proxy.Text);
+            Assert.AreEqual("simple", proxy.Text);
         }
 
         [Test]
@@ -45,8 +45,9 @@ namespace Surrogates.Tests.Substitute
 
             container.Map(m =>
                 m.Throughout<Dummy>()
-                .Substitute.This<string, DateTime, Dummy.EvenMore>(d => d.Void_VariousParameters)
-                .With<ReplacementObj>()
+                .Visit
+                .This<string, DateTime, Dummy.EvenMore>(d => d.Void_VariousParameters)
+                .With<InterferenceObject>()
                 .This<string, Dummy, DateTime, string, Dummy.EvenMore>(r => r.Void_VariousParametersPlusIntanceAndMethodName));
 
             var dummy =
@@ -71,7 +72,7 @@ namespace Surrogates.Tests.Substitute
             Assert.IsNotNullOrEmpty(dummy.Text);
             Assert.AreEqual("complex", dummy.Text);
             Assert.IsNotNullOrEmpty(proxy.Text);
-            Assert.AreEqual("simple, this call was not made by the original method - method: Void_VariousParameters", proxy.Text);
+            Assert.AreEqual("complex", proxy.Text);
         }
 
         [Test, ExpectedException(typeof(NullReferenceException))]
@@ -81,8 +82,9 @@ namespace Surrogates.Tests.Substitute
 
             container.Map(m =>
                 m.Throughout<Dummy>()
-                .Substitute.This<string, DateTime, Dummy.EvenMore>(d => d.Void_VariousParameters)
-                .With<ReplacementObj>()
+                .Visit
+                .This<string, DateTime, Dummy.EvenMore>(d => d.Void_VariousParameters)
+                .With<InterferenceObject>()
                 .This<string, Dummy, DateTime, string, Dummy.EvenMore>(r => r.Void_VariousParametersWithDifferentNames));
             
             var dummy =
@@ -102,9 +104,9 @@ namespace Surrogates.Tests.Substitute
 
             container.Map(m => m
                 .Throughout<Dummy>()
-                .Substitute
+                .Visit
                 .This(d => d.Void_ParameterLess)
-                .With<ReplacementObj>()
+                .With<InterferenceObject>()
                 .This<Dummy, string>(r => r.Void_InstanceAndMethodName));
 
             var dummy =
@@ -118,9 +120,7 @@ namespace Surrogates.Tests.Substitute
 
             Assert.IsNotNullOrEmpty(dummy.Text);
             Assert.AreEqual("simple", dummy.Text);
-
-            Assert.IsNotNullOrEmpty(proxy.Text);
-            Assert.AreEqual(typeof(Dummy).Name + "Proxy+Void_ParameterLess", proxy.Text);
+            Assert.AreEqual("simple", proxy.Text);
         }
     }
 }

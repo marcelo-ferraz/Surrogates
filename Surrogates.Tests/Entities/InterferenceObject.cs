@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Surrogates.Tests.Entities
 {
-    public class ReplacementObj
+    public class InterferenceObject
     {
         public void Void_ParameterLess()
         {
@@ -28,18 +28,19 @@ namespace Surrogates.Tests.Entities
             Void_VariousParametersPlusIntanceAndMethodName(arg0, arg1, arg2, arg3, arg4);
         }
 
-        public int IntAsking4InstanceAndMethodName(Dummy instance, string methodName)
-        {
-            instance.Text = methodName;
-            return 4;
-        }
-        public double DoubleWithOriginalParameters(int first, int second)
-        {
-            return first + second;
-        }
+        //public int IntAsking4InstanceAndMethodName(Dummy instance, string methodName)
+        //{
+        //    instance.Text = methodName;
+        //    return 4;
+        //}
+        //public double DoubleWithOriginalParameters(int first, int second)
+        //{
+        //    return first + second;
+        //}
 
         public int Int_2_ParameterLess()
         {
+            Void_ParameterLess();
             return 2;
         }
 

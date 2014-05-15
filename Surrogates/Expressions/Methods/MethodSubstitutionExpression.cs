@@ -46,13 +46,13 @@ namespace Surrogates.Expressions.Methods
 
             foreach (var baseMethod in State.Methods)
             {
-                LocalBuilder @return = null;
+                LocalBuilder baseMethodReturn = null;
 
                 var gen = State.TypeBuilder.EmitOverride(
-                    substituteMethod, baseMethod, GetInterceptorField<TSubstitutor>(), out @return);
+                    substituteMethod, baseMethod, GetInterceptorField<TSubstitutor>(), out baseMethodReturn);
 
-                if (@return != null)
-                { gen.EmitDefaultValue(baseMethod.ReturnType, @return); }
+                if (baseMethodReturn != null)
+                { gen.EmitDefaultValue(baseMethod.ReturnType, baseMethodReturn); }
 
                 gen.Emit(OpCodes.Ret);
             }
@@ -68,18 +68,19 @@ namespace Surrogates.Expressions.Methods
 
             foreach (var baseMethod in State.Methods)
             {
-                LocalBuilder @return = null;
+                LocalBuilder baseMethodReturn = null;
 
                 var gen = State.TypeBuilder.EmitOverride(
-                    substituteMethod, baseMethod, GetInterceptorField<TSubstitutor>(), out @return);
+                    substituteMethod, baseMethod, GetInterceptorField<TSubstitutor>(), out baseMethodReturn);
 
-                if (@return == null)
+                //the base method is void, discard the value
+                if (baseMethodReturn == null)
                 {
                     gen.Emit(OpCodes.Pop);
                 }
                 else if (!substituteMethod.ReturnType.IsAssignableFrom(baseMethod.ReturnType))
-                {                
-                    gen.EmitDefaultValue(substituteMethod.ReturnType, @return); 
+                {
+                    gen.EmitDefaultValue(substituteMethod.ReturnType, baseMethodReturn); 
                 }
 
                 gen.Emit(OpCodes.Ret);

@@ -89,7 +89,7 @@ namespace Surrogates.Expressions.Methods
 
             if (method.ReflectedType != typeof(void))
             {
-                gen.Emit(OpCodes.Nop);
+                //gen.Emit(OpCodes.Nop);
                 gen.EmitDefaultValue(method.ReturnType);
             }
         }

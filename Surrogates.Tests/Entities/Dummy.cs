@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Surrogates.Tests.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,7 @@ namespace Surrogates.Tests.Entities
 
         public virtual void Void_ParameterLess()
         {
-            Text += "simple";
+            Text = "simple";
         }
 
         public virtual void Void_VariousParameters(string text, DateTime date, EvenMore someInstance)
@@ -40,21 +41,11 @@ namespace Surrogates.Tests.Entities
             return 1;
         }
 
-
-        public int nhonho2() {
-            nhonho();
-            return 0; 
-        }
-
-        public void nhonho()
-        {
-        }
-
-        ReplacementObj _interceptor0;
         public virtual int Int_1_VariousParameters(string text, DateTime date, EvenMore someInstance)
         {
-            Void_VariousParameters(null, new DateTime(), null);
+            Void_VariousParameters(text, date, someInstance);
             return 1;
         }
     }
 }
+

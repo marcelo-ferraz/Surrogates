@@ -24,33 +24,47 @@ namespace Surrogates.Expressions.Methods
 
             foreach (var baseMethod in State.Methods)
             {
-                var gen = State.TypeBuilder.EmitOverride(
-                    visitorMethod, baseMethod, GetInterceptorField<TVisitor>());
 
-                gen.Emit(OpCodes.Nop);
+                LocalBuilder baseMethodReturn = null;
+
+                var gen = State.TypeBuilder.EmitOverride(
+                    visitorMethod, baseMethod, GetInterceptorField<TVisitor>(), out baseMethodReturn);
+
                 gen.Emit(OpCodes.Ldarg_0);
+                
+                var @params =
+                    gen.EmitParameters(baseMethod, baseMethod);
+
                 gen.Emit(OpCodes.Call, baseMethod);
+                gen.Emit(OpCodes.Ret);
             }
-            State.Fields.Clear();
+            State.Methods.Clear();
         }
 
         protected override void RegisterFunction(Func<TVisitor, Delegate> function)
         {
-            MethodInfo visitorMethod =
+            MethodInfo substituteMethod =
                 function(NotInitializedInstance).Method;
 
             foreach (var baseMethod in State.Methods)
             {
-                var gen = State.TypeBuilder.EmitOverride(
-                    visitorMethod, baseMethod, GetInterceptorField<TVisitor>());
+                LocalBuilder baseMethodReturn = null;
 
-                gen.Emit(OpCodes.Nop);
+                var gen = State.TypeBuilder.EmitOverride(
+                    substituteMethod, baseMethod, GetInterceptorField<TVisitor>(), out baseMethodReturn);
+
+                gen.Emit(OpCodes.Pop); 
+                
                 gen.Emit(OpCodes.Ldarg_0);
+                
+                var @params =
+                    gen.EmitParameters(baseMethod, baseMethod);
+
                 gen.Emit(OpCodes.Call, baseMethod);
 
                 gen.Emit(OpCodes.Ret);
             }
-            State.Fields.Clear();
+            State.Methods.Clear();
         }
     }
 }

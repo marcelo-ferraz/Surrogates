@@ -55,7 +55,7 @@ namespace Surrogates
             gen.Emit(OpCodes.Ldloc, local);
         }
 
-        internal static Type[] ArrangeTheParameters(this ILGenerator gen, MethodInfo newMethod, MethodInfo baseMethod)
+        internal static Type[] EmitParameters(this ILGenerator gen, MethodInfo newMethod, MethodInfo baseMethod)
         {
             var newParams =
                 new List<Type>();
@@ -100,7 +100,17 @@ namespace Surrogates
 
                     if (paramFound)
                     {
+                        //gen.EmitWriteLine("emitting:= " + (i + 1).ToString());
+                        
+                        // original code (wich surprisingly did not work):
                         gen.Emit(OpCodes.Ldarg, i + 1);
+                        //switch (i)
+                        //{
+                        //    case 0: gen.Emit(OpCodes.Ldarg_1); break;
+                        //    case 1: gen.Emit(OpCodes.Ldarg_2); break;
+                        //    case 2: gen.Emit(OpCodes.Ldarg_3); break;
+                        //}
+
                         break;
                     }
                 }
@@ -121,7 +131,7 @@ namespace Surrogates
         {
             gen.Emit(OpCodes.Ldarg_0);
             gen.Emit(OpCodes.Call, typeof(T).GetConstructor(new Type[] { }));
-            gen.Emit(OpCodes.Nop);
+            //gen.Emit(OpCodes.Nop);
 
             for (int i = 0; i < fields.Count; i++)
             {
@@ -133,7 +143,7 @@ namespace Surrogates
                 gen.Emit(OpCodes.Stfld, fields[i]);
             }
 
-            gen.Emit(OpCodes.Nop);
+            //gen.Emit(OpCodes.Nop);
 
             gen.Emit(OpCodes.Ret);
         }
