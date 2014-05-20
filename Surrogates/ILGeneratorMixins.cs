@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace Surrogates
 {
+    using EmitBasedOnOrginal = Action<ILGenerator, MethodInfo, ParameterInfo, Type>;
+
     internal static class ILGeneratorMixins
     {
         /// <summary>
@@ -55,13 +57,9 @@ namespace Surrogates
             gen.Emit(OpCodes.Ldloc, local);
         }
 
-        internal static Type[] EmitParameters(this ILGenerator gen, MethodInfo newMethod, MethodInfo baseMethod)
+        internal static Type[] EmitParameters4<TBase>(this ILGenerator gen, MethodInfo newMethod, Action<ParameterInfo> interfere = null)
         {
-            var newParams =
-                new List<Type>();
-
-            var baseType =
-                baseMethod.DeclaringType;
+            var newParams = new List<Type>();
 
             foreach (var param in newMethod.GetParameters())
             {
@@ -71,60 +69,81 @@ namespace Surrogates
                 newParams.Add(pType);
 
                 // get the instance if the parameter of the interceptor is named instance
-                if (pType.IsAssignableFrom(baseType) && param.Name == "instance")
+                if (pType.IsAssignableFrom(typeof(TBase)) && param.Name == "instance")
                 {
                     gen.Emit(OpCodes.Ldarg_0);
                     continue;
                 }
 
-                // get the method name if the parameter is named methodname
-                if (pType == typeof(string) && param.Name == "methodName")
-                {
-                    gen.Emit(OpCodes.Ldstr, baseMethod.Name);
-                    continue;
-                }
-
-                // get the originl method's parameters if they have the same name and type or are assinable from the type do not forget to box
-                var baseParams =
-                    baseMethod.GetParameters();
-
-                bool paramFound = false;
-
-                for (int i = 0; i < baseParams.Length; i++)
-                {
-                    if (baseParams[i].Name != param.Name)
-                    { continue; }
-
-                    paramFound =
-                        pType.IsAssignableFrom(baseParams[i].ParameterType);
-
-                    if (paramFound)
-                    {
-                        //gen.EmitWriteLine("emitting:= " + (i + 1).ToString());
-                        
-                        // original code (wich surprisingly did not work):
-                        gen.Emit(OpCodes.Ldarg, i + 1);
-                        //switch (i)
-                        //{
-                        //    case 0: gen.Emit(OpCodes.Ldarg_1); break;
-                        //    case 1: gen.Emit(OpCodes.Ldarg_2); break;
-                        //    case 2: gen.Emit(OpCodes.Ldarg_3); break;
-                        //}
-
-                        break;
-                    }
-                }
-
-                if (paramFound) { continue; }
-
-                if (!pType.IsValueType)
-                { gen.Emit(OpCodes.Ldnull); }
-                else
-                {
-                    gen.EmitDefaultValue(pType);
-                }
+                if (interfere != null)
+                { interfere(param); }
             }
             return newParams.ToArray();
+        }
+
+        internal static Type[] EmitParameters4<TBase>(this ILGenerator gen, MethodInfo newMethod, MethodInfo baseMethod)
+        {
+            return gen.EmitParameters4<TBase>(
+                newMethod,
+                p =>  EmitArgumentsBasedOnOriginal(gen, baseMethod, p, p.ParameterType)); 
+        }
+
+        internal static Type[] EmitParameters4<TBase>(this ILGenerator gen, MethodInfo newMethod, string paramName, string literalValue)
+        {
+            return gen.EmitParameters4<TBase>(
+                newMethod,
+                p => {
+                    if (p.ParameterType == typeof(string) && p.Name == paramName)
+                    {
+                        gen.Emit(OpCodes.Ldstr, literalValue);
+                    }
+                });
+        }
+
+        /// <summary>
+        /// Set the original method's parameters if they have the same name and type or are assinable from the type do not forget to 
+        /// </summary>
+        /// <param name="gen"></param>
+        /// <param name="original"></param>
+        /// <param name="param"></param>
+        /// <param name="pType"></param>
+        private static void EmitArgumentsBasedOnOriginal(ILGenerator gen, MethodInfo originalMethod, ParameterInfo param, Type pType)
+        {
+            // get the method name if the parameter is named methodname
+            if (pType == typeof(string) && param.Name == "methodName")
+            {
+                gen.Emit(OpCodes.Ldstr, originalMethod.Name);
+                return;
+            }
+
+            var baseParams =
+                originalMethod.GetParameters();
+
+            bool paramFound = false;
+
+            for (int i = 0; i < baseParams.Length; i++)
+            {
+                if (baseParams[i].Name != param.Name)
+                { continue; }
+
+                paramFound =
+                    pType.IsAssignableFrom(baseParams[i].ParameterType);
+
+                if (paramFound)
+                {
+                    gen.Emit(OpCodes.Ldarg, i + 1);
+                    break;
+                }
+            }
+
+            if (paramFound) { return; }
+
+            if (!pType.IsValueType)
+            { gen.Emit(OpCodes.Ldnull); }
+            else
+            {
+                gen.EmitDefaultValue(pType);
+            }
         }
 
         internal static void EmitConstructor4<T>(this ILGenerator gen, IList<FieldInfo> fields)

@@ -20,7 +20,7 @@ namespace Surrogates.Tests.Disable
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Disable
-                .This(d => d.Void_ParameterLess));
+                .ThisMethod(d => d.Void_ParameterLess));
 
             var dummy =
                 new Dummy();
@@ -42,7 +42,7 @@ namespace Surrogates.Tests.Disable
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Disable
-                .This<int>(d => d.Int_1_ParameterLess));
+                .ThisMethod<int>(d => d.Int_1_ParameterLess));
 
             var dummy =
                 new Dummy();

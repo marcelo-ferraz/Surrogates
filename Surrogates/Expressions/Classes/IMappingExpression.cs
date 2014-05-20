@@ -6,8 +6,8 @@ namespace Surrogates.Expressions.Classes
     {
         MethodDisableExpression<T> Disable { get; }
 
-        MethodInterferenceExpression<T> Substitute { get; }
+        InterferenceExpression<T> Substitute { get; }
 
-        MethodInterferenceExpression<T> Visit { get; }
+        InterferenceExpression<T> Visit { get; }
     }
 }

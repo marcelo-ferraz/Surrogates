@@ -1,5 +1,7 @@
 ﻿using Surrogates.Expressions.Classes;
+using Surrogates.Expressions.Properties;
 using Surrogates.Mappers;
+using Surrogates.SDILReader;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -8,36 +10,10 @@ using System.Reflection.Emit;
 namespace Surrogates.Expressions.Methods
 {
     public class MethodSubstitutionExpression<TBase, TSubstitutor> 
-        : VoidExpression<TBase, TSubstitutor>
+        : EndExpression<TBase, TSubstitutor>
     {
-        protected FieldBuilder SubstituteField { get; set; }
-
         internal MethodSubstitutionExpression(IMappingExpression<TBase> mapper, MappingState state)
             : base(mapper, state){ }
-
-        protected virtual FieldInfo GetInterceptorField<TSubstitute>()
-        {
-            if (SubstituteField == null)
-            {
-                ushort fieldCount = 0;
-
-                for (fieldCount = 0; fieldCount < State.Fields.Count; fieldCount++)
-                {
-                    if (State.Fields[fieldCount].FieldType == typeof(TSubstitute))
-                    { return State.Fields[fieldCount]; }
-                }
-
-                string name = string.Concat(
-                    "_interceptor", fieldCount.ToString());
-
-                SubstituteField = State.TypeBuilder
-                    .DefineField(name, typeof(TSubstitute), FieldAttributes.Private);
-
-                State.Fields.Add(SubstituteField);
-            }
-
-            return SubstituteField;
-        }
 
         protected override void RegisterAction(Func<TSubstitutor, Delegate> action)
         {
@@ -48,8 +24,8 @@ namespace Surrogates.Expressions.Methods
             {
                 LocalBuilder baseMethodReturn = null;
 
-                var gen = State.TypeBuilder.EmitOverride(
-                    substituteMethod, baseMethod, GetInterceptorField<TSubstitutor>(), out baseMethodReturn);
+                var gen = State.TypeBuilder.EmitOverride<TBase>(
+                    substituteMethod, baseMethod, GetField4<TSubstitutor>(), out baseMethodReturn);
 
                 if (baseMethodReturn != null)
                 { gen.EmitDefaultValue(baseMethod.ReturnType, baseMethodReturn); }
@@ -70,8 +46,8 @@ namespace Surrogates.Expressions.Methods
             {
                 LocalBuilder baseMethodReturn = null;
 
-                var gen = State.TypeBuilder.EmitOverride(
-                    substituteMethod, baseMethod, GetInterceptorField<TSubstitutor>(), out baseMethodReturn);
+                var gen = State.TypeBuilder.EmitOverride<TBase>(
+                    substituteMethod, baseMethod, GetField4<TSubstitutor>(), out baseMethodReturn);
 
                 //the base method is void, discard the value
                 if (baseMethodReturn == null)
@@ -87,5 +63,42 @@ namespace Surrogates.Expressions.Methods
             }
             State.Methods.Clear();
         }
+
+        //public PropertyReplaceExpression<TBase, T> ThisMethodProperty<T>(Func<TBase, T> propGetter)
+        //{
+        //    var reader =
+        //        new MethodBodyReader(propGetter.Method);
+
+        //    string propName = null;
+
+        //    for (int i = 0; i < reader.Instructions.Count; i++)
+        //    {
+        //        var code =
+        //            reader.Instructions[i].Code.Name;
+
+        //        if (code != "callvirt" && code != "call")
+        //        { continue; }
+
+        //        if (!(reader.Instructions[1].Operand is MethodInfo))
+        //        { continue; }
+
+        //        propName = ((MethodInfo)reader.Instructions[i].Operand).Name;
+
+        //        if (!propName.Contains("get_") && !propName.Contains("set_"))
+        //        { throw new ArgumentException("What was provided is not an property"); }
+
+        //        propName = propName
+        //            .Replace("get_", string.Empty)
+        //            .Replace("set_", string.Empty);
+        //    }
+
+        //    if (string.IsNullOrEmpty(propName))
+        //    { throw new ArgumentException("What was provided is not a call for an property"); }
+
+        //    State.Properties.Add(
+        //        typeof(TBase).GetProperty(propName));
+
+        //    return new PropertyExpression<TBase,T>(Mapper, State);
+        //}
     }
 }

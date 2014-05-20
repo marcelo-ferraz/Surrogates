@@ -8,6 +8,8 @@ namespace Surrogates.Tests.Entities
 {
     public class Dummy
     {
+        public virtual int Int_Property { get; set; }
+
         public class EvenMore
         {
             public string SomeText { get; set; }
@@ -45,6 +47,37 @@ namespace Surrogates.Tests.Entities
         {
             Void_VariousParameters(text, date, someInstance);
             return 1;
+        }
+    }
+
+
+    public class BaseClass
+    {
+        public virtual int Nhonho { get; set; }
+    }
+
+    public class Class1: BaseClass
+    {
+        public override int Nhonho
+        {
+            get
+            {
+                return NewGetMethod();
+            }
+            set
+            {
+                NewSetMethod(value);
+            }
+        }
+
+        private void NewSetMethod(int value)
+        {
+            throw new NotImplementedException();
+        }
+
+        private int NewGetMethod()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -22,13 +22,13 @@ namespace Surrogates
             ctrGen.EmitConstructor4<T>(fields);
         }
 
-        internal static ILGenerator EmitOverride(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField)
+        internal static ILGenerator EmitOverride<TBase>(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField)
         {
             LocalBuilder @return = null;
-            return EmitOverride(typeBuilder, newMethod, baseMethod, interceptorField, out @return);
+            return EmitOverride<TBase>(typeBuilder, newMethod, baseMethod, interceptorField, out @return);
         }
 
-        internal static ILGenerator EmitOverride(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, out LocalBuilder returnField)
+        internal static ILGenerator EmitOverride<TBase>(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, out LocalBuilder returnField)
         {
             var builder = typeBuilder.DefineMethod(
                 baseMethod.Name,
@@ -47,11 +47,12 @@ namespace Surrogates
             gen.Emit(OpCodes.Ldfld, interceptorField);
 
             var @params =
-                gen.EmitParameters(newMethod, baseMethod);
+                gen.EmitParameters4<TBase>(newMethod, baseMethod);
 
             gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
 
             return gen;
         }
+
     }
 }

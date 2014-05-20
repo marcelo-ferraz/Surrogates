@@ -19,9 +19,9 @@ namespace Surrogates.Tests.Visit
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Visit
-                .This<int>(d => d.Int_1_ParameterLess)
-                .With<InterferenceObject>()
-                .This(r => r.Void_ParameterLess))
+                .ThisMethod<int>(d => d.Int_1_ParameterLess)
+                .Using<InterferenceObject>()
+                .ThisMethod(r => r.Void_ParameterLess))
                 ;
 
             var dummy =
@@ -47,9 +47,9 @@ namespace Surrogates.Tests.Visit
 
             container.Map(m =>
                 m.Throughout<Dummy>()
-                .Visit.This<string, DateTime, Dummy.EvenMore, int>(d => d.Int_1_VariousParameters)
-                .With<InterferenceObject>()
-                .This<string, Dummy, DateTime, string, Dummy.EvenMore>(r => r.Void_VariousParametersPlusIntanceAndMethodName));
+                .Visit.ThisMethod<string, DateTime, Dummy.EvenMore, int>(d => d.Int_1_VariousParameters)
+                .Using<InterferenceObject>()
+                .ThisMethod<string, Dummy, DateTime, string, Dummy.EvenMore>(r => r.Void_VariousParametersPlusIntanceAndMethodName));
 
             var dummy =
                 new Dummy();
@@ -87,9 +87,9 @@ namespace Surrogates.Tests.Visit
 
             container.Map(m =>
                 m.Throughout<Dummy>()
-                .Visit.This<string, DateTime, Dummy.EvenMore, int>(d => d.Int_1_VariousParameters)
-                .With<InterferenceObject>()
-                .This<string, Dummy, DateTime, string, Dummy.EvenMore>(r => r.Void_VariousParametersWithDifferentNames))
+                .Visit.ThisMethod<string, DateTime, Dummy.EvenMore, int>(d => d.Int_1_VariousParameters)
+                .Using<InterferenceObject>()
+                .ThisMethod<string, Dummy, DateTime, string, Dummy.EvenMore>(r => r.Void_VariousParametersWithDifferentNames))
                 ;
 
             var dummy =
@@ -110,9 +110,9 @@ namespace Surrogates.Tests.Visit
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Visit
-                .This<int>(d => d.Int_1_ParameterLess)
-                .With<InterferenceObject>()
-                .This<Dummy, string>(r => r.Void_InstanceAndMethodName));
+                .ThisMethod<int>(d => d.Int_1_ParameterLess)
+                .Using<InterferenceObject>()
+                .ThisMethod<Dummy, string>(r => r.Void_InstanceAndMethodName));
 
             var dummy =
                 new Dummy();

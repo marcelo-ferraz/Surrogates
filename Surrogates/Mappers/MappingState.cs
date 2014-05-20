@@ -18,17 +18,19 @@ namespace Surrogates.Mappers
         internal IList<MethodInfo> Methods { get;set; }
         internal IList<FieldInfo> Fields { get; set; }
 
-        internal MethodInfo PushMethod(int i)
-        {
-            var method = Methods[i];
-            Methods.RemoveAt(i);
-            return method;
-        }
+        //internal MethodInfo PushMethod(int i)
+        //{
+        //    var method = Methods[i];
+        //    Methods.RemoveAt(i);
+        //    return method;
+        //}
 
-        internal MethodInfo Push(MethodInfo method)
-        {
-            Methods.Remove(method);
-            return method;
-        }
+        //internal MethodInfo Push(MethodInfo method)
+        //{
+        //    Methods.Remove(method);
+        //    return method;
+        //}
+
+        public List<PropertyInfo> Properties { get; set; }
     }
 }

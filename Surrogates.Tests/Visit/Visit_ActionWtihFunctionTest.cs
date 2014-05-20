@@ -15,9 +15,9 @@ namespace Surrogates.Tests.Visit
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Visit
-                .This(d => d.Void_ParameterLess)
-                .With<InterferenceObject>()
-                .This<int>(r => r.Int_2_ParameterLess));
+                .ThisMethod(d => d.Void_ParameterLess)
+                .Using<InterferenceObject>()
+                .ThisMethod<int>(r => r.Int_2_ParameterLess));
 
             var dummy =
                 new Dummy();
@@ -39,9 +39,9 @@ namespace Surrogates.Tests.Visit
 
             container.Map(m =>
                 m.Throughout<Dummy>()
-                .Visit.This<string, DateTime, Dummy.EvenMore>(d => d.Void_VariousParameters)
-                .With<InterferenceObject>()
-                .This<string, Dummy, DateTime, string, Dummy.EvenMore, int>(r => r.Int_2_VariousParametersPlusIntanceAndMethodName));
+                .Visit.ThisMethod<string, DateTime, Dummy.EvenMore>(d => d.Void_VariousParameters)
+                .Using<InterferenceObject>()
+                .ThisMethod<string, Dummy, DateTime, string, Dummy.EvenMore, int>(r => r.Int_2_VariousParametersPlusIntanceAndMethodName));
 
             var dummy =
                 new Dummy();
@@ -66,9 +66,9 @@ namespace Surrogates.Tests.Visit
 
             container.Map(m =>
                 m.Throughout<Dummy>()
-                .Visit.This<string, DateTime, Dummy.EvenMore>(d => d.Void_VariousParameters)
-                .With<InterferenceObject>()
-                .This<string, Dummy, DateTime, string, Dummy.EvenMore, int>(r => r.Int_2_VariousParametersWithDifferentNames));
+                .Visit.ThisMethod<string, DateTime, Dummy.EvenMore>(d => d.Void_VariousParameters)
+                .Using<InterferenceObject>()
+                .ThisMethod<string, Dummy, DateTime, string, Dummy.EvenMore, int>(r => r.Int_2_VariousParametersWithDifferentNames));
 
             var dummy =
                 new Dummy();
@@ -88,9 +88,9 @@ namespace Surrogates.Tests.Visit
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Visit
-                .This(d => d.Void_ParameterLess)
-                .With<InterferenceObject>()
-                .This<Dummy, string, int>(r => r.Int_2_InstanceAndMethodName))
+                .ThisMethod(d => d.Void_ParameterLess)
+                .Using<InterferenceObject>()
+                .ThisMethod<Dummy, string, int>(r => r.Int_2_InstanceAndMethodName))
                 ;
 
             var dummy =

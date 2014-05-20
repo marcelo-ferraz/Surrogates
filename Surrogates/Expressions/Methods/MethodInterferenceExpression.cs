@@ -23,21 +23,19 @@ namespace Surrogates.Expressions.Methods
             Kind = kind;
         }
 
-        public IMappingExpression<TBase> And { get { return Mapper; } }
-
-        public virtual MethodInterferenceExpression<TBase> AllPublic()
+        public virtual MethodInterferenceExpression<TBase> PublicMethods()
         {
             var @public = typeof(TBase)
                 .GetMethods(BindingFlags.Instance | BindingFlags.Public);
 
             for (int i = 0; i < @public.Length; i++)
             {
-                RegisterMethod(@public[i]);
+                Register(@public[i]);
             }
             return this;
         }
 
-        public virtual MethodInterferenceExpression<TBase> AllProtectedMethods()
+        public virtual MethodInterferenceExpression<TBase> ProtectedMethods()
         {
             var methods = typeof(TBase)
                 .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic);
@@ -46,13 +44,13 @@ namespace Surrogates.Expressions.Methods
             {
                 if (methods[i].IsFamily && !methods[i].IsPrivate)
                 {
-                    RegisterMethod(methods[i]);
+                    Register(methods[i]);
                 }
             }
             return this;
         }
 
-        public virtual MethodInterferenceExpression<TBase> AllInternalMethods()
+        public virtual MethodInterferenceExpression<TBase> InternalMethods()
         {
             var methods = typeof(TBase)
                 .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic);
@@ -61,13 +59,13 @@ namespace Surrogates.Expressions.Methods
             {
                 if (!methods[i].IsFamily && !methods[i].IsPrivate)
                 {
-                    RegisterMethod(methods[i]);
+                    Register(methods[i]);
                 }
             }
             return this;
         }
 
-        public virtual MethodInterferenceExpression<TBase> Where(Func<MethodInfo, bool> predicate)
+        public virtual MethodInterferenceExpression<TBase> Methods(Func<MethodInfo, bool> predicate)
         {
             var methods = typeof(TBase)
                 .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
@@ -77,18 +75,18 @@ namespace Surrogates.Expressions.Methods
                 if ((methods[i].IsFamily || methods[i].IsPublic) &&
                     (predicate(methods[i])))
                 {
-                    RegisterMethod(methods[i]);
+                    Register(methods[i]);
                 }
             }
 
             return this;
         }
 
-        public virtual VoidExpression<TBase, TInterceptor> With<TInterceptor>()
+        public virtual EndExpression<TBase, TInterceptor> Using<TInterceptor>()
         {
             return 
                 this.Kind == InterferenceKind.Substitution ?
-                (VoidExpression<TBase, TInterceptor>)new MethodSubstitutionExpression<TBase, TInterceptor>(Mapper, State) :
+                (EndExpression<TBase, TInterceptor>)new MethodSubstitutionExpression<TBase, TInterceptor>(Mapper, State) :
                 new MethodVisitationExpression<TBase, TInterceptor>(Mapper, State);
         }
     }

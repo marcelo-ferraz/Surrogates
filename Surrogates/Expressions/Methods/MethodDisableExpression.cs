@@ -20,7 +20,7 @@ namespace Surrogates.Expressions.Methods
 
             for (int i = 0; i < @public.Length; i++)
             {
-                RegisterMethod(@public[i]);
+                Register(@public[i]);
             }
 
             return new AndExpression<TBase>(Mapper);
@@ -35,7 +35,7 @@ namespace Surrogates.Expressions.Methods
             {
                 if (methods[i].IsFamily && !methods[i].IsPrivate)
                 {
-                    RegisterMethod(methods[i]);
+                    Register(methods[i]);
                 }
             }
 
@@ -51,7 +51,7 @@ namespace Surrogates.Expressions.Methods
             {
                 if (!methods[i].IsFamily && !methods[i].IsPrivate)
                 {
-                    RegisterMethod(methods[i]);
+                    Register(methods[i]);
                 }
             }
 
@@ -68,17 +68,17 @@ namespace Surrogates.Expressions.Methods
                 if ((methods[i].IsFamily || methods[i].IsPublic) &&
                     (predicate(methods[i])))
                 {
-                    RegisterMethod(methods[i]);
+                    Register(methods[i]);
                 }
             }
+
+            State.Methods.Clear();
 
             return new AndExpression<TBase>(Mapper);
         }
 
-        protected override void RegisterMethod(MethodInfo method)
+        protected override void Register(MethodInfo method)
         {
-            State.Push(method);
-
             var builder = State.TypeBuilder.DefineMethod(
                 method.Name,
                 MethodAttributes.Public | MethodAttributes.Virtual,

@@ -27,13 +27,13 @@ namespace Surrogates.Expressions.Methods
 
                 LocalBuilder baseMethodReturn = null;
 
-                var gen = State.TypeBuilder.EmitOverride(
-                    visitorMethod, baseMethod, GetInterceptorField<TVisitor>(), out baseMethodReturn);
+                var gen = State.TypeBuilder.EmitOverride<TBase>(
+                    visitorMethod, baseMethod, GetField4<TVisitor>(), out baseMethodReturn);
 
                 gen.Emit(OpCodes.Ldarg_0);
                 
                 var @params =
-                    gen.EmitParameters(baseMethod, baseMethod);
+                    gen.EmitParameters4<TBase>(baseMethod, baseMethod);
 
                 gen.Emit(OpCodes.Call, baseMethod);
                 gen.Emit(OpCodes.Ret);
@@ -50,15 +50,15 @@ namespace Surrogates.Expressions.Methods
             {
                 LocalBuilder baseMethodReturn = null;
 
-                var gen = State.TypeBuilder.EmitOverride(
-                    substituteMethod, baseMethod, GetInterceptorField<TVisitor>(), out baseMethodReturn);
+                var gen = State.TypeBuilder.EmitOverride<TBase>(
+                    substituteMethod, baseMethod, GetField4<TVisitor>(), out baseMethodReturn);
 
                 gen.Emit(OpCodes.Pop); 
                 
                 gen.Emit(OpCodes.Ldarg_0);
                 
                 var @params =
-                    gen.EmitParameters(baseMethod, baseMethod);
+                    gen.EmitParameters4<TBase>(baseMethod, baseMethod);
 
                 gen.Emit(OpCodes.Call, baseMethod);
 

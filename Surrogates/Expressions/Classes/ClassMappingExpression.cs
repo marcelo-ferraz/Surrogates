@@ -15,14 +15,14 @@ namespace Surrogates.Expressions.Classes
             get { return new MethodDisableExpression<T>(this, State); }
         }
 
-        public MethodInterferenceExpression<T> Substitute
+        public InterferenceExpression<T> Substitute
         {
-            get { return new MethodInterferenceExpression<T>(this, State, InterferenceKind.Substitution); }
+            get { return new InterferenceExpression<T>(this, State, InterferenceKind.Substitution); }
         }
 
-        public MethodInterferenceExpression<T> Visit
+        public InterferenceExpression<T> Visit
         {
-            get { return new MethodInterferenceExpression<T>(this, State, InterferenceKind.Visitation); }
+            get { return new InterferenceExpression<T>(this, State, InterferenceKind.Visitation); }
         }
 
         internal ClassMappingExpression(string name, MappingState state)

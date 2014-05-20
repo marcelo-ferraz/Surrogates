@@ -15,9 +15,9 @@ namespace Surrogates.Tests.Substitute
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Substitute
-                .This(d => d.Void_ParameterLess)
-                .With<InterferenceObject>()
-                .This<int>(r => r.Int_2_ParameterLess));
+                .ThisMethod(d => d.Void_ParameterLess)
+                .Using<InterferenceObject>()
+                .ThisMethod<int>(r => r.Int_2_ParameterLess));
 
             var dummy =
                 new Dummy();
@@ -39,9 +39,10 @@ namespace Surrogates.Tests.Substitute
 
             container.Map(m =>
                 m.Throughout<Dummy>()
-                .Substitute.This<string, DateTime, Dummy.EvenMore>(d => d.Void_VariousParameters)
-                .With<InterferenceObject>()
-                .This<string, Dummy, DateTime, string, Dummy.EvenMore, int>(r => r.Int_2_VariousParametersPlusIntanceAndMethodName));
+                .Substitute
+                .ThisMethod<string, DateTime, Dummy.EvenMore>(d => d.Void_VariousParameters)
+                .Using<InterferenceObject>()
+                .ThisMethod<string, Dummy, DateTime, string, Dummy.EvenMore, int>(r => r.Int_2_VariousParametersPlusIntanceAndMethodName));
 
             var dummy =
                 new Dummy();
@@ -75,9 +76,10 @@ namespace Surrogates.Tests.Substitute
 
             container.Map(m =>
                 m.Throughout<Dummy>()
-                .Substitute.This<string, DateTime, Dummy.EvenMore>(d => d.Void_VariousParameters)
-                .With<InterferenceObject>()
-                .This<string, Dummy, DateTime, string, Dummy.EvenMore, int>(r => r.Int_2_VariousParametersWithDifferentNames));
+                .Substitute
+                .ThisMethod<string, DateTime, Dummy.EvenMore>(d => d.Void_VariousParameters)
+                .Using<InterferenceObject>()
+                .ThisMethod<string, Dummy, DateTime, string, Dummy.EvenMore, int>(r => r.Int_2_VariousParametersWithDifferentNames));
 
             var dummy =
                 new Dummy();
@@ -97,9 +99,9 @@ namespace Surrogates.Tests.Substitute
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Substitute
-                .This(d => d.Void_ParameterLess)
-                .With<InterferenceObject>()
-                .This<Dummy, string, int>(r => r.Int_2_InstanceAndMethodName))
+                .ThisMethod(d => d.Void_ParameterLess)
+                .Using<InterferenceObject>()
+                .ThisMethod<Dummy, string, int>(r => r.Int_2_InstanceAndMethodName))
                 ;
 
             var dummy =
