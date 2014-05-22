@@ -1,4 +1,5 @@
 ﻿using Surrogates.Expressions.Classes;
+using Surrogates.Expressions.Properties.Accessors;
 using Surrogates.Mappers;
 using System;
 using System.Collections.Generic;
@@ -9,18 +10,13 @@ using System.Text;
 
 namespace Surrogates.Expressions.Properties
 {
-    public class PropertyVisitExpression<TBase, TSubstitutor>
-        : EndExpression<TBase, TSubstitutor>
+    public class PropertyVisitExpression<TBase, TVisitor>
+        : PropertyInterferenceExpression<TBase, TVisitor>
     {
-        protected PropertyAccessor Accessor;
-
-        internal PropertyVisitExpression(PropertyAccessor kind, IMappingExpression<TBase> mapper, MappingState state)
-            : base(mapper, state)
-        {
-            Accessor = kind;
-        }
+        internal PropertyVisitExpression(PropertyAccessor accessor, IMappingExpression<TBase> mapper, MappingState state)
+            : base(InterferenceKind.Visitation,accessor, mapper, state) { }
         
-        private void Register(Func<TSubstitutor, Delegate> action)
+        private void Register(Func<TVisitor, Delegate> action)
         {
             var method =
                 action(NotInitializedInstance)
@@ -49,7 +45,6 @@ namespace Surrogates.Expressions.Properties
                         OverrideSetter(prop, method));
                 }
             }
-            State.Properties.Clear();
         }
 
         private MethodBuilder OverrideGetter(PropertyInfo property, MethodInfo newMethod)
@@ -66,14 +61,18 @@ namespace Surrogates.Expressions.Properties
                 gen.DeclareLocal(property.ReflectedType);
 
             gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldfld, GetField4<TSubstitutor>());
+            gen.Emit(OpCodes.Ldfld, GetField4<TVisitor>());
 
             var @params = gen.EmitParameters4<TBase>(
                 newMethod,
                 p =>
                 {
                     if (p.Name == "propertyName" && p.ParameterType == typeof(string))
-                    { gen.Emit(OpCodes.Ldstr, property.Name); }
+                    { 
+                        gen.Emit(OpCodes.Ldstr, property.Name);
+                        return true;
+                    }
+                    return false;
                 });
 
             gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
@@ -104,14 +103,18 @@ namespace Surrogates.Expressions.Properties
                 gen.DeclareLocal(property.ReflectedType);
 
             gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldfld, GetField4<TSubstitutor>());
+            gen.Emit(OpCodes.Ldfld, GetField4<TVisitor>());
 
             var @params = gen.EmitParameters4<TBase>(
                 newMethod,
                 p =>
                 {
                     if (p.Name == "propertyName" && p.ParameterType == typeof(string))
-                    { gen.Emit(OpCodes.Ldstr, property.Name); }
+                    { 
+                        gen.Emit(OpCodes.Ldstr, property.Name);
+                        return true;
+                    }
+                    return false;
                 });
 
             gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
@@ -126,12 +129,12 @@ namespace Surrogates.Expressions.Properties
             return setter;
         }
 
-        protected override void RegisterAction(Func<TSubstitutor, Delegate> action)
+        protected override void RegisterAction(Func<TVisitor, Delegate> action)
         {
             Register(action);
         }
 
-        protected override void RegisterFunction(Func<TSubstitutor, Delegate> function)
+        protected override void RegisterFunction(Func<TVisitor, Delegate> function)
         {
             Register(function);
         }

@@ -1,6 +1,7 @@
 ﻿using Surrogates.Expressions.Classes;
 using Surrogates.Expressions.Methods;
 using Surrogates.Expressions.Properties;
+using Surrogates.Expressions.Properties.Accessors;
 using Surrogates.Mappers;
 using Surrogates.SDILReader;
 using System;
@@ -29,7 +30,7 @@ namespace Surrogates.Expressions
             return new MethodInterferenceExpression<TBase>(Mapper, State, _kind);
         }
 
-        public PropertyAccessorChoiceExpression<TBase> ThisProperty<T>(Func<TBase, T> propGetter)
+        public AccessorExpression<TBase> ThisProperty<T>(Func<TBase, T> propGetter)
         {
             var reader =
                 new MethodBodyReader(propGetter.Method);
@@ -63,7 +64,7 @@ namespace Surrogates.Expressions
             State.Properties.Add(
                 typeof(TBase).GetProperty(propName));
 
-            return new PropertyAccessorChoiceExpression<TBase>(_kind, Mapper, State);
+            return new AccessorExpression<TBase>(_kind, Mapper, State);
         }
     }
 }

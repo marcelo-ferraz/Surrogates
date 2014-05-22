@@ -42,19 +42,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Disable\DisableTest.cs" />
-    <Compile Include="Visit\Visit_ActionWithActionTest.cs" />
-    <Compile Include="Visit\Visit_ActionWtihFunctionTest.cs" />
-    <Compile Include="Visit\Visit_FuncWithActionTest.cs" />
-    <Compile Include="Visit\Visit_FuncWithFuncTest.cs" />
+    <Compile Include="_Properties\Class1.cs" />
+    <Compile Include="Methods\Disable\DisableTest.cs" />
+    <Compile Include="Methods\Visit\Visit_ActionWithActionTest.cs" />
+    <Compile Include="Methods\Visit\Visit_ActionWtihFunctionTest.cs" />
+    <Compile Include="Methods\Visit\Visit_FuncWithActionTest.cs" />
+    <Compile Include="Methods\Visit\Visit_FuncWithFuncTest.cs" />
     <Compile Include="Entities\Dummy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entities\InterferenceObject.cs" />
-    <Compile Include="Substitute\Substitute_ActionWithActionTest.cs" />
-    <Compile Include="IInterferenceTest.cs" />
-    <Compile Include="Substitute\Substitute_FuncWithActionTest.cs" />
-    <Compile Include="Substitute\Substitute_FuncWithFuncTest.cs" />
-    <Compile Include="Substitute\Substitute_ActionWtihFunctionTest.cs" />
+    <Compile Include="Methods\Substitute\Substitute_ActionWithActionTest.cs" />
+    <Compile Include="Methods\IInterferenceTest.cs" />
+    <Compile Include="Methods\Substitute\Substitute_FuncWithActionTest.cs" />
+    <Compile Include="Methods\Substitute\Substitute_FuncWithFuncTest.cs" />
+    <Compile Include="Methods\Substitute\Substitute_ActionWtihFunctionTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Surrogates\Surrogates.csproj">

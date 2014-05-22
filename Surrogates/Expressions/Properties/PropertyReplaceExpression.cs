@@ -1,4 +1,5 @@
 ﻿using Surrogates.Expressions.Classes;
+using Surrogates.Expressions.Properties.Accessors;
 using Surrogates.Mappers;
 using System;
 using System.Collections.Generic;
@@ -10,15 +11,10 @@ using System.Text;
 namespace Surrogates.Expressions.Properties
 {
     public class PropertyReplaceExpression<TBase, TSubstitutor>
-        : EndExpression<TBase, TSubstitutor>
-    {       
-        protected PropertyAccessor Accessor;
-
-        internal PropertyReplaceExpression(PropertyAccessor kind, IMappingExpression<TBase> mapper, MappingState state)
-            : base(mapper, state)
-        {
-            Accessor = kind;
-        }
+        : PropertyInterferenceExpression<TBase, TSubstitutor>
+    {
+        internal PropertyReplaceExpression(PropertyAccessor accessor, IMappingExpression<TBase> mapper, MappingState state)
+            : base(InterferenceKind.Substitution, accessor, mapper, state) { }
         
         private void Register(Func<TSubstitutor, Delegate> action)
         {
@@ -39,7 +35,7 @@ namespace Surrogates.Expressions.Properties
 
                 if (okForGetter)
                 {
-                    newProp.SetSetMethod(
+                    newProp.SetGetMethod(
                         OverrideGetter(prop, method));
                 }
 
@@ -49,7 +45,6 @@ namespace Surrogates.Expressions.Properties
                         OverrideSetter(prop, method));
                 }
             }
-            State.Properties.Clear();
         }
 
         private MethodBuilder OverrideGetter(PropertyInfo property, MethodInfo newMethod)
@@ -63,7 +58,7 @@ namespace Surrogates.Expressions.Properties
             ILGenerator gen = getter.GetILGenerator();
 
             var returnField =
-                gen.DeclareLocal(property.ReflectedType);
+                gen.DeclareLocal(property.PropertyType);
 
             gen.Emit(OpCodes.Ldarg_0);
             gen.Emit(OpCodes.Ldfld, GetField4<TSubstitutor>());
@@ -73,13 +68,17 @@ namespace Surrogates.Expressions.Properties
                 p =>
                 {
                     if (p.Name == "propertyName" && p.ParameterType == typeof(string))
-                    { gen.Emit(OpCodes.Ldstr, property.Name); }
+                    { 
+                        gen.Emit(OpCodes.Ldstr, property.Name);
+                        return true;
+                    }
+                    return false;
                 });
 
             gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
 
             // in case the new method does not have return or is not assignable from property type
-            if (newMethod.ReturnType.IsAssignableFrom(property.PropertyType))
+            if (!newMethod.ReturnType.IsAssignableFrom(property.PropertyType))
             {
                 gen.Emit(OpCodes.Pop);
                 gen.EmitDefaultValue(property.PropertyType, returnField);
@@ -104,9 +103,6 @@ namespace Surrogates.Expressions.Properties
 
             ILGenerator gen = setter.GetILGenerator();
 
-            var returnField =
-                gen.DeclareLocal(property.ReflectedType);
-
             gen.Emit(OpCodes.Ldarg_0);
             gen.Emit(OpCodes.Ldfld, GetField4<TSubstitutor>());
 
@@ -115,7 +111,11 @@ namespace Surrogates.Expressions.Properties
                 p =>
                 {
                     if (p.Name == "propertyName" && p.ParameterType == typeof(string))
-                    { gen.Emit(OpCodes.Ldstr, property.Name); }
+                    { 
+                        gen.Emit(OpCodes.Ldstr, property.Name);
+                        return true;
+                    }
+                    return false;
                 });
 
             gen.EmitCall(OpCodes.Callvirt, newMethod, @params);

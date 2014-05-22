@@ -7,12 +7,13 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 
-namespace Surrogates.Expressions.Properties
+namespace Surrogates.Expressions.Properties.Accessors
 {
+    [Flags]
     public enum PropertyAccessor : byte
     {
-        Set,
-        Get,
-        Both
+        None = 0,
+        Set = 1,
+        Get = 2
     }
 }

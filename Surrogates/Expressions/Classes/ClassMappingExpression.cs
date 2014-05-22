@@ -15,7 +15,7 @@ namespace Surrogates.Expressions.Classes
             get { return new MethodDisableExpression<T>(this, State); }
         }
 
-        public InterferenceExpression<T> Substitute
+        public InterferenceExpression<T> Replace
         {
             get { return new InterferenceExpression<T>(this, State, InterferenceKind.Substitution); }
         }

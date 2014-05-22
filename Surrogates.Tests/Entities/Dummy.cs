@@ -48,6 +48,14 @@ namespace Surrogates.Tests.Entities
             Void_VariousParameters(text, date, someInstance);
             return 1;
         }
+
+        public int Id {
+            get {
+                Int_1_ParameterLess();
+                return 0;
+            }
+            set { throw new Exception(); }
+        }
     }
 
 

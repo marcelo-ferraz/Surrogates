@@ -39,13 +39,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Expressions\Classes\ProxyAlreadyMadeException.cs" />
+    <Compile Include="AccessorAlreadyOverridenException.cs" />
+    <Compile Include="ProxyAlreadyMadeException.cs" />
     <Compile Include="Expressions\InterferenceExpression.cs" />
-    <Compile Include="Expressions\Properties\Unused\Copy of Copy of PropertyExpression.cs" />
+    <Compile Include="Expressions\Properties\Accessors\AccessorAndExpression.cs" />
+    <Compile Include="Expressions\Properties\Accessors\AccessorChangeExpression.cs" />
+    <Compile Include="Expressions\Properties\Accessors\AccessorExpression.cs" />
     <Compile Include="Expressions\Properties\PropertyVisitExpression.cs" />
-    <Compile Include="Expressions\Properties\PropertyAccessorChoiceExpression.cs" />
-    <Compile Include="Expressions\Properties\PropertyAccessor.cs" />
+    <Compile Include="Expressions\Properties\Accessors\PropertyAccessor.cs" />
     <Compile Include="Expressions\Properties\PropertyInterferenceExpression.cs" />
+    <Compile Include="Expressions\Properties\UsingInterferenceExpression.cs" />
     <Compile Include="SDILReader\Globals.cs" />
     <Compile Include="SDILReader\ILInstruction.cs" />
     <Compile Include="SDILReader\MethodBodyReader.cs" />

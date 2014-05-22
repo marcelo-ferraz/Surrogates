@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Surrogates.Tests.Disable
+namespace Surrogates.Tests.Methods.Disable
 {
     [TestFixture]
     public class DisableTest

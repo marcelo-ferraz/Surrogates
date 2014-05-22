@@ -57,7 +57,7 @@ namespace Surrogates
             gen.Emit(OpCodes.Ldloc, local);
         }
 
-        internal static Type[] EmitParameters4<TBase>(this ILGenerator gen, MethodInfo newMethod, Action<ParameterInfo> interfere = null)
+        internal static Type[] EmitParameters4<TBase>(this ILGenerator gen, MethodInfo newMethod, Func<ParameterInfo, bool> interfere = null)
         {
             var newParams = new List<Type>();
 
@@ -75,8 +75,15 @@ namespace Surrogates
                     continue;
                 }
 
-                if (interfere != null)
-                { interfere(param); }
+                if (interfere != null && interfere(param))
+                { continue; }
+                
+                if (!pType.IsValueType)
+                { gen.Emit(OpCodes.Ldnull); }
+                else
+                {
+                    gen.EmitDefaultValue(pType);
+                }
             }
             return newParams.ToArray();
         }
@@ -96,24 +103,26 @@ namespace Surrogates
                     if (p.ParameterType == typeof(string) && p.Name == paramName)
                     {
                         gen.Emit(OpCodes.Ldstr, literalValue);
+                        return true;
                     }
+                    return false;
                 });
         }
 
         /// <summary>
-        /// Set the original method's parameters if they have the same name and type or are assinable from the type do not forget to 
+        /// Setter the original method's parameters if they have the same name and type or are assinable from the type do not forget to 
         /// </summary>
         /// <param name="gen"></param>
         /// <param name="original"></param>
         /// <param name="param"></param>
         /// <param name="pType"></param>
-        private static void EmitArgumentsBasedOnOriginal(ILGenerator gen, MethodInfo originalMethod, ParameterInfo param, Type pType)
+        private static bool EmitArgumentsBasedOnOriginal(ILGenerator gen, MethodInfo originalMethod, ParameterInfo param, Type pType)
         {
             // get the method name if the parameter is named methodname
             if (pType == typeof(string) && param.Name == "methodName")
             {
                 gen.Emit(OpCodes.Ldstr, originalMethod.Name);
-                return;
+                return true;
             }
 
             var baseParams =
@@ -136,14 +145,7 @@ namespace Surrogates
                 }
             }
 
-            if (paramFound) { return; }
-
-            if (!pType.IsValueType)
-            { gen.Emit(OpCodes.Ldnull); }
-            else
-            {
-                gen.EmitDefaultValue(pType);
-            }
+            return paramFound;
         }
 
         internal static void EmitConstructor4<T>(this ILGenerator gen, IList<FieldInfo> fields)
