@@ -40,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccessorAlreadyOverridenException.cs" />
+    <Compile Include="Mappers\Entities\PropertyList.cs" />
+    <Compile Include="Mappers\Entities\Property.cs" />
     <Compile Include="ProxyAlreadyMadeException.cs" />
     <Compile Include="Expressions\InterferenceExpression.cs" />
     <Compile Include="Expressions\Properties\Accessors\AccessorAndExpression.cs" />
@@ -61,7 +63,7 @@
     <Compile Include="Expressions\InterferenceKind.cs" />
     <Compile Include="Expressions\Methods\MethodDisableExpression.cs" />
     <Compile Include="Expressions\Methods\MethodInterferenceExpression.cs" />
-    <Compile Include="Expressions\Methods\MethodSubstitutionExpression.cs" />
+    <Compile Include="Expressions\Methods\MethodReplaceExpression.cs" />
     <Compile Include="Expressions\Methods\MethodVisitationExpression.cs" />
     <Compile Include="Expressions\EndExpression.cs" />
     <Compile Include="IFlushTypes.cs" />
@@ -69,7 +71,7 @@
     <Compile Include="Mappers\BaseMapper.cs" />
     <Compile Include="Mappers\DefaultMapper.cs" />
     <Compile Include="Mappers\IMapper.cs" />
-    <Compile Include="Mappers\MappingState.cs" />
+    <Compile Include="Mappers\Entities\MappingState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeBuilderMixins.cs" />
     <Compile Include="Expressions\Properties\PropertyReplaceExpression.cs" />

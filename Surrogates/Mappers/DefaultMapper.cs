@@ -1,5 +1,6 @@
 ﻿using Surrogates.Expressions.Classes;
 using Surrogates.Expressions.Methods;
+using Surrogates.Mappers.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

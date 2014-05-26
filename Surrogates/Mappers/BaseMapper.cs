@@ -1,4 +1,5 @@
 ﻿using Surrogates.Expressions.Classes;
+using Surrogates.Mappers.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,6 +1,7 @@
 ﻿using Surrogates.Expressions.Classes;
 using Surrogates.Expressions.Properties;
 using Surrogates.Mappers;
+using Surrogates.Mappers.Entities;
 using Surrogates.SDILReader;
 using System;
 using System.Linq;
@@ -9,15 +10,15 @@ using System.Reflection.Emit;
 
 namespace Surrogates.Expressions.Methods
 {
-    public class MethodSubstitutionExpression<TBase, TSubstitutor> 
+    public class MethodReplaceExpression<TBase, TSubstitutor>
         : EndExpression<TBase, TSubstitutor>
     {
-        internal MethodSubstitutionExpression(IMappingExpression<TBase> mapper, MappingState state)
-            : base(mapper, state){ }
+        internal MethodReplaceExpression(IMappingExpression<TBase> mapper, MappingState state)
+            : base(mapper, state) { }
 
         protected override void RegisterAction(Func<TSubstitutor, Delegate> action)
         {
-            MethodInfo substituteMethod = 
+            MethodInfo substituteMethod =
                 action(NotInitializedInstance).Method;
 
             foreach (var baseMethod in State.Methods)
@@ -56,49 +57,12 @@ namespace Surrogates.Expressions.Methods
                 }
                 else if (!substituteMethod.ReturnType.IsAssignableFrom(baseMethod.ReturnType))
                 {
-                    gen.EmitDefaultValue(substituteMethod.ReturnType, baseMethodReturn); 
+                    gen.EmitDefaultValue(substituteMethod.ReturnType, baseMethodReturn);
                 }
 
                 gen.Emit(OpCodes.Ret);
             }
             State.Methods.Clear();
         }
-
-        //public PropertyReplaceExpression<TBase, T> ThisMethodProperty<T>(Func<TBase, T> propGetter)
-        //{
-        //    var reader =
-        //        new MethodBodyReader(propGetter.Method);
-
-        //    string propName = null;
-
-        //    for (int i = 0; i < reader.Instructions.Count; i++)
-        //    {
-        //        var code =
-        //            reader.Instructions[i].Code.Name;
-
-        //        if (code != "callvirt" && code != "call")
-        //        { continue; }
-
-        //        if (!(reader.Instructions[1].Operand is MethodInfo))
-        //        { continue; }
-
-        //        propName = ((MethodInfo)reader.Instructions[i].Operand).Name;
-
-        //        if (!propName.Contains("get_") && !propName.Contains("set_"))
-        //        { throw new ArgumentException("What was provided is not an property"); }
-
-        //        propName = propName
-        //            .Replace("get_", string.Empty)
-        //            .Replace("set_", string.Empty);
-        //    }
-
-        //    if (string.IsNullOrEmpty(propName))
-        //    { throw new ArgumentException("What was provided is not a call for an property"); }
-
-        //    State.Properties.Add(
-        //        typeof(TBase).GetProperty(propName));
-
-        //    return new PropertyExpression<TBase,T>(Mapper, State);
-        //}
     }
 }

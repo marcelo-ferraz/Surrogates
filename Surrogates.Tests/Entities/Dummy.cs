@@ -8,7 +8,12 @@ namespace Surrogates.Tests.Entities
 {
     public class Dummy
     {
-        public virtual int Int_Property { get; set; }
+        private int _int_Property;
+        public virtual int Int_Property 
+        {
+            get { return _int_Property; }
+            set { _int_Property = value; } 
+        }
 
         public class EvenMore
         {
@@ -48,13 +53,18 @@ namespace Surrogates.Tests.Entities
             Void_VariousParameters(text, date, someInstance);
             return 1;
         }
-
+        private int _id;
         public int Id {
             get {
-                Int_1_ParameterLess();
+                Int_1_WithField(_id);
                 return 0;
             }
             set { throw new Exception(); }
+        }
+
+        private void Int_1_WithField(int _id)
+        {
+            throw new NotImplementedException();
         }
     }
 

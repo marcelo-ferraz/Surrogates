@@ -3,6 +3,7 @@ using Surrogates.Expressions.Methods;
 using Surrogates.Expressions.Properties;
 using Surrogates.Expressions.Properties.Accessors;
 using Surrogates.Mappers;
+using Surrogates.Mappers.Entities;
 using Surrogates.SDILReader;
 using System;
 using System.Collections.Generic;

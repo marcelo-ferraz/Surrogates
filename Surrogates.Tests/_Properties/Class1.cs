@@ -22,9 +22,10 @@ namespace Surrogates.Tests._Properties
                 .Replace
                 .ThisProperty(d => d.Id)
                 .Accessors(a => a
-                    .Getter.Using<InterferenceObject>().ThisMethod<int>(d => d.Int_2_ParameterLess)
-                    .And
-                    .Setter.Using<InterferenceObject>().ThisMethod<int>(d => d.Int_2_ParameterLess))
+                    .Getter.Using<InterferenceObject>().ThisMethod<int, int>(d => d.Int_2_WithField)
+                    //.And
+                    //.Setter.Using<InterferenceObject>().ThisMethod<int>(d => d.Int_2_ParameterLess)
+                    )
                 ).Save() ;
 
 

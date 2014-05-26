@@ -1,5 +1,6 @@
 ﻿using Surrogates.Expressions.Classes;
 using Surrogates.Mappers;
+using Surrogates.Mappers.Entities;
 
 namespace Surrogates.Expressions.Properties.Accessors
 {

@@ -51,5 +51,10 @@ namespace Surrogates.Tests.Entities
             Void_InstanceAndMethodName(instance, methodName);
             return 2;
         }
+
+        internal int Int_2_WithField(int field)
+        {
+            return field;
+        }
     }
 }

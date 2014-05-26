@@ -1,5 +1,6 @@
 ﻿using Surrogates.Expressions.Classes;
 using Surrogates.Mappers;
+using Surrogates.Mappers.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 namespace Surrogates.Expressions.Methods
 {
     public class MethodVisitationExpression<TBase, TVisitor> 
-        : MethodSubstitutionExpression<TBase, TVisitor>
+        : MethodReplaceExpression<TBase, TVisitor>
     {
         internal MethodVisitationExpression(IMappingExpression<TBase> mapper, MappingState state)
             : base(mapper, state)

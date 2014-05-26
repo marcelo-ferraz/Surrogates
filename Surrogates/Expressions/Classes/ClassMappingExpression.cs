@@ -1,5 +1,6 @@
 ﻿using Surrogates.Expressions.Methods;
 using Surrogates.Mappers;
+using Surrogates.Mappers.Entities;
 using System;
 using System.Reflection;
 

@@ -1,5 +1,6 @@
 ﻿using Surrogates.Expressions.Classes;
 using Surrogates.Mappers;
+using Surrogates.Mappers.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,7 +87,7 @@ namespace Surrogates.Expressions.Methods
         {
             return 
                 this.Kind == InterferenceKind.Substitution ?
-                (EndExpression<TBase, TInterceptor>)new MethodSubstitutionExpression<TBase, TInterceptor>(Mapper, State) :
+                (EndExpression<TBase, TInterceptor>)new MethodReplaceExpression<TBase, TInterceptor>(Mapper, State) :
                 new MethodVisitationExpression<TBase, TInterceptor>(Mapper, State);
         }
     }

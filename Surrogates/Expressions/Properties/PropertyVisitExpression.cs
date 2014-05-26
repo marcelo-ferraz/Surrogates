@@ -1,6 +1,7 @@
 ﻿using Surrogates.Expressions.Classes;
 using Surrogates.Expressions.Properties.Accessors;
 using Surrogates.Mappers;
+using Surrogates.Mappers.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,65 +16,27 @@ namespace Surrogates.Expressions.Properties
     {
         internal PropertyVisitExpression(PropertyAccessor accessor, IMappingExpression<TBase> mapper, MappingState state)
             : base(InterferenceKind.Visitation,accessor, mapper, state) { }
-        
-        private void Register(Func<TVisitor, Delegate> action)
+
+        protected override MethodBuilder OverrideGetter(Property property, MethodInfo newMethod)
         {
-            var method =
-                action(NotInitializedInstance)
-                .Method;
+            var pType =
+                property.Original.PropertyType;
 
-            var okForSetter = Accessor != PropertyAccessor.Get;
-            var okForGetter = Accessor != PropertyAccessor.Set;
+            var prop = property.Original;
 
-            foreach (var prop in State.Properties)
-            {
-                var newProp = State.TypeBuilder.DefineProperty(
-                    prop.Name,
-                    prop.Attributes,
-                    prop.PropertyType,
-                    null);
-
-                if (okForGetter)
-                {
-                    newProp.SetSetMethod(
-                        OverrideGetter(prop, method));
-                }
-
-                if (okForSetter)
-                {
-                    newProp.SetSetMethod(
-                        OverrideSetter(prop, method));
-                }
-            }
-        }
-
-        private MethodBuilder OverrideGetter(PropertyInfo property, MethodInfo newMethod)
-        {
-            MethodBuilder getter = State.TypeBuilder.DefineMethod(
-               string.Concat("get_", property.Name),
-               MethodAttributes.Virtual | MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig,
-               property.PropertyType,
-               Type.EmptyTypes);
+            var getter = CreateGetter(prop);
 
             ILGenerator gen = getter.GetILGenerator();
 
             var returnField =
-                gen.DeclareLocal(property.ReflectedType);
+                gen.DeclareLocal(pType);
 
             gen.Emit(OpCodes.Ldarg_0);
             gen.Emit(OpCodes.Ldfld, GetField4<TVisitor>());
 
             var @params = gen.EmitParameters4<TBase>(
                 newMethod,
-                p =>
-                {
-                    if (p.Name == "propertyName" && p.ParameterType == typeof(string))
-                    { 
-                        gen.Emit(OpCodes.Ldstr, property.Name);
-                        return true;
-                    }
-                    return false;
-                });
+                p => EmitParameterNameAndField(property, pType, gen, p));
 
             gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
 
@@ -81,62 +44,45 @@ namespace Surrogates.Expressions.Properties
             {
                 gen.Emit(OpCodes.Pop);
             }
-            
-            gen.Emit(OpCodes.Call, property.GetMethod);
+
+            gen.Emit(OpCodes.Call, prop.GetMethod);
             
             gen.Emit(OpCodes.Ret);
 
             return getter;
         }
 
-        private MethodBuilder OverrideSetter(PropertyInfo property, MethodInfo newMethod)
+        protected override MethodBuilder OverrideSetter(Property property, MethodInfo newMethod)
         {
-            MethodBuilder setter = State.TypeBuilder.DefineMethod(
-               string.Concat("set_", property.Name),
-               MethodAttributes.Virtual | MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig,
-               typeof(void),
-               Type.EmptyTypes);
+            var pType =
+                property.Original.PropertyType;
+
+            var prop = property.Original;
+
+            var setter = CreateSetter(prop);
 
             ILGenerator gen = setter.GetILGenerator();
 
             var returnField =
-                gen.DeclareLocal(property.ReflectedType);
+                gen.DeclareLocal(pType);
 
             gen.Emit(OpCodes.Ldarg_0);
             gen.Emit(OpCodes.Ldfld, GetField4<TVisitor>());
 
             var @params = gen.EmitParameters4<TBase>(
                 newMethod,
-                p =>
-                {
-                    if (p.Name == "propertyName" && p.ParameterType == typeof(string))
-                    { 
-                        gen.Emit(OpCodes.Ldstr, property.Name);
-                        return true;
-                    }
-                    return false;
-                });
+                p => EmitParameterNameAndField(property, pType, gen, p));
 
             gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
 
             if (newMethod.ReturnType != typeof(void))
             { gen.Emit(OpCodes.Pop); }
 
-            gen.Emit(OpCodes.Call, property.GetSetMethod());
+            gen.Emit(OpCodes.Call, prop.GetSetMethod());
 
             gen.Emit(OpCodes.Ret);
 
             return setter;
-        }
-
-        protected override void RegisterAction(Func<TVisitor, Delegate> action)
-        {
-            Register(action);
-        }
-
-        protected override void RegisterFunction(Func<TVisitor, Delegate> function)
-        {
-            Register(function);
         }
     }
 }

@@ -54,5 +54,14 @@ namespace Surrogates
             return gen;
         }
 
+        internal static FieldBuilder DefineFieldFromProperty(this TypeBuilder builder, PropertyInfo prop)
+        {
+            var fieldName = prop.Name;
+
+            fieldName = string.Concat(
+                '_', Char.ToLower(fieldName[0]), fieldName.Substring(1));
+
+            return builder.DefineField(fieldName, prop.PropertyType, FieldAttributes.Private);
+        }
     }
 }
