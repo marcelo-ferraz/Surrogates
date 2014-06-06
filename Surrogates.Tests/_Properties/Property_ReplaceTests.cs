@@ -16,7 +16,7 @@ namespace Surrogates.Tests._Properties
         [Test]
         public void WithRegularPropertyAccessors()
         {
-            var container = 
+            var container =
                 new SurrogatesContainer();
 
             container.Map(m => m
@@ -29,7 +29,7 @@ namespace Surrogates.Tests._Properties
                     With.OneSimpleSetter(a);
                 }));
 
-            var proxy = 
+            var proxy =
                 container.Invoke<Dummy>();
 
             proxy.NewExpectedException = 1;
@@ -91,21 +91,21 @@ namespace Surrogates.Tests._Properties
         [Test]
         public void WithVoid()
         {
-            var container = 
+            var container =
                 new SurrogatesContainer();
 
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Replace
                 .ThisProperty(d => d.NewExpectedException)
-                .Accessors(a => 
+                .Accessors(a =>
                     a.Getter.Using<InterferenceObject>().ThisMethod<int>(d => d.Int_2_ParameterLess)));
 
-            var proxy = 
+            var proxy =
                 container.Invoke<Dummy>();
 
             Assert.AreEqual(0, proxy.NewExpectedException);
-         }
+        }
 
         [Test]
         public void WithFieldAndInstance()
@@ -120,9 +120,6 @@ namespace Surrogates.Tests._Properties
                 .Accessors(a => a
                     .Getter.Using<InterferenceObject>().ThisMethod<int, Dummy, int>(d => d.Int_ReturnFieldAndInstance))
                 ).Save();
-
-
-
         }
     }
 }
