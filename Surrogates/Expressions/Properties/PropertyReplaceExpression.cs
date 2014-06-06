@@ -63,6 +63,7 @@ namespace Surrogates.Expressions.Properties
 
             ILGenerator gen = setter.GetILGenerator();
 
+            gen.Emit(OpCodes.Nop);            
             gen.Emit(OpCodes.Ldarg_0);
             gen.Emit(OpCodes.Ldfld, GetField4<TSubstitutor>());
 
@@ -72,8 +73,14 @@ namespace Surrogates.Expressions.Properties
 
             gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
 
-            if (newMethod.ReturnType != typeof(void))
-            { gen.Emit(OpCodes.Pop); }
+            if (!newMethod.ReturnType.IsAssignableFrom(pType))
+            { 
+                gen.Emit(OpCodes.Stfld, property.Field); 
+            }
+            else if (newMethod.ReturnType != typeof(void))
+            { 
+                gen.Emit(OpCodes.Pop); 
+            }
 
             gen.Emit(OpCodes.Ret);
 

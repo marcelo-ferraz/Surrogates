@@ -10,13 +10,27 @@ namespace Surrogates.Mappers
     {
         private FieldBuilder _field;
         private TypeBuilder _typeBuilder;
-        
-        public PropertyInfo Original { get; set; }
-        public PropertyBuilder Builder { get; set; }
+        private PropertyBuilder _propBuilder;
 
         internal Property(TypeBuilder typeBuilder)
         {
             _typeBuilder = typeBuilder;
+        }
+
+        public PropertyInfo Original { get; set; }
+        
+        public PropertyBuilder Builder 
+        {
+            get 
+            {
+                return _propBuilder ?? 
+                    (_propBuilder = _typeBuilder.DefineProperty(
+                    Original.Name,
+                    Original.Attributes | PropertyAttributes.HasDefault,
+                    Original.PropertyType,
+                    Type.EmptyTypes));
+            }
+            set { _propBuilder = value; }
         }
 
         public FieldBuilder Field 

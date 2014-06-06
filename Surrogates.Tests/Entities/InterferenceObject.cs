@@ -52,9 +52,10 @@ namespace Surrogates.Tests.Entities
             return 2;
         }
 
-        internal int Int_2_WithField(int field)
+        internal int Int_ReturnFieldAndInstance(int field, Dummy instance)
         {
-            return field;
+            instance.Text = "was added to the field +1";
+            return field + 1;
         }
     }
 }

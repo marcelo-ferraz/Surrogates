@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="_Properties\Class1.cs" />
+    <Compile Include="_Properties\Property_ReplaceTests.cs" />
     <Compile Include="Methods\Disable\DisableTest.cs" />
     <Compile Include="Methods\Visit\Visit_ActionWithActionTest.cs" />
     <Compile Include="Methods\Visit\Visit_ActionWtihFunctionTest.cs" />

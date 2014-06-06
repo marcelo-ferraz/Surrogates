@@ -16,20 +16,12 @@ namespace Surrogates.Expressions.Properties.Accessors
     {
         public AccessorExpression(InterferenceKind kind, IMappingExpression<TBase> mapper, MappingState state)
             : base(mapper, state)
-        { _kind = kind; }
+        { Kind = kind; }
 
-        private InterferenceKind _kind;
+        internal InterferenceKind Kind { get; set; }
 
         private void EmitDefaultSet(Property prop)
         {
-            if (prop.Field == null)
-            {
-                prop.Field =
-                    State
-                    .TypeBuilder
-                    .DefineFieldFromProperty(prop.Original);
-            }
-
             //insert a basic set
             MethodBuilder setter = State.TypeBuilder.DefineMethod(
                 string.Concat("set_", prop.Original.Name),
@@ -39,25 +31,24 @@ namespace Surrogates.Expressions.Properties.Accessors
 
             ILGenerator gen = setter.GetILGenerator();
 
+            var originalSetter =
+                prop.Original.GetSetMethod();
+
             gen.Emit(OpCodes.Nop);
             gen.Emit(OpCodes.Ldarg_0);
             gen.Emit(OpCodes.Ldarg_1);
-            gen.Emit(OpCodes.Stfld, prop.Field);
+            gen.Emit(OpCodes.Call, originalSetter);
+
+            if (originalSetter.ReturnType != typeof(void))
+            { gen.Emit(OpCodes.Pop); }
+
             gen.Emit(OpCodes.Ret);
 
             prop.Builder.SetSetMethod(setter);
         }
 
-        private void EmitDefaultGet(Property prop)
+        public void EmitBaseGetter(Property prop)
         {
-            if (prop.Field == null)
-            {
-                prop.Field =
-                    State
-                    .TypeBuilder
-                    .DefineFieldFromProperty(prop.Original);
-            }
-
             MethodBuilder getter = State.TypeBuilder.DefineMethod(
                 string.Concat("get_", prop.Original.Name),
                 MethodAttributes.Virtual | MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig,
@@ -66,12 +57,12 @@ namespace Surrogates.Expressions.Properties.Accessors
 
             ILGenerator gen = getter.GetILGenerator();
 
-            var local =
+            var local = 
                 gen.DeclareLocal(prop.Original.PropertyType);
 
             gen.Emit(OpCodes.Nop);
             gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldfld, prop.Field);
+            gen.Emit(OpCodes.Call, prop.Original.GetGetMethod());
             gen.Emit(OpCodes.Stloc_0);
             gen.Emit(OpCodes.Br_S, local);
 
@@ -80,11 +71,12 @@ namespace Surrogates.Expressions.Properties.Accessors
 
             prop.Builder.SetGetMethod(getter);
         }
- 
+
+
         public AndExpression<TBase> Accessors(Action<AccessorChangeExpression<TBase>> changeAccessors)
         {
             var accessor =
-                new AccessorChangeExpression<TBase>(_kind, Mapper, State);
+                new AccessorChangeExpression<TBase>(Kind, Mapper, State);
 
             changeAccessors(accessor);
 
@@ -93,7 +85,7 @@ namespace Surrogates.Expressions.Properties.Accessors
             {
                 foreach (var prop in State.Properties)
                 {
-                    EmitDefaultGet(prop);
+                    EmitBaseGetter(prop);
                 }
             }
             //set was not set

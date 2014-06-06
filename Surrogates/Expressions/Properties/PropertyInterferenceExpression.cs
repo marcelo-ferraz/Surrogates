@@ -42,26 +42,31 @@ namespace Surrogates.Expressions.Properties
                 return true;
             }
 
+            if (p.Name == "value" && p.ParameterType.IsAssignableFrom(property.Original.PropertyType))
+            {
+                gen.Emit(OpCodes.Ldarg_1);
+                return true;
+            }
+
             return false;
         }
 
         protected virtual MethodBuilder CreateGetter(PropertyInfo prop)
         {
             return State.TypeBuilder.DefineMethod(
-                           string.Concat("get_", prop.Name),
-                           MethodAttributes.Virtual | MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig,
-                           prop.PropertyType,
-                           Type.EmptyTypes);
+                string.Concat("get_", prop.Name),
+                MethodAttributes.Virtual | MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig,
+                prop.PropertyType,
+                Type.EmptyTypes);
         }
 
         protected MethodBuilder CreateSetter(PropertyInfo prop)
         {
-            MethodBuilder setter = State.TypeBuilder.DefineMethod(
-               string.Concat("set_", prop.Name),
-               MethodAttributes.Virtual | MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig,
-               typeof(void),
-               Type.EmptyTypes);
-            return setter;
+            return State.TypeBuilder.DefineMethod(
+                string.Concat("set_", prop.Name),
+                MethodAttributes.Virtual | MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig,
+                typeof(void),
+                new Type[] { prop.PropertyType });
         }
 
         protected virtual void Register(Func<T, Delegate> action)
@@ -72,12 +77,6 @@ namespace Surrogates.Expressions.Properties
 
             foreach (var prop in State.Properties)
             {
-                prop.Builder = State.TypeBuilder.DefineProperty(
-                    prop.Original.Name,
-                    prop.Original.Attributes,
-                    prop.Original.PropertyType,
-                    null);
-
                 if ((Accessor & PropertyAccessor.Get) == PropertyAccessor.Get)
                 {
                     prop.Builder.SetGetMethod(

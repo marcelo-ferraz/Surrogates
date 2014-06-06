@@ -26,7 +26,7 @@ namespace Surrogates.Expressions
     public abstract class Expression<TBase, TInstance>
     {
         protected IMappingExpression<TBase> Mapper;
-        protected MappingState State;
+        internal MappingState State;
         protected TInstance NotInitializedInstance;
         protected FieldInfo PrivateField { get; set; }
 

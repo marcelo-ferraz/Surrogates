@@ -9,10 +9,24 @@ namespace Surrogates.Tests.Entities
     public class Dummy
     {
         private int _int_Property;
-        public virtual int Int_Property 
+        public virtual int Int_Property
         {
             get { return _int_Property; }
-            set { _int_Property = value; } 
+            set 
+            {
+                _int_Property = Nhonho(value); 
+            }
+        }
+
+        private int Nhonho(int value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual int NewExpectedException
+        {
+            get { throw new Exception("get"); }
+            set { throw new Exception("set"); }
         }
 
         public class EvenMore
@@ -53,50 +67,5 @@ namespace Surrogates.Tests.Entities
             Void_VariousParameters(text, date, someInstance);
             return 1;
         }
-        private int _id;
-        public int Id {
-            get {
-                Int_1_WithField(_id);
-                return 0;
-            }
-            set { throw new Exception(); }
-        }
-
-        private void Int_1_WithField(int _id)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-
-    public class BaseClass
-    {
-        public virtual int Nhonho { get; set; }
-    }
-
-    public class Class1: BaseClass
-    {
-        public override int Nhonho
-        {
-            get
-            {
-                return NewGetMethod();
-            }
-            set
-            {
-                NewSetMethod(value);
-            }
-        }
-
-        private void NewSetMethod(int value)
-        {
-            throw new NotImplementedException();
-        }
-
-        private int NewGetMethod()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
-
