@@ -99,7 +99,8 @@ namespace Surrogates.Tests._Properties
                 .Replace
                 .ThisProperty(d => d.NewExpectedException)
                 .Accessors(a =>
-                    a.Getter.Using<InterferenceObject>().ThisMethod<int>(d => d.Int_2_ParameterLess)));
+                    //a.Getter.Using<InterferenceObject>().ThisMethod<int>(d => d.Int_2_ParameterLess))).Save();
+                    a.Getter.Using<InterferenceObject>().ThisMethod(d => d.Void_ParameterLess))).Save();
 
             var proxy =
                 container.Invoke<Dummy>();

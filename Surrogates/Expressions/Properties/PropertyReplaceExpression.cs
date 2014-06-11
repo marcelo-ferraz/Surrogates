@@ -39,12 +39,13 @@ namespace Surrogates.Expressions.Properties
             gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
 
             // in case the new method does not have return or is not assignable from property type
-            if (!newMethod.ReturnType.IsAssignableFrom(pType))
+            if (newMethod.ReturnType != typeof(void) && 
+                !newMethod.ReturnType.IsAssignableFrom(pType))
             {
                 gen.Emit(OpCodes.Pop);
                 gen.EmitDefaultValue(pType, returnField);
             }
-            else if (newMethod.ReturnType == typeof(void))
+            else
             {
                 gen.EmitDefaultValue(pType, returnField);
             }

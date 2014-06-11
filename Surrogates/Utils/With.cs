@@ -7,6 +7,9 @@ using System.Reflection.Emit;
 
 namespace Surrogates.Utils
 {
+    /// <summary>
+    /// Adds to the expression
+    /// </summary>
     public static class With
     {
         private static void EmitBasicSetter(MappingState state, Property prop)
