@@ -51,7 +51,7 @@ We want to change the behaviour of the property `Age`, from the class `RegularJo
 
 To easily inject this real life abstractioned behavior, we make can use of the __`SurrogatesContainer`__. Here's how:
 ```c#
-    public MarriedNeder()
+    public void Map()
     {
     	_container.Map(m => m
         	.Throughout<RegularJoe>()
