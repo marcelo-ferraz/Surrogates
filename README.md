@@ -30,7 +30,7 @@ Keeping in mind that:
         }
     }
 ```
-We would want to change the behaviour of the property `Age`, from the class `RegularJoe`, by expressing what happens when you get kids, so we would want something slightly like:
+We want to change the behaviour of the property `Age`, from the class `RegularJoe`, to express what happens to you when you get kids, so basically we would want something slightly like:
 ```c#
     public class RegularJoeWithKids
     {
