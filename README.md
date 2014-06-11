@@ -1,6 +1,6 @@
 Surrogates
 ==========
-A very simple and versatile object masher by creation of proxies.
+A very simple and versatile object masher. 
 ## Overview
 By making use of this container, you can overwrite (, condiotionate [to be implemented]) or visit both properties and/or methods.
 
