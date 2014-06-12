@@ -1,4 +1,5 @@
-﻿using Surrogates.Expressions.Properties.Accessors;
+﻿using Surrogates.Expressions;
+using Surrogates.Expressions.Properties.Accessors;
 using Surrogates.Mappers;
 using Surrogates.Mappers.Entities;
 using System;
@@ -64,6 +65,9 @@ namespace Surrogates.Utils
         /// <param name="expression">The expression used for changing the accessor</param>
         public static void OneSimpleGetter<T>(AccessorChangeExpression<T> expression)
         {
+            if (expression.Kind != InterferenceKind.Substitution)
+            { throw new NotSupportedException("The only supported action is replacement"); }
+
             var state =
                 expression.State;
             //get was not set
@@ -84,6 +88,9 @@ namespace Surrogates.Utils
         /// <param name="expression">The expression used for changing the accessor</param>        
         public static void OneSimpleSetter<T>(AccessorChangeExpression<T> expression)
         {
+            if (expression.Kind != InterferenceKind.Substitution)
+            { throw new NotSupportedException("The only supported action is replacement"); }
+
             var state =
                 expression.State;
 

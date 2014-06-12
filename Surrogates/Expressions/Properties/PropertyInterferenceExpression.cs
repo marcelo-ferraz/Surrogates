@@ -27,7 +27,26 @@ namespace Surrogates.Expressions.Properties
             return new AccessorAndExpression<TBase,T>(_kind, Mapper, State);
         }
 
-        protected static bool EmitParameterNameAndField(Property property, Type pType, ILGenerator gen, ParameterInfo p)
+        protected static bool EmitPropertyNameAndField(Property property, Type pType, ILGenerator gen, ParameterInfo p)
+        {
+            if (p.Name == "propertyName" && p.ParameterType == typeof(string))
+            {
+                gen.Emit(OpCodes.Ldstr, property.Original.Name);
+                return true;
+            }
+
+            if (p.Name == "field" && p.ParameterType == pType)
+            {
+                gen.Emit(OpCodes.Ldarg_0);
+                gen.Emit(OpCodes.Ldfld, property.Field);
+                return true;
+            }
+
+            return false;
+        }
+
+
+        protected static bool EmitPropertyNameAndFieldAndValue(Property property, Type pType, ILGenerator gen, ParameterInfo p)
         {
             if (p.Name == "propertyName" && p.ParameterType == typeof(string))
             {

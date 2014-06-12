@@ -62,8 +62,13 @@ namespace Surrogates.Expressions
             if (string.IsNullOrEmpty(propName))
             { throw new ArgumentException("What was provided is not a call for an property"); }
 
-            State.Properties.Add(
-                typeof(TBase).GetProperty(propName));
+            var prop = typeof(TBase)
+                .GetProperty(propName);
+
+            if (!prop.GetGetMethod().IsVirtual)
+            { throw new NotSupportedException("The property should be marked as virtual!"); }
+
+            State.Properties.Add(prop);
 
             return new AccessorExpression<TBase>(_kind, Mapper, State);
         }

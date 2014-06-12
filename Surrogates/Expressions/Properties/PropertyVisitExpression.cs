@@ -28,15 +28,15 @@ namespace Surrogates.Expressions.Properties
 
             ILGenerator gen = getter.GetILGenerator();
 
-            var returnField =
+            var result =
                 gen.DeclareLocal(pType);
 
             gen.Emit(OpCodes.Ldarg_0);
             gen.Emit(OpCodes.Ldfld, GetField4<TVisitor>());
-
+            
             var @params = gen.EmitParameters4<TBase>(
                 newMethod,
-                p => EmitParameterNameAndField(property, pType, gen, p));
+                p => EmitPropertyNameAndField(property, pType, gen, p));
 
             gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
 
@@ -45,8 +45,14 @@ namespace Surrogates.Expressions.Properties
                 gen.Emit(OpCodes.Pop);
             }
 
+            gen.Emit(OpCodes.Ldarg_0);
             gen.Emit(OpCodes.Call, prop.GetMethod);
             
+            gen.Emit(OpCodes.Stloc_0);
+            gen.Emit(OpCodes.Br_S, result);
+
+            gen.Emit(OpCodes.Ldloc_0);
+
             gen.Emit(OpCodes.Ret);
 
             return getter;
@@ -63,21 +69,20 @@ namespace Surrogates.Expressions.Properties
 
             ILGenerator gen = setter.GetILGenerator();
 
-            var returnField =
-                gen.DeclareLocal(pType);
-
             gen.Emit(OpCodes.Ldarg_0);
             gen.Emit(OpCodes.Ldfld, GetField4<TVisitor>());
 
             var @params = gen.EmitParameters4<TBase>(
                 newMethod,
-                p => EmitParameterNameAndField(property, pType, gen, p));
+                p => EmitPropertyNameAndFieldAndValue(property, pType, gen, p));
 
             gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
 
             if (newMethod.ReturnType != typeof(void))
             { gen.Emit(OpCodes.Pop); }
 
+            gen.Emit(OpCodes.Ldarg_0);
+            gen.Emit(OpCodes.Ldarg_1);
             gen.Emit(OpCodes.Call, prop.GetSetMethod());
 
             gen.Emit(OpCodes.Ret);

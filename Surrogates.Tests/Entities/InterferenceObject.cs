@@ -52,10 +52,15 @@ namespace Surrogates.Tests.Entities
             return 2;
         }
 
-        internal int Int_ReturnFieldAndInstance(int field, Dummy instance)
+        public int Int_1_ReturnFieldAndInstance(int field, Dummy instance)
         {
             instance.Text = "was added to the field +1";
             return field + 1;
+        }
+
+        public void Void_InstanceAndField(Dummy instance, int value)
+        {
+            instance.Text = instance.GetType().Name;
         }
     }
 }

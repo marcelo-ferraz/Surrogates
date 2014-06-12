@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 namespace Surrogates.Tests._Properties
 {
     [TestFixture]
-    public class Property_ReplaceTests
+    public class Property_VisitTests
     {
-        [Test]
+        [Test, ExpectedException(typeof(NotSupportedException))]
         public void WithRegularPropertyAccessors()
         {
             var container =
@@ -21,19 +21,13 @@ namespace Surrogates.Tests._Properties
 
             container.Map(m => m
                 .Throughout<Dummy>()
-                .Replace
+                .Visit
                 .ThisProperty(d => d.NewExpectedException)
                 .Accessors(a =>
                 {
                     With.OneSimpleGetter(a);
                     With.OneSimpleSetter(a);
                 }));
-
-            var proxy =
-                container.Invoke<Dummy>();
-
-            proxy.NewExpectedException = 1;
-            Assert.AreEqual(1, proxy.NewExpectedException);
         }
 
         [Test]
@@ -44,22 +38,20 @@ namespace Surrogates.Tests._Properties
 
             container.Map(m => m
                 .Throughout<Dummy>()
-                .Replace
+                .Visit
                 .ThisProperty(d => d.NewExpectedException)
                 .Accessors(a =>
-                    a.Getter.Using<InterferenceObject>().ThisMethod<int>(d => d.Int_2_ParameterLess)));
+                    a.Getter.Using<InterferenceObject>().ThisMethod<Dummy, string, int>(d => d.Int_2_InstanceAndMethodName)))
+                    ;
 
             var proxy =
                 container.Invoke<Dummy>();
 
-            try
-            {
-                proxy.NewExpectedException = 1;
-                Assert.Fail();
-            }
-            catch { }
+            Except(
+                () => proxy.NewExpectedException = 2,
+                () => { int res = proxy.NewExpectedException; });
 
-            Assert.AreEqual(2, proxy.NewExpectedException);
+            Assert.IsTrue(proxy.Text.Contains("Dummy"));
         }
 
         [Test]
@@ -70,22 +62,20 @@ namespace Surrogates.Tests._Properties
 
             container.Map(m => m
                 .Throughout<Dummy>()
-                .Replace
+                .Visit
                 .ThisProperty(d => d.NewExpectedException)
                 .Accessors(a =>
-                    a.Setter.Using<InterferenceObject>().ThisMethod<int>(d => d.Int_2_ParameterLess)));
+                    a.Setter.Using<InterferenceObject>().ThisMethod<int, Dummy, int>(d => d.Int_1_ReturnFieldAndInstance)))
+                    .Save();
 
             var proxy =
                 container.Invoke<Dummy>();
 
-            proxy.NewExpectedException = 1;
+            Except(
+                () => proxy.NewExpectedException = 2,
+                () => { int res = proxy.NewExpectedException; });
 
-            try
-            {
-                var val = proxy.NewExpectedException;
-                Assert.Fail();
-            }
-            catch { }
+            Assert.IsTrue(proxy.Text.Contains("was added"));
         }
 
         [Test]
@@ -96,15 +86,20 @@ namespace Surrogates.Tests._Properties
 
             container.Map(m => m
                 .Throughout<Dummy>()
-                .Replace
+                .Visit
                 .ThisProperty(d => d.NewExpectedException)
                 .Accessors(a =>
-                  a.Getter.Using<InterferenceObject>().ThisMethod(d => d.Void_ParameterLess)));
+                  a.Getter.Using<InterferenceObject>().ThisMethod<Dummy, int>(d => d.Void_InstanceAndField)))
+                  ;
 
             var proxy =
                 container.Invoke<Dummy>();
+            
+            Except(
+                () => proxy.NewExpectedException = 2,
+                () => { int res = proxy.NewExpectedException; });
 
-            Assert.AreEqual(0, proxy.NewExpectedException);
+            Assert.IsTrue(proxy.Text.Contains("Dummy"));
         }
 
         [Test]
@@ -115,7 +110,7 @@ namespace Surrogates.Tests._Properties
 
             container.Map(m => m
                 .Throughout<Dummy>()
-                .Replace
+                .Visit
                 .ThisProperty(d => d.NewExpectedException)
                 .Accessors(a => a
                     .Getter.Using<InterferenceObject>().ThisMethod<int, Dummy, int>(d => d.Int_1_ReturnFieldAndInstance))
@@ -124,42 +119,25 @@ namespace Surrogates.Tests._Properties
             var proxy =
                 container.Invoke<Dummy>();
 
-            try
-            {
-                proxy.NewExpectedException = 2;
-                Assert.Fail();
-            }
-            catch { }
+            Except(
+                () => proxy.NewExpectedException = 2, 
+                () => { int res = proxy.NewExpectedException; });
 
-            Assert.AreEqual(1, proxy.NewExpectedException);
-        }
-    }
-
-
-
-    public class DummyProxy : Dummy
-    {
-        private InterferenceObject _interference_0;
-
-        private int _newExpectedException;
-
-        public override int NewExpectedException
-        {
-            get
-            {
-                this._interference_0.Void_InstanceAndField(this, 0);
-                return base.NewExpectedException;
-            }
-            set
-            {
-                this._interference_0.Void_InstanceAndField(this, _newExpectedException);
-                base.NewExpectedException = value;
-            }
+            Assert.IsTrue(proxy.Text.Contains("was added"));
         }
 
-        public DummyProxy()
+        public void Except(params Action[] actions)
         {
-            this._interference_0 = new InterferenceObject();
+            for (int i = 0; i < actions.Length; i++)
+            {
+
+                try
+                {
+                    actions[i]();
+                    Assert.Fail();
+                }
+                catch { }
+            }
         }
     }
 }

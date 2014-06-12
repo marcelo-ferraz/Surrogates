@@ -12,26 +12,19 @@ namespace Surrogates
 
     internal static class ILGeneratorMixins
     {
-        /// <summary>
-        /// Emits the default value for varios types
-        /// </summary>
-        /// <param name="gen"></param>
-        /// <param name="type"></param>
-        internal static void EmitDefaultValue(this ILGenerator gen, Type type, LocalBuilder local = null)
+        internal static void EmitDefaultParameterValue(this ILGenerator gen, Type type, LocalBuilder local = null)
         {
             bool isInteger =
                 type == typeof(sbyte) || type == typeof(byte) ||
                 type == typeof(ushort) || type == typeof(short) ||
                 type == typeof(uint) || type == typeof(int) ||
                 type == typeof(ulong) || type == typeof(long);
-
-            if (local == null)
-            {
-                local = gen.DeclareLocal(type);
-            }
-            
+          
             if (type == typeof(DateTime) || type == typeof(TimeSpan))
             {
+                if (local == null)
+                { local = gen.DeclareLocal(type); }
+
                 gen.Emit(OpCodes.Ldloca_S, local);
                 gen.Emit(OpCodes.Initobj, type);
                 gen.Emit(OpCodes.Ldloc, local);
@@ -51,7 +44,20 @@ namespace Surrogates
                 gen.Emit(OpCodes.Ldstr, string.Empty);
             }
             else { throw new NotSupportedException(string.Format("The type {0} is not supporte, yet.", type)); }
-             
+        }
+       
+        /// <summary>
+        /// Emits the default value for varios types
+        /// </summary>
+        /// <param name="gen"></param>
+        /// <param name="type"></param>
+        internal static void EmitDefaultValue(this ILGenerator gen, Type type, LocalBuilder local = null)
+        {
+            if (local == null)
+            { local = gen.DeclareLocal(type); }
+
+            EmitDefaultParameterValue(gen, type, local);
+
             gen.Emit(OpCodes.Stloc, local);
             gen.Emit(OpCodes.Br_S, local);
             gen.Emit(OpCodes.Ldloc, local);
@@ -82,7 +88,7 @@ namespace Surrogates
                 { gen.Emit(OpCodes.Ldnull); }
                 else
                 {
-                    gen.EmitDefaultValue(pType);
+                    gen.EmitDefaultParameterValue(pType);
                 }
             }
             return newParams.ToArray();

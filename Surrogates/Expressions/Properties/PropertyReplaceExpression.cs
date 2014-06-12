@@ -34,19 +34,16 @@ namespace Surrogates.Expressions.Properties
 
             var @params = gen.EmitParameters4<TBase>(
                 newMethod,
-                p => EmitParameterNameAndField(property, pType, gen, p));
+                p => EmitPropertyNameAndField(property, pType, gen, p));
 
             gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
 
             // in case the new method does not have return or is not assignable from property type
-            if (newMethod.ReturnType != typeof(void) && 
-                !newMethod.ReturnType.IsAssignableFrom(pType))
+            if (!newMethod.ReturnType.IsAssignableFrom(pType))
             {
-                gen.Emit(OpCodes.Pop);
-                gen.EmitDefaultValue(pType, returnField);
-            }
-            else
-            {
+                if (newMethod.ReturnType != typeof(void))
+                { gen.Emit(OpCodes.Pop); }
+
                 gen.EmitDefaultValue(pType, returnField);
             }
 
@@ -70,7 +67,7 @@ namespace Surrogates.Expressions.Properties
 
             var @params = gen.EmitParameters4<TBase>(
                 newMethod,
-                p => EmitParameterNameAndField(property, pType, gen, p));
+                p => EmitPropertyNameAndField(property, pType, gen, p));
 
             gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
 
