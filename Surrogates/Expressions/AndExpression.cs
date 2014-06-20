@@ -8,7 +8,7 @@ using System.Text;
 namespace Surrogates.Expressions
 {
     public class AndExpression<TBase>
-        : Expression<TBase, TBase>
+        : AndExpression<TBase, TBase>
     {
         internal AndExpression(IMappingExpression<TBase> mapper)
             : base(mapper)

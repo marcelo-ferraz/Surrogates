@@ -43,28 +43,16 @@ namespace Surrogates.Expressions
                 FormatterServices.GetSafeUninitializedObject(typeof(TInstance));
         }
 
-        protected virtual FieldInfo GetField4<TSubstitute>()
+        protected virtual FieldInfo GetField4<TInterference>(string name = null)
         {
-            if (PrivateField == null)
+            if (PrivateField != null &&
+                PrivateField.FieldType == typeof(TInterference))
             {
-                ushort fieldCount = 0;
-
-                for (fieldCount = 0; fieldCount < State.Fields.Count; fieldCount++)
-                {
-                    if (State.Fields[fieldCount].FieldType == typeof(TSubstitute))
-                    { return State.Fields[fieldCount]; }
-                }
-
-                string name = string.Concat(
-                    "_interference_", fieldCount.ToString());
-
-                PrivateField = State.TypeBuilder
-                    .DefineField(name, typeof(TSubstitute), FieldAttributes.Private);
-
-                State.Fields.Add(PrivateField);
+                return PrivateField;
             }
 
-            return PrivateField;
+            return PrivateField =
+                State.Fields.Get<TInterference>(name);
         }
     }
 }

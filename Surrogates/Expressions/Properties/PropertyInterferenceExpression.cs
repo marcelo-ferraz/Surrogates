@@ -12,15 +12,18 @@ namespace Surrogates.Expressions.Properties
     public class PropertyInterferenceExpression<TBase, T>
         : FluentExpression<AccessorAndExpression<TBase, T>, TBase, T>
     {
-        internal PropertyInterferenceExpression(InterferenceKind kind, PropertyAccessor accessor, IMappingExpression<TBase> mapper, MappingState state)
+        internal PropertyInterferenceExpression(InterferenceKind kind, PropertyAccessor accessor, IMappingExpression<TBase> mapper, MappingState state, string fieldName)
             : base(mapper, state)
         {
             Accessor = accessor;
-            _kind = kind;
+            this._kind = kind;
+            this.FieldName = fieldName;
         }
 
-        protected PropertyAccessor Accessor;
         private InterferenceKind _kind;
+
+        protected PropertyAccessor Accessor;
+        protected string FieldName;
 
         protected override AccessorAndExpression<TBase, T> Return()
         {

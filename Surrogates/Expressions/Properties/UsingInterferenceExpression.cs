@@ -24,14 +24,14 @@ namespace Surrogates.Expressions.Properties
         private InterferenceKind _interferenceKind;
         private PropertyAccessor _propertyAccessor;
 
-        public PropertyInterferenceExpression<TBase, T> Using<T>()
+        public PropertyInterferenceExpression<TBase, T> Using<T>(string fieldName = null)
         {
             State.Properties.Add(_propertyAccessor);
 
             return _interferenceKind == InterferenceKind.Substitution ?
                 (PropertyInterferenceExpression<TBase, T>)
-                new PropertyReplaceExpression<TBase, T>(_propertyAccessor, Mapper, State) :
-                new PropertyVisitExpression<TBase, T>(_propertyAccessor, Mapper, State);
+                new PropertyReplaceExpression<TBase, T>(_propertyAccessor, Mapper, State, fieldName) :
+                new PropertyVisitExpression<TBase, T>(_propertyAccessor, Mapper, State, fieldName);
         }
     }
 }

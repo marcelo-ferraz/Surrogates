@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Surrogates.Utils;
 
 namespace Surrogates.Expressions.Properties.Accessors
 {
@@ -85,7 +86,10 @@ namespace Surrogates.Expressions.Properties.Accessors
             {
                 foreach (var prop in State.Properties)
                 {
-                    EmitBaseGetter(prop);
+                    if (Detect.IsAutomatic(prop))
+                    { With.OneSimpleGetter(accessor); }
+                    else
+                    { EmitBaseGetter(prop); }
                 }
             }
             //set was not set
@@ -93,7 +97,10 @@ namespace Surrogates.Expressions.Properties.Accessors
             {
                 foreach (var prop in State.Properties)
                 {
-                    EmitDefaultSet(prop);
+                    if (Detect.IsAutomatic(prop))
+                    { With.OneSimpleSetter(accessor); }
+                    else
+                    { EmitDefaultSet(prop); }
                 }
             }
 

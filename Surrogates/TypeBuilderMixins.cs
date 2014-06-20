@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Surrogates.Mappers.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -10,7 +11,7 @@ namespace Surrogates
 {
     internal static class TypeBuilderMixins
     {
-        internal static void CreateConstructor4<T>(this TypeBuilder typeBuilder, IList<FieldInfo> fields)
+        internal static void CreateConstructor4<T>(this TypeBuilder typeBuilder, FieldList fields)
         {
             var ctorBuilder = typeBuilder.DefineConstructor(
                 MethodAttributes.Public,

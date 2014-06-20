@@ -1,4 +1,5 @@
 ﻿using Surrogates.Expressions.Properties.Accessors;
+using Surrogates.Mappers.Collections;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -11,26 +12,26 @@ namespace Surrogates.Mappers.Entities
         public MappingState()
         {
             Methods = new List<MethodInfo>();
-            Fields = new List<FieldInfo>();
+            Fields = new FieldList(owner: this);
         }
 
         private TypeBuilder _typeBuilder;
 
         internal AssemblyBuilder AssemblyBuilder { get; set; }
         internal ModuleBuilder ModuleBuilder { get; set; }
-        
-        internal TypeBuilder TypeBuilder 
+
+        internal TypeBuilder TypeBuilder
         {
             get { return _typeBuilder; }
-            set 
+            set
             {
                 _typeBuilder = value;
                 Properties = new PropertyList(this);
-            } 
+            }
         }
- 
-        internal IList<MethodInfo> Methods { get;set; }
-        internal IList<FieldInfo> Fields { get; set; }
+
+        internal IList<MethodInfo> Methods { get; set; }
+        internal FieldList Fields { get; set; }
         internal PropertyList Properties { get; set; }
     }
 }

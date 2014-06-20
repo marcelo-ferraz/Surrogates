@@ -44,21 +44,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="_Properties\Property_VisitTests.cs" />
-    <Compile Include="_Properties\Property_ReplaceTests.cs" />
-    <Compile Include="Methods\Disable\DisableTest.cs" />
-    <Compile Include="Methods\Visit\Visit_ActionWithActionTest.cs" />
-    <Compile Include="Methods\Visit\Visit_ActionWtihFunctionTest.cs" />
-    <Compile Include="Methods\Visit\Visit_FuncWithActionTest.cs" />
-    <Compile Include="Methods\Visit\Visit_FuncWithFuncTest.cs" />
-    <Compile Include="Entities\Dummy.cs" />
+    <Compile Include="Github\Examples\LazyLoadIng\LazyLoader.cs" />
+    <Compile Include="Github\Examples\LazyLoadIng\MockedRepository.cs" />
+    <Compile Include="Github\Examples\LazyLoadIng\SimpleModel.cs" />
+    <Compile Include="Github\Examples\LazyLoadIng\LazyLoadIngTest.cs" />
+    <Compile Include="Github\Examples\RegularJoe\TwoKids.cs" />
+    <Compile Include="Github\Examples\RegularJoe\Example.cs" />
+    <Compile Include="Github\Examples\RegularJoe\RegularJoe.cs" />
+    <Compile Include="Github\Examples\RegularJoe\Kids.cs" />
+    <Compile Include="SimpleTests\_Properties\Property_VisitTests.cs" />
+    <Compile Include="SimpleTests\_Properties\Property_ReplaceTests.cs" />
+    <Compile Include="SimpleTests\Methods\Disable\DisableTest.cs" />
+    <Compile Include="SimpleTests\Methods\Visit\Visit_ActionWithActionTest.cs" />
+    <Compile Include="SimpleTests\Methods\Visit\Visit_ActionWtihFunctionTest.cs" />
+    <Compile Include="SimpleTests\Methods\Visit\Visit_FuncWithActionTest.cs" />
+    <Compile Include="SimpleTests\Methods\Visit\Visit_FuncWithFuncTest.cs" />
+    <Compile Include="SimpleTests\Entities\Dummy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Entities\InterferenceObject.cs" />
-    <Compile Include="Methods\Substitute\Substitute_ActionWithActionTest.cs" />
-    <Compile Include="Methods\IInterferenceTest.cs" />
-    <Compile Include="Methods\Substitute\Substitute_FuncWithActionTest.cs" />
-    <Compile Include="Methods\Substitute\Substitute_FuncWithFuncTest.cs" />
-    <Compile Include="Methods\Substitute\Substitute_ActionWtihFunctionTest.cs" />
+    <Compile Include="SimpleTests\Entities\InterferenceObject.cs" />
+    <Compile Include="SimpleTests\Methods\Substitute\Substitute_ActionWithActionTest.cs" />
+    <Compile Include="SimpleTests\Methods\IInterferenceTest.cs" />
+    <Compile Include="SimpleTests\Methods\Substitute\Substitute_FuncWithActionTest.cs" />
+    <Compile Include="SimpleTests\Methods\Substitute\Substitute_FuncWithFuncTest.cs" />
+    <Compile Include="SimpleTests\Methods\Substitute\Substitute_ActionWtihFunctionTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Surrogates\Surrogates.csproj">

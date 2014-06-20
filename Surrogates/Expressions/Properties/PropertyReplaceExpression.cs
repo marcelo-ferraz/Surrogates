@@ -14,8 +14,8 @@ namespace Surrogates.Expressions.Properties
     public class PropertyReplaceExpression<TBase, TSubstitutor>
         : PropertyInterferenceExpression<TBase, TSubstitutor>
     {
-        internal PropertyReplaceExpression(PropertyAccessor accessor, IMappingExpression<TBase> mapper, MappingState state)
-            : base(InterferenceKind.Substitution, accessor, mapper, state) { }
+        internal PropertyReplaceExpression(PropertyAccessor accessor, IMappingExpression<TBase> mapper, MappingState state, string fieldName)
+            : base(InterferenceKind.Substitution, accessor, mapper, state, fieldName) { }
 
         protected override MethodBuilder OverrideGetter(Property property, MethodInfo newMethod)
         {
@@ -30,7 +30,7 @@ namespace Surrogates.Expressions.Properties
                 gen.DeclareLocal(pType);
 
             gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldfld, GetField4<TSubstitutor>());
+            gen.Emit(OpCodes.Ldfld, GetField4<TSubstitutor>(this.FieldName));
 
             var @params = gen.EmitParameters4<TBase>(
                 newMethod,
@@ -63,7 +63,7 @@ namespace Surrogates.Expressions.Properties
 
             gen.Emit(OpCodes.Nop);            
             gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldfld, GetField4<TSubstitutor>());
+            gen.Emit(OpCodes.Ldfld, GetField4<TSubstitutor>(this.FieldName));
 
             var @params = gen.EmitParameters4<TBase>(
                 newMethod,
@@ -71,7 +71,8 @@ namespace Surrogates.Expressions.Properties
 
             gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
 
-            if (!newMethod.ReturnType.IsAssignableFrom(pType))
+            if (newMethod.ReturnType != typeof(void) && 
+                !newMethod.ReturnType.IsAssignableFrom(pType))
             { 
                 gen.Emit(OpCodes.Stfld, property.Field); 
             }

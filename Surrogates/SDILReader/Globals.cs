@@ -52,7 +52,7 @@ namespace Surrogates.SDILReader
         /// The complete name to the type
         /// </param>
         /// <returns>
-        /// The simplified name of the type (i.e. "int" instead f System.Int32)
+        /// The simplified name of the type (index.e. "int" instead f System.Int32)
         /// </returns>
         public static string ProcessSpecialTypes(string typeName)
         {

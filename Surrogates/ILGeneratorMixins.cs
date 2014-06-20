@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Surrogates
 {
+    using Surrogates.Mappers.Collections;
     using EmitBasedOnOrginal = Action<ILGenerator, MethodInfo, ParameterInfo, Type>;
 
     internal static class ILGeneratorMixins
@@ -154,10 +155,10 @@ namespace Surrogates
             return paramFound;
         }
 
-        internal static void EmitConstructor4<T>(this ILGenerator gen, IList<FieldInfo> fields)
+        internal static void EmitConstructor4<T>(this ILGenerator gen, FieldList fields)
         {
             gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Call, typeof(T).GetConstructor(new Type[] { }));
+            gen.Emit(OpCodes.Call, typeof(T).GetConstructor(Type.EmptyTypes));
             //gen.Emit(OpCodes.Nop);
 
             for (int i = 0; i < fields.Count; i++)

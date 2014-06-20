@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using Surrogates;
+using Surrogates.Mappers.Entities;
 namespace Surrogates.Mappers
 {
     public class Property : IComparable
@@ -11,9 +12,10 @@ namespace Surrogates.Mappers
         private FieldBuilder _field;
         private TypeBuilder _typeBuilder;
         private PropertyBuilder _propBuilder;
-
-        internal Property(TypeBuilder typeBuilder)
+        private MappingState _owner;
+        internal Property(MappingState owner, TypeBuilder typeBuilder)
         {
+            _owner = owner;
             _typeBuilder = typeBuilder;
         }
 

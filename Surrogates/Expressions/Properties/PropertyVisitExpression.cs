@@ -14,8 +14,10 @@ namespace Surrogates.Expressions.Properties
     public class PropertyVisitExpression<TBase, TVisitor>
         : PropertyInterferenceExpression<TBase, TVisitor>
     {
-        internal PropertyVisitExpression(PropertyAccessor accessor, IMappingExpression<TBase> mapper, MappingState state)
-            : base(InterferenceKind.Visitation,accessor, mapper, state) { }
+        public PropertyVisitExpression(PropertyAccessor accessor, IMappingExpression<TBase> mapper, MappingState state, string fieldName)
+            : base(InterferenceKind.Visitation, accessor, mapper, state, fieldName)
+        {
+        }
 
         protected override MethodBuilder OverrideGetter(Property property, MethodInfo newMethod)
         {
@@ -32,7 +34,7 @@ namespace Surrogates.Expressions.Properties
                 gen.DeclareLocal(pType);
 
             gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldfld, GetField4<TVisitor>());
+            gen.Emit(OpCodes.Ldfld, GetField4<TVisitor>(FieldName));
             
             var @params = gen.EmitParameters4<TBase>(
                 newMethod,
@@ -70,7 +72,7 @@ namespace Surrogates.Expressions.Properties
             ILGenerator gen = setter.GetILGenerator();
 
             gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldfld, GetField4<TVisitor>());
+            gen.Emit(OpCodes.Ldfld, GetField4<TVisitor>(FieldName));
 
             var @params = gen.EmitParameters4<TBase>(
                 newMethod,
