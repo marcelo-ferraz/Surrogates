@@ -115,7 +115,7 @@ The reason of having white hair:
 ```c#
     public class TwoKids
     {
-    	public int Quantity { get; set; }
+        public int Quantity { get; set; }
      	
         public TwoKids()
         {
@@ -159,17 +159,32 @@ And then, when we call the regular joe fellow, it will gives us back a broken ma
     }
 ```
 
+##The Parameter rule
+Every single parameter from the original can be passed on, as long as it respects these rules:      
+
++   Same exact name
++   Same or assignable type
++   The order does not matter.
+
 ##The Special Parameters
 For all that matter, just being able to execute an action in a method, inside another just seem too limited, so for I've made some special parameters to be used, hopefully, a lot. 
-They are different for Methods and for Properties.
-1. For methods:
+They are different for Methods and for Properties.    
 
-| Parameter     | Contents
-|---------------| -------------
-| arguments     | It contains the value of all arguments of that original method 
-| instance      | It contains a pointer to the instance of the original class 
-| methodName    | it contains the original method's name
- 
+####1.   For methods:
+
+Type       | Parameter     | Contents
+--------   |---------------| -------------
+`object[]` | arguments     | It contains the value of all arguments of that original method 
+`string`   | methodName    | it contains the original method's name
+Same or can be infered from the original class | instance      | It contains a pointer to the instance of the original class 
+
+####2.   For Properties:
+
+Type       | Parameter     | Contents
+--------   |---------------| -------------
+`string`   | propertyName    | it contains the original property's name
+Same or can be infered from the original parameter | value     | it contains the value of the value set to the property. This only works for the setter, otherwise, it will be passed as `default(type)` 
+Same or can be infered from the original class | instance      | It contains a pointer to the instance of the original class 
 
 
 #####The documentation is still under development. 
