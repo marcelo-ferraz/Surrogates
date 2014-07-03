@@ -36,7 +36,7 @@ namespace Surrogates.Expressions.Properties
                 newMethod,
                 p => EmitPropertyNameAndField(property, pType, gen, p));
 
-            gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
+            gen.EmitCall(newMethod, @params);
 
             // in case the new method does not have return or is not assignable from property type
             if (!newMethod.ReturnType.IsAssignableFrom(pType))
@@ -69,7 +69,7 @@ namespace Surrogates.Expressions.Properties
                 newMethod,
                 p => EmitPropertyNameAndField(property, pType, gen, p));
 
-            gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
+            gen.EmitCall(newMethod, @params);
 
             if (newMethod.ReturnType != typeof(void) && 
                 !newMethod.ReturnType.IsAssignableFrom(pType))

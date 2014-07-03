@@ -50,7 +50,7 @@ namespace Surrogates
             var @params =
                 gen.EmitParameters4<TBase>(newMethod, baseMethod);
 
-            gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
+            gen.EmitCall(newMethod, @params);
 
             return gen;
         }

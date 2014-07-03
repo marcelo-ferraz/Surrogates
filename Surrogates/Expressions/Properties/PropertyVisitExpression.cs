@@ -40,7 +40,7 @@ namespace Surrogates.Expressions.Properties
                 newMethod,
                 p => EmitPropertyNameAndField(property, pType, gen, p));
 
-            gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
+            gen.EmitCall(newMethod, @params);
 
             if (newMethod.ReturnType != typeof(void))
             {
@@ -78,7 +78,7 @@ namespace Surrogates.Expressions.Properties
                 newMethod,
                 p => EmitPropertyNameAndFieldAndValue(property, pType, gen, p));
 
-            gen.EmitCall(OpCodes.Callvirt, newMethod, @params);
+            gen.EmitCall(newMethod, @params);
 
             if (newMethod.ReturnType != typeof(void))
             { gen.Emit(OpCodes.Pop); }

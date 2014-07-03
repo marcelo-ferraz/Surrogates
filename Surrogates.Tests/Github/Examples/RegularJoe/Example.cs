@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace Surrogates.Tests.Github.Examples
+namespace Surrogates.Tests.Github.Examples.RegularJoe
 {
     [TestFixture]
-    public class Test
+    public class RegularJoeTest
     {
         private SurrogatesContainer _container = new SurrogatesContainer();
 
@@ -24,7 +24,7 @@ namespace Surrogates.Tests.Github.Examples
         }
 
         [Test]
-        public void RegularJoe_Test()
+        public void Test()
         {
             var joeWithKids =
                 _container.Invoke<RegularJoe>();

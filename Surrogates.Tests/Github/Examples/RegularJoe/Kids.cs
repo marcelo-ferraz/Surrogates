@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Surrogates.Tests.Github.Examples
+namespace Surrogates.Tests.Github.Examples.RegularJoe
 {
     public class Kids
     {
@@ -13,6 +13,11 @@ namespace Surrogates.Tests.Github.Examples
         public int AddTo(int field)
         {
             return field + 10 * Quantity;
+        }
+
+        public void Oop(object[] arguments)
+        {
+ 
         }
     }
 }

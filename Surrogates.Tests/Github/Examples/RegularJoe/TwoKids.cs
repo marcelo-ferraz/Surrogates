@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Surrogates.Tests.Github.Examples
+namespace Surrogates.Tests.Github.Examples.RegularJoe
 {
     public class TwoKids : Kids
     {

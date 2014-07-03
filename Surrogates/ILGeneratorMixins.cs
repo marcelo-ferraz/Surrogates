@@ -81,7 +81,7 @@ namespace Surrogates
                     gen.Emit(OpCodes.Ldarg_0);
                     continue;
                 }
-
+                
                 if (interfere != null && interfere(param))
                 { continue; }
                 
@@ -102,19 +102,20 @@ namespace Surrogates
                 p =>  EmitArgumentsBasedOnOriginal(gen, baseMethod, p, p.ParameterType)); 
         }
 
-        internal static Type[] EmitParameters4<TBase>(this ILGenerator gen, MethodInfo newMethod, string paramName, string literalValue)
-        {
-            return gen.EmitParameters4<TBase>(
-                newMethod,
-                p => {
-                    if (p.ParameterType == typeof(string) && p.Name == paramName)
-                    {
-                        gen.Emit(OpCodes.Ldstr, literalValue);
-                        return true;
-                    }
-                    return false;
-                });
-        }
+        //internal static Type[] EmitParameters4<TBase>(this ILGenerator gen, MethodInfo newMethod, string paramName, string literalValue)
+        //{
+        //    return gen.EmitParameters4<TBase>(
+        //        newMethod,
+        //        p => {
+
+        //            if (p.ParameterType == typeof(string) && p.Name == paramName)
+        //            {
+        //                gen.Emit(OpCodes.Ldstr, literalValue);
+        //                return true;
+        //            }
+        //            return false;
+        //        });
+        //}
 
         /// <summary>
         /// Setter the original method's parameters if they have the same name and type or are assinable from the type do not forget to 
@@ -134,6 +135,9 @@ namespace Surrogates
 
             var baseParams =
                 originalMethod.GetParameters();
+
+            if (TryAddArgsParam(gen, param, pType, baseParams))
+            { return true; }
 
             bool paramFound = false;
 
@@ -155,11 +159,53 @@ namespace Surrogates
             return paramFound;
         }
 
+        private static bool TryAddArgsParam(ILGenerator gen, ParameterInfo param, Type pType, ParameterInfo[] baseParams)
+        {
+            if (pType != typeof(object[]) || param.Name != "arguments")
+            {
+                return false;
+            }
+            var arguments =
+                gen.DeclareLocal(typeof(object[]));
+
+            gen.Emit(OpCodes.Ldc_I4, baseParams.Length);
+            gen.Emit(OpCodes.Newarr, typeof(object));
+
+            if (baseParams.Length < 1) { return true; }
+
+            gen.Emit(OpCodes.Stloc_0);
+
+            for (int i = 0; i < baseParams.Length; i++)
+            {
+                gen.Emit(OpCodes.Ldloc_0);
+                gen.Emit(OpCodes.Ldc_I4, i);
+                gen.Emit(OpCodes.Ldarg, i + 1);
+
+                if (baseParams[i].ParameterType.IsValueType)
+                {
+                    gen.Emit(
+                        OpCodes.Box, 
+                        baseParams[i].ParameterType);
+                }
+
+                gen.Emit(OpCodes.Stelem_Ref);
+            }
+
+            gen.Emit(OpCodes.Ldloc_0);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Emits a constructor for the type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="gen"></param>
+        /// <param name="fields"></param>
         internal static void EmitConstructor4<T>(this ILGenerator gen, FieldList fields)
         {
             gen.Emit(OpCodes.Ldarg_0);
             gen.Emit(OpCodes.Call, typeof(T).GetConstructor(Type.EmptyTypes));
-            //gen.Emit(OpCodes.Nop);
 
             for (int i = 0; i < fields.Count; i++)
             {
@@ -171,9 +217,25 @@ namespace Surrogates
                 gen.Emit(OpCodes.Stfld, fields[i]);
             }
 
-            //gen.Emit(OpCodes.Nop);
-
             gen.Emit(OpCodes.Ret);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gen"></param>
+        /// <param name="method"></param>
+        /// <param name="params"></param>
+        internal static void EmitCall(this ILGenerator gen, MethodInfo method, Type[] @params = null)
+        {
+            if ((method.CallingConvention | CallingConventions.VarArgs) == CallingConventions.VarArgs)
+            {
+                gen.Emit(OpCodes.Call, method);
+            }
+            else
+            {
+                gen.EmitCall(OpCodes.Callvirt, method, @params ?? Type.EmptyTypes);
+            }
         }
     }
 }
