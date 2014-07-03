@@ -81,8 +81,7 @@ And the usage:
                 Assert.Pass(); 
             }
         }
-```
-    
+```    
     
 #### Example 2: A simple extension
 What if, whilst having a domain model like `RegularJoe` that we'd want to change the behaviour of the property `Age`, to express what really happens to you when you get kids.     
@@ -159,9 +158,19 @@ And then, when we call the regular joe fellow, it will gives us back a broken ma
         // some processing here
     }
 ```
-	
 
-#####The documentation is still under development.    
+##The Special Parameters
+For all that matter, just being able to execute an action in a method, inside another just seem too limited, so for I've made some special parameters to be used, hopefully, a lot. 
+They are different for Methods and for Properties.
+1. For methods:
+
+| Parameter     | Contents
+|---------------| -------------
+| arguments     | It contains the value of all arguments of that original method 
+| instance      | It contains a pointer to the instance of the original class 
+| methodName    | it contains the original method's name
+ 
 
 
+#####The documentation is still under development. 
 [nHibernate]:http://nhforge.org/
