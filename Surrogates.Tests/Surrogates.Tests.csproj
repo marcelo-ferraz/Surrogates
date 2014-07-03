@@ -49,7 +49,7 @@
     <Compile Include="Github\Examples\LazyLoadIng\SimpleModel.cs" />
     <Compile Include="Github\Examples\LazyLoadIng\LazyLoadIngTest.cs" />
     <Compile Include="Github\Examples\RegularJoe\TwoKids.cs" />
-    <Compile Include="Github\Examples\RegularJoe\Example.cs" />
+    <Compile Include="Github\Examples\RegularJoe\RegularJoeTest.cs" />
     <Compile Include="Github\Examples\RegularJoe\RegularJoe.cs" />
     <Compile Include="Github\Examples\RegularJoe\Kids.cs" />
     <Compile Include="SimpleTests\_Properties\Property_VisitTests.cs" />

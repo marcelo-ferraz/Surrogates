@@ -20,7 +20,7 @@ namespace Surrogates.Tests.Github.Examples.RegularJoe
                 .Replace
                 .ThisProperty(d => d.Age)
                 .Accessors(a =>
-                    a.Getter.Using<TwoKids>().ThisMethod<int, int>(d => d.AddTo)));
+                    a.Getter.Using<TwoKids>().ThisMethod<int>(d => () => 3))).Save();
         }
 
         [Test]
