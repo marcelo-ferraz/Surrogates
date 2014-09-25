@@ -27,7 +27,12 @@ namespace Surrogates.Mappers
 
         internal static string CreateName4<T>()
         {
-            return string.Concat(typeof(T).Name, "Proxy");
+            return CreateName4(typeof(T));
+        }
+
+        internal static string CreateName4(Type type)
+        {
+            return string.Concat(type.Name, "Proxy");
         }
 
         public override Type Flush()

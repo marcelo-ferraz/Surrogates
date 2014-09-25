@@ -9,7 +9,7 @@ using System.Threading;
 namespace Surrogates 
 {
     /// <summary>
-    /// 
+    /// The main container, from wich you can invoke your dependencies, and/or map them
     /// </summary>
     public class SurrogatesContainer
     {
@@ -51,15 +51,10 @@ namespace Surrogates
         }
 
         /// <summary>
-        /// Creates the name of the surrogate type, in case no type is provided.
+        /// It represents a map, from wich the container will follow to create a proxy to that class
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <param name="mapping"></param>
         /// <returns></returns>
-        protected virtual string CreateTypeName<T>()
-        {
-            return DefaultMapper.CreateName4<T>();
-        }
-
         public virtual SurrogatesContainer Map(Action<IMapper> mapping)
         {
             var expression =
@@ -75,14 +70,26 @@ namespace Surrogates
             return this;
         }
 
+
         public virtual T Invoke<T>(string name = null)
         {
             if (string.IsNullOrEmpty(name))
-            { name = CreateTypeName<T>(); }
+            { name = DefaultMapper.CreateName4<T>(); }
 
             return (T)Activator.CreateInstance(Dictionary[name]);
         }
+        
+        public virtual object Invoke(Type type, string name = null)
+        {
+            if (string.IsNullOrEmpty(name))
+            { name = DefaultMapper.CreateName4(type); }
 
+            return Activator.CreateInstance(Dictionary[name]);
+        }
+
+       /// <summary>
+       /// Saves the current proxies in a file, so you don't have to do map it again, if you want to
+       /// </summary>
         public virtual void Save()
         {
             AssemblyBuilder.Save(string.Concat(AssemblyBuilder.GetName().Name, ".dll"));
