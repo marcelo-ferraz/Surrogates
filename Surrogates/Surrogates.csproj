@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Surrogates</RootNamespace>
     <AssemblyName>Surrogates</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccessorAlreadyOverridenException.cs" />
+    <Compile Include="BaseSurrogacyContainer.cs" />
     <Compile Include="Mappers\Collections\FieldList.cs" />
     <Compile Include="Mappers\Collections\PropertyList.cs" />
     <Compile Include="Mappers\Entities\Property.cs" />

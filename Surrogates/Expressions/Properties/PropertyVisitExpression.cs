@@ -48,7 +48,7 @@ namespace Surrogates.Expressions.Properties
             }
 
             gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Call, prop.GetMethod);
+            gen.Emit(OpCodes.Call, prop.GetGetMethod());
             
             gen.Emit(OpCodes.Stloc_0);
             gen.Emit(OpCodes.Br_S, result);
