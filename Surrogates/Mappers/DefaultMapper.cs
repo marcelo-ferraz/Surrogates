@@ -12,12 +12,8 @@ namespace Surrogates.Mappers
 {
     public class DefaultMapper : BaseMapper
     {
-        protected IFlushTypes MapExpression; 
-
-        internal DefaultMapper(MappingState state)
-        {
-            this.State = state;
-        }
+        public DefaultMapper(MappingState state)
+            :base(state) { }
 
         public override IMappingExpression<T> Throughout<T>(string name = null)
         {
@@ -33,11 +29,6 @@ namespace Surrogates.Mappers
         internal static string CreateName4(Type type)
         {
             return string.Concat(type.Name, "Proxy");
-        }
-
-        public override Type Flush()
-        {
-            return MapExpression.Flush();
         }
     }
 }

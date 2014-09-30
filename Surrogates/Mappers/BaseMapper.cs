@@ -10,16 +10,21 @@ namespace Surrogates.Mappers
 {
     public abstract class BaseMapper : IMapper
     {
+        protected IFlushTypes MapExpression;
+
         protected MappingState State;
 
         protected Type ConstructedType;
 
-        public BaseMapper()
+        public BaseMapper(MappingState state)
         {
-            this.State = new MappingState();
+            this.State = state;
         }
 
-        public abstract Type Flush();
+        public Type Flush()
+        {
+            return MapExpression.Flush();
+        }
 
         public abstract IMappingExpression<T> Throughout<T>(string name = null);
     }

@@ -11,11 +11,17 @@ namespace Surrogates
     /// <summary>
     /// The main container, from wich you can invoke your dependencies, and/or map them
     /// </summary>
-    public class SurrogatesContainer : BaseContainer4Surrogacy
+    public class SurrogatesContainer : BaseContainer4Surrogacy<Type, DefaultMapper>
     {
-        public new SurrogatesContainer Map(Action<IMapper> mapping)
+        protected override void AddMap(DefaultMapper mappingExp, Type type)
         {
-            return (SurrogatesContainer)base.Map(mapping);
+            Dictionary.Add(type.Name, type);
+        }
+
+        public SurrogatesContainer Map(Action<IMapper> mapping)
+        {
+            base.InternalMap(mapping);
+            return this;
         }
 
         public virtual T Invoke<T>(string name = null)

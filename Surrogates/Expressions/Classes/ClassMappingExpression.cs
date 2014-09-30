@@ -26,12 +26,16 @@ namespace Surrogates.Expressions.Classes
             get { return new InterferenceExpression<T>(this, State, InterferenceKind.Visitation); }
         }
 
-        internal ClassMappingExpression(string name, MappingState state)
+        public ClassMappingExpression(string name, MappingState state)
+        {
+            this.State = state;
+            CreateProxy(name, state);
+        }
+
+        protected virtual void CreateProxy(string name, MappingState state)
         {
             if (string.IsNullOrEmpty(name))
             { name = DefaultMapper.CreateName4<T>(); }
-
-            State = state;
 
             try
             {

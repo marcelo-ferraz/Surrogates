@@ -17,10 +17,10 @@ namespace Surrogates.Mappers.Entities
 
         private TypeBuilder _typeBuilder;
 
-        internal AssemblyBuilder AssemblyBuilder { get; set; }
-        internal ModuleBuilder ModuleBuilder { get; set; }
+        public AssemblyBuilder AssemblyBuilder { get; set; }
+        public ModuleBuilder ModuleBuilder { get; set; }
 
-        internal TypeBuilder TypeBuilder
+        public TypeBuilder TypeBuilder
         {
             get { return _typeBuilder; }
             set

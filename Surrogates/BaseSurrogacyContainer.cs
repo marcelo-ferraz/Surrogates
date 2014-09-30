@@ -9,21 +9,24 @@ using System.Threading;
 
 namespace Surrogates
 {
-    public class BaseContainer4Surrogacy
+    public abstract class BaseContainer4Surrogacy<T, M>
+        where M: BaseMapper
     {
         private static int _assemblyNumber = 0;
-
+        
         protected AssemblyBuilder AssemblyBuilder;
         protected ModuleBuilder ModuleBuilder;
-
-        protected IDictionary<string, Type> Dictionary;
+        
+        protected IDictionary<string, T> Dictionary;
 
         public BaseContainer4Surrogacy()
         {
             Dictionary =
-                new Dictionary<string, Type>();
+                new Dictionary<string, T>();
             CreateAssemblyAndModule();
         }
+
+        protected abstract void AddMap(M mappingExp, Type type);
 
         protected virtual void CreateAssemblyAndModule()
         {
@@ -42,9 +45,9 @@ namespace Surrogates
         /// Used to create expressions for mapping a specific type
         /// </summary>
         /// <returns></returns>
-        protected virtual DefaultMapper CreateExpression()
+        protected virtual M CreateExpression()
         {
-            return new DefaultMapper(new MappingState { AssemblyBuilder = AssemblyBuilder, ModuleBuilder = ModuleBuilder });
+            return (M) Activator.CreateInstance(typeof(M), new MappingState { AssemblyBuilder = AssemblyBuilder, ModuleBuilder = ModuleBuilder });
         }
 
         /// <summary>
@@ -52,32 +55,30 @@ namespace Surrogates
         /// </summary>
         /// <param name="mapping"></param>
         /// <returns></returns>
-        public virtual BaseContainer4Surrogacy Map(Action<IMapper> mapping)
+        protected virtual void InternalMap(Action<IMapper> mapping)
         {
             var expression =
-                CreateExpression();
+                this.CreateExpression();
 
             mapping.Invoke(expression);
 
             Type type =
                 expression.Flush();
 
-            Dictionary.Add(type.Name, type);
-
-            return this;
+            AddMap(expression, type);
         }
 
-        public virtual bool Has<T>(string name = null)
+        public virtual bool Has<T>(string key = null)
         {
-            return this.Has(typeof(T), name);
+            return this.Has(typeof(T), key);
         }
 
-        public virtual bool Has(Type type = null, string name = null)
+        public virtual bool Has(Type type = null, string key = null)
         {
-            if (string.IsNullOrEmpty(name))
-            { name = DefaultMapper.CreateName4(type); }
+            if (string.IsNullOrEmpty(key))
+            { key = DefaultMapper.CreateName4(type); }
 
-            return Dictionary.ContainsKey(name);
+            return Dictionary.ContainsKey(key);
         }
 
         /// <summary>

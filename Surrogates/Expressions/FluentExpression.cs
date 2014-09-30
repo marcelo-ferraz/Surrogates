@@ -20,6 +20,24 @@ namespace Surrogates.Expressions
             return this as TExpression;
         }
 
+        private void RegisterByName(string methodName)
+        {
+            Func<BindingFlags, MethodInfo> get = flags =>
+                typeof(TInstance).GetMethod(methodName, BindingFlags.Instance | flags);
+
+            MethodInfo method;
+
+            if ((method = get(BindingFlags.NonPublic)) == null)
+            {
+                if ((method = get(BindingFlags.Public)) == null)
+                {
+                    throw new KeyNotFoundException(string.Format(
+                        "The method '{0}' wans not found withn the type '{1}'", methodName, typeof(TInstance).Name));
+                }
+            }
+            Register(method);
+        }
+
         protected virtual void RegisterAction(Func<TInstance, Delegate> action)
         {
             Register(action(NotInitializedInstance).Method);
@@ -33,6 +51,12 @@ namespace Surrogates.Expressions
         protected virtual void Register(MethodInfo method)
         {
             State.Methods.Add(method);
+        }
+
+        public virtual TExpression ThisMethod(string methodName) 
+        {
+            this.RegisterByName(methodName);
+            return Return(); 
         }
 
         public virtual TExpression ThisMethod(Func<TInstance, Action> action)
