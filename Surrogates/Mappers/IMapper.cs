@@ -1,15 +1,15 @@
 ﻿using Surrogates.Expressions.Classes;
-using Surrogates.Expressions.Methods;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
 
 namespace Surrogates.Mappers
 {
     public interface IMapper : IFlushTypes
     {
+        /// <summary>
+        /// Exposes a given type to be intervened
+        /// </summary>
+        /// <typeparam name="T">The type to be exposed</typeparam>
+        /// <param name="name">The name of this map</param>
+        /// <returns></returns>
         IMappingExpression<T> Throughout<T>(string name = null);
     }
 }

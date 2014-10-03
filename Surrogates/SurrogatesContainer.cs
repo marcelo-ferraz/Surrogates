@@ -1,10 +1,6 @@
-﻿using Surrogates.Mappers;
-using Surrogates.Mappers.Entities;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System;
 using System.Reflection.Emit;
-using System.Threading;
+using Surrogates.Mappers;
 
 namespace Surrogates 
 {
@@ -18,17 +14,34 @@ namespace Surrogates
             Dictionary.Add(type.Name, type);
         }
 
+        /// <summary>
+        /// Adds a map of what needs to be changed in the instance into the container
+        /// </summary>
+        /// <param name="mapping"></param>
+        /// <returns></returns>
         public SurrogatesContainer Map(Action<IMapper> mapping)
         {
             base.InternalMap(mapping);
             return this;
         }
 
+        /// <summary>
+        /// Invokes the asked surrogated type, either by name, or by the base type
+        /// </summary>
+        /// <typeparam name="T">The base type</typeparam>
+        /// <param name="name">The choosen name</param>
+        /// <returns></returns>
         public virtual T Invoke<T>(string name = null)
         {
             return (T)Invoke(typeof(T), name);
         }
         
+        /// <summary>
+        /// Invokes the asked surrogated type, either by name, or by the base type
+        /// </summary>
+        /// <param name="type">The base type</typeparam>
+        /// <param name="name">The choosen name</param>
+        /// <returns></returns>
         public virtual object Invoke(Type type, string name = null)
         {
             if (string.IsNullOrEmpty(name))

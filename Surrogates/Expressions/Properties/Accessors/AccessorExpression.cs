@@ -1,13 +1,10 @@
-﻿using Surrogates.Expressions.Classes;
-using Surrogates.Expressions.Methods;
-using Surrogates.Mappers;
-using Surrogates.Mappers.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
+using Surrogates.Expressions.Classes;
+using Surrogates.Mappers;
+using Surrogates.Mappers.Entities;
+using Surrogates.SDILReader;
 using Surrogates.Utils;
 
 namespace Surrogates.Expressions.Properties.Accessors
@@ -21,7 +18,7 @@ namespace Surrogates.Expressions.Properties.Accessors
 
         internal InterferenceKind Kind { get; set; }
 
-        private void EmitDefaultSet(Property prop)
+        protected virtual void EmitDefaultSet(Property prop)
         {
             //insert a basic set
             MethodBuilder setter = State.TypeBuilder.DefineMethod(
@@ -48,7 +45,7 @@ namespace Surrogates.Expressions.Properties.Accessors
             prop.Builder.SetSetMethod(setter);
         }
 
-        public void EmitBaseGetter(Property prop)
+        protected virtual void EmitBaseGetter(Property prop)
         {
             MethodBuilder getter = State.TypeBuilder.DefineMethod(
                 string.Concat("get_", prop.Original.Name),
@@ -74,6 +71,71 @@ namespace Surrogates.Expressions.Properties.Accessors
         }
 
 
+        /// <summary>
+        /// Exposes a given property to be interefered
+        /// </summary>
+        /// <param name="propName"></param>
+        /// <returns></returns>
+        public AccessorExpression<TBase> ThisProperty(string propName)
+        {
+            if (string.IsNullOrEmpty(propName))
+            { throw new ArgumentException("What was provided is not a call for an property"); }
+
+            var prop = typeof(TBase)
+                .GetProperty(propName);
+
+            if (!prop.GetGetMethod().IsVirtual)
+            { throw new NotSupportedException("The property should be marked as virtual!"); }
+
+            State.Properties.Add(prop);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Exposes a given property to be interefered
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="propGetter"></param>
+        /// <returns></returns>
+        public AccessorExpression<TBase> ThisProperty<T>(Func<TBase, T> propGetter)
+        {
+            var reader =
+                new MethodBodyReader(propGetter.Method);
+
+            string propName = null;
+
+            for (int i = 0; i < reader.Instructions.Count; i++)
+            {
+                var code =
+                    reader.Instructions[i].Code.Name;
+
+                if (code != "callvirt" && code != "call")
+                { continue; }
+
+                if (!(reader.Instructions[1].Operand is MethodInfo))
+                { continue; }
+
+                propName = ((MethodInfo)reader.Instructions[i].Operand).Name;
+
+                if (!propName.Contains("get_") && !propName.Contains("set_"))
+                { throw new ArgumentException("What was provided is not an property"); }
+
+                propName = propName
+                    .Replace("get_", string.Empty)
+                    .Replace("set_", string.Empty);
+
+                break;
+            }
+
+            return ThisProperty(propName);
+        }
+
+        /// <summary>
+        /// Gives access to the accessors of the property
+        /// </summary>
+        /// <param name="changeAccessors"></param>
+        /// <returns></returns>
         public AndExpression<TBase> Accessors(Action<AccessorChangeExpression<TBase>> changeAccessors)
         {
             var accessor =

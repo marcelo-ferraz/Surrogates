@@ -1,18 +1,13 @@
-﻿using Surrogates.Expressions.Classes;
-using Surrogates.Mappers;
-using Surrogates.Mappers.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
+using Surrogates.Expressions.Classes;
+using Surrogates.Mappers.Entities;
 
 namespace Surrogates.Expressions.Methods
 {
     public class MethodInterferenceExpression<TBase>
-        : FluentExpression<MethodInterferenceExpression<TBase>, TBase, TBase>
+     : FluentExpression<EndMethodInterferenceExpression<TBase>, TBase, TBase>
     {
         protected TypeBuilder Typebuilder;
         protected InterferenceKind Kind;
@@ -24,71 +19,66 @@ namespace Surrogates.Expressions.Methods
             Kind = kind;
         }
 
-        public virtual MethodInterferenceExpression<TBase> PublicMethods()
+        protected override EndMethodInterferenceExpression<TBase> Return()
         {
-            var @public = typeof(TBase)
-                .GetMethods(BindingFlags.Instance | BindingFlags.Public);
-
-            for (int i = 0; i < @public.Length; i++)
-            {
-                Register(@public[i]);
-            }
-            return this;
+            return new EndMethodInterferenceExpression<TBase>(this.Mapper, this.State, Kind);
         }
 
-        public virtual MethodInterferenceExpression<TBase> ProtectedMethods()
+        protected virtual EndMethodInterferenceExpression<TBase> Expose(
+            BindingFlags flags, Func<MethodInfo, bool> predicate = null)
         {
             var methods = typeof(TBase)
-                .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic);
+                .GetMethods(BindingFlags.Instance | flags);
 
             for (int i = 0; i < methods.Length; i++)
             {
-                if (methods[i].IsFamily && !methods[i].IsPrivate)
+                if (predicate == null && predicate(methods[i]))
                 {
                     Register(methods[i]);
                 }
             }
-            return this;
+            return Return();
         }
 
-        public virtual MethodInterferenceExpression<TBase> InternalMethods()
+        /// <summary>
+        /// Exposes all public methods
+        /// </summary>
+        /// <returns></returns>
+        public virtual EndMethodInterferenceExpression<TBase> PublicMethods(Func<MethodInfo, bool> predicate)
         {
-            var methods = typeof(TBase)
-                .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic);
-
-            for (int i = 0; i < methods.Length; i++)
-            {
-                if (!methods[i].IsFamily && !methods[i].IsPrivate)
-                {
-                    Register(methods[i]);
-                }
-            }
-            return this;
+            return Expose(BindingFlags.Public,  predicate);
         }
 
-        public virtual MethodInterferenceExpression<TBase> Methods(Func<MethodInfo, bool> predicate)
+        /// <summary>
+        /// Exposes all protected methods
+        /// </summary>
+        /// <returns></returns>
+        public virtual EndMethodInterferenceExpression<TBase> ProtectedMethods(Func<MethodInfo, bool> predicate)
         {
-            var methods = typeof(TBase)
-                .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-
-            for (int i = 0; i < methods.Length; i++)
-            {
-                if ((methods[i].IsFamily || methods[i].IsPublic) &&
-                    (predicate(methods[i])))
-                {
-                    Register(methods[i]);
-                }
-            }
-
-            return this;
+            return Expose(
+                BindingFlags.NonPublic,
+                m => m.IsFamily && !m.IsPrivate && predicate(m));
         }
 
-        public virtual EndExpression<TBase, TInterceptor> Using<TInterceptor>()
+        /// <summary>
+        /// Exposes all internal methods
+        /// </summary>
+        /// <returns></returns>
+        public virtual EndMethodInterferenceExpression<TBase> InternalMethods(Func<MethodInfo, bool> predicate)
         {
-            return 
-                this.Kind == InterferenceKind.Substitution ?
-                (EndExpression<TBase, TInterceptor>)new MethodReplaceExpression<TBase, TInterceptor>(Mapper, State) :
-                new MethodVisitationExpression<TBase, TInterceptor>(Mapper, State);
+            return Expose(
+                BindingFlags.NonPublic,
+                m => !m.IsFamily && !m.IsPrivate && predicate(m));
+        }
+
+        /// <summary>
+        /// Exposes all methods that satisfy a given predicate
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public virtual EndMethodInterferenceExpression<TBase> Methods(Func<MethodInfo, bool> predicate)
+        {
+            return Expose(BindingFlags.NonPublic | BindingFlags.Public, predicate);
         }
     }
 }

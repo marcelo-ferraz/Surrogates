@@ -1,12 +1,8 @@
-﻿using Surrogates.Expressions.Classes;
-using Surrogates.Expressions.Properties;
-using Surrogates.Mappers;
-using Surrogates.Mappers.Entities;
-using Surrogates.SDILReader;
-using System;
-using System.Linq;
+﻿using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using Surrogates.Expressions.Classes;
+using Surrogates.Mappers.Entities;
 
 namespace Surrogates.Expressions.Methods
 {

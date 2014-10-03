@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Surrogates
 {
     using Surrogates.Mappers.Collections;
-    using EmitBasedOnOrginal = Action<ILGenerator, MethodInfo, ParameterInfo, Type>;
 
     internal static class ILGeneratorMixins
     {

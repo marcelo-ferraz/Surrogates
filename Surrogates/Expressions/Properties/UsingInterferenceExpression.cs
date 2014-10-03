@@ -1,13 +1,7 @@
 ﻿
 using Surrogates.Expressions.Classes;
 using Surrogates.Expressions.Properties.Accessors;
-using Surrogates.Mappers;
 using Surrogates.Mappers.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Surrogates.Expressions.Properties
 {
@@ -24,6 +18,12 @@ namespace Surrogates.Expressions.Properties
         private InterferenceKind _interferenceKind;
         private PropertyAccessor _propertyAccessor;
 
+        /// <summary>
+        /// Exposes the interference type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fieldName"></param>
+        /// <returns></returns>
         public PropertyInterferenceExpression<TBase, T> Using<T>(string fieldName = null)
         {
             State.Properties.Add(_propertyAccessor);

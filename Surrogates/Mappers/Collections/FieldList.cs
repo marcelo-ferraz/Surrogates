@@ -1,18 +1,14 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection;
 using System.Reflection.Emit;
 using Surrogates.Mappers.Entities;
 using Surrogates.Utils;
 
-using System.Reflection;
-
 namespace Surrogates.Mappers.Collections
 {
     using TypeFieldList = List<FieldList.TypeNField>;
-using System.Text.RegularExpressions;
 
     public class FieldList
     {
