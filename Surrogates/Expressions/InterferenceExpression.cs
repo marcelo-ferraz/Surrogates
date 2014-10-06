@@ -13,7 +13,7 @@ namespace Surrogates.Expressions
     /// </summary>
     /// <typeparam name="TBase"></typeparam>
     public class InterferenceExpression<TBase>
-        : EndMethodInterferenceExpression<TBase>        
+        : EndInterferenceExpression<TBase>        
     {
         private InterferenceKind _kind;
 
@@ -23,9 +23,9 @@ namespace Surrogates.Expressions
             _kind = kind;
         }
 
-        protected override EndMethodInterferenceExpression<TBase> Return()
+        protected override EndInterferenceExpression<TBase> Return()
         {
-            return new EndMethodInterferenceExpression<TBase>(Mapper, State, _kind);
+            return new EndInterferenceExpression<TBase>(Mapper, State, _kind);
         }
 
         /// <summary>

@@ -3,10 +3,10 @@ using Surrogates.Mappers.Entities;
 
 namespace Surrogates.Expressions.Methods
 {
-    public class EndMethodInterferenceExpression<TBase>
+    public class EndInterferenceExpression<TBase>
         : MethodInterferenceExpression<TBase>
     {
-        internal EndMethodInterferenceExpression(
+        internal EndInterferenceExpression(
             IMappingExpression<TBase> mapper, MappingState state, InterferenceKind kind)
             : base(mapper, state, kind) { }
         

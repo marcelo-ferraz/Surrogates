@@ -6,6 +6,11 @@ using Surrogates.Mappers.Entities;
 
 namespace Surrogates.Expressions.Methods
 {
+    /// <summary>
+    /// Expression used to replace one or a set of methods
+    /// </summary>
+    /// <typeparam name="TBase"></typeparam>
+    /// <typeparam name="TSubstitutor"></typeparam>
     public class MethodReplaceExpression<TBase, TSubstitutor>
         : EndExpression<TBase, TSubstitutor>
     {

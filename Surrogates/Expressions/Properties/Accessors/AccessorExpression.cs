@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Reflection;
-using System.Reflection.Emit;
 using Surrogates.Expressions.Classes;
-using Surrogates.Mappers;
 using Surrogates.Mappers.Entities;
 using Surrogates.SDILReader;
 using Surrogates.Utils;
 
 namespace Surrogates.Expressions.Properties.Accessors
 {
+    /// <summary>
+    /// Exposes the accessors to a given property
+    /// </summary>
+    /// <typeparam name="TBase"></typeparam>
     public class AccessorExpression<TBase>
         : Expression<TBase>
     {
@@ -17,59 +19,6 @@ namespace Surrogates.Expressions.Properties.Accessors
         { Kind = kind; }
 
         internal InterferenceKind Kind { get; set; }
-
-        protected virtual void EmitDefaultSet(Property prop)
-        {
-            //insert a basic set
-            MethodBuilder setter = State.TypeBuilder.DefineMethod(
-                string.Concat("set_", prop.Original.Name),
-                MethodAttributes.Virtual | MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig,
-                typeof(void),
-                new[] { prop.Original.PropertyType });
-
-            ILGenerator gen = setter.GetILGenerator();
-
-            var originalSetter =
-                prop.Original.GetSetMethod();
-
-            gen.Emit(OpCodes.Nop);
-            gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldarg_1);
-            gen.Emit(OpCodes.Call, originalSetter);
-
-            if (originalSetter.ReturnType != typeof(void))
-            { gen.Emit(OpCodes.Pop); }
-
-            gen.Emit(OpCodes.Ret);
-
-            prop.Builder.SetSetMethod(setter);
-        }
-
-        protected virtual void EmitBaseGetter(Property prop)
-        {
-            MethodBuilder getter = State.TypeBuilder.DefineMethod(
-                string.Concat("get_", prop.Original.Name),
-                MethodAttributes.Virtual | MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig,
-                prop.Original.PropertyType,
-                Type.EmptyTypes);
-
-            ILGenerator gen = getter.GetILGenerator();
-
-            var local = 
-                gen.DeclareLocal(prop.Original.PropertyType);
-
-            gen.Emit(OpCodes.Nop);
-            gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Call, prop.Original.GetGetMethod());
-            gen.Emit(OpCodes.Stloc_0);
-            gen.Emit(OpCodes.Br_S, local);
-
-            gen.Emit(OpCodes.Ldloc_0);
-            gen.Emit(OpCodes.Ret);
-
-            prop.Builder.SetGetMethod(getter);
-        }
-
 
         /// <summary>
         /// Exposes a given property to be interefered
@@ -95,8 +44,8 @@ namespace Surrogates.Expressions.Properties.Accessors
         /// <summary>
         /// Exposes a given property to be interefered
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="propGetter"></param>
+        /// <typeparam name="T">The type that property</typeparam>
+        /// <param name="propGetter">The path to that property</param>
         /// <returns></returns>
         public AccessorExpression<TBase> ThisProperty<T>(Func<TBase, T> propGetter)
         {
@@ -134,7 +83,7 @@ namespace Surrogates.Expressions.Properties.Accessors
         /// <summary>
         /// Gives access to the accessors of the property
         /// </summary>
-        /// <param name="changeAccessors"></param>
+        /// <param name="changeAccessors">The expression that will change the way the accessors of that, or those properties, behave</param>
         /// <returns></returns>
         public AndExpression<TBase> Accessors(Action<AccessorChangeExpression<TBase>> changeAccessors)
         {
@@ -151,7 +100,7 @@ namespace Surrogates.Expressions.Properties.Accessors
                     if (Detect.IsAutomatic(prop))
                     { With.OneSimpleGetter(accessor); }
                     else
-                    { EmitBaseGetter(prop); }
+                    { prop.EmitBaseGetter(this.State); }
                 }
             }
             //set was not set
@@ -162,7 +111,7 @@ namespace Surrogates.Expressions.Properties.Accessors
                     if (Detect.IsAutomatic(prop))
                     { With.OneSimpleSetter(accessor); }
                     else
-                    { EmitDefaultSet(prop); }
+                    { prop.EmitDefaultSet(this.State); }
                 }
             }
 

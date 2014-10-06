@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using Surrogates.Expressions.Classes;
@@ -12,70 +11,6 @@ namespace Surrogates.Expressions.Methods
     {
         internal MethodDisableExpression(IMappingExpression<TBase> mapper, MappingState state)
             : base(mapper, state) { }
-
-        public virtual AndExpression<TBase> AllPublicMethods()
-        {
-            var @public = typeof(TBase)
-                .GetMethods(BindingFlags.Instance | BindingFlags.Public);
-
-            for (int i = 0; i < @public.Length; i++)
-            {
-                Register(@public[i]);
-            }
-
-            return new AndExpression<TBase>(Mapper);
-        }
-
-        public virtual AndExpression<TBase> AllProtected()
-        {
-            var methods = typeof(TBase)
-                .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic);
-
-            for (int i = 0; i < methods.Length; i++)
-            {
-                if (methods[i].IsFamily && !methods[i].IsPrivate)
-                {
-                    Register(methods[i]);
-                }
-            }
-
-            return new AndExpression<TBase>(Mapper);
-        }
-
-        public virtual AndExpression<TBase> AllInternal()
-        {
-            var methods = typeof(TBase)
-                .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic);
-
-            for (int i = 0; i < methods.Length; i++)
-            {
-                if (!methods[i].IsFamily && !methods[i].IsPrivate)
-                {
-                    Register(methods[i]);
-                }
-            }
-
-            return new AndExpression<TBase>(Mapper);
-        }
-
-        public virtual AndExpression<TBase> Where(Func<MethodInfo, bool> predicate)
-        {
-            var methods = typeof(TBase)
-                .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-
-            for (int i = 0; i < methods.Length; i++)
-            {
-                if ((methods[i].IsFamily || methods[i].IsPublic) &&
-                    (predicate(methods[i])))
-                {
-                    Register(methods[i]);
-                }
-            }
-
-            State.Methods.Clear();
-
-            return new AndExpression<TBase>(Mapper);
-        }
 
         protected override void Register(MethodInfo method)
         {

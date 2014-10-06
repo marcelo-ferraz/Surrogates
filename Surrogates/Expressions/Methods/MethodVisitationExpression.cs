@@ -10,8 +10,7 @@ namespace Surrogates.Expressions.Methods
         : MethodReplaceExpression<TBase, TVisitor>
     {
         internal MethodVisitationExpression(IMappingExpression<TBase> mapper, MappingState state)
-            : base(mapper, state)
-        { }
+            : base(mapper, state) { }
 
         protected override void RegisterAction(Func<TVisitor, Delegate> action)
         {
