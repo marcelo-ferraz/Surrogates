@@ -10,7 +10,7 @@ namespace Surrogates.Tests.Github.Examples.RegularJoe
     {
         public virtual int Age { get; set; }
 
-        protected virtual void Calculate(int i)
+        public virtual void Calculate(int i)
         {
             throw new NotImplementedException();
         }

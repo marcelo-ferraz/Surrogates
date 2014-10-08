@@ -97,7 +97,7 @@ namespace Surrogates.Expressions.Properties.Accessors
             {
                 foreach (var prop in State.Properties)
                 {
-                    if (Detect.IsAutomatic(prop))
+                    if (Infer.IsAutomatic(prop))
                     { With.OneSimpleGetter(accessor); }
                     else
                     { prop.EmitBaseGetter(this.State); }
@@ -108,7 +108,7 @@ namespace Surrogates.Expressions.Properties.Accessors
             {
                 foreach (var prop in State.Properties)
                 {
-                    if (Detect.IsAutomatic(prop))
+                    if (Infer.IsAutomatic(prop))
                     { With.OneSimpleSetter(accessor); }
                     else
                     { prop.EmitDefaultSet(this.State); }

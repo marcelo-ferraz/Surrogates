@@ -21,7 +21,9 @@ namespace Surrogates.Tests.Github.Examples.RegularJoe
                 .ThisProperty(d => d.Age)
                 .Accessors(a =>
                     a.Getter.Using<TwoKids>().ThisMethod<int, int>(d => d.AddTo))
+                
                 .And
+
                 .Replace
                 .ThisMethod("Calculate")
                 .Using<TwoKids>()
@@ -39,6 +41,8 @@ namespace Surrogates.Tests.Github.Examples.RegularJoe
 
             joeWithKids.Age = 18;
             singleJoe.Age = 18;
+            
+            //joeWithKids.Calculate(2);
 
             Assert.AreNotEqual(singleJoe.Age, joeWithKids.Age);
             Assert.AreEqual(18, singleJoe.Age);

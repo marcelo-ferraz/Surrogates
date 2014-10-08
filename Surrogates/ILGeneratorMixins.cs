@@ -2,13 +2,136 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using Surrogates.Mappers.Collections;
+using Surrogates.Utils;
 
 namespace Surrogates
 {
-    using Surrogates.Mappers.Collections;
-
     internal static class ILGeneratorMixins
     {
+        /// <summary>
+        /// Setter the original method's parameters if they have the same name and type or are assinable from the type do not forget to 
+        /// </summary>
+        /// <param name="gen"></param>
+        /// <param name="original"></param>
+        /// <param name="param"></param>
+        /// <param name="pType"></param>
+        private static bool EmitArgumentsBasedOnOriginal(ILGenerator gen, MethodInfo originalMethod, ParameterInfo param, Type pType)
+        {
+            // get the method name if the parameter is named methodname
+            if (pType == typeof(string) && param.Name == " s_name")
+            {
+                gen.Emit(OpCodes.Ldstr, originalMethod.Name);
+                return true;
+            }
+
+            var baseParams =
+                originalMethod.GetParameters();
+
+            if (TryAddArgsParam(gen, param, pType, baseParams))
+            { return true; }
+
+            if (TryAddTheMethodAsParameter(gen, originalMethod, param, baseParams))
+            { return true; }
+
+            for (int i = 0; i < baseParams.Length; i++)
+            {
+                if (baseParams[i].Name == param.Name)
+                {
+                    var compatible =
+                        pType.IsAssignableFrom(baseParams[i].ParameterType);
+
+                    if (compatible)
+                    {
+                        gen.Emit(OpCodes.Ldarg, i + 1);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to add the current method as a parameter
+        /// </summary>
+        /// <param name="gen"></param>
+        /// <param name="baseMethod"></param>
+        /// <param name="param"></param>
+        /// <param name="pType"></param>
+        /// <param name="baseParams"></param>
+        /// <returns></returns>
+        private static bool TryAddTheMethodAsParameter(ILGenerator gen, MethodInfo baseMethod, ParameterInfo param, ParameterInfo[] baseParams)
+        {
+            if (param.Name != "s_method" && 
+                param.Name.ToLower() == string.Concat("s_", baseMethod.Name.ToLower())) 
+            { return false; }
+
+            if (!baseMethod.IsFamily && !baseMethod.IsPrivate && !baseMethod.IsPublic)
+            { throw new NotSupportedException("You cannot use an internal method to be passed as a parameter."); }
+
+            var isFunc =
+                baseMethod.ReturnType != typeof(void);
+
+            Type delType = Infer.DelegateTypeFrom(baseMethod);
+
+            if (param.ParameterType == typeof(Delegate) || param.ParameterType == delType)
+            {
+                gen.Emit(OpCodes.Ldarg_0);
+                gen.Emit(OpCodes.Ldftn, baseMethod);
+                gen.Emit(OpCodes.Newobj, delType.GetConstructors()[0]);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gen"></param>
+        /// <param name="param"></param>
+        /// <param name="pType"></param>
+        /// <param name="baseParams"></param>
+        /// <returns></returns>
+        private static bool TryAddArgsParam(ILGenerator gen, ParameterInfo param, Type pType, ParameterInfo[] baseParams)
+        {
+            if (pType != typeof(object[]) || param.Name != "s_arguments")
+            {
+                return false;
+            }
+            var arguments =
+                gen.DeclareLocal(typeof(object[]));
+
+            gen.Emit(OpCodes.Ldc_I4, baseParams.Length);
+            gen.Emit(OpCodes.Newarr, typeof(object));
+
+            if (baseParams.Length < 1) { return true; }
+
+            gen.Emit(OpCodes.Stloc_0);
+
+            for (int i = 0; i < baseParams.Length; i++)
+            {
+                gen.Emit(OpCodes.Ldloc_0);
+                gen.Emit(OpCodes.Ldc_I4, i);
+                gen.Emit(OpCodes.Ldarg, i + 1);
+
+                if (baseParams[i].ParameterType.IsValueType)
+                {
+                    gen.Emit(
+                        OpCodes.Box,
+                        baseParams[i].ParameterType);
+                }
+
+                gen.Emit(OpCodes.Stelem_Ref);
+            }
+
+            gen.Emit(OpCodes.Ldloc_0);
+
+            return true;
+        }
+        
         internal static void EmitDefaultParameterValue(this ILGenerator gen, Type type, LocalBuilder local = null)
         {
             bool isInteger =
@@ -72,7 +195,7 @@ namespace Surrogates
                 newParams.Add(pType);
 
                 // get the instance if the parameter of the interceptor is named instance
-                if (pType.IsAssignableFrom(typeof(TBase)) && param.Name == "instance")
+                if (pType.IsAssignableFrom(typeof(TBase)) && param.Name == "s_instance")
                 {
                     gen.Emit(OpCodes.Ldarg_0);
                     continue;
@@ -96,133 +219,6 @@ namespace Surrogates
             return gen.EmitParameters4<TBase>(
                 newMethod,
                 p =>  EmitArgumentsBasedOnOriginal(gen, baseMethod, p, p.ParameterType)); 
-        }
-
-        /// <summary>
-        /// Setter the original method's parameters if they have the same name and type or are assinable from the type do not forget to 
-        /// </summary>
-        /// <param name="gen"></param>
-        /// <param name="original"></param>
-        /// <param name="param"></param>
-        /// <param name="pType"></param>
-        private static bool EmitArgumentsBasedOnOriginal(ILGenerator gen, MethodInfo originalMethod, ParameterInfo param, Type pType)
-        {
-            // get the method name if the parameter is named methodname
-            if (pType == typeof(string) && param.Name == "methodName")
-            {
-                gen.Emit(OpCodes.Ldstr, originalMethod.Name);
-                return true;
-            }
-
-            var baseParams =
-                originalMethod.GetParameters();
-
-            if (TryAddArgsParam(gen, param, pType, baseParams))
-            { return true; }
-
-            if (TryAddTheMethodAsParameter(gen, originalMethod, param, pType, baseParams))
-            { return true; }
-
-            for (int i = 0; i < baseParams.Length; i++)
-            {
-                if (baseParams[i].Name == param.Name)
-                {
-                    var compatible =
-                        pType.IsAssignableFrom(baseParams[i].ParameterType);
-
-                    if (compatible)
-                    {
-                        gen.Emit(OpCodes.Ldarg, i + 1);
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        private static bool TryAddTheMethodAsParameter(ILGenerator gen, MethodInfo originalMethod, ParameterInfo param, Type pType, ParameterInfo[] baseParams)
-        {
-            if (param.Name != "method") { return false; }
-
-            if (!originalMethod.IsFamily && !originalMethod.IsPrivate && !originalMethod.IsPublic) 
-            { throw new NotSupportedException("You cannot use an internal method to be passed as a parameter."); }
-                
-            var isFunc =
-                originalMethod.ReturnType != typeof(void);
-
-            Type[] paramTypes = (Type[])Array.CreateInstance(typeof(Type),
-                isFunc ?
-                 baseParams.Length + 1 :
-                 baseParams.Length);
-
-            for (int i = 0; i < baseParams.Length; i++)
-            { paramTypes[i] = baseParams[i].ParameterType; }
-
-            Type delType;
-            
-            if (isFunc)
-            {
-                paramTypes[paramTypes.Length - 1] = originalMethod.ReturnType;
-                delType = Type
-                    .GetType(string.Concat("System.Func`", (paramTypes.Length + 1).ToString()))
-                    .MakeGenericType(paramTypes);
-            }
-            else if (paramTypes.Length > 0)
-            {
-                delType = Type
-                    .GetType(string.Concat("System.Action`", paramTypes.Length.ToString()))
-                    .MakeGenericType(paramTypes);
-            }
-            else { delType = typeof(Action); }
-
-            if (pType == typeof(Delegate) || pType == delType)
-            {
-                gen.Emit(OpCodes.Ldarg_0);
-                gen.Emit(OpCodes.Ldftn, originalMethod);
-                gen.Emit(OpCodes.Newobj, delType.GetConstructors()[0]);
-
-                return true;
-            }
-
-            return false;
-        }
-
-        private static bool TryAddArgsParam(ILGenerator gen, ParameterInfo param, Type pType, ParameterInfo[] baseParams)
-        {
-            if (pType != typeof(object[]) || param.Name != "arguments")
-            {
-                return false;
-            }
-            var arguments =
-                gen.DeclareLocal(typeof(object[]));
-
-            gen.Emit(OpCodes.Ldc_I4, baseParams.Length);
-            gen.Emit(OpCodes.Newarr, typeof(object));
-
-            if (baseParams.Length < 1) { return true; }
-
-            gen.Emit(OpCodes.Stloc_0);
-
-            for (int i = 0; i < baseParams.Length; i++)
-            {
-                gen.Emit(OpCodes.Ldloc_0);
-                gen.Emit(OpCodes.Ldc_I4, i);
-                gen.Emit(OpCodes.Ldarg, i + 1);
-
-                if (baseParams[i].ParameterType.IsValueType)
-                {
-                    gen.Emit(
-                        OpCodes.Box, 
-                        baseParams[i].ParameterType);
-                }
-
-                gen.Emit(OpCodes.Stelem_Ref);
-            }
-
-            gen.Emit(OpCodes.Ldloc_0);
-
-            return true;
         }
 
         /// <summary>

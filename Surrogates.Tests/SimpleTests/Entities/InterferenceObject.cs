@@ -12,15 +12,15 @@ namespace Surrogates.Tests.Simple.Entities
             //Don't do anything
         }
 
-        public void Void_InstanceAndMethodName(Dummy instance, string methodName)
+        public void Void_InstanceAndMethodName(Dummy  s_instance, string  s_name)
         {
-            instance.Text = instance.GetType().Name + "+" + methodName;
+             s_instance.Text =  s_instance.GetType().Name + "+" +  s_name;
         }
 
-        public void Void_VariousParametersPlusIntanceAndMethodName(string text, Dummy instance, DateTime date, string methodName, Dummy.EvenMore someInstance)
+        public void Void_VariousParametersPlusIntanceAndMethodName(string text, Dummy  s_instance, DateTime date, string  s_name, Dummy.EvenMore someInstance)
         {
-            instance.Text += ", " + 
-                text + " - method: " + methodName;
+             s_instance.Text += ", " + 
+                text + " - method: " +  s_name;
         }
 
         public void Void_VariousParametersWithDifferentNames(string arg0, Dummy arg1, DateTime arg2, string arg3, Dummy.EvenMore arg4)
@@ -34,9 +34,9 @@ namespace Surrogates.Tests.Simple.Entities
             return 2;
         }
 
-        public int Int_2_VariousParametersPlusIntanceAndMethodName(string text, Dummy instance, DateTime date, string methodName, Dummy.EvenMore someInstance)
+        public int Int_2_VariousParametersPlusIntanceAndMethodName(string text, Dummy s_instance, DateTime date, string s_name, Dummy.EvenMore someInstance)
         {
-            Void_VariousParametersPlusIntanceAndMethodName(text, instance, date, methodName, someInstance);
+            Void_VariousParametersPlusIntanceAndMethodName(text,  s_instance, date,  s_name, someInstance);
             return 2;
         }
 
@@ -46,21 +46,21 @@ namespace Surrogates.Tests.Simple.Entities
             return 2;
         }
 
-        public int Int_2_InstanceAndMethodName(Dummy instance, string methodName)
+        public int Int_2_InstanceAndMethodName(Dummy s_instance, string s_name)
         {
-            Void_InstanceAndMethodName(instance, methodName);
+            Void_InstanceAndMethodName(s_instance,  s_name);
             return 2;
         }
 
-        public int Int_1_ReturnFieldAndInstance(int field, Dummy instance)
+        public int Int_1_ReturnFieldAndInstance(int field, Dummy s_instance)
         {
-            instance.Text = "was added to the field +1";
+             s_instance.Text = "was added to the field +1";
             return field + 1;
         }
 
-        public void Void_InstanceAndField(Dummy instance, int value)
+        public void Void_InstanceAndField(Dummy s_instance, int s_value)
         {
-            instance.Text = instance.GetType().Name;
+             s_instance.Text =  s_instance.GetType().Name;
         }
     }
 }
