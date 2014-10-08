@@ -128,7 +128,7 @@ The reason of having white hair:
         }
     }
 ```
-To easily inject this real life abstractioned behavior, we can map such attrocity to the regular fellow using the __`SurrogatesContainer`__. Here's how:
+To easily inject this real life abstracted behaviour, we can map such atrocity to the regular fellow using the __`SurrogatesContainer`__. Here's how:
 ```c#
     public void Map()
     {
@@ -176,8 +176,8 @@ Type       | Parameter     | Contents
 --------   |---------------| -------------
 `System.Object[]` | __s_arguments__     | It contains the value of all arguments of that original method 
 `System.String`   | __s_name__    | it contains the original method's name
-Same or can be infered from the original class | __s_instance__      | It contains a pointer to the instance of the original class 
-`System.Delegate` or the equivalent in either `System.Action<T, ...>` or `System.Func<T...>` | **s_method** or the __s___ + **same** name of the original, __in any case__ | It contains a pointer to the original method. For mor information on how to use this argument, [click here](#methodParameter)
+Same or can be inferred from the original class | __s_instance__      | It contains a pointer to the instance of the original class 
+`System.Delegate` or the equivalent in either `System.Action<T, ...>` or `System.Func<T...>` | **s_method** or the __s___ + **same** name of the original, __in any case__ | It contains a pointer to the original method. For more information on how to use this argument, [click here](#methodParameter)
 
 ####2.   For Properties:
 
@@ -198,17 +198,12 @@ The name can be either the same name of the original method, in any case (per ex
 #####Typing
 The type can be either:    
 
-- a __`System.Delegate`__    
+- a __`System.Delegate`__  : Making use of this type, to call the method, you can use the `DynamicInvoke` method. It accepts an array of objects and returns an object. As it calls a late-bound call, it can give a small overhead to regular call.
 
-Making use of this type, to call the method, you can use the `DynamicInvoke` method. It accepts an array of objects and returns an object. As it calls a late-bound call, it can give a small overhead to regular call.
-
-- the equivalent in __`System.Action<>`__ or __`System.Func<>`__      
-
-Please, keep in mind that this is simplest and fastest, with no overheading, in relation to a native call.     
+- the equivalent in __`System.Action<>`__ or __`System.Func<>`__ : Please, keep in mind that this is simplest and fastest, with no overheading, in relation to a native call.     
 The relation between a method and a Action and a function is this:
-
-- a method that returns __`void`__, is an __Action__, if it returns something, it is a __Func__,
-- the order of parameters dictate the type of such delegate:    
+ - a method that returns __`void`__, is an __Action__, if it returns something, it is a __Func__,
+ - the order of parameters dictate the type of such delegate:    
  - `void Get(string s, int i)`, turns into __`System.Action<string, int>`__,  
  - `Datetime Get(string s, int i)`, turns into __`System.Func<string, int, DateTime>`__,     
  
