@@ -17,17 +17,14 @@ namespace Surrogates.Expressions.Methods
         internal MethodReplaceExpression(IMappingExpression<TBase> mapper, MappingState state)
             : base(mapper, state) { }
 
-        protected override void RegisterAction(Func<TSubstitutor, Delegate> action)
+        private void ReplaceAction(MethodInfo action)
         {
-            MethodInfo substituteMethod =
-                action(NotInitializedInstance).Method;
-
             foreach (var baseMethod in State.Methods)
             {
                 LocalBuilder baseMethodReturn = null;
 
                 var gen = State.TypeBuilder.EmitOverride<TBase>(
-                    substituteMethod, baseMethod, GetField4<TSubstitutor>(), out baseMethodReturn);
+                    action, baseMethod, GetField4<TSubstitutor>(), out baseMethodReturn);
 
                 if (baseMethodReturn != null)
                 { gen.EmitDefaultValue(baseMethod.ReturnType, baseMethodReturn); }
@@ -37,13 +34,8 @@ namespace Surrogates.Expressions.Methods
             State.Methods.Clear();
         }
 
-        protected override void RegisterFunction(Func<TSubstitutor, Delegate> function)
+        private void ReplaceFunction(MethodInfo substituteMethod)
         {
-            // if the method of substitution returns the same type, or that type is assinable from, return that
-            // all the rules from the void method are appliable here
-            MethodInfo substituteMethod =
-                function(NotInitializedInstance).Method;
-
             foreach (var baseMethod in State.Methods)
             {
                 LocalBuilder baseMethodReturn = null;
@@ -64,6 +56,25 @@ namespace Surrogates.Expressions.Methods
                 gen.Emit(OpCodes.Ret);
             }
             State.Methods.Clear();
+        }
+
+        protected override void Register(MethodInfo method)
+        {
+            if (method.ReturnType == typeof(void))
+            { ReplaceAction(method); }
+            else { ReplaceFunction(method); }
+        }
+
+        protected override void RegisterAction(Func<TSubstitutor, Delegate> action)
+        {
+            ReplaceAction(action(NotInitializedInstance).Method);
+        }
+
+        protected override void RegisterFunction(Func<TSubstitutor, Delegate> function)
+        {
+            // if the method of substitution returns the same type, or that type is assinable from, return that
+            // all the rules from the void method are appliable here
+            ReplaceFunction(function(NotInitializedInstance).Method);
         }
     }
 }

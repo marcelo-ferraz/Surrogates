@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime;
+using System.Runtime.CompilerServices;
 using Surrogates.Expressions.Classes;
 using Surrogates.Mappers.Entities;
 
@@ -12,54 +14,69 @@ namespace Surrogates.Expressions.Methods
         internal MethodVisitationExpression(IMappingExpression<TBase> mapper, MappingState state)
             : base(mapper, state) { }
 
-        protected override void RegisterAction(Func<TVisitor, Delegate> action)
+        [TargetedPatchingOptOut("")]
+        private void VisitAction(MethodInfo action)
         {
-            MethodInfo visitorMethod =
-                action(NotInitializedInstance).Method;
-
             foreach (var baseMethod in State.Methods)
             {
-
                 LocalBuilder baseMethodReturn = null;
 
                 var gen = State.TypeBuilder.EmitOverride<TBase>(
-                    visitorMethod, baseMethod, GetField4<TVisitor>(), out baseMethodReturn);
+                    action, baseMethod, GetField4<TVisitor>(), out baseMethodReturn);
 
                 gen.Emit(OpCodes.Ldarg_0);
-                
+
                 var @params =
                     gen.EmitParameters4<TBase>(baseMethod, baseMethod);
 
                 gen.Emit(OpCodes.Call, baseMethod);
                 gen.Emit(OpCodes.Ret);
             }
+            
             State.Methods.Clear();
+        }
+
+        [TargetedPatchingOptOut("")]
+        private void VisitFunction(MethodInfo function)
+        {
+            foreach (var baseMethod in State.Methods)
+            {
+                LocalBuilder baseMethodReturn = null;
+
+                var gen = State.TypeBuilder.EmitOverride<TBase>(
+                    function, baseMethod, GetField4<TVisitor>(), out baseMethodReturn);
+
+                gen.Emit(OpCodes.Pop);
+
+                gen.Emit(OpCodes.Ldarg_0);
+
+                var @params =
+                    gen.EmitParameters4<TBase>(baseMethod, baseMethod);
+
+                gen.Emit(OpCodes.Call, baseMethod);
+
+                gen.Emit(OpCodes.Ret);
+            }
+            
+            State.Methods.Clear();
+        }
+
+        protected override void Register(MethodInfo method)
+        {
+            if (method.ReturnType == typeof(void))
+            { VisitAction(method); }
+            else 
+            { VisitFunction(method); }
+        }
+
+        protected override void RegisterAction(Func<TVisitor, Delegate> action)
+        {
+            VisitAction(action(NotInitializedInstance).Method);
         }
 
         protected override void RegisterFunction(Func<TVisitor, Delegate> function)
         {
-            MethodInfo substituteMethod =
-                function(NotInitializedInstance).Method;
-
-            foreach (var baseMethod in State.Methods)
-            {
-                LocalBuilder baseMethodReturn = null;
-
-                var gen = State.TypeBuilder.EmitOverride<TBase>(
-                    substituteMethod, baseMethod, GetField4<TVisitor>(), out baseMethodReturn);
-
-                gen.Emit(OpCodes.Pop); 
-                
-                gen.Emit(OpCodes.Ldarg_0);
-                
-                var @params =
-                    gen.EmitParameters4<TBase>(baseMethod, baseMethod);
-
-                gen.Emit(OpCodes.Call, baseMethod);
-
-                gen.Emit(OpCodes.Ret);
-            }
-            State.Methods.Clear();
+            VisitFunction(function(NotInitializedInstance).Method);
         }
     }
 }

@@ -98,21 +98,6 @@ namespace Surrogates
                 p =>  EmitArgumentsBasedOnOriginal(gen, baseMethod, p, p.ParameterType)); 
         }
 
-        //internal static Type[] EmitParameters4<TBase>(this ILGenerator gen, MethodInfo newMethod, string paramName, string literalValue)
-        //{
-        //    return gen.EmitParameters4<TBase>(
-        //        newMethod,
-        //        p => {
-
-        //            if (p.ParameterType == typeof(string) && p.Name == paramName)
-        //            {
-        //                gen.Emit(OpCodes.Ldstr, literalValue);
-        //                return true;
-        //            }
-        //            return false;
-        //        });
-        //}
-
         /// <summary>
         /// Setter the original method's parameters if they have the same name and type or are assinable from the type do not forget to 
         /// </summary>
@@ -135,24 +120,72 @@ namespace Surrogates
             if (TryAddArgsParam(gen, param, pType, baseParams))
             { return true; }
 
-            bool paramFound = false;
+            if (TryAddTheMethodAsParameter(gen, originalMethod, param, pType, baseParams))
+            { return true; }
 
             for (int i = 0; i < baseParams.Length; i++)
             {
-                if (baseParams[i].Name != param.Name)
-                { continue; }
-
-                paramFound =
-                    pType.IsAssignableFrom(baseParams[i].ParameterType);
-
-                if (paramFound)
+                if (baseParams[i].Name == param.Name)
                 {
-                    gen.Emit(OpCodes.Ldarg, i + 1);
-                    break;
+                    var compatible =
+                        pType.IsAssignableFrom(baseParams[i].ParameterType);
+
+                    if (compatible)
+                    {
+                        gen.Emit(OpCodes.Ldarg, i + 1);
+                        return true;
+                    }
                 }
             }
 
-            return paramFound;
+            return false;
+        }
+
+        private static bool TryAddTheMethodAsParameter(ILGenerator gen, MethodInfo originalMethod, ParameterInfo param, Type pType, ParameterInfo[] baseParams)
+        {
+            if (param.Name != "method") { return false; }
+
+            if (!originalMethod.IsFamily && !originalMethod.IsPrivate && !originalMethod.IsPublic) 
+            { throw new NotSupportedException("You cannot use an internal method to be passed as a parameter."); }
+                
+            var isFunc =
+                originalMethod.ReturnType != typeof(void);
+
+            Type[] paramTypes = (Type[])Array.CreateInstance(typeof(Type),
+                isFunc ?
+                 baseParams.Length + 1 :
+                 baseParams.Length);
+
+            for (int i = 0; i < baseParams.Length; i++)
+            { paramTypes[i] = baseParams[i].ParameterType; }
+
+            Type delType;
+            
+            if (isFunc)
+            {
+                paramTypes[paramTypes.Length - 1] = originalMethod.ReturnType;
+                delType = Type
+                    .GetType(string.Concat("System.Func`", (paramTypes.Length + 1).ToString()))
+                    .MakeGenericType(paramTypes);
+            }
+            else if (paramTypes.Length > 0)
+            {
+                delType = Type
+                    .GetType(string.Concat("System.Action`", paramTypes.Length.ToString()))
+                    .MakeGenericType(paramTypes);
+            }
+            else { delType = typeof(Action); }
+
+            if (pType == typeof(Delegate) || pType == delType)
+            {
+                gen.Emit(OpCodes.Ldarg_0);
+                gen.Emit(OpCodes.Ldftn, originalMethod);
+                gen.Emit(OpCodes.Newobj, delType.GetConstructors()[0]);
+
+                return true;
+            }
+
+            return false;
         }
 
         private static bool TryAddArgsParam(ILGenerator gen, ParameterInfo param, Type pType, ParameterInfo[] baseParams)

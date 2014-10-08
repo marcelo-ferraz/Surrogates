@@ -2,7 +2,7 @@
 using System.Reflection.Emit;
 using Surrogates.Mappers;
 
-namespace Surrogates 
+namespace Surrogates
 {
     /// <summary>
     /// The main container, from wich you can invoke your dependencies, and/or map them
@@ -35,7 +35,7 @@ namespace Surrogates
         {
             return (T)Invoke(typeof(T), name);
         }
-        
+
         /// <summary>
         /// Invokes the asked surrogated type, either by name, or by the base type
         /// </summary>
@@ -47,12 +47,12 @@ namespace Surrogates
             if (string.IsNullOrEmpty(name))
             { name = DefaultMapper.CreateName4(type); }
 
-            return Activator.CreateInstance(Dictionary[name]);            
+            return Activator.CreateInstance(Dictionary[name]);
         }
 
-       /// <summary>
-       /// Saves the current proxies in a file, so you don't have to do map it again, if you want to
-       /// </summary>
+        /// <summary>
+        /// Saves the current proxies in a file, so you don't have to do map it again, if you want to
+        /// </summary>
         public virtual void Save()
         {
             AssemblyBuilder.Save(string.Concat(AssemblyBuilder.GetName().Name, ".dll"));

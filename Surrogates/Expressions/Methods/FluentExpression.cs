@@ -33,7 +33,7 @@ namespace Surrogates.Expressions.Methods
         /// Exposes all public methods
         /// </summary>
         /// <returns></returns>
-        public virtual TExpression PublicMethods(Func<MethodInfo, bool> predicate)
+        public virtual TExpression AllPublic(Func<MethodInfo, bool> predicate)
         {
             return Expose(BindingFlags.Public, predicate);
         }
@@ -42,7 +42,7 @@ namespace Surrogates.Expressions.Methods
         /// Exposes all protected methods
         /// </summary>
         /// <returns></returns>
-        public virtual TExpression ProtectedMethods(Func<MethodInfo, bool> predicate)
+        public virtual TExpression AllProtected(Func<MethodInfo, bool> predicate)
         {
             return Expose(
                 BindingFlags.NonPublic,
@@ -53,7 +53,7 @@ namespace Surrogates.Expressions.Methods
         /// Exposes all internal methods
         /// </summary>
         /// <returns></returns>
-        public virtual TExpression InternalMethods(Func<MethodInfo, bool> predicate)
+        public virtual TExpression AllInternal(Func<MethodInfo, bool> predicate)
         {
             return Expose(
                 BindingFlags.NonPublic,
@@ -64,7 +64,7 @@ namespace Surrogates.Expressions.Methods
         /// Exposes all internal methods
         /// </summary>
         /// <returns></returns>
-        public virtual TExpression Methods(Func<MethodInfo, bool> predicate)
+        public virtual TExpression Where(Func<MethodInfo, bool> predicate)
         {
             return Expose(
                 BindingFlags.Public | BindingFlags.NonPublic,

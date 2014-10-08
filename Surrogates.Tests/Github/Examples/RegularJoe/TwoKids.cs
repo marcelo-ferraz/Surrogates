@@ -12,5 +12,10 @@ namespace Surrogates.Tests.Github.Examples.RegularJoe
         {
             Quantity = 2;
         }
+
+        public void NewMethod(Action<int> method, int i)
+        {
+            method(i);
+        }
     }
 }
