@@ -26,7 +26,38 @@ This framework can be divided in: __Mapping__, __Method Rules__ and __Parameter 
 To make use of the original class instance, or original method's parameters or information, there are some rules that have to be followed. And for that matter, this document divides into rules for methods (, properties) and those method's parameters.
 
 #### Mapping
+The mapping offers a sugar-like fluent synthax, to provide an easy to use and straight foward approach to the binding.    
+the synthax is supposed to be read as a sentence or a phrase:
+
+```c#
+	_container.Map(m => m.Throughout<RegularJoe>().Replace.ThisMethod("GetAge").Using<TwoKids>().ThisMethod("NewMethod"));    
+```
+
+##### Interception
+There are three kinds of interception: __Replace__, __Visit__ and __Disable__. Each will intercept and act differently with the base method. 
+###### Replace
 _to_be_documented_
+###### Visit
+To visit a method means that your new code will be called before the original method. _If the new method has a return, this result will be discarded. If the new code does not throws an exception, it will not interrupt the original flow.     
+Synthax:    
+```c#
+	_container.Map(m => m.Throughout<RegularJoe>().Visit.ThisMethod("GetAge").Using<TwoKids>().ThisMethod("NewMethod"));    
+```
+Or, using lambda expressions:
+```c#
+	_container.Map(m => m.Throughout<RegularJoe>().Visit.ThisMethod("GetAge").Using<TwoKids>().ThisMethod(t => t.NewMethod));    
+```
+###### Disable
+It is meant to disable any method, or property. By disable, you should read: it will be only returned Null for a reference type and the default for value type.
+Syntax:
+```c#	
+	_container.Map(m => m.Throughout<RegularJoe>().Disable.ThisMethod("GetAge");
+```
+Or, using lambda expressions:
+```c#	
+	_container.Map(m => m.Throughout<RegularJoe>().Disable.ThisMethod<int>(joe => joe.GetAge);
+```
+
 #### Method Rules
 _to_be_documented_
 #### Parameter Rules
@@ -45,7 +76,7 @@ Those special parameters are different for Methods and for Properties.
 Type       | Parameter     | Contents
 --------   |---------------| -------------
 `System.String`   | __s_name__    | it contains the original property's name
-Same or can be inferred from the original parameter | __s_value__     | it contains the value of the value set to the property. This only works for the setter, otherwise, it will be passed as `default(type)` 
+Same or one that can be inferred from the original parameter | __s_value__     | it contains the value of the value set to the property. This only works for the setter, otherwise, it will be passed as `default(type)` 
 Same or can be inferred from the original class | __s_instance__      | It contains a pointer to the instance of the original class 
 
 ####Special Parameters for methods:
@@ -54,7 +85,7 @@ Type       | Parameter     | Contents
 --------   |---------------| -------------
 `System.Object[]` | __s_arguments__     | It contains the value of all arguments of that original method 
 `System.String`   | __s_name__    | it contains the original method's name
-Same or can be inferred from the original class | __s_instance__      | It contains a pointer to the instance of the original class 
+Same or one that can be inferred from the original class | __s_instance__      | It contains a pointer to the instance of the original class 
 `System.Delegate` or the equivalent in either `System.Action<T, ...>` or `System.Func<T...>` | **s_method** or the __s___ + **same** name of the original, __in any case__ | It contains a pointer to the original method. For more information on how to use this argument, [click here](#methodParameter)
 
 <a id="methodParameter" title="methodParameter" class="toc-item"></a>

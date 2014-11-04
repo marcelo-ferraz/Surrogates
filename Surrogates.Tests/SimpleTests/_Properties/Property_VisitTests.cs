@@ -1,12 +1,7 @@
-﻿using NUnit.Framework;
-using Surrogates.Expressions.Properties.Accessors;
+﻿using System;
+using NUnit.Framework;
 using Surrogates.Tests.Simple.Entities;
 using Surrogates.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Surrogates.Tests.Simple._Properties
 {

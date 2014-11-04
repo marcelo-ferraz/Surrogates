@@ -1,7 +1,6 @@
-﻿using Surrogates;
+﻿using System;
 using NUnit.Framework;
 using Surrogates.Tests.Simple.Entities;
-using System;
 
 namespace Surrogates.Tests.Simple.Methods.Visit
 {
