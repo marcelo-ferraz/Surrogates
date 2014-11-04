@@ -34,12 +34,23 @@ the synthax is supposed to be read as a sentence or a phrase:
 ```
 
 ##### Interception
-There are three kinds of interception: __Replace__, __Visit__ and __Disable__. Each will intercept and act differently with the base method. 
-###### Replace
-_to_be_documented_
-###### Visit
-To visit a method means that your new code will be called before the original method. _If the new method has a return, this result will be discarded. If the new code does not throws an exception, it will not interrupt the original flow.     
-Synthax:    
+There are three kinds of interception: __Replace__, __Visit__ and __Disable__. Each will intercept and act differently withn the base method. 
+
+- **Replace**: 
+	To replace a method means that the new code will be called instead of the original one. You still can call the original method, using the parameter [s_method](#user-content-the-special-s_method-parameter), with wich you can conditionate or alter the its outcome, per example.    
+**About the return**: If the new method has a return, and that return is either the same type of the original return or some type that can be deduced from the original, it will be returned. Otherwise, the return will be discarded, and the original will return a default value.    
+**Synthax**:    
+```c#
+	_container.Map(m => m.Throughout<RegularJoe>().Replace.ThisMethod("GetAge").Using<TwoKids>().ThisMethod("NewMethod"));    
+```
+Or, using lambda expressions:
+```c#
+	_container.Map(m => m.Throughout<RegularJoe>().Replace.ThisMethod("GetAge").Using<TwoKids>().ThisMethod(t => t.NewMethod));    
+```
+- **Visit**: 
+	To visit a method means that your new code will be called before the original method. _If the new method has a return, this result will be discarded.     
+**About the return**: If the new code does not throws an exception, it will not interrupt the original flow.        
+**Synthax**:    
 ```c#
 	_container.Map(m => m.Throughout<RegularJoe>().Visit.ThisMethod("GetAge").Using<TwoKids>().ThisMethod("NewMethod"));    
 ```
@@ -47,9 +58,9 @@ Or, using lambda expressions:
 ```c#
 	_container.Map(m => m.Throughout<RegularJoe>().Visit.ThisMethod("GetAge").Using<TwoKids>().ThisMethod(t => t.NewMethod));    
 ```
-###### Disable
-It is meant to disable any method, or property. By disable, you should read: it will be only returned Null for a reference type and the default for value type.
-Syntax:
+- **Disable** : 
+	It is meant to disable any method, or property. By disable, you should read: it will be only returned Null for a reference type and the default for value type.    
+**Syntax**:
 ```c#	
 	_container.Map(m => m.Throughout<RegularJoe>().Disable.ThisMethod("GetAge");
 ```
@@ -59,16 +70,18 @@ Or, using lambda expressions:
 ```
 
 #### Method Rules
-_to_be_documented_
+The methods, to be intercepted, have to be instance and virtual, and either internal, protected or public. Static methods, non-virtual or private will not work out.
+
 #### Parameter Rules
 Every single parameter from the original can be passed on, as long as it respects these rules:      
 
-+   Same exact name
-+   Same or assignable type
-+   The order does not matter.
++   Same exact name,
++   Same type or one that is assignable from the original type,     
+
+_(The order does not matter.)_
 
 #### Special Parameters 
-For all that it matters, just being able to execute an action in a method, inside another just seem too limited, so for I've made some special parameters to be used, hopefully, a lot. 
+For all that it matters, just being able to execute an action in a method, inside another just seem too limited, so this framework  made some special parameters to be used, hopefully, a lot. 
 Those special parameters are different for Methods and for Properties. 
 
 ####Special Parameters for Properties:
@@ -99,7 +112,7 @@ Per example, if you have the original method named __GetCommand__, any of the fo
  - __s_getCommand__,
  - __s_getcommand__      
  
-Or you can just simply name it __s_method__.
+_(You can just simply name it __s_method__, wich serves for any method.)_
 #####How to type it:
 The original method will be exposed through delegate or a derivated type, like an ``System.Action`` or a ``System.Func<>``. 
 
@@ -195,7 +208,75 @@ _to_be_documented_
 #### Adding instrumentation
 _to_be_documented_
 #### Lazy loading
-_to_be_documented_
+One of the most admirable features of [Nhibernate](http://nhforge.org/) has to be the lazy loading feature. To be able to create a domain model clean, without a single infrastructure feature, and it will have, even then, a high abstractioned feature, it is something to be inspired.     
+Following you will find one example on how to do it.       
+The model:
+```c#
+    public class SimpleModel
+    {
+        public virtual int Id { get; set; }
+        public virtual string Name { get; set; }
+        public virtual int OutterId { get; set; }
+    }
+```
+
+The loader class:
+```c#
+    public class IdLazyLoader
+    {
+        private int _value;
+        private bool _isDirty = false;
+
+        private MockedRepository _repository = new MockedRepository();
+
+        public int Load(string propertyName)
+        {
+            return object.Equals(_value, default(int)) ?
+                (_value = _repository.Get<int>(propertyName)) :
+                _value;
+        }
+
+        public void MarkAsDirty(int value)
+        {
+            _isDirty = true;
+            _value = value;
+        }
+    }
+```
+The class map: 
+```c#
+    public void Map()
+    {
+        _container.Map(m => m
+            .Throughout<SimpleModel>()
+            .Replace
+            .ThisProperty(d => d.Id)
+            .Accessors(a => a
+                .Getter.Using<IdLazyLoader>("idLoader").ThisMethod<string, int>(l => l.Load)
+                .And
+                .Setter.Using<IdLazyLoader>("idLoader").ThisMethod<int>(l => l.MarkAsDirty))
+    }
+```
+
+
+And the usage:
+```c#
+   public void Test()
+        {
+            var model = 
+                _container.Invoke<SimpleModel>();
+
+            try
+            {
+                var id = model.Id;
+                Assert.Fail();
+            }
+            catch (NotImplementedException)
+            {
+                Assert.Pass(); 
+            }
+        }
+``` 
 #### Adding logs
 _to_be_documented_
 #### Intercepting specific methods
