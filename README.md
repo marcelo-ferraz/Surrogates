@@ -23,9 +23,12 @@ ____
 ____
 ### API
 This framework can be divided in: __Mapping__, __Method Rules__ and __Parameter Rules__. The first is responsible for creating a bind between the base code and the interceptor code.     
-To make use of the original class instance, or original method's parameters or information, there are some rules that have to be followed. And for that matter, this document divides into methods (and properties) and those method's parameters.
+To make use of the original class instance, or original method's parameters or information, there are some rules that have to be followed. And for that matter, this document divides into rules for methods (, properties) and those method's parameters.
 
-
+#### Mapping
+_to_be_documented_
+#### Method Rules
+_to_be_documented_
 #### Parameter Rules
 Every single parameter from the original can be passed on, as long as it respects these rules:      
 
@@ -155,11 +158,16 @@ The list goes on and on. Access logic in memory, disable partially an website, c
 >As this is a non-linear line of thought, **it can turn, very easily, into a big mess**. So please, **use it wisely and document it as much as you might think you will need**.
 
 #### Depency Injection
+_to_be_documented_
 #### Disabling a method
+_to_be_documented_
 #### Adding instrumentation
+_to_be_documented_
 #### Lazy loading
+_to_be_documented_
 #### Adding logs
+_to_be_documented_
 #### Intercepting specific methods
+_to_be_documented_
 #### Multi-dispatch delegate behaviour
-
-
+_to_be_documented_
