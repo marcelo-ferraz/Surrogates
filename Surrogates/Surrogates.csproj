@@ -39,7 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccessorAlreadyOverridenException.cs" />
-    <Compile Include="BaseSurrogacyContainer.cs" />
+    <Compile Include="BaseContainer4Surrogacy.cs" />
     <Compile Include="Expressions\Methods\FluentExpression.cs" />
     <Compile Include="Expressions\Methods\MethodInterferenceExpression.cs" />
     <Compile Include="Mappers\Collections\FieldList.cs" />
