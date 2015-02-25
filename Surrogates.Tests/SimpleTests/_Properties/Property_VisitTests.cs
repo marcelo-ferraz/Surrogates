@@ -17,7 +17,7 @@ namespace Surrogates.Tests.Simple._Properties
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Visit
-                .ThisProperty(d => d.NewExpectedException)
+                .ThisProperty(d => d.AccessItWillThrowException)
                 .Accessors(a =>
                 {
                     With.OneSimpleGetter(a);
@@ -34,17 +34,17 @@ namespace Surrogates.Tests.Simple._Properties
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Visit
-                .ThisProperty(d => d.NewExpectedException)
+                .ThisProperty(d => d.AccessItWillThrowException)
                 .Accessors(a =>
-                    a.Getter.Using<InterferenceObject>().ThisMethod<Dummy, string, int>(d => d.Int_2_InstanceAndMethodName)))
+                    a.Getter.Using<InterferenceObject>().ThisMethod<Dummy, string, int>(d => d.SetPropText_InstanceAndMethodName_Return2)))
                     ;
 
             var proxy =
                 container.Invoke<Dummy>();
 
             Except(
-                () => proxy.NewExpectedException = 2,
-                () => { int res = proxy.NewExpectedException; });
+                () => proxy.AccessItWillThrowException = 2,
+                () => { int res = proxy.AccessItWillThrowException; });
 
             Assert.IsTrue(proxy.Text.Contains("Dummy"));
         }
@@ -58,17 +58,17 @@ namespace Surrogates.Tests.Simple._Properties
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Visit
-                .ThisProperty(d => d.NewExpectedException)
+                .ThisProperty(d => d.AccessItWillThrowException)
                 .Accessors(a =>
-                    a.Setter.Using<InterferenceObject>().ThisMethod<int, Dummy, int>(d => d.Int_1_ReturnFieldAndInstance)))
+                    a.Setter.Using<InterferenceObject>().ThisMethod<int, Dummy, int>(d => d.SetPropText_info_Return_FieldPlus1)))
                     .Save();
 
             var proxy =
                 container.Invoke<Dummy>();
 
             Except(
-                () => proxy.NewExpectedException = 2,
-                () => { int res = proxy.NewExpectedException; });
+                () => proxy.AccessItWillThrowException = 2,
+                () => { int res = proxy.AccessItWillThrowException; });
 
             Assert.IsTrue(proxy.Text.Contains("was added"));
         }
@@ -82,17 +82,17 @@ namespace Surrogates.Tests.Simple._Properties
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Visit
-                .ThisProperty(d => d.NewExpectedException)
+                .ThisProperty(d => d.AccessItWillThrowException)
                 .Accessors(a =>
-                  a.Getter.Using<InterferenceObject>().ThisMethod<Dummy, int>(d => d.Void_InstanceAndField)))
+                  a.Getter.Using<InterferenceObject>().ThisMethod<Dummy, int>(d => d.SetPropText_TypeName)))
                   ;
 
             var proxy =
                 container.Invoke<Dummy>();
             
             Except(
-                () => proxy.NewExpectedException = 2,
-                () => { int res = proxy.NewExpectedException; });
+                () => proxy.AccessItWillThrowException = 2,
+                () => { int res = proxy.AccessItWillThrowException; });
 
             Assert.IsTrue(proxy.Text.Contains("Dummy"));
         }
@@ -106,17 +106,17 @@ namespace Surrogates.Tests.Simple._Properties
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Visit
-                .ThisProperty(d => d.NewExpectedException)
+                .ThisProperty(d => d.AccessItWillThrowException)
                 .Accessors(a => a
-                    .Getter.Using<InterferenceObject>().ThisMethod<int, Dummy, int>(d => d.Int_1_ReturnFieldAndInstance))
+                    .Getter.Using<InterferenceObject>().ThisMethod<int, Dummy, int>(d => d.SetPropText_info_Return_FieldPlus1))
                 );
 
             var proxy =
                 container.Invoke<Dummy>();
 
             Except(
-                () => proxy.NewExpectedException = 2, 
-                () => { int res = proxy.NewExpectedException; });
+                () => proxy.AccessItWillThrowException = 2, 
+                () => { int res = proxy.AccessItWillThrowException; });
 
             Assert.IsTrue(proxy.Text.Contains("was added"));
         }

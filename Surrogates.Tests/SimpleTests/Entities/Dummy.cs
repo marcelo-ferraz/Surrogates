@@ -4,63 +4,63 @@ namespace Surrogates.Tests.Simple.Entities
 {
     public class Dummy
     {
+        public class EvenMore
+        {
+            public string SomeText { get; set; }
+        }
+
         private int _int_Property;
         public virtual int Int_Property
         {
             get { return _int_Property; }
             set 
             {
-                _int_Property = Nhonho(value); 
+                _int_Property = NotImplementedMethod(value); 
             }
         }
 
-        private int Nhonho(int value)
+        private int NotImplementedMethod(int value)
         {
             throw new NotImplementedException();
         }
 
-        public virtual int NewExpectedException
+        public virtual int AccessItWillThrowException
         {
             get { throw new Exception("get"); }
             set { throw new Exception("set"); }
         }
 
-        public class EvenMore
-        {
-            public string SomeText { get; set; }
-        }
-
         public string Text { get; set; }
 
-        public virtual void Void_ParameterLess()
+        public virtual void SetPropText_simple()
         {
             Text = "simple";
         }
 
-        public virtual void Void_VariousParameters(string text, DateTime date, EvenMore someInstance)
+        public virtual void SetPropText_complex(string text, DateTime date, EvenMore someInstance)
         {
             Text = "complex";
         }
 
-        public virtual int IntParameterless()
+        public virtual int GetTheNumberTwo()
         {
             return 2;
         }
 
-        public virtual double DoubleSimpleParameters(int first, int second)
+        public virtual double CompareFirstToSecond(int first, int second)
         {
             return first.CompareTo(second);
         }
 
-        public virtual int Int_1_ParameterLess()
+        public virtual int Call_SetPropText_simple_Return_1()
         {
-            Void_ParameterLess();
+            SetPropText_simple();
             return 1;
         }
 
-        public virtual int Int_1_VariousParameters(string text, DateTime date, EvenMore someInstance)
+        public virtual int Call_SetPropText_complex_Return_1(string text, DateTime date, EvenMore someInstance)
         {
-            Void_VariousParameters(text, date, someInstance);
+            SetPropText_complex(text, date, someInstance);
             return 1;
         }
     }

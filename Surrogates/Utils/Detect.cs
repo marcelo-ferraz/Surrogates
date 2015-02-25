@@ -41,7 +41,7 @@ namespace Surrogates.Utils
             {
                 paramTypes[paramTypes.Length - 1] = baseMethod.ReturnType;
                 delType = Type
-                    .GetType(string.Concat("System.Func`", (paramTypes.Length + 1).ToString()))
+                    .GetType(string.Concat("System.Func`", (paramTypes.Length).ToString()))
                     .MakeGenericType(paramTypes);
             }
             else if (paramTypes.Length > 0)

@@ -14,9 +14,9 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Replace
-                .ThisMethod<int>(d => d.Int_1_ParameterLess)
+                .ThisMethod<int>(d => d.Call_SetPropText_simple_Return_1)
                 .Using<InterferenceObject>()
-                .ThisMethod(r => r.Void_ParameterLess))
+                .ThisMethod(r => r.AccomplishNothing))
                 ;
 
             var dummy =
@@ -26,9 +26,9 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
                 container.Invoke<Dummy>();
 
             var dummyRes = 
-                dummy.Int_1_ParameterLess();
+                dummy.Call_SetPropText_simple_Return_1();
             var proxyRes = 
-                proxy.Int_1_ParameterLess();
+                proxy.Call_SetPropText_simple_Return_1();
 
             Assert.AreEqual("simple", dummy.Text);
             Assert.IsNullOrEmpty(proxy.Text);
@@ -43,9 +43,9 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
 
             container.Map(m =>
                 m.Throughout<Dummy>()
-                .Replace.ThisMethod<string, DateTime, Dummy.EvenMore, int>(d => d.Int_1_VariousParameters)
+                .Replace.ThisMethod<string, DateTime, Dummy.EvenMore, int>(d => d.Call_SetPropText_complex_Return_1)
                 .Using<InterferenceObject>()
-                .ThisMethod<string, Dummy, DateTime, string, Dummy.EvenMore>(r => r.Void_VariousParametersPlusIntanceAndMethodName));
+                .ThisMethod<string, Dummy, DateTime, string, Dummy.EvenMore>(r => r.AddToPropText__MethodName));
 
             var dummy =
                 new Dummy();
@@ -54,8 +54,8 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
                 container.Invoke<Dummy>();
 
             // just to show that the rest of the object behaves as expected
-            dummy.Void_ParameterLess();
-            proxy.Void_ParameterLess();
+            dummy.SetPropText_simple();
+            proxy.SetPropText_simple();
 
             Assert.IsNotNullOrEmpty(dummy.Text);
             Assert.AreEqual("simple", dummy.Text);
@@ -64,15 +64,15 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
 
             //and now, the comparison between the two methods
             var dummyRes = 
-                dummy.Int_1_VariousParameters("this call was not made by the original method", DateTime.Now, new Dummy.EvenMore());
+                dummy.Call_SetPropText_complex_Return_1("this call was not made by the original method", DateTime.Now, new Dummy.EvenMore());
             
             var proxyRes = 
-                proxy.Int_1_VariousParameters("this call was not made by the original method", DateTime.Now, new Dummy.EvenMore());
+                proxy.Call_SetPropText_complex_Return_1("this call was not made by the original method", DateTime.Now, new Dummy.EvenMore());
 
             Assert.IsNotNullOrEmpty(dummy.Text);
             Assert.AreEqual("complex", dummy.Text);
             Assert.IsNotNullOrEmpty(proxy.Text);
-            Assert.AreEqual("simple, this call was not made by the original method - method: Int_1_VariousParameters", proxy.Text);
+            Assert.AreEqual("simple, this call was not made by the original method - method: Call_SetPropText_complex_Return_1", proxy.Text);
             Assert.AreNotEqual(dummyRes, proxyRes);
             Assert.AreEqual(0, proxyRes);
         }
@@ -84,7 +84,7 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
 
             container.Map(m =>
                 m.Throughout<Dummy>()
-                .Replace.ThisMethod<string, DateTime, Dummy.EvenMore, int>(d => d.Int_1_VariousParameters)
+                .Replace.ThisMethod<string, DateTime, Dummy.EvenMore, int>(d => d.Call_SetPropText_complex_Return_1)
                 .Using<InterferenceObject>()
                 .ThisMethod<string, Dummy, DateTime, string, Dummy.EvenMore>(r => r.Void_VariousParametersWithDifferentNames))
                 ;
@@ -95,8 +95,8 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
             var proxy =
                 container.Invoke<Dummy>();
 
-            dummy.Int_1_VariousParameters("text", DateTime.Now, new Dummy.EvenMore());
-            proxy.Int_1_VariousParameters("text", DateTime.Now, new Dummy.EvenMore());
+            dummy.Call_SetPropText_complex_Return_1("text", DateTime.Now, new Dummy.EvenMore());
+            proxy.Call_SetPropText_complex_Return_1("text", DateTime.Now, new Dummy.EvenMore());
         }
 
         [Test]
@@ -107,9 +107,9 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Replace
-                .ThisMethod<int>(d => d.Int_1_ParameterLess)
+                .ThisMethod<int>(d => d.Call_SetPropText_simple_Return_1)
                 .Using<InterferenceObject>()
-                .ThisMethod<Dummy, string>(r => r.Void_InstanceAndMethodName));
+                .ThisMethod<Dummy, string>(r => r.SetPropText_InstanceAndMethodName));
 
             var dummy =
                 new Dummy();
@@ -118,15 +118,15 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
                 container.Invoke<Dummy>();
 
             var dummyRes =
-                dummy.Int_1_ParameterLess();
+                dummy.Call_SetPropText_simple_Return_1();
             var proxyRes = 
-                proxy.Int_1_ParameterLess();
+                proxy.Call_SetPropText_simple_Return_1();
 
             Assert.IsNotNullOrEmpty(dummy.Text);
             Assert.AreEqual("simple", dummy.Text);
 
             Assert.IsNotNullOrEmpty(proxy.Text);
-            Assert.AreEqual(typeof(Dummy).Name + "Proxy+Int_1_ParameterLess", proxy.Text);
+            Assert.AreEqual(typeof(Dummy).Name + "Proxy+Call_SetPropText_simple_Return_1", proxy.Text);
             Assert.AreNotEqual(dummyRes, proxyRes);
             Assert.AreEqual(0, proxyRes);
         }

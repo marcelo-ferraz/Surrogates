@@ -14,7 +14,7 @@ namespace Surrogates.Tests.Simple.Methods.Disable
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Disable
-                .ThisMethod(d => d.Void_ParameterLess));
+                .ThisMethod(d => d.SetPropText_simple));
 
             var dummy =
                 new Dummy();
@@ -22,8 +22,8 @@ namespace Surrogates.Tests.Simple.Methods.Disable
             var proxy =
                 container.Invoke<Dummy>();
 
-            dummy.Void_ParameterLess();
-            proxy.Void_ParameterLess();
+            dummy.SetPropText_simple();
+            proxy.SetPropText_simple();
 
             Assert.AreEqual("simple", dummy.Text);
             Assert.IsNullOrEmpty(proxy.Text);
@@ -36,7 +36,7 @@ namespace Surrogates.Tests.Simple.Methods.Disable
             container.Map(m => m
                 .Throughout<Dummy>()
                 .Disable
-                .ThisMethod<int>(d => d.Int_1_ParameterLess));
+                .ThisMethod<int>(d => d.Call_SetPropText_simple_Return_1));
 
             var dummy =
                 new Dummy();
@@ -45,9 +45,9 @@ namespace Surrogates.Tests.Simple.Methods.Disable
                 container.Invoke<Dummy>();
 
             var dummyRes =
-                dummy.Int_1_ParameterLess();
+                dummy.Call_SetPropText_simple_Return_1();
             var proxyRes =
-                proxy.Int_1_ParameterLess();
+                proxy.Call_SetPropText_simple_Return_1();
 
             Assert.AreEqual("simple", dummy.Text);
             Assert.IsNullOrEmpty(proxy.Text);

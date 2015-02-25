@@ -97,13 +97,13 @@ Same or can be inferred from the original class | __s_instance__      | It conta
 Type       | Parameter     | Contents
 --------   |---------------| -------------
 `System.Object[]` | __s_arguments__     | It contains the value of all arguments of that original method 
-`System.String`   | __s_name__    | it contains the original method's name
+`System.String`   | __s_name__    | It contains the original method's name
 Same or one that can be inferred from the original class | __s_instance__      | It contains a pointer to the instance of the original class 
 `System.Delegate` or the equivalent in either `System.Action<T, ...>` or `System.Func<T...>` | **s_method** or the __s___ + **same** name of the original, __in any case__ | It contains a pointer to the original method. For more information on how to use this argument, [click here](#methodParameter)
 
 <a id="methodParameter" title="methodParameter" class="toc-item"></a>
 ####The special s_method parameter
-When passing the method as parameter, there are some restrictions, a few rules and a helper, in to ease the use. it can only be a protected or public instance method. 
+When passing the method as parameter, there are some restrictions and a few rules, to ease its use. It can only be a protected or public instance method. 
 #####How to name it:
 You can make use of the original method name, in any letter case, led by "__s___".    
 Per example, if you have the original method named __GetCommand__, any of the following is acceptable:
@@ -112,13 +112,13 @@ Per example, if you have the original method named __GetCommand__, any of the fo
  - __s_getCommand__,
  - __s_getcommand__      
  
-_(You can just simply name it __s_method__, wich serves for any method.)_
+_(You can just simply name it __s_method__, which serves for any method.)_
 #####How to type it:
-The original method will be exposed through delegate or a derivated type, like an ``System.Action`` or a ``System.Func<>``. 
+The original method will be exposed through delegate or a derived type, like an ``System.Action`` or a ``System.Func<>``. 
 
 - a __`System.Delegate`__  : Making use of this type, to call the method, you can use the `DynamicInvoke` method. It accepts an array of objects and returns an object. As it calls a late-bound call, it can give a small overhead to regular call.
 
-- the equivalent in __`System.Action<>`__ or __`System.Func<>`__, keep in mind that this is simplest and fastest, with no overheading, and no need for boxing and unboxing, in comparison to a native call, this call it will have the same perfomance.     
+- the equivalent in __`System.Action<>`__ or __`System.Func<>`__, keep in mind that this is simplest and fastest, with no over heading, and no need for boxing and unboxing, in comparison to a native call, this call it will have the same performance.     
 The relation between a method and a Action or a function is this:
  - a method that returns __`void`__, is an __Action__, if it returns something, it is a __Func__,
   - the order of parameters dictate the type of such delegate:    

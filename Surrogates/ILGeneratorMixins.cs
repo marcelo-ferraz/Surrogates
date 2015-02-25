@@ -19,7 +19,7 @@ namespace Surrogates
         private static bool EmitArgumentsBasedOnOriginal(ILGenerator gen, MethodInfo originalMethod, ParameterInfo param, Type pType)
         {
             // get the method name if the parameter is named methodname
-            if (pType == typeof(string) && param.Name == " s_name")
+            if (pType == typeof(string) && param.Name == "s_name")
             {
                 gen.Emit(OpCodes.Ldstr, originalMethod.Name);
                 return true;
