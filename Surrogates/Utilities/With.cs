@@ -6,7 +6,7 @@ using Surrogates.Expressions.Properties.Accessors;
 using Surrogates.Mappers;
 using Surrogates.Mappers.Entities;
 
-namespace Surrogates.Utils
+namespace Surrogates.Utilities
 {
     /// <summary>
     /// Adds to the expression

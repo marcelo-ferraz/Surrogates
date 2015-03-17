@@ -3,6 +3,7 @@ using System.Reflection;
 using Surrogates.Expressions.Methods;
 using Surrogates.Mappers;
 using Surrogates.Mappers.Entities;
+using Surrogates.Utilities.Mixins;
 
 namespace Surrogates.Expressions.Classes
 {

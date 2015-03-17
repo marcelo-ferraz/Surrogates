@@ -1,5 +1,4 @@
 ﻿
-using Surrogates.Expressions.Classes;
 using Surrogates.Expressions.Properties.Accessors;
 using Surrogates.Mappers.Entities;
 

@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using Surrogates.Mappers.Collections;
-using Surrogates.Utils;
 
-namespace Surrogates
+namespace Surrogates.Utilities.Mixins
 {
     internal static class ILGeneratorMixins
     {

@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Surrogates.Utils
+namespace Surrogates.Utilities
 {
     public static class StringMixins
     {

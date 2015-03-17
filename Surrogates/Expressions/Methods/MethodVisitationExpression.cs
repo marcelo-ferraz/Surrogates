@@ -2,8 +2,8 @@
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime;
-using Surrogates.Expressions.Classes;
 using Surrogates.Mappers.Entities;
+using Surrogates.Utilities.Mixins;
 
 namespace Surrogates.Expressions.Methods
 {

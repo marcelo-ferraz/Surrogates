@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Reflection;
-using Surrogates.Expressions.Classes;
 using Surrogates.Mappers.Entities;
-using Surrogates.SDILReader;
-using Surrogates.Utils;
-
+using Surrogates.Utilities.SDILReader;
+using Surrogates.Utilities;
+using Surrogates.Utilities.Mixins;
 namespace Surrogates.Expressions.Properties.Accessors
 {
     /// <summary>

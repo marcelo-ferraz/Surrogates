@@ -1,7 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using Surrogates.Tests.Simple.Entities;
-using Surrogates.Utils;
+using Surrogates.Utilities;
 
 namespace Surrogates.Tests.Simple._Properties
 {

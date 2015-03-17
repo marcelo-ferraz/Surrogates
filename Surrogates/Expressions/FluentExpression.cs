@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Surrogates.Expressions.Classes;
 using Surrogates.Mappers.Entities;
 
 namespace Surrogates.Expressions

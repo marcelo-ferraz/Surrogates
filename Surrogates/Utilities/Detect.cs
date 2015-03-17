@@ -2,7 +2,7 @@
 using System.Reflection;
 using Surrogates.Mappers;
 
-namespace Surrogates.Utils
+namespace Surrogates.Utilities
 {
     public static class Infer
     {

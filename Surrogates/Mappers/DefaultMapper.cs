@@ -1,6 +1,7 @@
 ﻿using System;
 using Surrogates.Expressions.Classes;
 using Surrogates.Mappers.Entities;
+using Surrogates.Expressions;
 
 namespace Surrogates.Mappers
 {

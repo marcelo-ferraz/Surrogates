@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using System.Runtime.Serialization;
-using Surrogates.Expressions.Classes;
 using Surrogates.Mappers.Entities;
 
 namespace Surrogates.Expressions

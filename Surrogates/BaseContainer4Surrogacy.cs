@@ -68,6 +68,19 @@ namespace Surrogates
             AddMap(expression, type);
         }
 
+        protected virtual void InternalMap(string cmd)
+        {
+            var expression =
+                this.CreateExpression();
+
+
+
+            Type type =
+                expression.Flush();
+
+            AddMap(expression, type);
+        }
+
         public virtual bool Has<T>(string key = null)
         {
             return this.Has(typeof(T), key);

@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Surrogates.Mappers.Collections;
 
-namespace Surrogates
+namespace Surrogates.Utilities.Mixins
 {
     internal static class TypeBuilderMixins
     {

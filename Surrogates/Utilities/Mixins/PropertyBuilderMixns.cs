@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 using Surrogates.Mappers;
 using Surrogates.Mappers.Entities;
 
-namespace Surrogates
+namespace Surrogates.Utilities.Mixins
 {
     public static class PropertyBuilderMixns
     {

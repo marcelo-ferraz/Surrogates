@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using Surrogates.Mappers.Entities;
-using Surrogates.Utils;
+using Surrogates.Utilities;
 
 namespace Surrogates.Mappers.Collections
 {

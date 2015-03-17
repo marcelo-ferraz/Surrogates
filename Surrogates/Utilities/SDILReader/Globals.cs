@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Surrogates.SDILReader
+namespace Surrogates.Utilities.SDILReader
 {
     public static class Globals
     {

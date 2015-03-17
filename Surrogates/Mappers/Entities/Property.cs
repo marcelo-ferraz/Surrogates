@@ -2,6 +2,8 @@
 using System.Reflection;
 using System.Reflection.Emit;
 using Surrogates.Mappers.Entities;
+using Surrogates.Utilities.Mixins;
+
 namespace Surrogates.Mappers
 {
     public class Property : IComparable

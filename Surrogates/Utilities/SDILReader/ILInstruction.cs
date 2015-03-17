@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection.Emit;
 
-namespace Surrogates.SDILReader
+namespace Surrogates.Utilities.SDILReader
 {
     public class ILInstruction
     {

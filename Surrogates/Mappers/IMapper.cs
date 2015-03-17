@@ -1,4 +1,4 @@
-﻿using Surrogates.Expressions.Classes;
+﻿using Surrogates.Expressions;
 
 namespace Surrogates.Mappers
 {

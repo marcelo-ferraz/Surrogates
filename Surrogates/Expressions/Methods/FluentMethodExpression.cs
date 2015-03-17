@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Surrogates.Mappers.Entities;
+using System;
 using System.Reflection;
-using Surrogates.Mappers.Entities;
 
 namespace Surrogates.Expressions.Methods
 {
-    public abstract class FluentExpression<TExpression, TBase, TInstance> 
-        : Surrogates.Expressions.FluentExpression<TExpression, TBase, TInstance>
+    public abstract class FluentMethodExpression<TExpression, TBase, TInstance> 
+        : FluentExpression<TExpression, TBase, TInstance>
         where TExpression : Expression<TBase, TInstance>
     {
-        internal FluentExpression(
+        internal FluentMethodExpression(
             IMappingExpression<TBase> mapper, MappingState state)
             : base(mapper, state) { }
         

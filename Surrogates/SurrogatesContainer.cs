@@ -50,13 +50,10 @@ namespace Surrogates
             return Activator.CreateInstance(Dictionary[name]);
         }
 
-        /// <summary>
-        /// Saves the current proxies in a file, so you don't have to do map it again, if you want to
-        /// </summary>
-        public virtual void Save()
+        public virtual SurrogatesContainer Map<T, Tin>(params string[] cmds)
         {
-            AssemblyBuilder.Save(string.Concat(AssemblyBuilder.GetName().Name, ".dll"));
-            //save the dictionary, with all the types, surrogates and names
+ 
+            return this;
         }
     }
 }

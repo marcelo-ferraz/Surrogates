@@ -39,13 +39,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccessorAlreadyOverridenException.cs" />
+    <Compile Include="Appliances\Interlocking\InterlockedValuePropertyInterceptor.cs" />
+    <Compile Include="Appliances\Interlocking\InterlockedRefPropertyInterceptor.cs" />
+    <Compile Include="Appliances\Interlocking\InterlockedPropertyInterceptor.cs" />
     <Compile Include="BaseContainer4Surrogacy.cs" />
+    <Compile Include="Expressions\IMappingExpression.cs" />
+    <Compile Include="Expressions\Methods\EndInterferenceExpression.cs" />
     <Compile Include="Expressions\Methods\FluentExpression.cs" />
+    <Compile Include="Expressions\Methods\FluentMethodExpression.cs" />
     <Compile Include="Expressions\Methods\MethodInterferenceExpression.cs" />
     <Compile Include="Mappers\Collections\FieldList.cs" />
     <Compile Include="Mappers\Collections\PropertyList.cs" />
     <Compile Include="Mappers\Entities\Property.cs" />
-    <Compile Include="PropertyBuilderMixns.cs" />
+    <Compile Include="Mappers\StringMapper.cs" />
+    <Compile Include="Utilities\Mixins\PropertyBuilderMixns.cs" />
     <Compile Include="ProxyAlreadyMadeException.cs" />
     <Compile Include="Expressions\InterferenceExpression.cs" />
     <Compile Include="Expressions\Properties\Accessors\AccessorAndExpression.cs" />
@@ -55,33 +62,33 @@
     <Compile Include="Expressions\Properties\Accessors\PropertyAccessor.cs" />
     <Compile Include="Expressions\Properties\PropertyInterferenceExpression.cs" />
     <Compile Include="Expressions\Properties\UsingInterferenceExpression.cs" />
-    <Compile Include="SDILReader\Globals.cs" />
-    <Compile Include="SDILReader\ILInstruction.cs" />
-    <Compile Include="SDILReader\MethodBodyReader.cs" />
+    <Compile Include="Utilities\Clone.cs" />
+    <Compile Include="Utilities\SDILReader\Globals.cs" />
+    <Compile Include="Utilities\SDILReader\ILInstruction.cs" />
+    <Compile Include="Utilities\SDILReader\MethodBodyReader.cs" />
     <Compile Include="SurrogatesContainer.cs" />
     <Compile Include="Expressions\Classes\ClassMappingExpression.cs" />
-    <Compile Include="Expressions\Classes\IMappingExpression.cs" />
     <Compile Include="Expressions\AndExpression.cs" />
     <Compile Include="Expressions\Expression.cs" />
     <Compile Include="Expressions\FluentExpression.cs" />
     <Compile Include="Expressions\InterferenceKind.cs" />
     <Compile Include="Expressions\Methods\MethodDisableExpression.cs" />
-    <Compile Include="Expressions\Methods\EndInterferenceExpression.cs" />
     <Compile Include="Expressions\Methods\MethodReplaceExpression.cs" />
     <Compile Include="Expressions\Methods\MethodVisitationExpression.cs" />
     <Compile Include="Expressions\EndExpression.cs" />
     <Compile Include="IFlushTypes.cs" />
-    <Compile Include="ILGeneratorMixins.cs" />
+    <Compile Include="Utilities\Mixins\ILGeneratorMixins.cs" />
     <Compile Include="Mappers\BaseMapper.cs" />
     <Compile Include="Mappers\DefaultMapper.cs" />
     <Compile Include="Mappers\IMapper.cs" />
     <Compile Include="Mappers\Entities\MappingState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TypeBuilderMixins.cs" />
+    <Compile Include="Utilities\Mixins\TypeBuilderMixins.cs" />
     <Compile Include="Expressions\Properties\PropertyReplaceExpression.cs" />
-    <Compile Include="Utils\Detect.cs" />
-    <Compile Include="Utils\StringMixins.cs" />
-    <Compile Include="Utils\With.cs" />
+    <Compile Include="Utilities\Detect.cs" />
+    <Compile Include="Utilities\StringMixins.cs" />
+    <Compile Include="Utilities\WhizzoDev\Cloning.cs" />
+    <Compile Include="Utilities\With.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
