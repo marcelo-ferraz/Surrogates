@@ -31,13 +31,13 @@ namespace Surrogates.Expressions.Properties
 
         protected static bool EmitPropertyNameAndField(Property property, Type pType, ILGenerator gen, ParameterInfo p)
         {
-            if (p.Name == "propertyName" && p.ParameterType == typeof(string))
+            if (p.Name == "s_name" && p.ParameterType == typeof(string))
             {
                 gen.Emit(OpCodes.Ldstr, property.Original.Name);
                 return true;
             }
 
-            if (p.Name == "field" && p.ParameterType == pType)
+            if (p.Name == "s_field" && p.ParameterType == pType)
             {
                 gen.Emit(OpCodes.Ldarg_0);
                 gen.Emit(OpCodes.Ldfld, property.Field);
@@ -90,12 +90,19 @@ namespace Surrogates.Expressions.Properties
                 new Type[] { prop.PropertyType });
         }
 
-        protected virtual void Register(Func<T, Delegate> action)
+        protected virtual MethodBuilder OverrideSetter(Property prop, MethodInfo method)
         {
-            var method =
-                action(NotInitializedInstance)
-                .Method;
+            throw new NotImplementedException();
+        }
 
+        protected virtual MethodBuilder OverrideGetter(Property prop, MethodInfo method)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        protected override void Register(MethodInfo method)
+        {
             foreach (var prop in State.Properties)
             {
                 if ((Accessor & PropertyAccessor.Get) == PropertyAccessor.Get)
@@ -110,26 +117,6 @@ namespace Surrogates.Expressions.Properties
                         OverrideSetter(prop, method));
                 }
             }
-        }
-
-        protected virtual MethodBuilder OverrideSetter(Property prop, MethodInfo method)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected virtual MethodBuilder OverrideGetter(Property prop, MethodInfo method)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void RegisterAction(Func<T, Delegate> action)
-        {
-            Register(action);
-        }
-
-        protected override void RegisterFunction(Func<T, Delegate> function)
-        {
-            Register(function);
         }
     }
 }

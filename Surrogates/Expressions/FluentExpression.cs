@@ -51,6 +51,12 @@ namespace Surrogates.Expressions
             State.Methods.Add(method);
         }
 
+        public virtual TExpression ThisMethod(Delegate action)
+        {
+            this.Register(action.Method);
+            return Return();
+        }
+
         /// <summary>
         /// Exposes a given method, to become part of the expression
         /// </summary>
