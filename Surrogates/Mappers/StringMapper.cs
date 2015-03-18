@@ -19,7 +19,7 @@ namespace Surrogates.Mappers
                 new Regex(@"^(?:(a|A)(s|S)\s+(?<aliases>(\w,?\s)+))(?<rest>.+)$", RegexOptions.Compiled);
 
             _operationsRegexp = 
-                new Regex(@"((?<operation>\w+)(?:\s+)(?<members>(\w\.\w+,?\s)+)(?:\s*)(((?:(a|A)(c|C)(c|C)(e|E)(s|S)(s|S)(o|O)(r|R)(s|S)?\s+)((((?<accessor1>((s|S)|(g|G))(e|E)(t|T)(t|T)(e|E)(r|R))(?:\s*\=\s*)(?<accessMethod1>\w.\w+)(?:\s+)))((?:and\s+)(?<accessor2>((s|S)|(g|G))(e|E)(t|T)(t|T)(e|E)(r|R))(?:\s*\=\s*)(?<accessMethod2>\w.\w+)(?:\s+))?)|(?:(w|W)(i|I)(t|T)(h|H)\s+)(?<method>\w.\w+))))",
+                new Regex(@"((?<operation>\w+)(?:\s+)(?<members>(\w\.\w+,?\s)+)(?:\s*)(((?:(a|A)(c|C)(c|C)(e|E)(s|S)(s|S)(o|O)(r|R)(s|S)?\s+)((((?<accessor1>((s|S)|(g|G))(e|E)(t|T)(t|T)(e|E)(r|R))(?:\s*\=\s*)(?<accessMethod1>\w.\w+)(?:\s+)))((?:and\s+)(?<accessor2>((s|S)|(g|G))(e|E)(t|T)(t|T)(e|E)(r|R))(?:\s*\=\s*)(?<accessMethod2>\w.\w+)(?:\s+))?)|(?:(w|W)(i|I)(t|T)(h|H)\s+)(?<property>\w.\w+))))",
                     RegexOptions.Compiled);
         }
 
@@ -66,9 +66,9 @@ namespace Surrogates.Mappers
                     MembersFound(members);
                 }
 
-                if (grp["method"].Success && OperationFound != null)
+                if (grp["property"].Success && OperationFound != null)
                 {
-                    OperationFound(grp["method"].Value);
+                    OperationFound(grp["property"].Value);
                     continue;
                 }
                 

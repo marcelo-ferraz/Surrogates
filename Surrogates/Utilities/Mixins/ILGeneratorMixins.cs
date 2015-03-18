@@ -67,7 +67,7 @@ namespace Surrogates.Utilities.Mixins
             { return false; }
 
             if (!baseMethod.IsFamily && !baseMethod.IsPrivate && !baseMethod.IsPublic)
-            { throw new NotSupportedException("You cannot use an internal method to be passed as a parameter."); }
+            { throw new NotSupportedException("You cannot use an internal property to be passed as a parameter."); }
 
             var isFunc =
                 baseMethod.ReturnType != typeof(void);
@@ -182,7 +182,12 @@ namespace Surrogates.Utilities.Mixins
             gen.Emit(OpCodes.Ldloc, local);
         }
 
-        internal static Type[] EmitParameters4<TBase>(this ILGenerator gen, MethodInfo newMethod, Func<ParameterInfo, bool> interfere = null)
+        internal static Type[] EmitParameters4<TBase>(this ILGenerator gen, Type baseType, MethodInfo newMethod, Func<ParameterInfo, bool> interfere = null)
+        {
+            return EmitParameters(gen, typeof(TBase), newMethod, interfere);
+        }
+
+        internal static Type[] EmitParameters(this ILGenerator gen, Type baseType, MethodInfo newMethod, Func<ParameterInfo, bool> interfere = null)
         {
             var newParams = new List<Type>();
 
@@ -194,7 +199,7 @@ namespace Surrogates.Utilities.Mixins
                 newParams.Add(pType);
 
                 // get the instance if the parameter of the interceptor is named instance
-                if (pType.IsAssignableFrom(typeof(TBase)) && param.Name == "s_instance")
+                if (pType.IsAssignableFrom(baseType) && param.Name == "s_instance")
                 {
                     gen.Emit(OpCodes.Ldarg_0);
                     continue;
@@ -215,7 +220,13 @@ namespace Surrogates.Utilities.Mixins
 
         internal static Type[] EmitParameters4<TBase>(this ILGenerator gen, MethodInfo newMethod, MethodInfo baseMethod)
         {
-            return gen.EmitParameters4<TBase>(
+            return EmitParameters(gen, typeof(TBase), newMethod, baseMethod);
+        }
+
+        internal static Type[] EmitParameters(this ILGenerator gen, Type baseType,MethodInfo newMethod, MethodInfo baseMethod)
+        {
+            return gen.EmitParameters(
+                baseType,
                 newMethod,
                 p =>  EmitArgumentsBasedOnOriginal(gen, baseMethod, p, p.ParameterType)); 
         }

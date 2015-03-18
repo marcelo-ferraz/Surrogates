@@ -63,10 +63,10 @@ namespace Surrogates.Tests.Simple.Methods.Visit
 
             //and now, the comparison between the two methods
             var dummyRes = 
-                dummy.Call_SetPropText_complex_Return_1("this call was not made by the original method", DateTime.Now, new Dummy.EvenMore());
+                dummy.Call_SetPropText_complex_Return_1("this call was not made by the original property", DateTime.Now, new Dummy.EvenMore());
             
             var proxyRes = 
-                proxy.Call_SetPropText_complex_Return_1("this call was not made by the original method", DateTime.Now, new Dummy.EvenMore());
+                proxy.Call_SetPropText_complex_Return_1("this call was not made by the original property", DateTime.Now, new Dummy.EvenMore());
 
             Assert.IsNotNullOrEmpty(dummy.Text);
             Assert.AreEqual("complex", dummy.Text);

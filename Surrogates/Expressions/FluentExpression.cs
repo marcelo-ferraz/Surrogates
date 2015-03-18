@@ -29,7 +29,7 @@ namespace Surrogates.Expressions
                 if ((method = get(BindingFlags.Public)) == null)
                 {
                     throw new KeyNotFoundException(string.Format(
-                        "The method '{0}' wans not found withn the type '{1}'", methodName, typeof(TInstance).Name));
+                        "The property '{0}' wans not found withn the type '{1}'", methodName, typeof(TInstance).Name));
                 }
             }
             Register(method);

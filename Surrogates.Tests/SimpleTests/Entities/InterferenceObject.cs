@@ -17,7 +17,7 @@ namespace Surrogates.Tests.Simple.Entities
         public void AddToPropText__MethodName(string text, Dummy  s_instance, DateTime date, string  s_name, Dummy.EvenMore someInstance)
         {
              s_instance.Text += ", " + 
-                text + " - method: " +  s_name;
+                text + " - property: " +  s_name;
         }
 
         public void Void_VariousParametersWithDifferentNames(string arg0, Dummy arg1, DateTime arg2, string arg3, Dummy.EvenMore arg4)

@@ -59,13 +59,13 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
             Assert.AreEqual("simple", proxy.Text);
 
             //and now, the comparison between the two methods
-            dummy.SetPropText_complex("this call was not made by the original method", DateTime.Now, new Dummy.EvenMore());
-            proxy.SetPropText_complex("this call was not made by the original method", DateTime.Now, new Dummy.EvenMore());
+            dummy.SetPropText_complex("this call was not made by the original property", DateTime.Now, new Dummy.EvenMore());
+            proxy.SetPropText_complex("this call was not made by the original property", DateTime.Now, new Dummy.EvenMore());
 
             Assert.IsNotNullOrEmpty(dummy.Text);
             Assert.AreEqual("complex", dummy.Text);
             Assert.IsNotNullOrEmpty(proxy.Text);
-            Assert.AreEqual("simple, this call was not made by the original method - method: SetPropText_complex", proxy.Text);
+            Assert.AreEqual("simple, this call was not made by the original property - property: SetPropText_complex", proxy.Text);
         }
 
         [Test, ExpectedException(typeof(NullReferenceException))]
