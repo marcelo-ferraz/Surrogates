@@ -1,5 +1,6 @@
 ﻿using Surrogates.Expressions;
 using Surrogates.Mappers.Entities;
+using Surrogates.Tactics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,12 +40,7 @@ namespace Surrogates.Mappers
             return false;
         }
 
-        public event Action<string> OperationFound;
-        public event Action<string[]> MembersFound;
-        public event Action<string, string> AccessorFound;
-        public event Action<string> MethodFound;
-
-        public bool TryGetOperations(string cmd)
+        public bool TryGetOperations(string cmd, ref Strategies strategies)
         {
             var matches =
                 _operationsRegexp.Matches(cmd);
@@ -57,33 +53,31 @@ namespace Surrogates.Mappers
 
                 var op = grp["operation"].Value;
                 
-                if(grp["members"].Success && MembersFound != null)
+                Strategy strategy = grp["accessor1"].Success ?
+                    (Strategy) new Strategy.ForProperties() :
+                    new Strategy.ForMethods();
+
+                if(grp["members"].Success != null)
                 {
                     var members = grp["members"]
                         .Value
-                        .Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
-
-                    MembersFound(members);
+                        .Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);                                        
                 }
 
-                if (grp["property"].Success && OperationFound != null)
+                if (grp["properties"].Success)
                 {
-                    OperationFound(grp["property"].Value);
+                    __refvalue(__makeref(strategy), Strategy.ForProperties).Properties.Add(new Property2(strategy));
+                    //grp["property"].Value;
                     continue;
                 }
                 
-                if (grp["accessor1"].Success && AccessorFound != null)
+                if (grp["accessor1"].Success)
                 {   
-                    AccessorFound(
-                        grp["accessor1"].Value,
-                        grp["accessMethod1"].Value);
+                    //grp["accessor1"].Value, grp["accessMethod1"].Value);
 
                     if (grp["accessor2"].Success)
                     {
-                        AccessorFound(
-                            grp["accessor2"].Value,
-                            grp["accessMethod2"].Value);
-
+                        //grp["accessor2"].Value, grp["accessMethod2"].Value);
                     }
                 }
             }

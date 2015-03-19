@@ -59,6 +59,8 @@ namespace Surrogates.Tactics
             get { return _owner.Builder; }
         }
 
+        public string Name { get; set; }
+
         public InterferenceKind Kind { get; set; }
         
         public Type InterceptorType { get; set; }
@@ -71,8 +73,6 @@ namespace Surrogates.Tactics
         public void Apply(Type baseType, ref TypeBuilder builder)
         {
             Executioners[Kind](this);
-        }
-
-        public string Name { get; set; }
+        }        
     }
 }

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Surrogates.Tactics;
 
 namespace Surrogates.Utilities
 {
-    class ExecutionerAct
-    {
-    }
+    public delegate void ExecutionersAct(Strategy strategy);
 }

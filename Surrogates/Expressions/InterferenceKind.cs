@@ -1,8 +1,11 @@
 ﻿namespace Surrogates.Expressions
 {
-    public enum InterferenceKind
+    public enum InterferenceKind: byte
     {
         Visitation,
-        Substitution
+        Substitution,
+
+        Disable,
+
     }
 }

@@ -43,6 +43,10 @@
     <Compile Include="Appliances\Interlocking\InterlockedRefPropertyInterceptor.cs" />
     <Compile Include="Appliances\Interlocking\InterlockedPropertyInterceptor.cs" />
     <Compile Include="BaseContainer4Surrogacy.cs" />
+    <Compile Include="Executioners\DisableExecutioner.cs" />
+    <Compile Include="Executioners\Executioner.cs" />
+    <Compile Include="Executioners\ReplaceExecutioner.cs" />
+    <Compile Include="Executioners\VisitationExecutioner.cs" />
     <Compile Include="Expressions\IMappingExpression.cs" />
     <Compile Include="Expressions\Methods\EndInterferenceExpression.cs" />
     <Compile Include="Expressions\Methods\FluentExpression.cs" />
@@ -52,6 +56,9 @@
     <Compile Include="Mappers\Collections\PropertyList.cs" />
     <Compile Include="Mappers\Entities\Property.cs" />
     <Compile Include="Mappers\StringMapper.cs" />
+    <Compile Include="Tactics\Strategies.cs" />
+    <Compile Include="Tactics\Strategy.cs" />
+    <Compile Include="Utilities\ExecutionersAct.cs" />
     <Compile Include="Utilities\Mixins\PropertyBuilderMixns.cs" />
     <Compile Include="ProxyAlreadyMadeException.cs" />
     <Compile Include="Expressions\InterferenceExpression.cs" />
@@ -63,6 +70,7 @@
     <Compile Include="Expressions\Properties\PropertyInterferenceExpression.cs" />
     <Compile Include="Expressions\Properties\UsingInterferenceExpression.cs" />
     <Compile Include="Utilities\Clone.cs" />
+    <Compile Include="Utilities\Mixins\PropertyMixins.cs" />
     <Compile Include="Utilities\SDILReader\Globals.cs" />
     <Compile Include="Utilities\SDILReader\ILInstruction.cs" />
     <Compile Include="Utilities\SDILReader\MethodBodyReader.cs" />

@@ -22,11 +22,21 @@ namespace Surrogates.Utilities.Mixins
 
         internal static ILGenerator EmitOverride<TBase>(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField)
         {
+            return EmitOverride(typeBuilder, typeof(TBase), newMethod, baseMethod, interceptorField);
+        }
+
+        internal static ILGenerator EmitOverride(this TypeBuilder typeBuilder, Type baseType, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField)
+        {
             LocalBuilder @return = null;
-            return EmitOverride<TBase>(typeBuilder, newMethod, baseMethod, interceptorField, out @return);
+            return EmitOverride(typeBuilder, baseType, newMethod, baseMethod, interceptorField, out @return);
         }
 
         internal static ILGenerator EmitOverride<TBase>(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, out LocalBuilder returnField)
+        {
+            return EmitOverride(typeBuilder, typeof(TBase), newMethod, baseMethod, interceptorField, out returnField);
+        }
+
+        internal static ILGenerator EmitOverride(this TypeBuilder typeBuilder, Type baseType, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, out LocalBuilder returnField)
         {
             var builder = typeBuilder.DefineMethod(
                 baseMethod.Name,
@@ -45,7 +55,7 @@ namespace Surrogates.Utilities.Mixins
             gen.Emit(OpCodes.Ldfld, interceptorField);
 
             var @params =
-                gen.EmitParameters4<TBase>(newMethod, baseMethod);
+                gen.EmitParameters(baseType, newMethod, baseMethod);
 
             gen.EmitCall(newMethod, @params);
 

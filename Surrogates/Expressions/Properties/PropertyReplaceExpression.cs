@@ -13,7 +13,7 @@ namespace Surrogates.Expressions.Properties
         internal PropertyReplaceExpression(PropertyAccessor accessor, IMappingExpression<TBase> mapper, MappingState state, string fieldName)
             : base(InterferenceKind.Substitution, accessor, mapper, state, fieldName) { }
 
-        protected override MethodBuilder OverrideGetter(Property property, MethodInfo newMethod)
+        protected override MethodBuilder OverrideGetter(Property property, strate newMethod)
         {
             var pType =
                 property.Original.PropertyType;
@@ -29,8 +29,9 @@ namespace Surrogates.Expressions.Properties
             gen.Emit(OpCodes.Ldfld, GetField4<TSubstitutor>(this.FieldName));
 
             var @params = gen.EmitParameters4<TBase>(
+                strategy
                 newMethod,
-                p => EmitPropertyNameAndField(property, pType, gen, p));
+                p => property.EmitPropertyNameAndField(pType, gen, p));
 
             gen.EmitCall(newMethod, @params);
 

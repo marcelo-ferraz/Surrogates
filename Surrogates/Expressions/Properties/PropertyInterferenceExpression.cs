@@ -45,8 +45,7 @@ namespace Surrogates.Expressions.Properties
 
             return false;
         }
-
-
+        
         protected static bool EmitPropertyNameAndFieldAndValue(Property property, Type pType, ILGenerator gen, ParameterInfo p)
         {
             if (p.Name == "propertyName" && p.ParameterType == typeof(string))

@@ -4,11 +4,13 @@ using Surrogates.Utilities;
 using Surrogates.Utilities.Mixins;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime;
 
 namespace Surrogates.Executioners
 {
     public class ReplaceExecutioner: Executioner
     {
+        [TargetedPatchingOptOut("")]
         protected static void ReplaceAction(MethodInfo baseAction, Strategy.ForMethods strategy)
         {
             LocalBuilder baseMethodReturn = null;
@@ -22,6 +24,7 @@ namespace Surrogates.Executioners
             gen.Emit(OpCodes.Ret);
         }
 
+        [TargetedPatchingOptOut("")]
         protected static void ReplaceFunction(MethodInfo baseFunction, Strategy.ForMethods strategy)
         {
             LocalBuilder baseMethodReturn = null;
@@ -46,6 +49,7 @@ namespace Surrogates.Executioners
             gen.Emit(OpCodes.Ret);
         }
 
+        [TargetedPatchingOptOut("")]
         protected static MethodBuilder ReplaceGetter(Property property, Strategy.ForProperties strategy)
         {
             var pType =
@@ -82,6 +86,7 @@ namespace Surrogates.Executioners
             return getter;
         }
 
+        [TargetedPatchingOptOut("")]
         protected static MethodBuilder ReplaceSetter(Property property, Strategy.ForProperties strategy)
         {
             var pType =
