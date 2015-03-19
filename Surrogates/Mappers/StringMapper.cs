@@ -4,6 +4,7 @@ using Surrogates.Tactics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -38,6 +39,41 @@ namespace Surrogates.Mappers
             }
 
             return false;
+        }
+
+        protected virtual Strategy Get4Properties(Type owner, Type[] interceptors, GroupCollection grp)
+        {
+            var strategy = new Strategy.ForProperties();
+
+            if (grp["members"].Success != null)
+            {
+                var members = grp["members"]
+                    .Value
+                    .Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var propName in members)
+                {
+                    owner.GetProperty(propName, BindingFlags.Instance | BindingFlags.Public);
+
+                    BindingFlags.NonPublic | 
+                }                
+            }
+
+            if (grp["properties"].Success)
+            {
+                strategy.Properties.Add(new Property2(strategy));
+                //grp["property"].Value;
+                continue;
+            }
+
+            if (grp["accessor1"].Success)
+            {
+                //grp["accessor1"].Value, grp["accessMethod1"].Value);
+
+                if (grp["accessor2"].Success)
+                {
+                    //grp["accessor2"].Value, grp["accessMethod2"].Value);
+                }
+            }
         }
 
         public bool TryGetOperations(string cmd, ref Strategies strategies)
