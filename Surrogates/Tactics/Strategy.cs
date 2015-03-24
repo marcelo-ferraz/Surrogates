@@ -1,5 +1,5 @@
 ﻿using Surrogates.Executioners;
-using Surrogates.Expressions;
+using Surrogates.OldExpressions;
 using Surrogates.Mappers.Collections;
 using Surrogates.Utilities;
 using System;
@@ -15,7 +15,10 @@ namespace Surrogates.Tactics
     {
         public class ForProperties : Strategy
         {
-            public PropertyList Properties { get; set; }
+            public ForProperties(Strategy @base)
+                : base(@base) { }
+
+            public PropertyList2 Properties { get; set; }
 
             public MethodInfo Getter { set; get; }
 
@@ -24,6 +27,9 @@ namespace Surrogates.Tactics
 
         public class ForMethods : Strategy
         {
+            public ForMethods(Strategy @base)
+                : base(@base) { }
+
             public MethodInfo Interceptor { get; set; }
 
             public IList<MethodInfo> Methods { get; set; }
@@ -47,6 +53,14 @@ namespace Surrogates.Tactics
         public Strategy(Strategies owner)
         {
             this._owner = owner;
+        }
+
+        public Strategy(Strategy @base)
+        {
+            this._owner = @base._owner;
+            //this.Name = @base.Name;
+            this.InterceptorType = @base.InterceptorType;
+            this.Kind = @base.Kind;
         }
 
         public Type BaseType

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using Surrogates.Expressions.Properties.Accessors;
+using Surrogates.OldExpressions.Properties.Accessors;
 using Surrogates.Mappers;
 using Surrogates.Mappers.Entities;
 
-namespace Surrogates.Expressions.Properties
+namespace Surrogates.OldExpressions.Properties
 {
     public class PropertyInterferenceExpression<TBase, T>
         : FluentExpression<AccessorAndExpression<TBase, T>, TBase, T>

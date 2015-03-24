@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Reflection;
-using Surrogates.Expressions.Methods;
-using Surrogates.Expressions.Properties.Accessors;
+using Surrogates.OldExpressions.Methods;
+using Surrogates.OldExpressions.Properties.Accessors;
 using Surrogates.Mappers.Entities;
 using Surrogates.Utilities.SDILReader;
 
-namespace Surrogates.Expressions
+namespace Surrogates.OldExpressions
 {
     /// <summary>
     /// The expression responsible to interfere on a type's behaviour

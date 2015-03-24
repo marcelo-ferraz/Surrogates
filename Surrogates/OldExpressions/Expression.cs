@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using Surrogates.Mappers.Entities;
 
-namespace Surrogates.Expressions
+namespace Surrogates.OldExpressions
 {
     public abstract class Expression<TBase>
         : Expression<TBase, TBase>

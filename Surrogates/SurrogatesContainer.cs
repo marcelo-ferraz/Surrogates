@@ -7,9 +7,9 @@ namespace Surrogates
     /// <summary>
     /// The main container, from wich you can invoke your dependencies, and/or map them
     /// </summary>
-    public class SurrogatesContainer : BaseContainer4Surrogacy<Type, DefaultMapper>
+    public class SurrogatesContainer : BaseContainer4Surrogacy<Type, OldDefaultMapper>
     {
-        protected override void AddMap(DefaultMapper mappingExp, Type type)
+        protected override void AddMap(OldDefaultMapper mappingExp, Type type)
         {
             Dictionary.Add(type.Name, type);
         }
@@ -19,7 +19,7 @@ namespace Surrogates
         /// </summary>
         /// <param name="mapping"></param>
         /// <returns></returns>
-        public SurrogatesContainer Map(Action<IMapper> mapping)
+        public SurrogatesContainer Map(Action<IOldMapper> mapping)
         {
             base.InternalMap(mapping);
             return this;
@@ -45,7 +45,7 @@ namespace Surrogates
         public virtual object Invoke(Type type, string name = null)
         {
             if (string.IsNullOrEmpty(name))
-            { name = DefaultMapper.CreateName4(type); }
+            { name = OldDefaultMapper.CreateName4(type); }
 
             return Activator.CreateInstance(Dictionary[name]);
         }

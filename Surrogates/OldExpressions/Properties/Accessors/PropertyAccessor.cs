@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Surrogates.Expressions.Properties.Accessors
+namespace Surrogates.OldExpressions.Properties.Accessors
 {
     [Flags]
     public enum PropertyAccessor : byte

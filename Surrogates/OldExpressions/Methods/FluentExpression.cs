@@ -2,10 +2,10 @@
 using System.Reflection;
 using Surrogates.Mappers.Entities;
 
-namespace Surrogates.Expressions.Methods
+namespace Surrogates.OldExpressions.Methods
 {
     public abstract class FluentExpression<TExpression, TBase, TInstance> 
-        : Surrogates.Expressions.FluentExpression<TExpression, TBase, TInstance>
+        : Surrogates.OldExpressions.FluentExpression<TExpression, TBase, TInstance>
         where TExpression : Expression<TBase, TInstance>
     {
         internal FluentExpression(

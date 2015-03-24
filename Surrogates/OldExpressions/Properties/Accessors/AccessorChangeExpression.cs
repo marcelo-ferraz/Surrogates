@@ -1,6 +1,6 @@
 ﻿using Surrogates.Mappers.Entities;
 
-namespace Surrogates.Expressions.Properties.Accessors
+namespace Surrogates.OldExpressions.Properties.Accessors
 {
     public class AccessorChangeExpression<TBase>
         : Expression<TBase>

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Reflection;
-using Surrogates.Expressions.Methods;
+using Surrogates.OldExpressions.Methods;
 using Surrogates.Mappers;
 using Surrogates.Mappers.Entities;
 using Surrogates.Utilities.Mixins;
 
-namespace Surrogates.Expressions.Classes
+namespace Surrogates.OldExpressions.Classes
 {
     public class ClassMappingExpression<T> : IMappingExpression<T>
     {
@@ -36,7 +36,7 @@ namespace Surrogates.Expressions.Classes
         protected virtual void CreateProxy(string name, MappingState state)
         {
             if (string.IsNullOrEmpty(name))
-            { name = DefaultMapper.CreateName4<T>(); }
+            { name = OldDefaultMapper.CreateName4<T>(); }
 
             try
             {

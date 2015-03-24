@@ -2,7 +2,7 @@
 using System;
 using System.Reflection;
 
-namespace Surrogates.Expressions.Methods
+namespace Surrogates.OldExpressions.Methods
 {
     public abstract class FluentMethodExpression<TExpression, TBase, TInstance> 
         : FluentExpression<TExpression, TBase, TInstance>

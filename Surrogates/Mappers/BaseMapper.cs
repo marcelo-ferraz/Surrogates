@@ -1,10 +1,10 @@
 ﻿using System;
 using Surrogates.Mappers.Entities;
-using Surrogates.Expressions;
+using Surrogates.OldExpressions;
 
 namespace Surrogates.Mappers
 {
-    public abstract class BaseMapper : IMapper
+    public abstract class BaseMapper : IOldMapper
     {
         protected IFlushTypes MapExpression;
 

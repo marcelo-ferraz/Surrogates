@@ -1,13 +1,13 @@
 ﻿using System;
-using Surrogates.Expressions.Classes;
+using Surrogates.OldExpressions.Classes;
 using Surrogates.Mappers.Entities;
-using Surrogates.Expressions;
+using Surrogates.OldExpressions;
 
 namespace Surrogates.Mappers
 {
-    public class DefaultMapper : BaseMapper
+    public class OldDefaultMapper : BaseMapper
     {
-        public DefaultMapper(MappingState state)
+        public OldDefaultMapper(MappingState state)
             :base(state) { }
 
         public override IMappingExpression<T> Throughout<T>(string name = null)
@@ -25,5 +25,10 @@ namespace Surrogates.Mappers
         {
             return string.Concat(type.Name, "Proxy");
         }
+    }
+
+    public class DefaultExpressionMapper
+    { 
+
     }
 }

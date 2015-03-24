@@ -1,6 +1,6 @@
 ﻿using Surrogates.Mappers.Entities;
 
-namespace Surrogates.Expressions
+namespace Surrogates.OldExpressions
 {
     public abstract class EndExpression<TBase, TInstance>
         : FluentExpression<AndExpression<TBase, TInstance>, TBase, TInstance>

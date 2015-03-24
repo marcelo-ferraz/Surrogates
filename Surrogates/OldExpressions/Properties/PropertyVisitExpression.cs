@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
 using System.Reflection.Emit;
-using Surrogates.Expressions.Properties.Accessors;
+using Surrogates.OldExpressions.Properties.Accessors;
 using Surrogates.Mappers;
 using Surrogates.Mappers.Entities;
 using Surrogates.Utilities.Mixins;
 
-namespace Surrogates.Expressions.Properties
+namespace Surrogates.OldExpressions.Properties
 {
     public class PropertyVisitExpression<TBase, TVisitor>
         : PropertyInterferenceExpression<TBase, TVisitor>

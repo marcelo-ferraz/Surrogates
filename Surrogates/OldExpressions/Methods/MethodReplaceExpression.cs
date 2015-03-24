@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 using Surrogates.Mappers.Entities;
 using Surrogates.Utilities.Mixins;
 
-namespace Surrogates.Expressions.Methods
+namespace Surrogates.OldExpressions.Methods
 {
     /// <summary>
     /// Expression used to replace one or a set of methods

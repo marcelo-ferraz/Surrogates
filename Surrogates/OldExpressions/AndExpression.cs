@@ -1,5 +1,5 @@
 ﻿
-namespace Surrogates.Expressions
+namespace Surrogates.OldExpressions
 {
     public class AndExpression<TBase>
         : AndExpression<TBase, TBase>

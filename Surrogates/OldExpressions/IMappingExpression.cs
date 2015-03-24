@@ -1,6 +1,6 @@
-﻿using Surrogates.Expressions.Methods;
+﻿using Surrogates.OldExpressions.Methods;
 
-namespace Surrogates.Expressions
+namespace Surrogates.OldExpressions
 {
     /// <summary>
     /// Provides all the supported expressions to interverne a method or property

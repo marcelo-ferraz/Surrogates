@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using Surrogates.Expressions;
-using Surrogates.Expressions.Properties.Accessors;
+using Surrogates.OldExpressions;
+using Surrogates.OldExpressions.Properties.Accessors;
 using Surrogates.Mappers;
 using Surrogates.Mappers.Entities;
 using Surrogates.Tactics;

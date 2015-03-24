@@ -1,6 +1,6 @@
 ﻿using Surrogates.Mappers.Entities;
 
-namespace Surrogates.Expressions.Methods
+namespace Surrogates.OldExpressions.Methods
 {
     public class EndInterferenceExpression<TBase>
         : MethodInterferenceExpression<TBase>

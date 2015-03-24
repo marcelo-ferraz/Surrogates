@@ -4,7 +4,7 @@ using Surrogates.Mappers.Entities;
 using Surrogates.Utilities.SDILReader;
 using Surrogates.Utilities;
 using Surrogates.Utilities.Mixins;
-namespace Surrogates.Expressions.Properties.Accessors
+namespace Surrogates.OldExpressions.Properties.Accessors
 {
     /// <summary>
     /// Exposes the accessors to a given property

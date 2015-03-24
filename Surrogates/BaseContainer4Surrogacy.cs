@@ -55,7 +55,7 @@ namespace Surrogates
         /// </summary>
         /// <param name="mapping"></param>
         /// <returns></returns>
-        protected virtual void InternalMap(Action<IMapper> mapping)
+        protected virtual void InternalMap(Action<IOldMapper> mapping)
         {
             var expression =
                 this.CreateExpression();
@@ -89,7 +89,7 @@ namespace Surrogates
         public virtual bool Has(Type type = null, string key = null)
         {
             if (string.IsNullOrEmpty(key))
-            { key = DefaultMapper.CreateName4(type); }
+            { key = OldDefaultMapper.CreateName4(type); }
 
             return Dictionary.ContainsKey(key);
         }

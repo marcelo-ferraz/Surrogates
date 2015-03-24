@@ -5,7 +5,7 @@ using System.Runtime;
 using Surrogates.Mappers.Entities;
 using Surrogates.Utilities.Mixins;
 
-namespace Surrogates.Expressions.Methods
+namespace Surrogates.OldExpressions.Methods
 {
     public class MethodVisitationExpression<TBase, TVisitor> 
         : MethodReplaceExpression<TBase, TVisitor>

@@ -1,8 +1,8 @@
 ﻿
-using Surrogates.Expressions.Properties.Accessors;
+using Surrogates.OldExpressions.Properties.Accessors;
 using Surrogates.Mappers.Entities;
 
-namespace Surrogates.Expressions.Properties
+namespace Surrogates.OldExpressions.Properties
 {
     public class UsingInterferenceExpression<TBase>
         : Expression<TBase>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Surrogates.Mappers.Entities;
 
-namespace Surrogates.Expressions
+namespace Surrogates.OldExpressions
 {
     public class FluentExpression<TExpression, TBase, TInstance> : Expression<TBase, TInstance>
         where TExpression : Expression<TBase, TInstance>

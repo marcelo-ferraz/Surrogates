@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using Surrogates.Expressions.Properties.Accessors;
+using Surrogates.OldExpressions.Properties.Accessors;
 using Surrogates.Mappers.Entities;
 using Surrogates.Tactics;
 
 namespace Surrogates.Mappers.Collections
 {
-    public class PropertyList2 : List<Property>
+    public class PropertyList2 : List<Property2>
     {
         private Strategy _owner;
 
@@ -21,7 +21,7 @@ namespace Surrogates.Mappers.Collections
         public void Add(PropertyInfo property)
         {
             var prop =
-                new Property(_owner, _owner.TypeBuilder) { Original = property };
+                new Property2(_owner) { Original = property };
 
             var index =
                 this.BinarySearch(prop);
