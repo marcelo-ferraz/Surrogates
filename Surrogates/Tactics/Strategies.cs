@@ -1,39 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Surrogates.Mappers.Collections;
+using Surrogates.Utilities.Mixins;
 
 namespace Surrogates.Tactics
 {
     public class Strategies 
     {
         private TypeBuilder _builder;
-
-        private Type _baseType;
-
         private IList<Strategy> _strategies;
+
+        internal Strategies(Type baseType,string name, ModuleBuilder moduleBuilder)
+        {
+            this.BaseType = baseType;
+            
+            if (string.IsNullOrEmpty(name))
+            { name = string.Concat(baseType, "Proxy"); }
+            
+            try
+            {
+                Builder = moduleBuilder
+                    .DefineType(name, TypeAttributes.Public, baseType);
+            }
+            catch (ArgumentException argEx)
+            { throw new ProxyAlreadyMadeException(baseType, name, argEx); }
+        }
 
         public void Add(Strategy strategy)
         {
             _strategies.Add(strategy);
         }
 
+        public TypeBuilder Builder
+        {
+            get { return _builder; }
+            set { _builder = value; }
+        }
         public Type BaseType { get; set; }
+        public FieldList Fields { get; set; }
 
-        public TypeBuilder Builder { get; set; }
-
-        public Mappers.Collections.FieldList Fields { get; set; }
-        
         public Type Apply()
         {
-            //create constructor
+
+            this.Builder
+                .CreateConstructor(this.BaseType, this.Fields);
+
             foreach (var strategy in _strategies)
             {
-                strategy.Apply(_baseType, ref _builder);
+                strategy.Apply(BaseType, ref _builder);
             }
 
-            return _builder.DeclaringType;
+            return this.Builder.CreateType();
         }
     }
 }

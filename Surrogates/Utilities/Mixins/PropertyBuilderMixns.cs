@@ -2,19 +2,21 @@
 using System.Reflection;
 using System.Reflection.Emit;
 using Surrogates.Mappers;
-using Surrogates.Mappers.Entities;
 
 namespace Surrogates.Utilities.Mixins
 {
     public static class PropertyBuilderMixns
     {
+        private static readonly MethodAttributes _flags =
+            MethodAttributes.Virtual | MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
+
         internal static Property EmitDefaultSet(
-            this Property that, MappingState state)
+            this Property that, TypeBuilder builder)
         {
             //insert a basic set
-            MethodBuilder setter = state.TypeBuilder.DefineMethod(
+            MethodBuilder setter = builder.DefineMethod(
                 string.Concat("set_", that.Original.Name),
-                MethodAttributes.Virtual | MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig,
+                _flags,
                 typeof(void),
                 new[] { that.Original.PropertyType });
 
@@ -39,11 +41,11 @@ namespace Surrogates.Utilities.Mixins
         }
 
         internal static Property EmitBaseGetter(
-            this Property that, MappingState state)
+            this Property that, TypeBuilder builder)
         {
-            MethodBuilder getter = state.TypeBuilder.DefineMethod(
+            MethodBuilder getter = builder.DefineMethod(
                 string.Concat("get_", that.Original.Name),
-                MethodAttributes.Virtual | MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig,
+                _flags,
                 that.Original.PropertyType,
                 Type.EmptyTypes);
 

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime;
 using System.Text.RegularExpressions;
+using Surrogates.Mappers.Collections;
 
 namespace Surrogates.Mappers.Parsers
 {
@@ -23,32 +24,41 @@ namespace Surrogates.Mappers.Parsers
         }
 
         [TargetedPatchingOptOut("")]
-        private static Strategy.ForProperties ExtractGetterORSetter(IDictionary<string, Type> interceptors, GroupCollection grp, Strategy.ForProperties strategy, int index)
+        private static Strategy.ForProperties ExtractGetterORSetter(FieldList interceptors, GroupCollection grp, Strategy.ForProperties strategy, int index)
         {
             var metName =
                     grp[string.Concat("accessMethod", index)].Value.Split('.');
 
+            var intType = interceptors[metName[0]].FieldType;
+
+            strategy.Fields.TryAdd(intType, ref metName[0]);
+
+            var interceptor = 
+                new Strategy.Interceptor
+                {
+                    Name = metName[0],
+                    DeclaredType = intType,
+                    Method = intType.GetMethod4Surrogacy(metName[1])
+                };
+
             if (grp[string.Concat("accessor", index)].Value[0] == 'g' ||
                 grp[string.Concat("accessor", index)].Value[0] == 'G')
             {
-                strategy.Getter = interceptors[metName[0]]
-                    .GetMethod4Surrogacy(metName[1]);
+                strategy.Getter = interceptor;
             }
-            else
-            {
-                strategy.Getter = interceptors[metName[0]]
-                    .GetMethod4Surrogacy(metName[1]);
-            }
+            else { strategy.Getter = interceptor; }
 
             return strategy;
         }
 
-        protected virtual Strategy Get4Properties(Type owner, IDictionary<string, Type> interceptors, GroupCollection grp)
+        protected virtual Strategy Get4Properties(Strategies strategies, GroupCollection grp)
         {
-            var strategy = new Strategy.ForProperties();
+            var strategy = new Strategy.ForProperties(strategies);
 
             if (grp["members"].Success != null)
             {
+                var owner = strategy.BaseType;
+
                 var members = grp["members"]
                     .Value
                     .Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
@@ -65,23 +75,26 @@ namespace Surrogates.Mappers.Parsers
             if (grp["accessor1"].Success)
             {
                 strategy = ExtractGetterORSetter(
-                    interceptors, grp, strategy, 1);
+                    strategies.Fields, grp, strategy, 1);
 
                 if (grp["accessor2"].Success)
                 {
                     strategy = ExtractGetterORSetter(
-                        interceptors, grp, strategy, 2);
+                        strategies.Fields, grp, strategy, 2);
                 }
             }
             return strategy;
         }
 
-        protected virtual Strategy Get4Methods(Type owner, IDictionary<string, Type> interceptors, GroupCollection grp)
+        protected virtual Strategy Get4Methods(Strategies strategies, GroupCollection grp)
         {
-            var strategy = new Strategy.ForMethods();
-
-            if (grp["members"].Success != null)
+            var strategy = 
+                new Strategy.ForMethods(strategies);
+            
+            if (grp["members"].Success)
             {
+                var owner = strategy.BaseType;
+
                 var members = grp["members"]
                     .Value
                     .Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
@@ -99,8 +112,9 @@ namespace Surrogates.Mappers.Parsers
                 .Value
                 .Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
 
-            var intType =
-                interceptors[interceptorName[0]];
+            var intType = strategies
+                .Fields[interceptorName[0]]
+                .FieldType;
 
             var intMethod =
                 intType.GetMethod4Surrogacy(interceptorName[1]);
@@ -126,15 +140,15 @@ namespace Surrogates.Mappers.Parsers
             return false;
         }
 
-        public bool TryGetOperations<T>(string cmd, string[] aliases, Type[] interceptors, ref Strategies strategies)
+        public bool TryGetOperations(string cmd, string[] aliases, Type[] interceptors, ref Strategies strategies)
         {
             var matches =
                 _operationsRegexp.Matches(cmd);
 
-            var dic = new Dictionary<string, Type>();
-
             for (int i = 0; i < aliases.Length; i++)
-            { dic.Add(aliases[i], interceptors[i]); }
+            {
+                strategies.Fields.TryAdd(interceptors[i], ref aliases[i]);
+            }
 
             for (int i = 0; i < matches.Count; i++)
             {
@@ -143,8 +157,8 @@ namespace Surrogates.Mappers.Parsers
                 var grps = matches[i].Groups;
 
                 strategies.Add(grps["accessor1"].Success ?
-                    Get4Properties(typeof(T), dic, grps) :
-                    Get4Methods(typeof(T), dic, grps));
+                    Get4Properties(strategies, grps) :
+                    Get4Methods(strategies, grps));
             }
 
             return true;

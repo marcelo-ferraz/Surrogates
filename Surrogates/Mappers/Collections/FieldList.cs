@@ -3,13 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using Surrogates.Mappers.Entities;
 using Surrogates.Utilities;
+using Surrogates.Tactics;
 
 namespace Surrogates.Mappers.Collections
 {
-    using TypeFieldList = List<FieldList.TypeNField>;
-
     public class FieldList
     {
         internal class TypeNField
@@ -30,14 +28,14 @@ namespace Surrogates.Mappers.Collections
         }
 
         private List<FieldBuilder> _fields;
-        private Dictionary<string, TypeFieldList> _innerTable;
-        private MappingState _owner;
+        private Dictionary<string, List<TypeNField>> _innerTable;
+        private Strategies _owner;
 
-        internal FieldList(MappingState owner)
+        internal FieldList(Strategies owner)
         {
             _owner = owner;
             _fields = new List<FieldBuilder>();
-            _innerTable = new Dictionary<string, TypeFieldList>();
+            _innerTable = new Dictionary<string, List<TypeNField>>();
         }
 
         internal int Count { get { return _fields.Count; } }
@@ -52,22 +50,47 @@ namespace Surrogates.Mappers.Collections
             return Get(typeof(T), name);
         }
 
-        internal FieldBuilder Get(Type type, string name = null)
+        internal bool TryAdd<T>(ref string name)
+        {
+            return TryAdd(typeof(T),ref name);
+        }
+
+        internal bool TryAdd(Type type, ref string name)
         {
             if (string.IsNullOrEmpty(name))
-            { name = "interference"; }
+            { name = "interceptor"; }
 
             if (name.CanBeFieldName())
             { throw new ArgumentException("The name cannot contain any special characters and can only start with a letter."); }
 
-            if (!_innerTable.ContainsKey(name))
-            {
-                _innerTable.Add(
-                    name,
-                    new TypeFieldList() { 
+            if (_innerTable.ContainsKey(name))
+            { return false; }
+
+            _innerTable.Add(
+                name,
+                new List<TypeNField>() { 
                         new TypeNField(type) 
                     });
+
+            return true;
+        }
+
+        internal FieldBuilder this[string name]
+        {
+            get
+            {
+                for (int i = 0; i < _fields.Count; i++)
+                {
+                    if (_fields[i].Name == name)
+                    { return _fields[i]; }
+                }
+                return null;
             }
+        }
+
+        internal FieldBuilder Get(Type type, string name = null)
+        {
+            TryAdd(type, ref name);
 
             var found = false;
             var fields = _innerTable[name];
@@ -83,8 +106,8 @@ namespace Surrogates.Mappers.Collections
             { return fields[index].Field; }
 
             //else
-            var field = _owner.TypeBuilder.DefineField(
-                string.Format("_{0}{1}_{2}", Char.ToLower(name[0]), name.Substring(1), index.ToString()),
+            var field = _owner.Builder.DefineField(
+                string.Format("_{0}{1}_{2}", Char.ToLower(name[0]), name.Length > 1 ? name.Substring(1) : string.Empty, index > 0 ? index.ToString() : string.Empty),
                 type,
                 FieldAttributes.Private);
 

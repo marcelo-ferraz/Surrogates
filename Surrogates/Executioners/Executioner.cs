@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Surrogates.Mappers.Collections;
 
 namespace Surrogates.Executioners
 {
@@ -15,19 +16,19 @@ namespace Surrogates.Executioners
 
         private static FieldInfo _lastPrivateField;
 
-        protected static FieldInfo GetField(Strategy st)
+        protected static FieldInfo GetField(Strategy.Interceptor @int, FieldList fields)
         {
             if (_lastPrivateField != null &&
-                _lastPrivateField.FieldType == st.InterceptorType)
+                _lastPrivateField.FieldType == @int.DeclaredType)
             {
                 return _lastPrivateField;
             }
 
             return _lastPrivateField =
-                st.Fields.Get(st.InterceptorType, st.Name);
+                fields.Get(@int.DeclaredType, @int.Name);
         }
-        
-        protected static virtual MethodBuilder CreateGetter(Strategy.ForProperties strategy, PropertyInfo prop)
+
+        protected static MethodBuilder CreateGetter(Strategy.ForProperties strategy, PropertyInfo prop)
         {
             return strategy.TypeBuilder.DefineMethod(
                 string.Concat("get_", prop.Name),

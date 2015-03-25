@@ -237,10 +237,10 @@ namespace Surrogates.Utilities.Mixins
         /// <typeparam name="T"></typeparam>
         /// <param name="gen"></param>
         /// <param name="fields"></param>
-        internal static void EmitConstructor4<T>(this ILGenerator gen, FieldList fields)
+        internal static void EmitConstructor(this ILGenerator gen, Type baseType, FieldList fields)
         {
             gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Call, typeof(T).GetConstructor(Type.EmptyTypes));
+            gen.Emit(OpCodes.Call, baseType.GetConstructor(Type.EmptyTypes));
 
             for (int i = 0; i < fields.Count; i++)
             {

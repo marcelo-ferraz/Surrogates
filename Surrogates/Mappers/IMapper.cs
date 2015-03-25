@@ -18,7 +18,7 @@ namespace Surrogates.Mappers
     public interface IMapper<TInput>
     {
         public Strategies Strategies { get; set; }
-        void Accept<T>(TInput input, params Type[] interceptors);
+        void Accept(TInput input, params Type[] interceptors);
 
         Type Flush();
     }

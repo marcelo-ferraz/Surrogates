@@ -1,5 +1,4 @@
 ﻿using Surrogates.Executioners;
-using Surrogates.OldExpressions;
 using Surrogates.Mappers.Collections;
 using Surrogates.Utilities;
 using System;
@@ -11,26 +10,39 @@ using System.Text;
 
 namespace Surrogates.Tactics
 {
-    public abstract class Strategy
+    public class Strategy
     {
+        public class Interceptor
+        {
+            public string Name { get; set; }
+            public Type DeclaredType { get; set; }
+            public MethodInfo Method { get; set; }
+        }
+
         public class ForProperties : Strategy
         {
+            public ForProperties(Strategies owner)
+                :base(owner) { }
+
             public ForProperties(Strategy @base)
                 : base(@base) { }
 
-            public PropertyList2 Properties { get; set; }
+            public PropertyList Properties { get; set; }
 
-            public MethodInfo Getter { set; get; }
+            public Interceptor Getter { set; get; }
 
-            public MethodInfo Setter { set; get; }
+            public Interceptor Setter { set; get; }
         }
 
         public class ForMethods : Strategy
         {
+            public ForMethods(Strategies owner)
+                : base(owner) { }
+
             public ForMethods(Strategy @base)
                 : base(@base) { }
 
-            public MethodInfo Interceptor { get; set; }
+            public Interceptor Interceptor { get; set; }
 
             public IList<MethodInfo> Methods { get; set; }
         }
@@ -38,15 +50,15 @@ namespace Surrogates.Tactics
         static Strategy()
         {
             Executioners =
-                new Dictionary<InterferenceKind, ExecutionersAct>
+                new Dictionary<string, Action<Strategy>>
                 {
-                    { InterferenceKind.Substitution, new ReplaceExecutioner().Execute },
-                    { InterferenceKind.Visitation, new VisitationExecutioner().Execute },
-                    { InterferenceKind.Disable, new DisableExecutioner().Execute }
+                    { "replace", new ReplaceExecutioner().Execute },
+                    { "visit", new VisitationExecutioner().Execute },
+                    { "disable", new DisableExecutioner().Execute },
                 };
         }
 
-        public static IDictionary<InterferenceKind, ExecutionersAct> Executioners { get; set; }
+        public static IDictionary<string, Action<Strategy>> Executioners { get; set; }
 
         private Strategies _owner;
 
@@ -58,8 +70,6 @@ namespace Surrogates.Tactics
         public Strategy(Strategy @base)
         {
             this._owner = @base._owner;
-            //this.Name = @base.Name;
-            this.InterceptorType = @base.InterceptorType;
             this.Kind = @base.Kind;
         }
 
@@ -73,11 +83,10 @@ namespace Surrogates.Tactics
             get { return _owner.Builder; }
         }
 
-        public string Name { get; set; }
-
         public InterferenceKind Kind { get; set; }
         
-        public Type InterceptorType { get; set; }
+
+        public string InterferenceKindExtended { get; set; }
 
         public FieldList Fields 
         {
@@ -86,7 +95,13 @@ namespace Surrogates.Tactics
 
         public void Apply(Type baseType, ref TypeBuilder builder)
         {
-            Executioners[Kind](this);
-        }        
+            var executionerName =
+                this.Kind != InterferenceKind.Disable ?
+                Enum.GetName(typeof(InterferenceKind), Kind) : 
+                InterferenceKindExtended;
+            
+
+            Executioners[executionerName](this);
+        }
     }
 }

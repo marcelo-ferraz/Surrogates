@@ -9,6 +9,7 @@ using System.Text;
 using Surrogates.Utilities.Mixins;
 using Surrogates.Mappers;
 using Surrogates.Utilities;
+using Surrogates.Utilities.Mixins;
 
 namespace Surrogates.Executioners
 {
@@ -21,12 +22,15 @@ namespace Surrogates.Executioners
 
             var gen = strategy.TypeBuilder.EmitOverride(
                 strategy.BaseType,
-                strategy.Interceptor, baseAction, GetField(strategy), out baseMethodReturn);
+                strategy.Interceptor.Method, 
+                baseAction, 
+                GetField(strategy.Interceptor, strategy.Fields), 
+                out baseMethodReturn);
 
             gen.Emit(OpCodes.Ldarg_0);
 
             var @params =
-                gen.EmitParameters(strategy.BaseType, strategy.Interceptor, baseAction);
+                gen.EmitParameters(strategy.BaseType, strategy.Interceptor.Method, baseAction);
 
             gen.Emit(OpCodes.Call, baseAction);
             gen.Emit(OpCodes.Ret);
@@ -39,9 +43,9 @@ namespace Surrogates.Executioners
 
             var gen = strategy.TypeBuilder.EmitOverride(
                 strategy.BaseType,
-                strategy.Interceptor,
+                strategy.Interceptor.Method,
                 baseFunction,
-                GetField(strategy),
+                GetField(strategy.Interceptor, strategy.Fields),
                 out baseMethodReturn);
 
             gen.Emit(OpCodes.Pop);
@@ -49,7 +53,7 @@ namespace Surrogates.Executioners
             gen.Emit(OpCodes.Ldarg_0);
 
             var @params =
-                gen.EmitParameters(strategy.BaseType, strategy.Interceptor, baseFunction);
+                gen.EmitParameters(strategy.BaseType, strategy.Interceptor.Method, baseFunction);
 
             gen.Emit(OpCodes.Call, baseFunction);
 
@@ -71,16 +75,16 @@ namespace Surrogates.Executioners
                 gen.DeclareLocal(pType);
 
             gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldfld, GetField(strategy));
+            gen.Emit(OpCodes.Ldfld, GetField(strategy.Getter, strategy.Fields));
 
             var @params = gen.EmitParameters(
                 strategy.BaseType,
-                strategy.Getter,
+                strategy.Getter.Method,
                 p => property.EmitPropertyNameAndField(pType, gen, p));
 
-            gen.EmitCall(strategy.Getter, @params);
+            gen.EmitCall(strategy.Getter.Method, @params);
 
-            if (strategy.Getter.ReturnType != typeof(void))
+            if (strategy.Getter.Method.ReturnType != typeof(void))
             {
                 gen.Emit(OpCodes.Pop);
             }
@@ -110,16 +114,16 @@ namespace Surrogates.Executioners
             ILGenerator gen = setter.GetILGenerator();
 
             gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldfld, GetField(strategy));
+            gen.Emit(OpCodes.Ldfld, GetField(strategy.Setter, strategy.Fields));
 
             var @params = gen.EmitParameters(
                 strategy.BaseType,
-                strategy.Setter,
+                strategy.Setter.Method,
                 p => property.EmitPropertyNameAndFieldAndValue(pType, gen, p));
 
-            gen.EmitCall(strategy.Setter, @params);
+            gen.EmitCall(strategy.Setter.Method, @params);
 
-            if (strategy.Setter.ReturnType != typeof(void))
+            if (strategy.Setter.Method.ReturnType != typeof(void))
             { gen.Emit(OpCodes.Pop); }
 
             gen.Emit(OpCodes.Ldarg_0);

@@ -10,6 +10,11 @@ namespace Surrogates.Utilities.Mixins
     {
         internal static void CreateConstructor4<T>(this TypeBuilder typeBuilder, FieldList fields)
         {
+            typeBuilder.CreateConstructor(typeof(T), fields);
+        }
+
+        internal static void CreateConstructor(this TypeBuilder typeBuilder, Type baseType, FieldList fields)
+        {
             var ctorBuilder = typeBuilder.DefineConstructor(
                 MethodAttributes.Public,
                 CallingConventions.Standard,
@@ -17,7 +22,7 @@ namespace Surrogates.Utilities.Mixins
 
             var ctrGen = ctorBuilder.GetILGenerator();
 
-            ctrGen.EmitConstructor4<T>(fields);
+            ctrGen.EmitConstructor(baseType, fields);
         }
 
         internal static ILGenerator EmitOverride<TBase>(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField)

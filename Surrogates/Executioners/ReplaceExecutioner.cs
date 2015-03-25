@@ -16,7 +16,7 @@ namespace Surrogates.Executioners
             LocalBuilder baseMethodReturn = null;
 
             var gen = strategy.TypeBuilder.EmitOverride(
-                strategy.BaseType, strategy.Interceptor, baseAction, GetField(strategy), out baseMethodReturn);
+                strategy.BaseType, strategy.Interceptor.Method, baseAction, GetField(strategy.Interceptor, strategy.Fields), out baseMethodReturn);
 
             if (baseMethodReturn != null)
             { gen.EmitDefaultValue(baseAction.ReturnType, baseMethodReturn); }
@@ -31,9 +31,9 @@ namespace Surrogates.Executioners
 
             var gen = strategy.TypeBuilder.EmitOverride(
                 strategy.BaseType,
-                strategy.Interceptor,
+                strategy.Interceptor.Method,
                 baseFunction,
-                GetField(strategy),
+                GetField(strategy.Interceptor, strategy.Fields),
                 out baseMethodReturn);
 
             //the base method is void, discard the value
@@ -41,9 +41,9 @@ namespace Surrogates.Executioners
             {
                 gen.Emit(OpCodes.Pop);
             }
-            else if (!strategy.Interceptor.ReturnType.IsAssignableFrom(baseFunction.ReturnType))
+            else if (!strategy.Interceptor.Method.ReturnType.IsAssignableFrom(baseFunction.ReturnType))
             {
-                gen.EmitDefaultValue(strategy.Interceptor.ReturnType, baseMethodReturn);
+                gen.EmitDefaultValue(strategy.Interceptor.Method.ReturnType, baseMethodReturn);
             }
 
             gen.Emit(OpCodes.Ret);
@@ -63,19 +63,19 @@ namespace Surrogates.Executioners
                 gen.DeclareLocal(pType);
 
             gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldfld, GetField(strategy));
+            gen.Emit(OpCodes.Ldfld, GetField(strategy.Getter, strategy.Fields));
 
             var @params = gen.EmitParameters(
                 strategy.BaseType,
-                strategy.Getter,
+                strategy.Getter.Method,
                 p => property.EmitPropertyNameAndField(pType, gen, p));
 
-            gen.EmitCall(strategy.Getter, @params);
+            gen.EmitCall(strategy.Getter.Method, @params);
 
             // in case the new method does not have return or is not assignable from property type
-            if (!strategy.Getter.ReturnType.IsAssignableFrom(pType))
+            if (!strategy.Getter.Method.ReturnType.IsAssignableFrom(pType))
             {
-                if (strategy.Getter.ReturnType != typeof(void))
+                if (strategy.Getter.Method.ReturnType != typeof(void))
                 { gen.Emit(OpCodes.Pop); }
 
                 gen.EmitDefaultValue(pType, returnField);
@@ -98,21 +98,21 @@ namespace Surrogates.Executioners
 
             gen.Emit(OpCodes.Nop);
             gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldfld, GetField(strategy));
+            gen.Emit(OpCodes.Ldfld, GetField(strategy.Setter, strategy.Fields));
 
             var @params = gen.EmitParameters(
                 strategy.BaseType,
-                strategy.Setter,
+                strategy.Setter.Method,
                 p => property.EmitPropertyNameAndField(pType, gen, p));
 
-            gen.EmitCall(strategy.Setter, @params);
+            gen.EmitCall(strategy.Setter.Method, @params);
 
-            if (strategy.Setter.ReturnType != typeof(void) &&
-                !strategy.Setter.ReturnType.IsAssignableFrom(pType))
+            if (strategy.Setter.Method.ReturnType != typeof(void) &&
+                !strategy.Setter.Method.ReturnType.IsAssignableFrom(pType))
             {
                 gen.Emit(OpCodes.Stfld, property.Field);
             }
-            else if (strategy.Setter.ReturnType != typeof(void))
+            else if (strategy.Setter.Method.ReturnType != typeof(void))
             {
                 gen.Emit(OpCodes.Pop);
             }

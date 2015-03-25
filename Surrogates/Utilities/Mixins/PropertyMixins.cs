@@ -52,7 +52,7 @@ namespace Surrogates.Utilities.Mixins
             return false;
         }
 
-        public virtual MethodBuilder CreateGetter(this PropertyInfo prop, ref TypeBuilder builder)
+        public static MethodBuilder CreateGetter(this PropertyInfo prop, ref TypeBuilder builder)
         {
             return builder.DefineMethod(
                 string.Concat("get_", prop.Name),
@@ -61,7 +61,7 @@ namespace Surrogates.Utilities.Mixins
                 Type.EmptyTypes);
         }
 
-        public MethodBuilder CreateSetter(this PropertyInfo prop, ref TypeBuilder builder)
+        public static MethodBuilder CreateSetter(this PropertyInfo prop, ref TypeBuilder builder)
         {
             return builder.DefineMethod(
                 string.Concat("set_", prop.Name),

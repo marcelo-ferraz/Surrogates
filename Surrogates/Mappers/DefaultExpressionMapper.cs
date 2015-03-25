@@ -7,20 +7,18 @@ using System.Text;
 
 namespace Surrogates.Mappers
 {
-    public class DefaultExpressionMapper: IMapper<NewExpression>
+    public class DefaultExpressionMapper: IFlushTypes
     {
-        private Strategies _strategies;
-
         public Tactics.Strategies Strategies { get; set; }
 
-        public void Accept<T>(NewExpression input, params Type[] interceptors)
+        public void Accept(NewExpression input, Strategies strategies)
         {
-            throw new NotImplementedException();
+            Strategies = input.Strategies;
         }
 
         public Type Flush()
         {
-            return _strategies.Apply();
+            return Strategies.Apply();
         }
     }
 }

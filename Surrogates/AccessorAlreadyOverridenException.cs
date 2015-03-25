@@ -1,11 +1,12 @@
 ﻿using System;
-using Surrogates.OldExpressions.Properties.Accessors;
+using Surrogates.Expressions.Accessors;
 
 namespace Surrogates
 {
     public class AccessorAlreadyOverridenException : Exception
     {
         private string p;
+        private Expressions.Accessors.PropertyAccessor accessor;
 
         private static string GetMsg(PropertyAccessor accessor)
         {

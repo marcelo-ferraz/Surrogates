@@ -4,30 +4,29 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
+using Surrogates.Expressions;
 using Surrogates.Mappers;
-using Surrogates.Mappers.Entities;
+using Surrogates.Mappers.Parsers;
+using Surrogates.Tactics;
 
 namespace Surrogates
 {
-    public abstract class BaseContainer4Surrogacy<T, M>
-        where M: BaseMapper
+    public abstract class BaseContainer4Surrogacy
     {
         private static int _assemblyNumber = 0;
         
         protected AssemblyBuilder AssemblyBuilder;
         protected ModuleBuilder ModuleBuilder;
         
-        protected IDictionary<string, T> Dictionary;
+        protected IDictionary<string, Type> Dictionary;
 
         public BaseContainer4Surrogacy()
         {
             Dictionary =
-                new Dictionary<string, T>();
+                new Dictionary<string, Type>();
             CreateAssemblyAndModule();
         }
-
-        protected abstract void AddMap(M mappingExp, Type type);
-
+        
         protected virtual void CreateAssemblyAndModule()
         {
             Interlocked.Increment(ref _assemblyNumber);
@@ -41,44 +40,44 @@ namespace Surrogates
                 string.Concat(AssemblyBuilder.GetName().Name, ".dll"));
         }
 
-        /// <summary>
-        /// Used to create expressions for mapping a specific type
-        /// </summary>
-        /// <returns></returns>
-        protected virtual M CreateExpression()
-        {
-            return (M) Activator.CreateInstance(typeof(M), new MappingState { AssemblyBuilder = AssemblyBuilder, ModuleBuilder = ModuleBuilder });
-        }
 
         /// <summary>
         /// It represents a map, from wich the container will follow to create a proxy to that class
         /// </summary>
         /// <param name="mapping"></param>
         /// <returns></returns>
-        protected virtual void InternalMap(Action<IOldMapper> mapping)
+        protected virtual void InternalMap(Action<NewExpression> mapping)
         {
             var expression =
-                this.CreateExpression();
+                new NewExpression(ModuleBuilder);
 
-            mapping.Invoke(expression);
+            mapping(expression);
 
             Type type =
-                expression.Flush();
+                expression.Strategies.Apply();
 
-            AddMap(expression, type);
+            Dictionary.Add(expression.Name, type);
         }
 
-        protected virtual void InternalMap(string cmd)
+        protected virtual void InternalMap<T>(string cmd, params Type[] interceptors)
         {
-            var expression =
-                this.CreateExpression();
+            var parser = new SCLParser();
+            
+            string[] aliases = null;
 
+            if (!parser.TryGetAliases(cmd, ref aliases))
+            { throw new FormatException("Could not extract 'Aliases' from the command written"); }
 
+            var strategies = 
+                new Strategies(typeof(T), aliases[0], ModuleBuilder);
+            
+            if (!parser.TryGetOperations(cmd, aliases, interceptors, ref strategies))
+            { throw new FormatException("Could extract an expression from the command written"); }
 
             Type type =
-                expression.Flush();
+                strategies.Apply();
 
-            AddMap(expression, type);
+            Dictionary.Add(aliases[0], type);
         }
 
         public virtual bool Has<T>(string key = null)
@@ -89,7 +88,7 @@ namespace Surrogates
         public virtual bool Has(Type type = null, string key = null)
         {
             if (string.IsNullOrEmpty(key))
-            { key = OldDefaultMapper.CreateName4(type); }
+            { key = string.Concat(type.Name, "Proxy"); }
 
             return Dictionary.ContainsKey(key);
         }
