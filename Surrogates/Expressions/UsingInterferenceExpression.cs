@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Surrogates.Tactics;
+using Surrogates.Utilities.Mixins;
 
 namespace Surrogates.Expressions
 {
@@ -10,6 +11,28 @@ namespace Surrogates.Expressions
     {
         public UsingInterferenceExpression(Strategy.ForMethods current, Strategies strategies)
             : base(current, strategies) { }
+
+        public AndExpression<TBase> Using<T>(string method)
+        {
+            return this.Using<T>(null, method);
+        }
+
+        public AndExpression<TBase> Using<T>(string name, string method)
+        {        
+            Strategies.Fields.TryAdd<T>(ref name);
+            
+            CurrentStrategy.Interceptor =
+               new Strategy.Interceptor
+               {
+                   DeclaredType = typeof(T),
+                   Name = name,
+                   Method = typeof(T).GetMethod4Surrogacy(method)
+               };
+
+            Strategies.Add(CurrentStrategy);
+
+            return new AndExpression<TBase>(new Strategy(Strategies), Strategies);
+        }
 
         public AndExpression<TBase> Using<T>(Func<T, Delegate> method)
         {

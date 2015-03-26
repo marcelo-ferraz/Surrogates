@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using Surrogates.Mappers;
+using Surrogates.Model;
 
 namespace Surrogates.Utilities
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using Surrogates.Mappers.Collections;
+using Surrogates.Model.Collections;
 using Surrogates.Utilities.Mixins;
 
 namespace Surrogates.Tactics
@@ -15,9 +15,7 @@ namespace Surrogates.Tactics
         private IList<Strategy> _strategies;
 
         internal Strategies(Type baseType,string name, ModuleBuilder moduleBuilder)
-        {
-            this.BaseType = baseType;
-            
+        {            
             if (string.IsNullOrEmpty(name))
             { name = string.Concat(baseType, "Proxy"); }
             
@@ -28,6 +26,10 @@ namespace Surrogates.Tactics
             }
             catch (ArgumentException argEx)
             { throw new ProxyAlreadyMadeException(baseType, name, argEx); }
+
+            this.BaseType = baseType;
+            this._strategies = new List<Strategy>();
+            this.Fields = new FieldList(this);
         }
 
         public void Add(Strategy strategy)
@@ -45,7 +47,6 @@ namespace Surrogates.Tactics
 
         public Type Apply()
         {
-
             this.Builder
                 .CreateConstructor(this.BaseType, this.Fields);
 

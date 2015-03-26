@@ -3,7 +3,7 @@ using System.Reflection;
 using Surrogates.Expressions.Accessors;
 using Surrogates.Tactics;
 
-namespace Surrogates.Mappers.Collections
+namespace Surrogates.Model.Collections
 {
     public class PropertyList : List<Property>
     {

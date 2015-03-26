@@ -12,11 +12,10 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
             var container = new SurrogatesContainer();
 
             container.Map(m => m
-                .Throughout<Dummy>()
+                .From<Dummy>()
                 .Replace
-                .ThisMethod<int>(d => d.Call_SetPropText_simple_Return_1)
-                .Using<InterferenceObject>()
-                .ThisMethod(r => r.AccomplishNothing))
+                .This(d => (Func<int>)d.Call_SetPropText_simple_Return_1)
+                .Using<InterferenceObject>(r => (Action)r.AccomplishNothing))
                 ;
 
             var dummy =
@@ -25,9 +24,9 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
             var proxy =
                 container.Invoke<Dummy>();
 
-            var dummyRes = 
+            var dummyRes =
                 dummy.Call_SetPropText_simple_Return_1();
-            var proxyRes = 
+            var proxyRes =
                 proxy.Call_SetPropText_simple_Return_1();
 
             Assert.AreEqual("simple", dummy.Text);
@@ -42,10 +41,10 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
             var container = new SurrogatesContainer();
 
             container.Map(m =>
-                m.Throughout<Dummy>()
-                .Replace.ThisMethod<string, DateTime, Dummy.EvenMore, int>(d => d.Call_SetPropText_complex_Return_1)
-                .Using<InterferenceObject>()
-                .ThisMethod<string, Dummy, DateTime, string, Dummy.EvenMore>(r => r.AddToPropText__MethodName));
+                m.From<Dummy>()
+                .Replace
+                .This(d => (Func<string, DateTime, Dummy.EvenMore, int>)d.Call_SetPropText_complex_Return_1)
+                .Using<InterferenceObject>("AddToPropText__MethodName"));
 
             var dummy =
                 new Dummy();
@@ -63,10 +62,10 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
             Assert.AreEqual("simple", proxy.Text);
 
             //and now, the comparison between the two methods
-            var dummyRes = 
+            var dummyRes =
                 dummy.Call_SetPropText_complex_Return_1("this call was not made by the original property", DateTime.Now, new Dummy.EvenMore());
-            
-            var proxyRes = 
+
+            var proxyRes =
                 proxy.Call_SetPropText_complex_Return_1("this call was not made by the original property", DateTime.Now, new Dummy.EvenMore());
 
             Assert.IsNotNullOrEmpty(dummy.Text);
@@ -83,10 +82,10 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
             var container = new SurrogatesContainer();
 
             container.Map(m =>
-                m.Throughout<Dummy>()
-                .Replace.ThisMethod<string, DateTime, Dummy.EvenMore, int>(d => d.Call_SetPropText_complex_Return_1)
-                .Using<InterferenceObject>()
-                .ThisMethod<string, Dummy, DateTime, string, Dummy.EvenMore>(r => r.Void_VariousParametersWithDifferentNames))
+                m.From<Dummy>()
+                .Replace
+                .Method("Call_SetPropText_complex_Return_1")
+                .Using<InterferenceObject>(r => (Action<string, Dummy, DateTime, string, Dummy.EvenMore>)r.Void_VariousParametersWithDifferentNames))
                 ;
 
             var dummy =
@@ -105,11 +104,10 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
             var container = new SurrogatesContainer();
 
             container.Map(m => m
-                .Throughout<Dummy>()
+                .From<Dummy>()
                 .Replace
-                .ThisMethod<int>(d => d.Call_SetPropText_simple_Return_1)
-                .Using<InterferenceObject>()
-                .ThisMethod<Dummy, string>(r => r.SetPropText_InstanceAndMethodName));
+                .This(d => (Func<int>)d.Call_SetPropText_simple_Return_1)
+                .Using<InterferenceObject>(r => (Action<Dummy, string>)r.SetPropText_InstanceAndMethodName));
 
             var dummy =
                 new Dummy();
@@ -119,7 +117,7 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
 
             var dummyRes =
                 dummy.Call_SetPropText_simple_Return_1();
-            var proxyRes = 
+            var proxyRes =
                 proxy.Call_SetPropText_simple_Return_1();
 
             Assert.IsNotNullOrEmpty(dummy.Text);

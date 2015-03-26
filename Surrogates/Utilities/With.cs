@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using Surrogates.OldExpressions;
-using Surrogates.Mappers;
+using Surrogates.Model;
 using Surrogates.Tactics;
 
 namespace Surrogates.Utilities
 {
+    using Accessors = Surrogates.Expressions.Accessors;
+
     /// <summary>
     /// Adds to the expression
     /// </summary>
@@ -16,8 +17,20 @@ namespace Surrogates.Utilities
         /// It adds a very simple getter accessor to the property 
         /// </summary>
         /// <param name="expression">The expression used for changing the accessor</param>
+        public static void OneSimpleGetter(Accessors.ModifierExpression expression)
+        {
+            foreach (var prop in expression.Strategy.Properties)
+            {
+                OneSimpleGetter(expression.Strategy, prop);
+            }
+        }
+
+        /// <summary>
+        /// It adds a very simple getter accessor to the property 
+        /// </summary>
+        /// <param name="strategy">the strategy respnsible for </param>
         /// <param name="prop">The original property </param>
-        public static MethodBuilder OneSimpleGetter(Strategy.ForProperties strategy, Property prop)
+        internal static MethodBuilder OneSimpleGetter(Strategy.ForProperties strategy, Property prop)
         {
             MethodBuilder getter = strategy.TypeBuilder.DefineMethod(
                 string.Concat("get_", prop.Original.Name),
@@ -47,7 +60,15 @@ namespace Surrogates.Utilities
         /// </summary>
         /// <param name="strategy">The expression used for changing the accessor</param> 
         /// <param name="prop">The original property </param>
-        public static MethodBuilder OneSimpleSetter(Strategy.ForProperties strategy, Property prop)
+        public static void OneSimpleSetter(Accessors.ModifierExpression expression)
+        {
+            foreach (var prop in expression.Strategy.Properties)
+            {
+                OneSimpleSetter(expression.Strategy, prop);
+            }
+        }
+        
+        internal static MethodBuilder OneSimpleSetter(Strategy.ForProperties strategy, Property prop)
         {
             //insert a basic set
             MethodBuilder setter = strategy.TypeBuilder.DefineMethod(

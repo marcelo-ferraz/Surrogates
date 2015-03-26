@@ -5,8 +5,8 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
 using Surrogates.Expressions;
-using Surrogates.Mappers;
-using Surrogates.Mappers.Parsers;
+using Surrogates.Model;
+using Surrogates.Model.Parsers;
 using Surrogates.Tactics;
 
 namespace Surrogates
@@ -55,8 +55,9 @@ namespace Surrogates
 
             Type type =
                 expression.Strategies.Apply();
-
-            Dictionary.Add(expression.Name, type);
+            var name = expression.Name;
+            
+            Dictionary.Add(type.Name, type);
         }
 
         protected virtual void InternalMap<T>(string cmd, params Type[] interceptors)

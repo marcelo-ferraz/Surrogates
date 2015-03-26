@@ -12,20 +12,13 @@ namespace Surrogates.Tests.Github.Examples.LazyLoadIng
         public void Map()
         {
             _container.Map(m => m
-                .Throughout<SimpleModel>()
+                .From<SimpleModel>()
                 .Replace
-                .ThisProperty(d => d.Id)
+                .These(d => d.Id, d => d.OutterId)
                 .Accessors(a => a
-                    .Getter.Using<IdLazyLoader>("idLoader").ThisMethod<string, int>(l => l.Load)
+                    .Getter.Using<IdLazyLoader>("idLoader", l => (Func<string, int>) l.Load)
                     .And
-                    .Setter.Using<IdLazyLoader>("idLoader").ThisMethod<int>(l => l.MarkAsDirty))
-                .And
-                .Replace
-                .ThisProperty(d => d.OutterId)
-                .Accessors(a => a
-                    .Getter.Using<IdLazyLoader>("idLoader").ThisMethod<string, int>(l => l.Load)
-                    .And
-                    .Setter.Using<IdLazyLoader>("idLoader").ThisMethod<int>(l => l.MarkAsDirty))                    
+                    .Setter.Using<IdLazyLoader>("idLoader", l => (Action<int>) l.MarkAsDirty))                
                 ).Save();
         }
 
@@ -47,27 +40,27 @@ namespace Surrogates.Tests.Github.Examples.LazyLoadIng
         }
     }
 
-    public class SimpleModelProxy2 : SimpleModel
-    {
-        private IdLazyLoader _id_loader_0;
+    //public class SimpleModelProxy2 : SimpleModel
+    //{
+    //    private IdLazyLoader _id_loader_0;
 
-        private int _id;
+    //    private int _id;
 
-        public override int Id
-        {
-            get
-            {
-                return this._id_loader_0.Load("Id");
-            }
-            set
-            {
-                this._id_loader_0.MarkAsDirty(value);
-            }
-        }
+    //    public override int Id
+    //    {
+    //        get
+    //        {
+    //            return this._id_loader_0.Load("Id");
+    //        }
+    //        set
+    //        {
+    //            this._id_loader_0.MarkAsDirty(value);
+    //        }
+    //    }
 
-        public SimpleModelProxy2()
-        {
-            this._id_loader_0 = new IdLazyLoader();
-        }
-    }
+    //    public SimpleModelProxy2()
+    //    {
+    //        this._id_loader_0 = new IdLazyLoader();
+    //    }
+    //}
 }

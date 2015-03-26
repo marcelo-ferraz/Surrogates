@@ -1,4 +1,4 @@
-﻿using Surrogates.Mappers;
+﻿using Surrogates.Model;
 using Surrogates.Tactics;
 using Surrogates.Utilities;
 using Surrogates.Utilities.Mixins;

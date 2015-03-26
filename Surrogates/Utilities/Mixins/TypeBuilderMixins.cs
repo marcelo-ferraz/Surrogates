@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using Surrogates.Mappers.Collections;
+using Surrogates.Model.Collections;
 
 namespace Surrogates.Utilities.Mixins
 {

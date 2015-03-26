@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 using Surrogates.Utilities.Mixins;
 using Surrogates.Tactics;
 
-namespace Surrogates.Mappers
+namespace Surrogates.Model
 {
     public class Property : IComparable
     {

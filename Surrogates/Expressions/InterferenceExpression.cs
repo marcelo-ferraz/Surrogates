@@ -20,12 +20,55 @@ namespace Surrogates.Expressions
         public InterferenceExpression(Strategy current, Strategies strategies)
             : base(current, strategies) { }
 
-        public T4Method This(params Func<TBase, Delegate>[] method)
+        public T4Method Method(string methodName)
         {
-            return (T4Method)Activator.CreateInstance(typeof(T4Method), CurrentStrategy, Strategies);
+            return Methods(methodName);
         }
 
-        public T4Prop This(params Func<TBase, object>[] props)
+        public T4Method Methods(params string[] methodNames)
+        {
+            var strat = new
+                Strategy.ForMethods(CurrentStrategy);
+
+            foreach (var methodName in methodNames)
+            {
+                MethodInfo method;
+
+                if ((method = strat.BaseType.GetMethod4Surrogacy(methodName)) == null)
+                { throw new MethodNotFoundException(methodName); }
+
+                strat.Methods.Add(method);
+            }
+
+            return (T4Method)Activator.CreateInstance(typeof(T4Method), strat, Strategies);
+        }
+
+        public T4Method This(Func<TBase, Delegate> method)
+        {
+            return this.These(method);
+        }
+
+        public T4Method These(params Func<TBase, Delegate>[] methods)
+        {
+
+            var strat = new
+                Strategy.ForMethods(CurrentStrategy);
+
+            foreach (var methodGetter in methods)
+            {
+                strat.Methods.Add(
+                    methodGetter(base.GetNotInit<TBase>()).Method);
+            }
+
+            return (T4Method)Activator.CreateInstance(typeof(T4Method), strat, Strategies);
+        }
+
+        public T4Prop This(Func<TBase, object> prop)
+        {
+            return this.These(prop);
+        }
+
+        public T4Prop These(params Func<TBase, object>[] props)
         {
             var strat = new
                 Strategy.ForProperties(CurrentStrategy);
@@ -34,6 +77,29 @@ namespace Surrogates.Expressions
             {
                 strat.Properties.Add(
                     GetProp(propGetter));
+            }
+
+            return (T4Prop)Activator.CreateInstance(typeof(T4Prop), strat, Strategies);
+        }
+
+        public T4Prop Property(string propName)
+        {
+            return this.Properties(propName);
+        }
+
+        public T4Prop Properties(params string[] propNames)
+        {
+            var strat = new
+                Strategy.ForProperties(CurrentStrategy);
+
+            foreach (var propName in propNames)
+            {
+                PropertyInfo prop;
+
+                if ((prop = strat.BaseType.GetProp4Surrogacy(propName)) == null)
+                { throw new PropertyNotFoundException(propName); }
+
+                strat.Properties.Add(prop);
             }
 
             return (T4Prop)Activator.CreateInstance(typeof(T4Prop), strat, Strategies);

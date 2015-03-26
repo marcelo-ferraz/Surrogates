@@ -12,11 +12,10 @@ namespace Surrogates.Tests.Simple.Methods.Visit
             var container = new SurrogatesContainer();
 
             container.Map(m => m
-                .Throughout<Dummy>()
+                .From<Dummy>()
                 .Visit
-                .ThisMethod<int>(d => d.Call_SetPropText_simple_Return_1)
-                .Using<InterferenceObject>()
-                .ThisMethod(r => r.AccomplishNothing))
+                .This(d => (Func<int>)d.Call_SetPropText_simple_Return_1)
+                .Using<InterferenceObject>(r => (Action) r.AccomplishNothing))
                 ;
 
             var dummy =
@@ -41,10 +40,10 @@ namespace Surrogates.Tests.Simple.Methods.Visit
             var container = new SurrogatesContainer();
 
             container.Map(m =>
-                m.Throughout<Dummy>()
-                .Visit.ThisMethod<string, DateTime, Dummy.EvenMore, int>(d => d.Call_SetPropText_complex_Return_1)
-                .Using<InterferenceObject>()
-                .ThisMethod<string, Dummy, DateTime, string, Dummy.EvenMore>(r => r.AddToPropText__MethodName));
+                m.From<Dummy>()
+                .Visit
+                .This(d => (Func<string, DateTime, Dummy.EvenMore, int>) d.Call_SetPropText_complex_Return_1)
+                .Using<InterferenceObject>(r => (Action<string, Dummy, DateTime, string, Dummy.EvenMore>) r.AddToPropText__MethodName));
 
             var dummy =
                 new Dummy();
@@ -81,11 +80,10 @@ namespace Surrogates.Tests.Simple.Methods.Visit
             var container = new SurrogatesContainer();
 
             container.Map(m =>
-                m.Throughout<Dummy>()
-                .Visit.ThisMethod<string, DateTime, Dummy.EvenMore, int>(d => d.Call_SetPropText_complex_Return_1)
-                .Using<InterferenceObject>()
-                .ThisMethod<string, Dummy, DateTime, string, Dummy.EvenMore>(r => r.Void_VariousParametersWithDifferentNames))
-                ;
+                m.From<Dummy>()
+                .Visit
+                .Method("Call_SetPropText_complex_Return_1")
+                .Using<InterferenceObject>("Void_VariousParametersWithDifferentNames"));
 
             var dummy =
                 new Dummy();
@@ -103,11 +101,10 @@ namespace Surrogates.Tests.Simple.Methods.Visit
             var container = new SurrogatesContainer();
 
             container.Map(m => m
-                .Throughout<Dummy>()
+                .From<Dummy>()
                 .Visit
-                .ThisMethod<int>(d => d.Call_SetPropText_simple_Return_1)
-                .Using<InterferenceObject>()
-                .ThisMethod<Dummy, string>(r => r.SetPropText_InstanceAndMethodName));
+                .This(d => (Func<int>)d.Call_SetPropText_simple_Return_1)
+                .Using<InterferenceObject>("SetPropText_InstanceAndMethodName"));
 
             var dummy =
                 new Dummy();

@@ -15,9 +15,9 @@ namespace Surrogates.Tests.Simple._Properties
                 new SurrogatesContainer();
 
             container.Map(m => m
-                .Throughout<Dummy>()
+                .From<Dummy>()
                 .Visit
-                .ThisProperty(d => d.AccessItWillThrowException)
+                .This(d => d.AccessItWillThrowException)
                 .Accessors(a =>
                 {
                     With.OneSimpleGetter(a);
@@ -32,12 +32,11 @@ namespace Surrogates.Tests.Simple._Properties
                 new SurrogatesContainer();
 
             container.Map(m => m
-                .Throughout<Dummy>()
+                .From<Dummy>()
                 .Visit
-                .ThisProperty(d => d.AccessItWillThrowException)
+                .This(d => d.AccessItWillThrowException)
                 .Accessors(a =>
-                    a.Getter.Using<InterferenceObject>().ThisMethod<Dummy, string, int>(d => d.SetPropText_InstanceAndMethodName_Return2)))
-                    ;
+                    a.Getter.Using<InterferenceObject>(d => (Func<Dummy, string, int>) d.SetPropText_InstanceAndMethodName_Return2)));
 
             var proxy =
                 container.Invoke<Dummy>();
@@ -56,12 +55,12 @@ namespace Surrogates.Tests.Simple._Properties
                 new SurrogatesContainer();
 
             container.Map(m => m
-                .Throughout<Dummy>()
+                .From<Dummy>()
                 .Visit
-                .ThisProperty(d => d.AccessItWillThrowException)
+                .This(d => d.AccessItWillThrowException)
                 .Accessors(a =>
-                    a.Setter.Using<InterferenceObject>().ThisMethod<int, Dummy, int>(d => d.SetPropText_info_Return_FieldPlus1)))
-                    .Save();
+                    a.Setter.Using<InterferenceObject>(d => (Func<int, Dummy, int>) d.SetPropText_info_Return_FieldPlus1)))
+                .Save();
 
             var proxy =
                 container.Invoke<Dummy>();
@@ -80,12 +79,11 @@ namespace Surrogates.Tests.Simple._Properties
                 new SurrogatesContainer();
 
             container.Map(m => m
-                .Throughout<Dummy>()
+                .From<Dummy>()
                 .Visit
-                .ThisProperty(d => d.AccessItWillThrowException)
+                .This(d => d.AccessItWillThrowException)
                 .Accessors(a =>
-                  a.Getter.Using<InterferenceObject>().ThisMethod<Dummy, int>(d => d.SetPropText_TypeName)))
-                  ;
+                  a.Getter.Using<InterferenceObject>(d => (Action<Dummy, int>) d.SetPropText_TypeName)));
 
             var proxy =
                 container.Invoke<Dummy>();
@@ -104,11 +102,11 @@ namespace Surrogates.Tests.Simple._Properties
                 new SurrogatesContainer();
 
             container.Map(m => m
-                .Throughout<Dummy>()
+                .From<Dummy>()
                 .Visit
-                .ThisProperty(d => d.AccessItWillThrowException)
+                .This(d => d.AccessItWillThrowException)
                 .Accessors(a => a
-                    .Getter.Using<InterferenceObject>().ThisMethod<int, Dummy, int>(d => d.SetPropText_info_Return_FieldPlus1))
+                    .Getter.Using<InterferenceObject>(d => (Func<int, Dummy, int>) d.SetPropText_info_Return_FieldPlus1))
                 );
 
             var proxy =

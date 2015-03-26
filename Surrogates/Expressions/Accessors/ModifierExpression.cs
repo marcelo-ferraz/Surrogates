@@ -3,32 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Surrogates.Tactics;
+using Surrogates.Model;
 
 namespace Surrogates.Expressions.Accessors
 {
     public class ModifierExpression
     {
-        private Strategy.ForProperties _strategy;
-
+        internal Strategy.ForProperties Strategy { get; set; }
+        
         public ModifierExpression(Strategy.ForProperties strategy)
         {
-            this._strategy = strategy;
+            this.Strategy = strategy;
         }
 
-        public Accessors.WithExpression Getter
+        public Accessors.UsingExpression Getter
         {
             get
             {
-                return new Accessors.WithExpression(_strategy, PropertyAccessor.Get);
+                return new Accessors.UsingExpression(Strategy, PropertyAccessor.Get);
             }
         }
 
-        public Accessors.WithExpression Setter
+        public Accessors.UsingExpression Setter
         {
             get
             {
-                return new Accessors.WithExpression(_strategy, PropertyAccessor.Set);
+                return new Accessors.UsingExpression(Strategy, PropertyAccessor.Set);
             }
         }
+
     }
 }

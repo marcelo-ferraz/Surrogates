@@ -1,5 +1,5 @@
 ﻿using Surrogates.Executioners;
-using Surrogates.Mappers.Collections;
+using Surrogates.Model.Collections;
 using Surrogates.Utilities;
 using System;
 using System.Collections.Generic;
@@ -22,10 +22,12 @@ namespace Surrogates.Tactics
         public class ForProperties : Strategy
         {
             public ForProperties(Strategies owner)
-                :base(owner) { }
+                :base(owner)
+            { Properties = new PropertyList(this); }
 
             public ForProperties(Strategy @base)
-                : base(@base) { }
+                : base(@base)
+            { Properties = new PropertyList(this); }
 
             public PropertyList Properties { get; set; }
 
@@ -37,10 +39,12 @@ namespace Surrogates.Tactics
         public class ForMethods : Strategy
         {
             public ForMethods(Strategies owner)
-                : base(owner) { }
+                : base(owner) 
+            { Methods = new List<MethodInfo>(); }
 
             public ForMethods(Strategy @base)
-                : base(@base) { }
+                : base(@base) 
+            { Methods = new List<MethodInfo>(); }
 
             public Interceptor Interceptor { get; set; }
 
@@ -97,7 +101,7 @@ namespace Surrogates.Tactics
         {
             var executionerName =
                 this.Kind != InterferenceKind.Disable ?
-                Enum.GetName(typeof(InterferenceKind), Kind) : 
+                Enum.GetName(typeof(InterferenceKind), Kind).ToLower() : 
                 InterferenceKindExtended;
             
 

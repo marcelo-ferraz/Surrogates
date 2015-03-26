@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Runtime;
 using System.Text.RegularExpressions;
-using Surrogates.Mappers.Collections;
+using Surrogates.Model.Collections;
 
-namespace Surrogates.Mappers.Parsers
+namespace Surrogates.Model.Parsers
 {
     public class SCLParser
     {

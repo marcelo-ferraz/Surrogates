@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Surrogates.Tests.Simple.Entities;
+using System;
 
 namespace Surrogates.Tests.Simple.Methods.Disable
 {
@@ -12,9 +13,9 @@ namespace Surrogates.Tests.Simple.Methods.Disable
             var container = new SurrogatesContainer();
 
             container.Map(m => m
-                .Throughout<Dummy>()
+                .From<Dummy>()
                 .Disable
-                .ThisMethod(d => d.SetPropText_simple));
+                .Method("SetPropText_simple"));
 
             var dummy =
                 new Dummy();
@@ -34,9 +35,9 @@ namespace Surrogates.Tests.Simple.Methods.Disable
             var container = new SurrogatesContainer();
 
             container.Map(m => m
-                .Throughout<Dummy>()
+                .From<Dummy>()
                 .Disable
-                .ThisMethod<int>(d => d.Call_SetPropText_simple_Return_1));
+                .This(d => (Func<int>)d.Call_SetPropText_simple_Return_1));
 
             var dummy =
                 new Dummy();

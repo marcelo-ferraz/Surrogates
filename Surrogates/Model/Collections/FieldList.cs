@@ -6,7 +6,7 @@ using System.Reflection.Emit;
 using Surrogates.Utilities;
 using Surrogates.Tactics;
 
-namespace Surrogates.Mappers.Collections
+namespace Surrogates.Model.Collections
 {
     public class FieldList
     {

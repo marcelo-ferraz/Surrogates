@@ -13,11 +13,10 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
             var container = new SurrogatesContainer();
 
             container.Map(m => m
-                .Throughout<Dummy>()
+                .From<Dummy>()
                 .Replace
-                .ThisMethod(d => d.SetPropText_simple)
-                .Using<InterferenceObject>()
-                .ThisMethod(r => r.AccomplishNothing));
+                .This(d => (Action) d.SetPropText_simple)
+                .Using<InterferenceObject>(r => (Action) r.AccomplishNothing));
 
             var dummy =
                 new Dummy();
@@ -38,10 +37,9 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
             var container = new SurrogatesContainer();
 
             container.Map(m =>
-                m.Throughout<Dummy>()
-                .Replace.ThisMethod<string, DateTime, Dummy.EvenMore>(d => d.SetPropText_complex)
-                .Using<InterferenceObject>()
-                .ThisMethod<string, Dummy, DateTime, string, Dummy.EvenMore>(r => r.AddToPropText__MethodName));
+                m.From<Dummy>()
+                .Replace.This(d => (Action<string, DateTime, Dummy.EvenMore>) d.SetPropText_complex)
+                .Using<InterferenceObject>(r => (Action<string, Dummy, DateTime, string, Dummy.EvenMore>)r.AddToPropText__MethodName));
 
             var dummy =
                 new Dummy();
@@ -74,10 +72,10 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
             var container = new SurrogatesContainer();
 
             container.Map(m =>
-                m.Throughout<Dummy>()
-                .Replace.ThisMethod<string, DateTime, Dummy.EvenMore>(d => d.SetPropText_complex)
-                .Using<InterferenceObject>()
-                .ThisMethod<string, Dummy, DateTime, string, Dummy.EvenMore>(r => r.Void_VariousParametersWithDifferentNames));
+                m.From<Dummy>()
+                .Replace
+                .This(d => (Action<string, DateTime, Dummy.EvenMore>)d.SetPropText_complex)
+                .Using<InterferenceObject>("Void_VariousParametersWithDifferentNames"));
             
             var dummy =
                 new Dummy();
@@ -95,11 +93,10 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
             var container = new SurrogatesContainer();
 
             container.Map(m => m
-                .Throughout<Dummy>()
+                .From<Dummy>()
                 .Replace
-                .ThisMethod(d => d.SetPropText_simple)
-                .Using<InterferenceObject>()
-                .ThisMethod<Dummy, string>(r => r.SetPropText_InstanceAndMethodName));
+                .This(d => (Action) d.SetPropText_simple)
+                .Using<InterferenceObject>(r => (Action<Dummy, string>) r.SetPropText_InstanceAndMethodName));
 
             var dummy =
                 new Dummy();

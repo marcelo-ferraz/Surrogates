@@ -8,24 +8,24 @@ using Surrogates.Tactics;
 
 namespace Surrogates.Expressions.Accessors
 {
-    public class WithExpression
+    public class UsingExpression
     {
         private PropertyAccessor _caller;
         internal Strategy.ForProperties _strategy;
         internal MethodInfo Method { get; set; }
 
-        public WithExpression(Strategy.ForProperties strategy, PropertyAccessor caller)
+        public UsingExpression(Strategy.ForProperties strategy, PropertyAccessor caller)
         {
             this._strategy = strategy;
             this._caller = caller;
         }
 
-        public Accessors.AndExpression With<T>(Func<T, Delegate> interceptor)
+        public Accessors.AndExpression Using<T>(Func<T, Delegate> interceptor)
         {
-            return With<T>(null, interceptor);
+            return Using<T>(null, interceptor);
         }
 
-        public Accessors.AndExpression With<T>(string name, Func<T, Delegate> interceptor)
+        public Accessors.AndExpression Using<T>(string name, Func<T, Delegate> interceptor)
         {
             var holder = (T)FormatterServices
                 .GetSafeUninitializedObject(typeof(T));

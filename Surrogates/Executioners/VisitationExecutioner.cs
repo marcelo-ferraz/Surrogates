@@ -7,7 +7,7 @@ using System.Reflection.Emit;
 using System.Runtime;
 using System.Text;
 using Surrogates.Utilities.Mixins;
-using Surrogates.Mappers;
+using Surrogates.Model;
 using Surrogates.Utilities;
 using Surrogates.Utilities.Mixins;
 

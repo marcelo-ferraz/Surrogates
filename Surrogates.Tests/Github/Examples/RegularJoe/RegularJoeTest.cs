@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 
 namespace Surrogates.Tests.Github.Examples.RegularJoe
 {
@@ -11,18 +12,15 @@ namespace Surrogates.Tests.Github.Examples.RegularJoe
         public void Map()
         {
             _container.Map(m => m
-                .Throughout<RegularJoe>()
+                .From<RegularJoe>()
                 .Replace
-                .ThisProperty(d => d.Age)
+                .This(d => d.Age)
                 .Accessors(a =>
-                    a.Getter.Using<TwoKids>().ThisMethod<int, int>(d => d.AddTo))
-                
+                    a.Getter.Using<TwoKids>(d => (Func<int, int>) d.AddTo))                
                 .And
-
                 .Replace
-                .ThisMethod("Calculate")
-                .Using<TwoKids>()
-                .ThisMethod("NewMethod"));
+                .Method("Calculate")
+                .Using<TwoKids>("NewMethod"));
         }
 
         [Test]

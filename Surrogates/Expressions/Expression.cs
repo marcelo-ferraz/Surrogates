@@ -15,13 +15,12 @@ namespace Surrogates.Expressions
         protected Expression(TStrat strategy, Strategies strategies)
         {
             this.CurrentStrategy = strategy;
+            this.Strategies = strategies;
         }
 
         protected T GetNotInit<T>()
         {
-            var dummy =
-                FormatterServices.GetSafeUninitializedObject(typeof(T));
-            return __refvalue( __makeref(dummy),T);
+            return (T) FormatterServices.GetSafeUninitializedObject(typeof(T));
         }
     }
 }

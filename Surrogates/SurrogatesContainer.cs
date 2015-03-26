@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection.Emit;
 using Surrogates.Expressions;
-using Surrogates.Mappers;
+using Surrogates.Model;
 
 namespace Surrogates
 {

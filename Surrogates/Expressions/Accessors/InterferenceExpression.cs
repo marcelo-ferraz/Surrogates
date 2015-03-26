@@ -3,13 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Surrogates.Tactics;
+using Surrogates.Model;
 
 namespace Surrogates.Expressions.Accessors
 {
     public class InterferenceExpression<TBase> : Expression<TBase, Strategy>
     {
-        public InterferenceExpression(Strategy current, Strategies strategies)
-            : base(current, strategies) { }
+        private Property _property;
+
+        public InterferenceExpression(Strategy current, Strategies strategies, Property property)
+            : base(current, strategies) 
+        { 
+            _property = property;
+        }
 
         public AndExpression<TBase> Accessors(Action<ModifierExpression> modExpr)
         {
