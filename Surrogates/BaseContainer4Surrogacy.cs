@@ -55,8 +55,7 @@ namespace Surrogates
 
             Type type =
                 expression.Strategies.Apply();
-            var name = expression.Name;
-            
+                        
             Dictionary.Add(type.Name, type);
         }
 
