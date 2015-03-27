@@ -1,10 +1,11 @@
 ﻿using NUnit.Framework;
-using Surrogates.Tests.Simple.Entities;
+using Surrogates.Tests.Scenarios.Entities;
 using System;
 
-namespace Surrogates.Tests.Simple.Methods.Substitute
+namespace Surrogates.Tests.Scenarios.Methods.Substitute
 {
-    public class Substitute_FuncWithActionTest : IInterferenceTest
+    [TestFixture]
+    public class Substitute_FuncWithFuncTest : IInterferenceTest
     {
         [Test]
         public void BothParameterLess()
@@ -15,7 +16,7 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
                 .From<Dummy>()
                 .Replace
                 .This(d => (Func<int>)d.Call_SetPropText_simple_Return_1)
-                .Using<InterferenceObject>(r => (Action)r.AccomplishNothing))
+                .Using<InterferenceObject>(r => (Func<int>)r.AccomplishNothing_Return2))
                 ;
 
             var dummy =
@@ -32,7 +33,7 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
             Assert.AreEqual("simple", dummy.Text);
             Assert.IsNullOrEmpty(proxy.Text);
             Assert.AreNotEqual(dummyRes, proxyRes);
-            Assert.AreEqual(0, proxyRes);
+            Assert.AreEqual(2, proxyRes);
         }
 
         [Test]
@@ -42,9 +43,8 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
 
             container.Map(m =>
                 m.From<Dummy>()
-                .Replace
-                .This(d => (Func<string, DateTime, Dummy.EvenMore, int>)d.Call_SetPropText_complex_Return_1)
-                .Using<InterferenceObject>("AddToPropText__MethodName"));
+                .Replace.This(d => (Func<string, DateTime, Dummy.EvenMore, int>)d.Call_SetPropText_complex_Return_1)
+                .Using<InterferenceObject>(r => (Func<string, Dummy, DateTime, string, Dummy.EvenMore, int> ) r.AddToPropText__MethodName_Return2));
 
             var dummy =
                 new Dummy();
@@ -73,7 +73,7 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
             Assert.IsNotNullOrEmpty(proxy.Text);
             Assert.AreEqual("simple, this call was not made by the original property - property: Call_SetPropText_complex_Return_1", proxy.Text);
             Assert.AreNotEqual(dummyRes, proxyRes);
-            Assert.AreEqual(0, proxyRes);
+            Assert.AreEqual(2, proxyRes);
         }
 
         [Test, ExpectedException(typeof(NullReferenceException))]
@@ -85,7 +85,8 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
                 m.From<Dummy>()
                 .Replace
                 .Method("Call_SetPropText_complex_Return_1")
-                .Using<InterferenceObject>(r => (Action<string, Dummy, DateTime, string, Dummy.EvenMore>)r.Void_VariousParametersWithDifferentNames))
+                .Using<InterferenceObject>(r => 
+                    (Func<string, Dummy, DateTime, string, Dummy.EvenMore, int>)r.DontAddToPropText__MethodName_Return2))
                 ;
 
             var dummy =
@@ -107,7 +108,7 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
                 .From<Dummy>()
                 .Replace
                 .This(d => (Func<int>)d.Call_SetPropText_simple_Return_1)
-                .Using<InterferenceObject>(r => (Action<Dummy, string>)r.SetPropText_InstanceAndMethodName));
+                .Using<InterferenceObject>(r => (Func<Dummy, string, int>) r.SetPropText_InstanceAndMethodName_Return2));
 
             var dummy =
                 new Dummy();
@@ -126,7 +127,7 @@ namespace Surrogates.Tests.Simple.Methods.Substitute
             Assert.IsNotNullOrEmpty(proxy.Text);
             Assert.AreEqual(typeof(Dummy).Name + "Proxy+Call_SetPropText_simple_Return_1", proxy.Text);
             Assert.AreNotEqual(dummyRes, proxyRes);
-            Assert.AreEqual(0, proxyRes);
+            Assert.AreEqual(2, proxyRes);
         }
     }
 }

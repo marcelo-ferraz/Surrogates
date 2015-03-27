@@ -1,13 +1,12 @@
 ﻿
+using Surrogates.Expressions;
+using Surrogates.Model.Parsers;
+using Surrogates.Tactics;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
-using Surrogates.Expressions;
-using Surrogates.Model;
-using Surrogates.Model.Parsers;
-using Surrogates.Tactics;
 
 namespace Surrogates
 {
@@ -39,15 +38,12 @@ namespace Surrogates
                 AssemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
                     new AssemblyName(string.Concat("Dynamic.Proxies_", _assemblyNumber)),
                     AssemblyBuilderAccess.RunAndSave);
+            }
+            finally { Monitor.Exit(AppDomain.CurrentDomain); }
 
-                ModuleBuilder = AssemblyBuilder.DefineDynamicModule(
-                    string.Concat("Dynamic.Module.Proxies_", _assemblyNumber),
-                    string.Concat(AssemblyBuilder.GetName().Name, ".dll"));
-            }
-            finally
-            {
-                Monitor.Exit(AppDomain.CurrentDomain);
-            }
+            ModuleBuilder = AssemblyBuilder.DefineDynamicModule(
+                string.Concat("Dynamic.Module.Proxies_", _assemblyNumber),
+                string.Concat(AssemblyBuilder.GetName().Name, ".dll"));
         }
 
 

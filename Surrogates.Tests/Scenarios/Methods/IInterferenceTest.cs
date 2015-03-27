@@ -1,7 +1,7 @@
 ﻿
-using Surrogates.Tests.Simple.Entities;
+using Surrogates.Tests.Scenarios.Entities;
 using System;
-namespace Surrogates.Tests.Simple.Methods
+namespace Surrogates.Tests.Scenarios.Methods
 {
     public interface IInterferenceTest
     {

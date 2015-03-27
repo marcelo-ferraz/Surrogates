@@ -11,7 +11,7 @@ namespace Surrogates.Expressions
         public Strategies Strategies { get; set; }
         public string Name { get; set; }
 
-        internal NewExpression(ModuleBuilder moduleBuilder)
+        public NewExpression(ModuleBuilder moduleBuilder)
         {
             this._moduleBuilder = moduleBuilder;
         }

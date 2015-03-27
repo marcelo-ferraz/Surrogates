@@ -45,11 +45,34 @@ namespace Surrogates.Model.Parsers
             return strategy;
         }
 
+        private static InterferenceKind SetInterferenceKind(GroupCollection grp, Strategy strategy)
+        {
+            InterferenceKind kind;
+            if (Enum.TryParse<InterferenceKind>(grp["operation"].Value, true, out kind))
+            {
+                return kind;
+            }
+
+            strategy.Kind = InterferenceKind.Extensions;
+            strategy.KindExtended =
+                grp["operation"].Value.ToLower();
+
+            if (!Strategy.Executioners.ContainsKey(strategy.KindExtended))
+            {
+                throw new NotSupportedException(strategy.KindExtended);
+            }
+
+            return kind;
+        }
+
+
         protected virtual Strategy Get4Properties(Strategies strategies, GroupCollection grp)
         {
             var strategy = new Strategy.ForProperties(strategies);
+            
+            SetInterferenceKind(grp, strategy);
 
-            if (grp["members"].Success != null)
+            if (grp["members"].Success)
             {
                 var owner = strategy.BaseType;
 
@@ -58,7 +81,7 @@ namespace Surrogates.Model.Parsers
                     .Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var propName in members)
                 {
-                    // verify whether it has the lias or not, and throw an exception if does not
+                    // verify whether it has the alias or not, and throw an exception if does not
                     var prop =
                         owner.GetProp4Surrogacy(propName.Split('.')[1]);
 
@@ -79,12 +102,13 @@ namespace Surrogates.Model.Parsers
             }
             return strategy;
         }
-
         protected virtual Strategy Get4Methods(Strategies strategies, GroupCollection grp)
         {
             var strategy = 
                 new Strategy.ForMethods(strategies);
-            
+
+            SetInterferenceKind(grp, strategy);
+
             if (grp["members"].Success)
             {
                 var owner = strategy.BaseType;
@@ -101,6 +125,8 @@ namespace Surrogates.Model.Parsers
                     strategy.Methods.Add(method);
                 }
             }
+
+
 
             var interceptorName = grp["interceptor"]
                 .Value

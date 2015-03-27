@@ -1,12 +1,12 @@
 ﻿using NUnit.Framework;
-using Surrogates.Tests.Simple.Entities;
+using Surrogates.Tests.Scenarios.Entities;
 using Surrogates.Utilities;
 using System;
 
-namespace Surrogates.Tests.Simple._Properties
+namespace Surrogates.Tests.Scenarios._Properties
 {
     [TestFixture]
-    public class Property_ReplaceTests
+    public class Property_VisitTests
     {
         [Test]
         public void WithRegularPropertyAccessors()
@@ -16,7 +16,7 @@ namespace Surrogates.Tests.Simple._Properties
 
             container.Map(m => m
                 .From<Dummy>()
-                .Replace
+                .Visit
                 .This(d => d.AccessItWillThrowException)
                 .Accessors(a =>
                 {
@@ -26,9 +26,11 @@ namespace Surrogates.Tests.Simple._Properties
 
             var proxy =
                 container.Invoke<Dummy>();
+            
+            proxy.AccessItWillThrowException = 2;
+            int res = proxy.AccessItWillThrowException; 
 
-            proxy.AccessItWillThrowException = 1;
-            Assert.AreEqual(1, proxy.AccessItWillThrowException);
+            Assert.AreEqual(2, proxy.AccessItWillThrowException);
         }
 
         [Test]
@@ -39,22 +41,19 @@ namespace Surrogates.Tests.Simple._Properties
 
             container.Map(m => m
                 .From<Dummy>()
-                .Replace
+                .Visit
                 .This(d => d.AccessItWillThrowException)
                 .Accessors(a =>
-                    a.Getter.Using<InterferenceObject>(d => (Func<int>) d.AccomplishNothing_Return2))).Save();
+                    a.Getter.Using<InterferenceObject>(d => (Func<Dummy, string, int>) d.SetPropText_InstanceAndMethodName_Return2)));
 
             var proxy =
                 container.Invoke<Dummy>();
 
-            try
-            {
-                proxy.AccessItWillThrowException = 1;
-                Assert.Fail();
-            }
-            catch { }
+            Except(
+                () => proxy.AccessItWillThrowException = 2,
+                () => { int res = proxy.AccessItWillThrowException; });
 
-            Assert.AreEqual(2, proxy.AccessItWillThrowException);
+            Assert.IsTrue(proxy.Text.Contains("Dummy"));
         }
 
         [Test]
@@ -65,22 +64,20 @@ namespace Surrogates.Tests.Simple._Properties
 
             container.Map(m => m
                 .From<Dummy>()
-                .Replace
+                .Visit
                 .This(d => d.AccessItWillThrowException)
                 .Accessors(a =>
-                    a.Setter.Using<InterferenceObject>(d => (Func<int>) d.AccomplishNothing_Return2)));
+                    a.Setter.Using<InterferenceObject>(d => (Func<int, Dummy, int>) d.SetPropText_info_Return_FieldPlus1)))
+                ;
 
             var proxy =
                 container.Invoke<Dummy>();
 
-            proxy.AccessItWillThrowException = 1;
+            Except(
+                () => proxy.AccessItWillThrowException = 2,
+                () => { int res = proxy.AccessItWillThrowException; });
 
-            try
-            {
-                var val = proxy.AccessItWillThrowException;
-                Assert.Fail();
-            }
-            catch { }
+            Assert.IsTrue(proxy.Text.Contains("was added"));
         }
 
         [Test]
@@ -91,15 +88,19 @@ namespace Surrogates.Tests.Simple._Properties
 
             container.Map(m => m
                 .From<Dummy>()
-                .Replace
+                .Visit
                 .This(d => d.AccessItWillThrowException)
                 .Accessors(a =>
-                  a.Getter.Using<InterferenceObject>(d => (Action) d.AccomplishNothing)));
+                  a.Getter.Using<InterferenceObject>(d => (Action<Dummy, int>) d.SetPropText_TypeName)));
 
             var proxy =
                 container.Invoke<Dummy>();
+            
+            Except(
+                () => proxy.AccessItWillThrowException = 2,
+                () => { int res = proxy.AccessItWillThrowException; });
 
-            Assert.AreEqual(0, proxy.AccessItWillThrowException);
+            Assert.IsTrue(proxy.Text.Contains("Dummy"));
         }
 
         [Test]
@@ -110,7 +111,7 @@ namespace Surrogates.Tests.Simple._Properties
 
             container.Map(m => m
                 .From<Dummy>()
-                .Replace
+                .Visit
                 .This(d => d.AccessItWillThrowException)
                 .Accessors(a => a
                     .Getter.Using<InterferenceObject>(d => (Func<int, Dummy, int>) d.SetPropText_info_Return_FieldPlus1))
@@ -119,14 +120,25 @@ namespace Surrogates.Tests.Simple._Properties
             var proxy =
                 container.Invoke<Dummy>();
 
-            try
-            {
-                proxy.AccessItWillThrowException = 2;
-                Assert.Fail();
-            }
-            catch { }
+            Except(
+                () => proxy.AccessItWillThrowException = 2, 
+                () => { int res = proxy.AccessItWillThrowException; });
 
-            Assert.AreEqual(1, proxy.AccessItWillThrowException);
+            Assert.IsTrue(proxy.Text.Contains("was added"));
+        }
+
+        public void Except(params Action[] actions)
+        {
+            for (int i = 0; i < actions.Length; i++)
+            {
+
+                try
+                {
+                    actions[i]();
+                    Assert.Fail();
+                }
+                catch { }
+            }
         }
     }
 }

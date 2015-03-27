@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Surrogates.Tests.Simple.Entities
+namespace Surrogates.Tests.Scenarios.Entities
 {
     public class InterferenceObject
     {

@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
-using Surrogates.Tests.Simple.Entities;
+using Surrogates.Tests.Scenarios.Entities;
 using System;
 
-namespace Surrogates.Tests.Simple.Methods.Disable
+namespace Surrogates.Tests.Scenarios.Methods.Disable
 {
     [TestFixture]
     public class DisableTest

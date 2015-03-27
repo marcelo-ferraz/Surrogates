@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
-using Surrogates.Tests.Simple.Entities;
+using Surrogates.Tests.Scenarios.Entities;
 using System;
 
-namespace Surrogates.Tests.Simple.Methods.Substitute
+namespace Surrogates.Tests.Scenarios.Methods.Substitute
 {
     [TestFixture]
     public class Substitute_ActionUsingActionTest : IInterferenceTest

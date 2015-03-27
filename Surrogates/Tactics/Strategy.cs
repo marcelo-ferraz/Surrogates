@@ -94,7 +94,7 @@ namespace Surrogates.Tactics
         public InterferenceKind Kind { get; set; }
         
 
-        public string InterferenceKindExtended { get; set; }
+        public string KindExtended { get; set; }
 
         public FieldList Fields 
         {
@@ -106,7 +106,7 @@ namespace Surrogates.Tactics
             var executionerName =
                 this.Kind != InterferenceKind.Extensions ?
                 Enum.GetName(typeof(InterferenceKind), Kind).ToLower() : 
-                InterferenceKindExtended;
+                KindExtended;
             
 
             Executioners[executionerName](this);
