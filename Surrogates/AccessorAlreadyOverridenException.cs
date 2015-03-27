@@ -1,5 +1,5 @@
-﻿using System;
-using Surrogates.Expressions.Accessors;
+﻿using Surrogates.Expressions.Accessors;
+using System;
 
 namespace Surrogates
 {

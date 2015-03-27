@@ -1,10 +1,10 @@
 ﻿
+using Surrogates.Tactics;
+using Surrogates.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using Surrogates.Utilities;
-using Surrogates.Tactics;
 
 namespace Surrogates.Model.Collections
 {

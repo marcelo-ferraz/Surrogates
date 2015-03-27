@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using Surrogates.Expressions.Accessors;
+﻿using Surrogates.Expressions.Accessors;
 using Surrogates.Tactics;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Surrogates.Model.Collections
 {

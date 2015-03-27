@@ -1,10 +1,9 @@
-﻿using Surrogates.Tactics;
+﻿using Surrogates.Model.Collections;
+using Surrogates.Tactics;
 using Surrogates.Utilities.Mixins;
 using System;
-using System.Collections.Generic;
 using System.Runtime;
 using System.Text.RegularExpressions;
-using Surrogates.Model.Collections;
 
 namespace Surrogates.Model.Parsers
 {

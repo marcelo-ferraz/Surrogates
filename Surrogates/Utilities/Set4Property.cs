@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Surrogates.Model;
+using Surrogates.Tactics;
+using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using Surrogates.Model;
-using Surrogates.Tactics;
 
 namespace Surrogates.Utilities
 {

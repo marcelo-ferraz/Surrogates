@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using Surrogates.Tactics;
+﻿using Surrogates.Tactics;
 using Surrogates.Utilities.Mixins;
 using Surrogates.Utilities.SDILReader;
+using System;
+using System.Reflection;
 
 namespace Surrogates.Expressions
 {

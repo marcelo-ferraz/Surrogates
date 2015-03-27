@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Surrogates.Model;
+using System;
 using System.Reflection;
-using Surrogates.Model;
 
 namespace Surrogates.Utilities
 {

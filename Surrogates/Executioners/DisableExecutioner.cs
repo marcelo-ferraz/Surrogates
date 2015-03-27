@@ -1,11 +1,8 @@
 ﻿using Surrogates.Tactics;
-using System;
-using System.Collections.Generic;
+using Surrogates.Utilities.Mixins;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using Surrogates.Utilities.Mixins;
 
 namespace Surrogates.Executioners
 {

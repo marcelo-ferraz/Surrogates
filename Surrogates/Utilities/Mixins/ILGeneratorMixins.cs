@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Surrogates.Model.Collections;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using Surrogates.Model.Collections;
 
 namespace Surrogates.Utilities.Mixins
 {

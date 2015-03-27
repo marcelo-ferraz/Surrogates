@@ -1,15 +1,10 @@
-﻿using Surrogates.Tactics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Surrogates.Model;
+using Surrogates.Tactics;
+using Surrogates.Utilities;
+using Surrogates.Utilities.Mixins;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime;
-using System.Text;
-using Surrogates.Utilities.Mixins;
-using Surrogates.Model;
-using Surrogates.Utilities;
-using Surrogates.Utilities.Mixins;
 
 namespace Surrogates.Executioners
 {
