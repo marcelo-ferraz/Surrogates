@@ -20,8 +20,8 @@ namespace Surrogates.Tests.Simple._Properties
                 .This(d => d.AccessItWillThrowException)
                 .Accessors(a =>
                 {
-                    With.OneSimpleGetter(a);
-                    With.OneSimpleSetter(a);
+                    Set4Property.OneSimpleGetter(a);
+                    Set4Property.OneSimpleSetter(a);
                 }));
 
             var proxy =
@@ -42,7 +42,7 @@ namespace Surrogates.Tests.Simple._Properties
                 .Replace
                 .This(d => d.AccessItWillThrowException)
                 .Accessors(a =>
-                    a.Getter.Using<InterferenceObject>(d => (Func<int>) d.AccomplishNothing_Return2)));
+                    a.Getter.Using<InterferenceObject>(d => (Func<int>) d.AccomplishNothing_Return2))).Save();
 
             var proxy =
                 container.Invoke<Dummy>();

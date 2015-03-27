@@ -89,7 +89,7 @@
     <Compile Include="Utilities\Detect.cs" />
     <Compile Include="Utilities\StringMixins.cs" />
     <Compile Include="Utilities\WhizzoDev\Cloning.cs" />
-    <Compile Include="Utilities\With.cs" />
+    <Compile Include="Utilities\Set4Property.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

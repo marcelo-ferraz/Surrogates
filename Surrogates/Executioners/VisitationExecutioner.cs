@@ -139,16 +139,15 @@ namespace Surrogates.Executioners
         {
             foreach (var property in strategy.Properties)
             {
-                var getter = strategy.Getter != null ?
-                    VisitGetter(property, strategy) :
-                    With.OneSimpleGetter(strategy, property);
+                if (strategy.Getter != null)
+                { VisitGetter(property, strategy); }
+                else
+                { Set4Property.OneSimpleGetter(strategy, property); }
 
-                var setter = strategy.Setter != null ?
-                    VisitSetter(property, strategy) :
-                    With.OneSimpleSetter(strategy, property);
-
-                property.Builder.SetGetMethod(getter);
-                property.Builder.SetSetMethod(setter);
+                if (strategy.Setter != null)
+                { VisitSetter(property, strategy); }
+                else
+                { Set4Property.OneSimpleSetter(strategy, property); }     
             }
         }
 

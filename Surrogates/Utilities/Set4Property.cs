@@ -11,7 +11,7 @@ namespace Surrogates.Utilities
     /// <summary>
     /// Adds to the expression
     /// </summary>
-    public static class With
+    public static class Set4Property
     {
         /// <summary>
         /// It adds a very simple getter accessor to the property 
@@ -30,7 +30,7 @@ namespace Surrogates.Utilities
         /// </summary>
         /// <param name="strategy">the strategy respnsible for </param>
         /// <param name="prop">The original property </param>
-        internal static MethodBuilder OneSimpleGetter(Strategy.ForProperties strategy, Property prop)
+        internal static void OneSimpleGetter(Strategy.ForProperties strategy, Property prop)
         {
             MethodBuilder getter = strategy.TypeBuilder.DefineMethod(
                 string.Concat("get_", prop.Original.Name),
@@ -52,7 +52,7 @@ namespace Surrogates.Utilities
             gen.Emit(OpCodes.Ldloc_0);
             gen.Emit(OpCodes.Ret);
 
-            return getter;
+            prop.Builder.SetGetMethod(getter);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Surrogates.Utilities
             }
         }
         
-        internal static MethodBuilder OneSimpleSetter(Strategy.ForProperties strategy, Property prop)
+        internal static void OneSimpleSetter(Strategy.ForProperties strategy, Property prop)
         {
             //insert a basic set
             MethodBuilder setter = strategy.TypeBuilder.DefineMethod(
@@ -85,7 +85,7 @@ namespace Surrogates.Utilities
             gen.Emit(OpCodes.Stfld, prop.Field);
             gen.Emit(OpCodes.Ret);
 
-            return setter;
+            prop.Builder.SetSetMethod(setter);
         }
     }
 }

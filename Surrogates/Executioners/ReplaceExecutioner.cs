@@ -50,7 +50,7 @@ namespace Surrogates.Executioners
         }
 
         [TargetedPatchingOptOut("")]
-        protected static MethodBuilder ReplaceGetter(Property property, Strategy.ForProperties strategy)
+        protected static void ReplaceGetter(Property property, Strategy.ForProperties strategy)
         {
             var pType =
                 property.Original.PropertyType;
@@ -83,7 +83,7 @@ namespace Surrogates.Executioners
 
             gen.Emit(OpCodes.Ret);
 
-            return getter;
+            property.Builder.SetGetMethod(getter);
         }
 
         [TargetedPatchingOptOut("")]
@@ -126,16 +126,15 @@ namespace Surrogates.Executioners
         {
             foreach (var property in strategy.Properties)
             {
-                var getter = strategy.Getter != null ?
-                    ReplaceGetter(property, strategy) :
-                    With.OneSimpleGetter(strategy, property);
+                if(strategy.Getter != null) 
+                { ReplaceGetter(property, strategy); }
+                else
+                { Set4Property.OneSimpleGetter(strategy, property); }
 
-                var setter = strategy.Setter != null ?
-                    ReplaceSetter(property, strategy) :
-                    With.OneSimpleSetter(strategy, property);
-                
-                property.Builder.SetGetMethod(getter);
-                property.Builder.SetSetMethod(setter);
+                if (strategy.Setter != null)
+                { ReplaceSetter(property, strategy); }
+                else
+                { Set4Property.OneSimpleSetter(strategy, property); }                
             }
         }
 

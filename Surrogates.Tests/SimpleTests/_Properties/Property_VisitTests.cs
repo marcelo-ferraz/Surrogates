@@ -8,7 +8,7 @@ namespace Surrogates.Tests.Simple._Properties
     [TestFixture]
     public class Property_VisitTests
     {
-        [Test, ExpectedException(typeof(NotSupportedException))]
+        [Test]
         public void WithRegularPropertyAccessors()
         {
             var container =
@@ -20,9 +20,17 @@ namespace Surrogates.Tests.Simple._Properties
                 .This(d => d.AccessItWillThrowException)
                 .Accessors(a =>
                 {
-                    With.OneSimpleGetter(a);
-                    With.OneSimpleSetter(a);
+                    Set4Property.OneSimpleGetter(a);
+                    Set4Property.OneSimpleSetter(a);
                 }));
+
+            var proxy =
+                container.Invoke<Dummy>();
+            
+            proxy.AccessItWillThrowException = 2;
+            int res = proxy.AccessItWillThrowException; 
+
+            Assert.AreEqual(2, proxy.AccessItWillThrowException);
         }
 
         [Test]
