@@ -11,6 +11,9 @@ namespace Surrogates.Expressions
         public AndExpression(Strategy current, Strategies strategies)
             : base(current, strategies) { }
 
-        public ExpressionFactory<TBase> And { get; private set; }
+        public ExpressionFactory<TBase> And 
+        {
+            get { return new ExpressionFactory<TBase>(CurrentStrategy, Strategies); }
+        }
     }
 }

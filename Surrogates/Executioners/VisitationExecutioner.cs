@@ -30,7 +30,7 @@ namespace Surrogates.Executioners
             gen.Emit(OpCodes.Ldarg_0);
 
             var @params =
-                gen.EmitParameters(strategy.BaseType, strategy.Interceptor.Method, baseAction);
+                gen.EmitParametersForSelf(strategy.BaseType, baseAction);
 
             gen.Emit(OpCodes.Call, baseAction);
             gen.Emit(OpCodes.Ret);
@@ -53,7 +53,7 @@ namespace Surrogates.Executioners
             gen.Emit(OpCodes.Ldarg_0);
 
             var @params =
-                gen.EmitParameters(strategy.BaseType, strategy.Interceptor.Method, baseFunction);
+                gen.EmitParametersForSelf(strategy.BaseType, baseFunction);
 
             gen.Emit(OpCodes.Call, baseFunction);
 
@@ -156,7 +156,7 @@ namespace Surrogates.Executioners
         {
             foreach (var method in strategy.Methods)
             {
-                if (method.ReturnType == typeof(void))
+                if (strategy.Interceptor.Method.ReturnType == typeof(void))
                 { VisitAction(method, strategy); }
                 else
                 { VisitFunction(method, strategy); }

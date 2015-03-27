@@ -27,23 +27,23 @@ namespace Surrogates.Executioners
         [TargetedPatchingOptOut("")]
         protected static void ReplaceFunction(MethodInfo baseFunction, Strategy.ForMethods strategy)
         {
-            LocalBuilder baseMethodReturn = null;
+            LocalBuilder baseMethodReturnBuilder = null;
 
             var gen = strategy.TypeBuilder.EmitOverride(
                 strategy.BaseType,
                 strategy.Interceptor.Method,
                 baseFunction,
                 GetField(strategy.Interceptor, strategy.Fields),
-                out baseMethodReturn);
+                out baseMethodReturnBuilder);
 
             //the base method is void, discard the value
-            if (baseMethodReturn == null)
+            if (baseMethodReturnBuilder == null)
             {
                 gen.Emit(OpCodes.Pop);
             }
             else if (!strategy.Interceptor.Method.ReturnType.IsAssignableFrom(baseFunction.ReturnType))
             {
-                gen.EmitDefaultValue(strategy.Interceptor.Method.ReturnType, baseMethodReturn);
+                gen.EmitDefaultValue(strategy.Interceptor.Method.ReturnType, baseMethodReturnBuilder);
             }
 
             gen.Emit(OpCodes.Ret);
@@ -143,7 +143,7 @@ namespace Surrogates.Executioners
         {
             foreach (var method in strategy.Methods)
             {
-                if (method.ReturnType == typeof(void))
+                if (strategy.Interceptor.Method.ReturnType == typeof(void))
                 { ReplaceAction(method, strategy); }
                 else
                 { ReplaceFunction(method, strategy); }

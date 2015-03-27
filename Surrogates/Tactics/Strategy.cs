@@ -14,6 +14,13 @@ namespace Surrogates.Tactics
     {
         public class Interceptor
         {
+            public Interceptor(string name, Type declaredType, MethodInfo method)
+            {
+                this.Name = string.IsNullOrEmpty(name) ? "interceptor" : name;
+                this.DeclaredType = declaredType;
+                this.Method = method;
+            }
+
             public string Name { get; set; }
             public Type DeclaredType { get; set; }
             public MethodInfo Method { get; set; }
@@ -100,7 +107,7 @@ namespace Surrogates.Tactics
         public void Apply(Type baseType, ref TypeBuilder builder)
         {
             var executionerName =
-                this.Kind != InterferenceKind.Disable ?
+                this.Kind != InterferenceKind.Extensions ?
                 Enum.GetName(typeof(InterferenceKind), Kind).ToLower() : 
                 InterferenceKindExtended;
             

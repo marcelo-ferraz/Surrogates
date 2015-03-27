@@ -25,10 +25,14 @@ namespace Surrogates.Expressions
             return Methods(methodName);
         }
 
-        public T4Method Methods(params string[] methodNames)
+        public virtual T4Method Methods(params string[] methodNames)
         {
             var strat = new
                 Strategy.ForMethods(CurrentStrategy);
+
+            CurrentStrategy = strat;
+
+
 
             foreach (var methodName in methodNames)
             {
@@ -48,11 +52,12 @@ namespace Surrogates.Expressions
             return this.These(method);
         }
 
-        public T4Method These(params Func<TBase, Delegate>[] methods)
+        public virtual T4Method These(params Func<TBase, Delegate>[] methods)
         {
-
             var strat = new
                 Strategy.ForMethods(CurrentStrategy);
+
+            CurrentStrategy = strat;
 
             foreach (var methodGetter in methods)
             {
@@ -68,10 +73,12 @@ namespace Surrogates.Expressions
             return this.These(prop);
         }
 
-        public T4Prop These(params Func<TBase, object>[] props)
+        public virtual T4Prop These(params Func<TBase, object>[] props)
         {
             var strat = new
                 Strategy.ForProperties(CurrentStrategy);
+
+            CurrentStrategy = strat;
 
             foreach (var propGetter in props)
             {
@@ -87,10 +94,12 @@ namespace Surrogates.Expressions
             return this.Properties(propName);
         }
 
-        public T4Prop Properties(params string[] propNames)
+        public virtual T4Prop Properties(params string[] propNames)
         {
             var strat = new
                 Strategy.ForProperties(CurrentStrategy);
+            
+            CurrentStrategy = strat;
 
             foreach (var propName in propNames)
             {

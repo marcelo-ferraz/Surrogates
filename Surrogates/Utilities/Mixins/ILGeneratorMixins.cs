@@ -166,7 +166,7 @@ namespace Surrogates.Utilities.Mixins
         }
        
         /// <summary>
-        /// Emits the default value for varios types
+        /// Emits the default value for various types
         /// </summary>
         /// <param name="gen"></param>
         /// <param name="type"></param>
@@ -218,9 +218,9 @@ namespace Surrogates.Utilities.Mixins
             return newParams.ToArray();
         }
 
-        internal static Type[] EmitParameters4<TBase>(this ILGenerator gen, MethodInfo newMethod, MethodInfo baseMethod)
+        internal static Type[] EmitParametersForSelf(this ILGenerator gen, Type baseType, MethodInfo baseMethod)
         {
-            return EmitParameters(gen, typeof(TBase), newMethod, baseMethod);
+            return EmitParameters(gen, baseType, baseMethod, baseMethod);
         }
 
         internal static Type[] EmitParameters(this ILGenerator gen, Type baseType,MethodInfo newMethod, MethodInfo baseMethod)

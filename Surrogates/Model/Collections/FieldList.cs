@@ -107,7 +107,7 @@ namespace Surrogates.Model.Collections
 
             //else
             var field = _owner.Builder.DefineField(
-                string.Format("_{0}{1}_{2}", Char.ToLower(name[0]), name.Length > 1 ? name.Substring(1) : string.Empty, index > 0 ? index.ToString() : string.Empty),
+                string.Format("_{0}{1}{2}", Char.ToLower(name[0]), name.Length > 1 ? name.Substring(1) : string.Empty, index > 0 ? string.Concat('_', index.ToString()) : string.Empty),
                 type,
                 FieldAttributes.Private);
 

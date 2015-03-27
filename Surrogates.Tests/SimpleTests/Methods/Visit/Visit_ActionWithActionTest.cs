@@ -76,7 +76,7 @@ namespace Surrogates.Tests.Simple.Methods.Visit
                 m.From<Dummy>()
                 .Visit
                 .This(d => (Action<string, DateTime, Dummy.EvenMore>) d.SetPropText_complex)
-                .Using<InterferenceObject>("Void_VariousParametersWithDifferentNames"));
+                .Using<InterferenceObject>("Void_VariousParametersWithDifferentNames")).Save();
             
             var dummy =
                 new Dummy();

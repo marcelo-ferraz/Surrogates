@@ -60,7 +60,7 @@ namespace Surrogates.Tests.Simple._Properties
                 .This(d => d.AccessItWillThrowException)
                 .Accessors(a =>
                     a.Setter.Using<InterferenceObject>(d => (Func<int, Dummy, int>) d.SetPropText_info_Return_FieldPlus1)))
-                .Save();
+                ;
 
             var proxy =
                 container.Invoke<Dummy>();

@@ -31,13 +31,23 @@ namespace Surrogates
         {
             Interlocked.Increment(ref _assemblyNumber);
 
-            AssemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
-                new AssemblyName(string.Concat("Dynamic.Proxies_", _assemblyNumber)),
-                AssemblyBuilderAccess.RunAndSave);
+            try
+            {
+                if (!Monitor.TryEnter(AppDomain.CurrentDomain))
+                { throw new ExecutionEngineException("It was not possible qo aquire the lock for the domain."); }
 
-            ModuleBuilder = AssemblyBuilder.DefineDynamicModule(
-                string.Concat("Dynamic.Module.Proxies_", _assemblyNumber),
-                string.Concat(AssemblyBuilder.GetName().Name, ".dll"));
+                AssemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
+                    new AssemblyName(string.Concat("Dynamic.Proxies_", _assemblyNumber)),
+                    AssemblyBuilderAccess.RunAndSave);
+
+                ModuleBuilder = AssemblyBuilder.DefineDynamicModule(
+                    string.Concat("Dynamic.Module.Proxies_", _assemblyNumber),
+                    string.Concat(AssemblyBuilder.GetName().Name, ".dll"));
+            }
+            finally
+            {
+                Monitor.Exit(AppDomain.CurrentDomain);
+            }
         }
 
 

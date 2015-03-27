@@ -47,13 +47,13 @@ namespace Surrogates.Tactics
 
         public Type Apply()
         {
-            this.Builder
-                .CreateConstructor(this.BaseType, this.Fields);
-
             foreach (var strategy in _strategies)
             {
                 strategy.Apply(BaseType, ref _builder);
             }
+
+            this.Builder
+                .CreateConstructor(this.BaseType, this.Fields);
 
             return this.Builder.CreateType();
         }

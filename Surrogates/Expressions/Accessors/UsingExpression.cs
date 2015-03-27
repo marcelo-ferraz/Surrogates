@@ -30,15 +30,10 @@ namespace Surrogates.Expressions.Accessors
             var holder = (T)FormatterServices
                 .GetSafeUninitializedObject(typeof(T));
                 
-            _strategy.Fields.TryAdd<T>(ref name);
+            //_strategy.Fields.TryAdd<T>(ref name);
 
             var @int =
-              new Strategy.Interceptor
-              {
-                  DeclaredType = typeof(T),
-                  Name = name,
-                  Method = interceptor(holder).Method
-              };
+              new Strategy.Interceptor(name, typeof(T), interceptor(holder).Method);
 
             if (_caller == PropertyAccessor.Set)
             {

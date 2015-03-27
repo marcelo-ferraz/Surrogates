@@ -58,7 +58,7 @@
     <Compile Include="PropertyNotFoundException.cs" />
     <Compile Include="Expressions\Accessors\PropertyAccessor.cs" />
     <Compile Include="Expressions\Accessors\AndExpression.cs" />
-    <Compile Include="Expressions\Accessors\WithExpression.cs" />
+    <Compile Include="Expressions\Accessors\UsingExpression.cs" />
     <Compile Include="Expressions\UsingInterferenceExpression.cs" />
     <Compile Include="Expressions\AndExpression.cs" />
     <Compile Include="Expressions\ApplyExpression.cs" />

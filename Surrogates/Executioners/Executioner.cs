@@ -14,18 +14,9 @@ namespace Surrogates.Executioners
         public abstract void Execute4Properties(Strategy.ForProperties st);
         public abstract void Execute4Methods(Strategy.ForMethods st);
 
-        private static FieldInfo _lastPrivateField;
-
         protected static FieldInfo GetField(Strategy.Interceptor @int, FieldList fields)
-        {
-            if (_lastPrivateField != null &&
-                _lastPrivateField.FieldType == @int.DeclaredType)
-            {
-                return _lastPrivateField;
-            }
-
-            return _lastPrivateField =
-                fields.Get(@int.DeclaredType, @int.Name);
+        {            
+            return fields.Get(@int.DeclaredType, @int.Name);
         }
 
         protected static MethodBuilder CreateGetter(Strategy.ForProperties strategy, PropertyInfo prop)

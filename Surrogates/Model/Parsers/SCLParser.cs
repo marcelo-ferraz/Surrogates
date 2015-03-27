@@ -33,13 +33,8 @@ namespace Surrogates.Model.Parsers
 
             strategy.Fields.TryAdd(intType, ref metName[0]);
 
-            var interceptor = 
-                new Strategy.Interceptor
-                {
-                    Name = metName[0],
-                    DeclaredType = intType,
-                    Method = intType.GetMethod4Surrogacy(metName[1])
-                };
+            var interceptor = new Strategy.Interceptor(
+                metName[0], intType, intType.GetMethod4Surrogacy(metName[1]));
 
             if (grp[string.Concat("accessor", index)].Value[0] == 'g' ||
                 grp[string.Concat("accessor", index)].Value[0] == 'G')

@@ -19,7 +19,7 @@ namespace Surrogates.Tests.Github.Examples.LazyLoadIng
                     .Getter.Using<IdLazyLoader>("idLoader", l => (Func<string, int>) l.Load)
                     .And
                     .Setter.Using<IdLazyLoader>("idLoader", l => (Action<int>) l.MarkAsDirty))                
-                ).Save();
+                );
         }
 
         [Test]

@@ -19,15 +19,10 @@ namespace Surrogates.Expressions
 
         public AndExpression<TBase> Using<T>(string name, string method)
         {        
-            Strategies.Fields.TryAdd<T>(ref name);
+            //Strategies.Fields.TryAdd<T>(ref name);
             
             CurrentStrategy.Interceptor =
-               new Strategy.Interceptor
-               {
-                   DeclaredType = typeof(T),
-                   Name = name,
-                   Method = typeof(T).GetMethod4Surrogacy(method)
-               };
+               new Strategy.Interceptor(name, typeof(T), typeof(T).GetMethod4Surrogacy(method));
 
             Strategies.Add(CurrentStrategy);
 
@@ -41,15 +36,10 @@ namespace Surrogates.Expressions
 
         public AndExpression<TBase> Using<T>(string name, Func<T, Delegate> method)
         {
-            Strategies.Fields.TryAdd<T>(ref name);
+            //Strategies.Fields.TryAdd<T>(ref name);
             
             CurrentStrategy.Interceptor =
-               new Strategy.Interceptor
-               {
-                   DeclaredType = typeof(T),
-                   Name = name,
-                   Method = method(GetNotInit<T>()).Method
-               };
+               new Strategy.Interceptor(name, typeof(T), method(GetNotInit<T>()).Method);   
 
             Strategies.Add(CurrentStrategy);
 
