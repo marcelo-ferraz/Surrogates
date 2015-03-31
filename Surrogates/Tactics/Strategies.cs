@@ -12,7 +12,7 @@ namespace Surrogates.Tactics
         private TypeBuilder _builder;
         private IList<Strategy> _strategies;
 
-        internal Strategies(Type baseType,string name, ModuleBuilder moduleBuilder)
+        internal Strategies(Type baseType, string name, ModuleBuilder moduleBuilder)
         {            
             if (string.IsNullOrEmpty(name))
             { name = string.Concat(baseType, "Proxy"); }
