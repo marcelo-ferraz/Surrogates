@@ -54,6 +54,6 @@ namespace Surrogates.Tactics
                 .CreateConstructor(this.BaseType, this.Fields);
 
             return this.Builder.CreateType();
-        }
+        } 
     }
 }

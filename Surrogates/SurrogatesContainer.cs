@@ -8,14 +8,6 @@ namespace Surrogates
     /// </summary>
     public class SurrogatesContainer : BaseContainer4Surrogacy
     {
-        private SurrogatesContainer Map<T>(string[] cmds, params Type[] interceptors)
-        {
-            foreach (var cmd in cmds)
-            { InternalMap<T>(cmd, interceptors); }
-
-            return this;
-        }
-
         /// <summary>
         /// Adds a map of what needs to be changed in the instance into the container
         /// </summary>
@@ -51,50 +43,26 @@ namespace Surrogates
 
             return Activator.CreateInstance(Dictionary[name]);
         }
-        
-        public virtual SurrogatesContainer Map<T, I>(params string[] cmds)
+
+        public virtual SurrogatesContainer Map<T>(string cmd)
         {
-            return Map<T>(cmds, typeof(I));
+            InternalMap<T>(cmd);
+
+            return this;
         }
 
-        public virtual SurrogatesContainer Map<T, I1, I2>(params string[] cmds)
+        public virtual SurrogatesContainer Map<T, I>(string cmd)
         {
-            return Map<T>(cmds, typeof(I1), typeof(I2));
+            InternalMap<T>(cmd, typeof(I));
+
+            return this;
         }
 
-        public virtual SurrogatesContainer Map<T, I1, I2, I3>(params string[] cmds)
+        public virtual SurrogatesContainer Map<T, I1, I2>(string cmd)
         {
-            return Map<T>(cmds, typeof(I1), typeof(I2), typeof(I3));
-        }
-
-        public virtual SurrogatesContainer Map<T, I1, I2, I3, I4>(params string[] cmds)
-        {
-            return Map<T>(cmds, typeof(I1), typeof(I2), typeof(I3), typeof(I4));
-        }
-
-        public virtual SurrogatesContainer Map<T, I1, I2, I3, I4, I5>(params string[] cmds)
-        {
-            return Map<T>(cmds, typeof(I1), typeof(I2), typeof(I3), typeof(I4), typeof(I5));
-        }
-
-        public virtual SurrogatesContainer Map<T, I1, I2, I3, I4, I5, I6>(params string[] cmds)
-        {
-            return Map<T>(cmds, typeof(I1), typeof(I2), typeof(I3), typeof(I4), typeof(I5), typeof(I6));
-        }
-
-        public virtual SurrogatesContainer Map<T, I1, I2, I3, I4, I5, I6, I7>(params string[] cmds)
-        {
-            return Map<T>(cmds, typeof(I1), typeof(I2), typeof(I3), typeof(I4), typeof(I5), typeof(I6), typeof(I7));
-        }
-
-        public virtual SurrogatesContainer Map<T, I1, I2, I3, I4, I5, I6, I7, I8>(params string[] cmds)
-        {
-            return Map<T>(cmds, typeof(I1), typeof(I2), typeof(I3), typeof(I4), typeof(I5), typeof(I6), typeof(I7), typeof(I8));
-        }
-
-        public virtual SurrogatesContainer Map<T, I1, I2, I3, I4, I5, I6, I7, I8, I9>(params string[] cmds)
-        {
-            return Map<T>(cmds, typeof(I1), typeof(I2), typeof(I3), typeof(I4), typeof(I5), typeof(I6), typeof(I7), typeof(I8), typeof(I9));
+            InternalMap<T>(cmd, typeof(I1), typeof(I2));
+            
+            return this;
         }
     }
 }

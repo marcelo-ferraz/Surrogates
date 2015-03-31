@@ -67,23 +67,33 @@ namespace Surrogates
 
         protected virtual void InternalMap<T>(string cmd, params Type[] interceptors)
         {
-            var parser = new SCLParser();
+            string[] aliases = (string[]) 
+                Array.CreateInstance(typeof(string), 0);
             
-            string[] aliases = null;
-
-            if (!parser.TryGetAliases(cmd, ref aliases))
-            { throw new FormatException("Could not extract 'Aliases' from the command written"); }
-
             var strategies = 
-                new Strategies(typeof(T), aliases[0], ModuleBuilder);
-            
-            if (!parser.TryGetOperations(cmd, aliases, interceptors, ref strategies))
-            { throw new FormatException("Could extract an expression from the command written"); }
+                ParseStrCmd(cmd, typeof(T), interceptors, ref aliases);
 
             Type type =
                 strategies.Apply();
 
             Dictionary.Add(aliases[0], type);
+        }
+
+        protected virtual Strategies ParseStrCmd(string cmd, Type baseType, Type[] interceptors, ref string[] aliases)
+        {
+            var parser = 
+                new SCLParser();
+
+            if (!parser.TryGetAliases(cmd, ref aliases))
+            { throw new FormatException("Could not extract 'Aliases' from the command written"); }
+
+            var strategies =
+                new Strategies(baseType, aliases[0], ModuleBuilder);
+
+            if (!parser.TryGetOperations(cmd, aliases, interceptors, ref strategies))
+            { throw new FormatException("Could extract an expression from the command written"); }
+
+            return strategies;
         }
 
         public virtual bool Has<T>(string key = null)

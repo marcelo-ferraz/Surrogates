@@ -41,8 +41,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Expressions\Class1.cs" />
-    <Compile Include="Expressions\ExpressionTests.cs" />
+    <Compile Include="Unit\ExpressionTests.cs" />
     <Compile Include="Github\Examples\LazyLoadIng\LazyLoader.cs" />
     <Compile Include="Github\Examples\LazyLoadIng\MockedRepository.cs" />
     <Compile Include="Github\Examples\LazyLoadIng\SimpleModel.cs" />
@@ -66,6 +65,8 @@
     <Compile Include="Scenarios\Methods\Substitute\Substitute_FuncWithActionTest.cs" />
     <Compile Include="Scenarios\Methods\Substitute\Substitute_FuncWithFuncTest.cs" />
     <Compile Include="Scenarios\Methods\Substitute\Substitute_ActionWtihFunctionTest.cs" />
+    <Compile Include="Unit\SCLTests.cs" />
+    <Compile Include="Unit\UnitTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Surrogates\Surrogates.csproj">

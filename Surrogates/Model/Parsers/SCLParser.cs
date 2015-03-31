@@ -2,6 +2,8 @@
 using Surrogates.Tactics;
 using Surrogates.Utilities.Mixins;
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Runtime;
 using System.Text.RegularExpressions;
 
@@ -23,14 +25,12 @@ namespace Surrogates.Model.Parsers
         }
 
         [TargetedPatchingOptOut("")]
-        private static Strategy.ForProperties ExtractGetterORSetter(FieldList interceptors, GroupCollection grp, Strategy.ForProperties strategy, int index)
+        private static Strategy.ForProperties ExtractGetterORSetter(FieldList interceptors, GroupCollection grp, Strategy.ForProperties strategy, int index, IDictionary<string, Type> dic)
         {
             var metName =
                     grp[string.Concat("accessMethod", index)].Value.Split('.');
 
-            var intType = interceptors[metName[0]].FieldType;
-
-            strategy.Fields.TryAdd(intType, ref metName[0]);
+            var intType = dic[metName[0]];
 
             var interceptor = new Strategy.Interceptor(
                 metName[0], intType, intType.GetMethod4Surrogacy(metName[1]));
@@ -45,7 +45,7 @@ namespace Surrogates.Model.Parsers
             return strategy;
         }
 
-        private static InterferenceKind SetInterferenceKind(GroupCollection grp, Strategy strategy)
+        private static InterferenceKind GetInterferenceKind(GroupCollection grp, Strategy strategy)
         {
             InterferenceKind kind;
             if (Enum.TryParse<InterferenceKind>(grp["operation"].Value, true, out kind))
@@ -66,11 +66,12 @@ namespace Surrogates.Model.Parsers
         }
 
 
-        protected virtual Strategy Get4Properties(Strategies strategies, GroupCollection grp)
+        protected virtual Strategy Get4Properties(Strategies strategies, GroupCollection grp, IDictionary<string, Type> dic)
         {
             var strategy = new Strategy.ForProperties(strategies);
-            
-            SetInterferenceKind(grp, strategy);
+
+            strategy.Kind = 
+                GetInterferenceKind(grp, strategy);
 
             if (grp["members"].Success)
             {
@@ -79,6 +80,7 @@ namespace Surrogates.Model.Parsers
                 var members = grp["members"]
                     .Value
                     .Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+                
                 foreach (var propName in members)
                 {
                     // verify whether it has the alias or not, and throw an exception if does not
@@ -92,22 +94,24 @@ namespace Surrogates.Model.Parsers
             if (grp["accessor1"].Success)
             {
                 strategy = ExtractGetterORSetter(
-                    strategies.Fields, grp, strategy, 1);
+                    strategies.Fields, grp, strategy, 1, dic);
 
                 if (grp["accessor2"].Success)
                 {
                     strategy = ExtractGetterORSetter(
-                        strategies.Fields, grp, strategy, 2);
+                        strategies.Fields, grp, strategy, 2, dic);
                 }
             }
             return strategy;
         }
-        protected virtual Strategy Get4Methods(Strategies strategies, GroupCollection grp)
+
+        protected virtual Strategy Get4Methods(Strategies strategies, GroupCollection grp, IDictionary<string, Type> dic)
         {
             var strategy = 
                 new Strategy.ForMethods(strategies);
 
-            SetInterferenceKind(grp, strategy);
+            strategy.Kind =
+                GetInterferenceKind(grp, strategy);
 
             if (grp["members"].Success)
             {
@@ -116,6 +120,7 @@ namespace Surrogates.Model.Parsers
                 var members = grp["members"]
                     .Value
                     .Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+                
                 foreach (var methName in members)
                 {
                     // verify whether it has the alias or not, and throw an exception if does not
@@ -126,20 +131,20 @@ namespace Surrogates.Model.Parsers
                 }
             }
 
+            if (grp["interceptor"].Success)
+            {
+                var interceptorName = grp["interceptor"]
+                    .Value
+                    .Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
 
+                var intType = dic[interceptorName[0]];
 
-            var interceptorName = grp["interceptor"]
-                .Value
-                .Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+                var intMethod =
+                    intType.GetMethod4Surrogacy(interceptorName[1]);
 
-            var intType = strategies
-                .Fields[interceptorName[0]]
-                .FieldType;
-
-            var intMethod =
-                intType.GetMethod4Surrogacy(interceptorName[1]);
-
-            strategy.Methods.Add(intMethod);
+                strategy.Interceptor = new Strategy.Interceptor(
+                    interceptorName[0], intType, intMethod);
+            }
 
             return strategy;
         }
@@ -151,10 +156,15 @@ namespace Surrogates.Model.Parsers
 
             if (match.Success)
             {
-                aliases = match
-                    .Groups["aliases"]
+                var arr = match.Groups["aliases"]
                     .Value
                     .Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+
+                Array.Resize(ref aliases, arr.Length);
+
+                arr.CopyTo(aliases, 0);
+
+                return true;
             }
 
             return false;
@@ -165,20 +175,20 @@ namespace Surrogates.Model.Parsers
             var matches =
                 _operationsRegexp.Matches(cmd);
 
-            for (int i = 0; i < aliases.Length; i++)
+            int i = 1;
+            var dic = interceptors.ToDictionary(
+                @int => aliases[i].Trim(),
+                @int => @int);
+            
+            for (int j = 0; j < matches.Count; j++)
             {
-                strategies.Fields.TryAdd(interceptors[i], ref aliases[i]);
-            }
+                if (!matches[j].Success) { return false; }
 
-            for (int i = 0; i < matches.Count; i++)
-            {
-                if (!matches[i].Success) { return false; }
-
-                var grps = matches[i].Groups;
+                var grps = matches[j].Groups;
 
                 strategies.Add(grps["accessor1"].Success ?
-                    Get4Properties(strategies, grps) :
-                    Get4Methods(strategies, grps));
+                    Get4Properties(strategies, grps, dic) :
+                    Get4Methods(strategies, grps, dic));
             }
 
             return true;
