@@ -1,99 +1,113 @@
 #Surrogates
-A very simple and versatile object masher, for C# developers.    
-It hooks on your regular OOP and ables you to add highly abstracted features that, otherwise, would imply in many replicated lines of code, helpers and maintenance.     
-Leave your code readable,  by doing exactly what it says. Then, to a end user, provide a very sophisticated façade, that will have quite separated concerns and responsibilities. And those features can be reused for many other porpoises.     
-____
-### Table of Contents
-- [API](#user-content-api)
-	- [Parameter Rules](#user-content-parameter-rules)
-	- [Mapping](#user-content-mapping)
-	- [Special Parameters](#user-content-special-parameters)
-		- [Special Parameters for Properties](#user-content-Special-Parameters-for-Properties)
-		- [Special Parameters for Methods](#user-content-Special-Parameters-for-Methods)
-- [Usages](#user-content-usages)
-	- [A simple example](#user-content-a-simple-example)
-	- [Depency Injection](#user-content-depency-injection)
-	- [Disabling a method](#user-content-disabling-a-method)
-	- [Adding instrumentation](#user-content-adding-instrumentation)
-	- [Lazy loading](#user-content-lazy-loading)
-	- [Adding logs](#user-content-adding-logs)
-	- [Intercepting specific methods](#user-content-intercepting-specific-methods)
-	- [Multi-dispatch delegate behaviour](#user-content-multi-dispatch-delegate-behaviour)
+Leave your code simple and direct, by doing exactly what it says. Then, to a client, provide a very sophisticated façade, that will have separated concerns and responsibilities. 
+Those features can be reused for many other porpoises.      
+
+>*"Keep your business code **simple**"*
+
+Surrogates is a direct and versatile object masher, which injects aspects and functionalities into any code.
+It hooks on your regular OOP and ables you to add highly abstracted features that, that otherwise, would imply in many replicated lines of code, inheritance, helpers and maintenance.     
+>*"Apply any immediate, or temporary, changes to a problematic legacy code"*
 
 ____
-### API
-This framework can be divided in: __Mapping__, __Method Rules__ and __Parameter Rules__. The first is responsible for creating a bind between the base code and the interceptor code.     
-To make use of the original class instance, or original method's parameters or information, there are some rules that have to be followed. And for that matter, this document divides into rules for methods (, properties) and those method's parameters.
+## Table of Contents
+* auto-gen TOC:
+{:toc}
 
-#### Mapping
-The mapping offers a sugar-like fluent synthax, to provide an easy to use and straight foward approach to the binding.    
+____
+## API
+### Mapping
+Mapping is responsible for creating a bind between the base type and its interceptor type.
+#### Expressions
+The mapping through __Expressions__ offers a sugar-like fluent synthax, that provides an easy to use and straight foward approach to the binding.    
 the synthax is supposed to be read as a sentence or a phrase:
-
 ```c#
-	_container.Map(m => m.Throughout<RegularJoe>().Replace.ThisMethod("GetAge").Using<TwoKids>().ThisMethod("NewMethod"));    
+_container.Map(m => 
+	m.From<RegularJoe>()
+	 .Replace
+	 .This(r => (Func<int>) r.GetAge)
+	 .Using<TwoKids>("NewMethod"));    
 ```
+It supports multiple operations for a single expression, to create a very complex Surrogated type.
+This expression API has support for methods and properties.
+>**Important notes**: 
 
-##### Interception
-There are three kinds of interception: __Replace__, __Visit__ and __Disable__. Each will intercept and act differently withn the base method. 
+> - Each expression made will be used to create one new proxy.     
+> - In order to create multiple proxies, from a same type, You have to give it a different name.
 
-- **Replace**: 
-	To replace a method means that the new code will be called instead of the original one. You still can call the original method, using the parameter [s_method](#user-content-the-special-s_method-parameter), with wich you can conditionate or alter the its outcome, per example.    
-**About the return**: If the new method has a return, and that return is either the same type of the original return or some type that can be deduced from the original, it will be returned. Otherwise, the return will be discarded, and the original will return a default value.    
-**Synthax**:    
+Examples: 
+Syntax for replacing:
 ```c#
-	_container.Map(m => m.Throughout<RegularJoe>().Replace.ThisMethod("GetAge").Using<TwoKids>().ThisMethod("NewMethod"));    
+_container.Map(m => m
+	.From<Dummy>()
+	.Replace
+	.This(d => d.AccessItWillThrowException)
+	.Accessors(a =>
+	{
+		Set4Property.OneSimpleGetter(a);
+		Set4Property.OneSimpleSetter(a);
+	}));    
 ```
-Or, using lambda expressions:
+Syntax for visiting:
 ```c#
-	_container.Map(m => m.Throughout<RegularJoe>().Replace.ThisMethod("GetAge").Using<TwoKids>().ThisMethod(t => t.NewMethod));    
+_container.Map(m => m
+	.From<Dummy>()
+	.Visit
+	.This(d => (Func<int>)d.Call_SetPropText_simple_Return_1)
+	.Using<InterferenceObject>(r => (Action) r.AccomplishNothing));   
 ```
-- **Visit**: 
-	To visit a method means that your new code will be called before the original method. _If the new method has a return, this result will be discarded.     
-**About the return**: If the new code does not throws an exception, it will not interrupt the original flow.        
-**Synthax**:    
+Syntax for disabling:
 ```c#
-	_container.Map(m => m.Throughout<RegularJoe>().Visit.ThisMethod("GetAge").Using<TwoKids>().ThisMethod("NewMethod"));    
+_container.Map(m => m
+	.From<Dummy>()
+	.Disable
+	.Method("SetPropText_simple"));
 ```
-Or, using lambda expressions:
-```c#
-	_container.Map(m => m.Throughout<RegularJoe>().Visit.ThisMethod("GetAge").Using<TwoKids>().ThisMethod(t => t.NewMethod));    
-```
-- **Disable** : 
-	It is meant to disable any method, or property. By disable, you should read: it will be only returned Null for a reference type and the default for value type.    
-**Syntax**:
-```c#	
-	_container.Map(m => m.Throughout<RegularJoe>().Disable.ThisMethod("GetAge");
-```
-Or, using lambda expressions:
-```c#	
-	_container.Map(m => m.Throughout<RegularJoe>().Disable.ThisMethod<int>(joe => joe.GetAge);
-```
+#### Surrogates Command Language (*SCL*)
+### Intercepting
+Intercepting
+There are three basic kinds of interception: __Replace__, __Visit__ and __Disable__. Each will intercept and act differently withn the base method or property. 
 
-#### Method Rules
-The methods, to be intercepted, have to be instance and virtual, and either internal, protected or public. Static methods, non-virtual or private will not work out.
+#### Replacing 
+To replace a method means that the new code will be called instead of the original one. You still can call the original method, using the parameter [s_method](#user-content-the-special-s_method-parameter), with wich you can conditionate or alter the its outcome, per example.    
 
-#### Parameter Rules
+>**About the return**: If the new method has a return, and that return is either the same type of the original return or some type that can be deduced from the original, it will be returned. Otherwise, the return will be discarded, and the original will return a default value.    
+
+#### Visiting
+To visit a method means that your new code will be called before the original method. _If the new method has a return, this result will be discarded.     
+>**About the return**: If the new code does not throws an exception, it will not interrupt the original flow.     
+
+#### Disabling
+It is meant to disable any method, or property. 
+>**About the return**: By disable, you should read: *it will be only returned Null for a reference type and the default for value type.*
+      
+### Rules
+
+#### Rules for Methods and Properties
+The methods or properties in order to be intercepted, have to be non-static and marked as virtual.
+Can come from a super (inherited) type. 
+Either protected and public modifiers are acceptable. 
+*So, to sum it up, any static, non-virtual, internal or private will not work out.*
+
+#### Parameter for Properties
 Every single parameter from the original can be passed on, as long as it respects these rules:      
 
 +   Same exact name,
 +   Same type or one that is assignable from the original type,     
 
 _(The order does not matter.)_
-
-#### Special Parameters 
+   
+### Special Parameters
 For all that it matters, just being able to execute an action in a method, inside another just seem too limited, so this framework  made some special parameters to be used, hopefully, a lot. 
-Those special parameters are different for Methods and for Properties. 
+Those special parameters are different for Methods and for Properties.      
 
-####Special Parameters for Properties:
-
+#### Special Parameters for Properties
 Type       | Parameter     | Contents
 --------   |---------------| -------------
 `System.String`   | __s_name__    | it contains the original property's name
 Same or one that can be inferred from the original parameter | __s_value__     | it contains the value of the value set to the property. This only works for the setter, otherwise, it will be passed as `default(type)` 
-Same or can be inferred from the original class | __s_instance__      | It contains a pointer to the instance of the original class 
+Same or can be inferred from the original class | __s_instance__      | It contains a pointer to the instance of the original class     
 
-####Special Parameters for methods:
-
+#### Special Parameters for methods
 Type       | Parameter     | Contents
 --------   |---------------| -------------
 `System.Object[]` | __s_arguments__     | It contains the value of all arguments of that original method 
@@ -102,7 +116,8 @@ Same or one that can be inferred from the original class | __s_instance__      |
 `System.Delegate` or the equivalent in either `System.Action<T, ...>` or `System.Func<T...>` | **s_method** or the __s___ + **same** name of the original, __in any case__ | It contains a pointer to the original method. For more information on how to use this argument, [click here](#methodParameter)
 
 <a id="methodParameter" title="methodParameter" class="toc-item"></a>
-####The special s_method parameter
+
+#### The special s_method parameter
 When passing the method as parameter, there are some restrictions and a few rules, to ease its use. It can only be a protected or public instance method. 
 #####How to name it:
 You can make use of the original method name, in any letter case, led by "__s___".    
@@ -124,7 +139,6 @@ The relation between a method and a Action or a function is this:
   - the order of parameters dictate the type of such delegate:    
   - `void Get(string s, int i)`, turns into __`System.Action<string, int>`__,  
   - `long Get(object obj, DateTime i)`, turns into __`System.Func<object, DateTime, log>`__, 
-   
 ____
 
 ### Usages
