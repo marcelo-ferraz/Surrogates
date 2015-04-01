@@ -142,7 +142,7 @@ namespace Surrogates.Expressions
             }
 
             if (string.IsNullOrEmpty(propName))
-            { throw new IncoherentPropertyOnBodyException(); }
+            { throw new IncoherentBody4PropertyException(); }
 
             var prop =
                 typeof(TBase).GetProp4Surrogacy(propName);

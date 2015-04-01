@@ -67,6 +67,7 @@
     <Compile Include="Scenarios\Methods\Substitute\Substitute_ActionWtihFunctionTest.cs" />
     <Compile Include="Unit\Methods\Disable\DisableTest.cs" />
     <Compile Include="Unit\Methods\IInterferenceTest.cs" />
+    <Compile Include="Unit\Methods\Substitute\SubstituteUnitTesting.cs" />
     <Compile Include="Unit\Methods\Substitute\Substitute_ActionWithActionTest.cs" />
     <Compile Include="Unit\Methods\Substitute\Substitute_ActionWtihFunctionTest.cs" />
     <Compile Include="Unit\Methods\Substitute\Substitute_FuncWithActionTest.cs" />

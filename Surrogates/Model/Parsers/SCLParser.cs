@@ -176,10 +176,11 @@ namespace Surrogates.Model.Parsers
                 _operationsRegexp.Matches(cmd);
 
             int i = 1;
-            var dic = interceptors.ToDictionary(
-                @int => aliases[i].Trim(),
-                @int => @int);
-            
+
+            var dic = aliases.Length > 1 ?
+                interceptors.ToDictionary(@int => aliases[i].Trim(), @int => @int) :
+                null;
+
             for (int j = 0; j < matches.Count; j++)
             {
                 if (!matches[j].Success) { return false; }

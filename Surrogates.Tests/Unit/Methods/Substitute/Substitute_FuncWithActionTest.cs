@@ -5,25 +5,18 @@ using System;
 namespace Surrogates.Tests.Unit.Methods.Substitute
 {
     [TestFixture]
-    public class Substitute_FuncWithActionTest : IInterferenceTest
+    public class Substitute_FuncWithActionTest : SubstituteUnitTesting,  IInterferenceTest
     {
         [Test]
         public void BothParameterLess()
         {
-            var container = new SurrogatesContainer();
-
-            container.Map(m => m
-                .From<Dummy>()
-                .Replace
-                .This(d => (Func<int>)d.Call_SetPropText_simple_Return_1)
-                .Using<InterferenceObject>(r => (Action)r.AccomplishNothing))
-                ;
-
             var dummy =
                 new Dummy();
 
-            var proxy =
-                container.Invoke<Dummy>();
+            var proxy = Replace<Dummy, InterferenceObject>(
+                (Func<int>) new Dummy().Call_SetPropText_simple_Return_1,
+                null,
+                (Action)new InterferenceObject().AccomplishNothing);
 
             var dummyRes =
                 dummy.Call_SetPropText_simple_Return_1();
@@ -38,20 +31,15 @@ namespace Surrogates.Tests.Unit.Methods.Substitute
 
         [Test]
         public void PassingBaseParameters()
-        {
-            var container = new SurrogatesContainer();
-
-            container.Map(m =>
-                m.From<Dummy>()
-                .Replace
-                .This(d => (Func<string, DateTime, Dummy.EvenMore, int>)d.Call_SetPropText_complex_Return_1)
-                .Using<InterferenceObject>("AddToPropText__MethodName"));
-
+        {  
             var dummy =
                 new Dummy();
 
-            var proxy =
-                container.Invoke<Dummy>();
+            var proxy = Replace<Dummy, InterferenceObject>(
+                (Func<string, DateTime, Dummy.EvenMore, int>) new Dummy().Call_SetPropText_complex_Return_1,
+                null,
+                (Action<string, Dummy, DateTime, string, Dummy.EvenMore>) new InterferenceObject().AddToPropText__MethodName);
+
 
             // just to show that the rest of the object behaves as expected
             dummy.SetPropText_simple();
@@ -80,20 +68,14 @@ namespace Surrogates.Tests.Unit.Methods.Substitute
         [Test, ExpectedException(typeof(NullReferenceException))]
         public void NotPassingBaseParameters()
         {
-            var container = new SurrogatesContainer();
-
-            container.Map(m =>
-                m.From<Dummy>()
-                .Replace
-                .Method("Call_SetPropText_complex_Return_1")
-                .Using<InterferenceObject>(r => (Action<string, Dummy, DateTime, string, Dummy.EvenMore>)r.Void_VariousParametersWithDifferentNames))
-                ;
-
             var dummy =
                 new Dummy();
 
-            var proxy =
-                container.Invoke<Dummy>();
+            var proxy = Replace<Dummy, InterferenceObject>(
+                (Func<string, DateTime, Dummy.EvenMore, int>)new Dummy().Call_SetPropText_complex_Return_1,
+                null,
+                (Action<string, Dummy, DateTime, string, Dummy.EvenMore>) new InterferenceObject().Void_VariousParametersWithDifferentNames);
+
 
             dummy.Call_SetPropText_complex_Return_1("text", DateTime.Now, new Dummy.EvenMore());
             proxy.Call_SetPropText_complex_Return_1("text", DateTime.Now, new Dummy.EvenMore());
@@ -102,19 +84,14 @@ namespace Surrogates.Tests.Unit.Methods.Substitute
         [Test]
         public void PassingInstanceAndMethodName()
         {
-            var container = new SurrogatesContainer();
-
-            container.Map(m => m
-                .From<Dummy>()
-                .Replace
-                .This(d => (Func<int>)d.Call_SetPropText_simple_Return_1)
-                .Using<InterferenceObject>(r => (Action<Dummy, string>)r.SetPropText_InstanceAndMethodName));
-
             var dummy =
                 new Dummy();
+            
+            var proxy = Replace<Dummy, InterferenceObject>(
+                (Func<int>)new Dummy().Call_SetPropText_simple_Return_1,
+                null,
+                (Action<Dummy, string>) new InterferenceObject().SetPropText_InstanceAndMethodName);
 
-            var proxy =
-                container.Invoke<Dummy>();
 
             var dummyRes =
                 dummy.Call_SetPropText_simple_Return_1();

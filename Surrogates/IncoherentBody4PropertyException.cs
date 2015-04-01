@@ -2,9 +2,9 @@
 
 namespace Surrogates
 {
-    public class IncoherentPropertyOnBodyException : Exception
+    public class IncoherentBody4PropertyException : Exception
     {
-        public IncoherentPropertyOnBodyException()
+        public IncoherentBody4PropertyException()
             : base("There was a problem whilst inspecting the body of the property you provided.")
         { }
     }

@@ -53,7 +53,7 @@
     <Compile Include="Expressions\ReplaceExpression.cs" />
     <Compile Include="Expressions\VisitExpression.cs" />
     <Compile Include="Expressions\InterferenceExpression.cs" />
-    <Compile Include="IncoherentPropertyOnBodyException.cs" />
+    <Compile Include="IncoherentBody4PropertyException.cs" />
     <Compile Include="MethodNotFoundException.cs" />
     <Compile Include="PropertyNotFoundException.cs" />
     <Compile Include="Expressions\Accessors\PropertyAccessor.cs" />

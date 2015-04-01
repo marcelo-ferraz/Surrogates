@@ -31,7 +31,7 @@ namespace Surrogates.Tests.Unit.Methods.Disable
         public void WithReturn()
         {
             Strategy.Kind = InterferenceKind.Disable;
-            this.Strategy.Methods.Add(((Action)new Dummy().SetPropText_simple).Method);
+            this.Strategy.Methods.Add(((Func<int>)new Dummy().Call_SetPropText_simple_Return_1).Method);
 
             var dummy =
                 new Dummy();
@@ -41,6 +41,7 @@ namespace Surrogates.Tests.Unit.Methods.Disable
 
             var dummyRes =
                 dummy.Call_SetPropText_simple_Return_1();
+
             var proxyRes =
                 proxy.Call_SetPropText_simple_Return_1();
 

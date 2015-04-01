@@ -97,7 +97,7 @@ namespace Surrogates.Tests.Unit
                 Array.CreateInstance(typeof(string), 0);
 
             var strats = GetStrategies(
-                "as d, i disable d.SetPropText_simple",
+                "as d disable d.SetPropText_simple",
                 typeof(Dummy),
                 new[] { typeof(InterferenceObject) },
                 aliases);

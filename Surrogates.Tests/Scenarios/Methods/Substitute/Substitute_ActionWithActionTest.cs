@@ -38,7 +38,8 @@ namespace Surrogates.Tests.Scenarios.Methods.Substitute
 
             container.Map(m =>
                 m.From<Dummy>()
-                .Replace.This(d => (Action<string, DateTime, Dummy.EvenMore>) d.SetPropText_complex)
+                .Replace
+                .This(d => (Action<string, DateTime, Dummy.EvenMore>) d.SetPropText_complex)
                 .Using<InterferenceObject>(r => (Action<string, Dummy, DateTime, string, Dummy.EvenMore>)r.AddToPropText__MethodName));
 
             var dummy =
