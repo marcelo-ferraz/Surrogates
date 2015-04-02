@@ -108,14 +108,14 @@ It is meant to disable any method, or property.
 >**About the return**: By disable, you should read: *it will be only returned Null for a reference type and the default for value type.*
       
 ## Rules
-
+In order to use the surrogacy at its best, one should know the rules which mandates the behavior of this API.
 ### Rules for Methods and Properties
 The methods or properties in order to be intercepted, have to be non-static and marked as virtual.
 Can come from a super (inherited) type. 
 Either protected and public modifiers are acceptable. 
 *So, to sum it up, any static, non-virtual, internal or private will not work out.*
 
-### Parameter for Properties
+### Rules for Parameters
 Every single parameter from the original can be passed on, as long as it respects these rules:      
 
 +   Same exact name,
