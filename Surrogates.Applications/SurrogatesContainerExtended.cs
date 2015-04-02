@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Surrogates.Applications
 {
-    public static class SurrogatesContainerExtended<T>
+    public static class SurrogatesContainerExtended
     {
-        public static AndExpression<T> ReadAndWrite(this ExtensionExpression<T> exp, params Func<T, object>[] property)
+        public static AndExpression<T> ReadAndWrite<T>(this ExtensionExpression<T> exp, params Func<T, object>[] property)
         {
             var strat = new Strategy
                 .ForProperties(exp.CurrentStrategy);
