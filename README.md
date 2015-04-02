@@ -159,9 +159,6 @@ _(You can just simply name it __s_method__, which serves for any method.)_
 The original method will be exposed through delegate or a derived type, like an ``System.Action`` or a ``System.Func<>``:   
 
 - A __`System.Delegate`__  : Making use of this type, to call the method, you can use the `DynamicInvoke` method. It accepts an array of objects and returns an object. As it calls a late-bound call as it demands boxing and unboxing, it may give a small overhead compared to regular call. 
-
-<i class="icon-plus-circled"></i> Example:  ```s_method.DynamicInvoke(object)```
-
 - The equivalent in __`System.Action<>`__ or __`System.Func<>`__, keep in mind that this is simplest and fastest, with no over heading, and no need for boxing and unboxing, in comparison to a native call, this call it will have the a very close performance.     
 The relation between a method and a Action or a function is this:
  - a method that returns __`void`__, is an __Action__, if it returns something, it is a __Func__,
@@ -169,24 +166,23 @@ The relation between a method and a Action or a function is this:
   - `void Get(string s, int i)`, turns into __`System.Action<string, int>`__,  
   - `long Get(object obj, DateTime i)`, turns into __`System.Func<object, DateTime, log>`__, 
 
-<i class="icon-plus-circled"></i> Examples:  
+####**How to use it**:
+Each type will change slightly the way a method is called.    
+
+ Type 	                 | How to call                         
+-------------------------|--------------------------------------
+ ```Delegate``` | ```s_method.DynamicInvoke(object)``` 
+ ```Action<string, int>```    | ```s_method("something", 1)```, ```s_method.DynamicInvoke(new object[] { "str", 1 })```, ```s_method.Invoke("something", 1)```
+ ```Func<string, int>```| ```s_method("something")```,```s_method.DynamicInvoke("str")```,```s_method.Invoke("something", 1)```
+
+Whe using ```Func<>``` or ```Action```, there is the possibility of asynchronously call the method. 
 ```c#
-// a simple void method, (it will ask for the right parameters, and can return the right type)
-s_method(/*right parameters*/ (...));
-
-// a simple method that returns a value 
-SomeType result = (SomeType) s_method.DynamicInvoke(object);
-
-// another example of invoke (it will ask for the right parameters, and can return the right type):
-s_method.Invoke(/*right parameters*/ (...));
-
 // it will call this method asynchronously, and with the return, you can wait the result 
 var asyncResult = s_method.BeginInvoke(object);
 // this will make your thread wait for the result
 asyncResult.AsyncWaitHandle.WaitOne();
 ```
-
-____
+___
 
 ## <i class="icon-align-left"></i> Usages
 ### Creating a pool aspect
