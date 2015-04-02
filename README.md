@@ -55,7 +55,7 @@ _container.Map(m =>
 ```
 It supports multiple operations for a single expression, to create a very complex Surrogated type.
 This expression API has support for methods and properties.
->**<i class="icon-attention"></i> Important notes**: 
+>:exclamation:**Important notes**: 
 
 > - Each expression made will be used to create one new proxy.     
 > - In order to create multiple proxies, from a same type, You have to give it a different name.
