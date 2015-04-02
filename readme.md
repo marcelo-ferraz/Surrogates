@@ -61,7 +61,7 @@ This expression API has support for methods and properties.
 > - In order to create multiple proxies, from a same type, You have to give it a different name.
 
 Examples: 
-<i class="icon-pencil"></i> Syntax for replacing:
+:pencil: Syntax for replacing:
 ```c#
 _container.Map(m => m
 	.From<Dummy>()
@@ -81,7 +81,7 @@ _container.Map(m => m
 	.This(d => (Func<int>)d.Call_SetPropText_simple_Return_1)
 	.Using<InterferenceObject>(r => (Action) r.AccomplishNothing));   
 ```
-<i class="icon-trash"></i> Syntax for disabling:
+:bomb: Syntax for disabling:
 ```c#
 _container.Map(m => m
 	.From<Dummy>()
@@ -93,16 +93,16 @@ _container.Map(m => m
 Intercepting
 There are three basic kinds of interception: __Replace__, __Visit__ and __Disable__. Each will intercept and act differently withn the base method or property. 
 
-### <i class="icon-pencil"></i> Replacing 
+### :pencil: Replacing 
 To replace a method means that the new code will be called instead of the original one. You still can call the original method, using the parameter [s_method](#user-content-the-special-s_method-parameter), with wich you can conditionate or alter the its outcome, per example.    
 
 >**About the return**: If the new method has a return, and that return is either the same type of the original return or some type that can be deduced from the original, it will be returned. Otherwise, the return will be discarded, and the original will return a default value.    
 
-### <i class="icon-coffee"></i>Visiting
+### :coffee: Visiting
 To visit a method means that your new code will be called before the original method. _If the new method has a return, this result will be discarded.     
 >**About the return**: If the new code does not throws an exception, it will not interrupt the original flow.     
 
-### <i class="icon-trash"></i> Disabling
+### :bomb:  Disabling
 It is meant to disable any method, or property. 
 >**About the return**: By disable, you should read: *it will be only returned Null for a reference type and the default for value type.*
       
@@ -266,7 +266,7 @@ When this behaviour is not desired, just delete the map.
 Sometimes a legacy class or system, has to have an instrumentation logic, because some method is too expensive, or a page is bloated, or just not working. You can add those behaviors to any class that is not static.    
 Or you need to temporarily add some triggers to a project, so you can run a new one in parallel.      
 The list goes on and on. Access logic in memory, disable partially an website, create a fast and simple dependency injection logic, etc.     
-><i class="icon-info-circled"></i> As this is a non-linear line of thought, **it can turn, very easily, into a big mess**. So please, **use it wisely** and **document it as much as you might think you will need**.
+>:exclamation: As this is a non-linear line of thought, **it can turn, very easily, into a big mess**. So please, **use it wisely** and **document it as much as you might think you will need**.
 
 ### Depency Injection
 _to_be_documented_
