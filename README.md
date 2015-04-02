@@ -44,8 +44,8 @@ ____
 ## Mapping
 Mapping is responsible for creating a bind between the base type and its interceptor type.
 ### Expressions
-The mapping through __Expressions__ offers a sugar-like fluent synthax, that provides an easy to use and straight foward approach to the binding.    
-the syntax is supposed to be read as a sentence or a phrase:
+The mapping through __Expressions__ offers a sugar-like fluent synthax, that provides an easy to use and straight foward approach to the binding.     
+the syntax is supposed to be read as a sentence or a phrase:    
 ```c#
 _container.Map(m => 
 	m.From<RegularJoe>()
@@ -54,7 +54,7 @@ _container.Map(m =>
 	 .Using<TwoKids>("NewMethod"));    
 ```
 It supports multiple operations for a single expression, to create a very complex Surrogated type.
-This expression API has support for methods and properties.
+This expression API has support for methods and properties.    
 >:exclamation:**Important notes**: 
 
 > - Each expression made will be used to create one new proxy.     
@@ -123,7 +123,7 @@ Every single parameter from the original can be passed on, as long as it respect
 
 _(The order does not matter.)_
    
-## <i class="icon-exchange"> </i>Special Parameters
+## Special Parameters
 For all that it matters, just being able to execute an action in a method, inside another just seem too limited, so this framework  made some special parameters to be used, hopefully, a lot. 
 Those special parameters are different for Methods and for Properties.      
 
@@ -144,7 +144,7 @@ Same or one that can be inferred from the original class | __s_instance__      |
 
 <a id="methodParameter" title="methodParameter" class="toc-item"></a>
 
-### <i class="icon-rocket"></i>The special s_method parameter
+### :squirrel: The special s_method parameter
 When passing the method as parameter, there are some restrictions and a few rules, to ease its use. It can only be a protected or public instance method. 
 ####How to name it:
 You can make use of the original method name, in any letter case, led by "__s___".    
