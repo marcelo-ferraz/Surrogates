@@ -110,7 +110,6 @@ _container.Map<Dummy>(
 ```
 
 # Intercepting
-Intercepting
 There are three basic kinds of interception: [replace](#replacing),  [visit](#visiting) and [disable](#disabling). Each will intercept and act differently withn the base method or property. 
 
 ## :pencil: Replacing 
