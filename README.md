@@ -173,11 +173,13 @@ Each type will change slightly the way a method is called.
 -------------------------|--------------------------------------
  ```Delegate``` | ```s_method.DynamicInvoke(object)``` 
  ```Action<string, int>```    | ```s_method("something", 1)```, ```s_method.DynamicInvoke(new object[] { "str", 1 })```, ```s_method.Invoke("something", 1)```
- ```Func<string, int>```| ```s_method("something")```,```s_method.DynamicInvoke("str")```,```s_method.Invoke("something", 1)```
+ ```Func<string, int>```| ```s_method("something")```, ```s_method.DynamicInvoke("str")```, ```s_method.Invoke("something", 1)```
 
 Whe using ```Func<>``` or ```Action```, there is the possibility of asynchronously call the method. 
+
 ```c#
-// this will call this method asynchronously, and with the return, you can wait for it to finish
+// this will call this method asynchronously, 
+//and with the return, you can wait for it to finish
 var asyncResult = s_method.BeginInvoke(object);
 // this will make your thread wait for the result
 asyncResult.AsyncWaitHandle.WaitOne();
