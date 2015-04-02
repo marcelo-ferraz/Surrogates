@@ -90,9 +90,28 @@ _container.Map(m => m
 	.Method("SetPropText_simple"));
 ```
 ## Surrogates Command Language (*SCL*)
+A more *magic* approach to mapping is by using a loose comand language. It was created to be very friendly. But it has nothing to lose when compared to an [expression](#expressions) as both providers are parsed into a strategy. Strategy that will be used inside the same engine.     
+It supports the same three basic operations [to replace](#replacing),  [to visit](#visiting) and [to disable](#disabling). Its syntax resambles very much the [expressions mapping](#expressions) api.
+
+:pencil: Syntax for replacing:
+```c#
+_container.Map<Dummy, InterferenceObject>(
+	"as d, i replace d.AccessItWillThrowException accessors getter = i.AccomplishNothing and setter = i.AccomplishNothing");    
+```
+ :coffee: Syntax for visiting:
+```c#
+_container.Map<Dummy, InterferenceObject>(
+	"as d, i visit d.Call_SetPropText_simple_Return_1 with i.AccomplishNothing");   
+```
+:bomb: Syntax for disabling:
+```c#
+_container.Map<Dummy>(
+	"as d Disable d.SetPropText_simple");
+```
+
 # Intercepting
 Intercepting
-There are three basic kinds of interception: __Replace__, __Visit__ and __Disable__. Each will intercept and act differently withn the base method or property. 
+There are three basic kinds of interception: [replace](#replacing),  [visit](#visiting) and [disable](#disabling). Each will intercept and act differently withn the base method or property. 
 
 ## :pencil: Replacing 
 To replace a method means that the new code will be called instead of the original one. You still can call the original method, using the parameter [s_method](#user-content-the-special-s_method-parameter), with wich you can conditionate or alter the its outcome, per example.    
