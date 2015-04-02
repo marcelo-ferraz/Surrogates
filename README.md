@@ -38,6 +38,7 @@ ____
 		- [Adding logs](#)
 		- [Intercepting specific methods](#)
 		- [Multi-dispatch delegate behaviour](#)
+		
 ____
 # API
 ## Mapping
