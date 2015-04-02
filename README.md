@@ -11,8 +11,6 @@ It hooks on your regular OOP and ables you to add highly abstracted features tha
 ____
 ## Table of Contents
 
-{:toc}
-
 ____
 ## API
 ### Mapping
@@ -88,7 +86,7 @@ Can come from a super (inherited) type.
 Either protected and public modifiers are acceptable. 
 *So, to sum it up, any static, non-virtual, internal or private will not work out.*
 
-#### Parameter for Properties
+#### Rules for Parameters
 Every single parameter from the original can be passed on, as long as it respects these rules:      
 
 +   Same exact name,
