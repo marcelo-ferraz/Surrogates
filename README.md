@@ -62,7 +62,7 @@ This expression API has support for methods and properties.
 
 Examples:     
 
-:pencil: Syntax for replacing:
+<i class="icon-pencil"></i> Syntax for replacing:
 ```c#
 _container.Map(m => m
 	.From<Dummy>()
@@ -74,7 +74,7 @@ _container.Map(m => m
 		Set4Property.OneSimpleSetter(a);
 	}));    
 ```
- :coffee: Syntax for visiting:
+<i class="icon-coffee"></i> Syntax for visiting:
 ```c#
 _container.Map(m => m
 	.From<Dummy>()
@@ -82,7 +82,7 @@ _container.Map(m => m
 	.This(d => (Func<int>)d.Call_SetPropText_simple_Return_1)
 	.Using<InterferenceObject>(r => (Action) r.AccomplishNothing));   
 ```
-:bomb: Syntax for disabling:
+<i class="icon-trash"></i> Syntax for disabling:
 ```c#
 _container.Map(m => m
 	.From<Dummy>()
@@ -93,17 +93,17 @@ _container.Map(m => m
 A more *magic* approach to mapping is by using a loose comand language. It was created to be very friendly. But it has nothing to lose when compared to an [expression](#expressions) as both providers are parsed into a strategy. Strategy that will be used inside the same engine.     
 It supports the same three basic operations [to replace](#replacing),  [to visit](#visiting) and [to disable](#disabling). Its syntax resambles very much the [expressions mapping](#expressions) api.
 
-:pencil: Syntax for replacing:
+<i class="icon-pencil"></i> Syntax for replacing:
 ```c#
 _container.Map<Dummy, InterferenceObject>(
 	"as d, i replace d.AccessItWillThrowException accessors getter = i.AccomplishNothing and setter = i.AccomplishNothing");    
 ```
- :coffee: Syntax for visiting:
+<i class="icon-coffee"></i> Syntax for visiting:
 ```c#
 _container.Map<Dummy, InterferenceObject>(
 	"as d, i visit d.Call_SetPropText_simple_Return_1 with i.AccomplishNothing");   
 ```
-:bomb: Syntax for disabling:
+<i class="icon-trash"></i> Syntax for disabling:
 ```c#
 _container.Map<Dummy>(
 	"as d Disable d.SetPropText_simple");
@@ -112,16 +112,16 @@ _container.Map<Dummy>(
 # Intercepting
 There are three basic kinds of interception: [replace](#replacing),  [visit](#visiting) and [disable](#disabling). Each will intercept and act differently withn the base method or property. 
 
-## :pencil: Replacing 
+## <i class="icon-pencil"></i> Replacing 
 To replace a method means that the new code will be called instead of the original one. You still can call the original method, using the parameter [s_method](#user-content-the-special-s_method-parameter), with wich you can conditionate or alter the its outcome, per example.    
 
 >**About the return**: If the new method has a return, and that return is either the same type of the original return or some type that can be deduced from the original, it will be returned. Otherwise, the return will be discarded, and the original will return a default value.    
 
-## :coffee: Visiting
+## <i class="icon-coffee"></i> Visiting
 To visit a method means that your new code will be called before the original method. _If the new method has a return, this result will be discarded.     
 >**About the return**: If the new code does not throws an exception, it will not interrupt the original flow.     
 
-## :bomb:  Disabling
+## <i class="icon-trash"></i> Disabling
 It is meant to disable any method, or property. 
 >**About the return**: By disable, you should read: *it will be only returned Null for a reference type and the default for value type.*
       
