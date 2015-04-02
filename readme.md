@@ -180,7 +180,8 @@ For more info, please read [this](#msdn.microsoft.com/en-us/library/22t547yb(v=v
 ```c#
 // this will call this method asynchronously, 
 //and with the return, you can wait for it to finish
-var asyncResult = s_method.BeginInvoke(object);
+var asyncResult = 
+	s_method.BeginInvoke(null, null);
 // this will make your thread wait for the result
 asyncResult.AsyncWaitHandle.WaitOne();
 ```
