@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace Surrogates.Appliances
+namespace Surrogates.Applications.Interlocking
 {
     public abstract class InterlockedPropertyInterceptor<T>
     {

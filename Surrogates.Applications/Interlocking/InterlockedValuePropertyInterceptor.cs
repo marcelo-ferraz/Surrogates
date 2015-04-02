@@ -1,5 +1,5 @@
 ﻿
-namespace Surrogates.Appliances
+namespace Surrogates.Applications.Interlocking
 {
     public class InterlockedValuePropertyInterceptor<T>
         : InterlockedPropertyInterceptor<T>

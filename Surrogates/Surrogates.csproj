@@ -39,9 +39,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccessorAlreadyOverridenException.cs" />
-    <Compile Include="Appliances\Interlocking\InterlockedValuePropertyInterceptor.cs" />
-    <Compile Include="Appliances\Interlocking\InterlockedRefPropertyInterceptor.cs" />
-    <Compile Include="Appliances\Interlocking\InterlockedPropertyInterceptor.cs" />
     <Compile Include="BaseContainer4Surrogacy.cs" />
     <Compile Include="Executioners\DisableExecutioner.cs" />
     <Compile Include="Executioners\Executioner.cs" />
@@ -61,7 +58,7 @@
     <Compile Include="Expressions\Accessors\UsingExpression.cs" />
     <Compile Include="Expressions\UsingInterferenceExpression.cs" />
     <Compile Include="Expressions\AndExpression.cs" />
-    <Compile Include="Expressions\ApplyExpression.cs" />
+    <Compile Include="Expressions\ExtensionExpression.cs" />
     <Compile Include="Expressions\DisableExpression.cs" />
     <Compile Include="Expressions\Expression.cs" />
     <Compile Include="Expressions\NewExpression.cs" />

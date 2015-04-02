@@ -35,12 +35,12 @@ namespace Surrogates.Expressions
             }
         }
 
-        public ApplyExpression<TBase> Apply
+        public ExtensionExpression<TBase> Apply
         {
             get
             {
                 CurrentStrategy.Kind = InterferenceKind.Extensions;
-                return new ApplyExpression<TBase>(CurrentStrategy, Strategies);
+                return new ExtensionExpression<TBase>(CurrentStrategy, Strategies);
             }
         }
     }
