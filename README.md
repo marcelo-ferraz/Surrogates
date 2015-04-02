@@ -159,12 +159,12 @@ _(You can just simply name it __s_method__, which serves for any method.)_
 The original method will be exposed through delegate or a derived type, like an ``System.Action`` or a ``System.Func<>``:   
 
 - A __`System.Delegate`__  : Making use of this type, to call the method, you can use the `DynamicInvoke` method. It accepts an array of objects and returns an object. As it calls a late-bound call as it demands boxing and unboxing, it may give a small overhead compared to regular call. 
-- The equivalent in __`System.Action<>`__ or __`System.Func<>`__, keep in mind that this is simplest and fastest, with no over heading, and no need for boxing and unboxing, in comparison to a native call, this call it will have the a very close performance.     
+- The equivalent in __`System.Action<>`__ or __`System.Func<>`__, keep in mind that this is simplest and fastest, with no over heading, and no need for boxing and unboxing, in comparison to a native call, this call it will have the a very close performance.      
 The relation between a method and a Action or a function is this:
- - a method that returns __`void`__, is an __Action__, if it returns something, it is a __Func__,
-  - the order of parameters dictate the type of such delegate:    
-  - `void Get(string s, int i)`, turns into __`System.Action<string, int>`__,  
-  - `long Get(object obj, DateTime i)`, turns into __`System.Func<object, DateTime, log>`__, 
+ - a method that returns __`void`__, is an [Action](#msdn.microsoft.com/en-us/library/system.action%28v=vs.90%29.aspx), if it returns something, it is a [Func<>](#msdn.microsoft.com/en-us/library/bb534960%28v=vs.90%29.aspx),
+  - the order of parameters dictate the type of such delegate: 
+	  - `void Get(string s, int i)`, turns into __`System.Action<string, int>`__,  
+	   - `long Get(object obj, DateTime i)`, turns into __`System.Func<object, DateTime, log>`__, 
 
 ####**How to use it**:
 Each type will change slightly the way a method is called.    
@@ -177,7 +177,7 @@ Each type will change slightly the way a method is called.
 
 Whe using ```Func<>``` or ```Action```, there is the possibility of asynchronously call the method. 
 ```c#
-// it will call this method asynchronously, and with the return, you can wait the result 
+// this will call this method asynchronously, and with the return, you can wait for it to finish
 var asyncResult = s_method.BeginInvoke(object);
 // this will make your thread wait for the result
 asyncResult.AsyncWaitHandle.WaitOne();
