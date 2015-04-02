@@ -60,7 +60,8 @@ This expression API has support for methods and properties.
 > - Each expression made will be used to create one new proxy.     
 > - In order to create multiple proxies, from a same type, You have to give it a different name.
 
-Examples: 
+Examples:     
+
 :pencil: Syntax for replacing:
 ```c#
 _container.Map(m => m
