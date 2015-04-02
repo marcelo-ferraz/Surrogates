@@ -8,6 +8,7 @@ Surrogates is a direct and versatile object masher, which injects aspects and fu
 It hooks on your regular OOP and ables you to add highly abstracted features that, that otherwise, would imply in many replicated lines of code, inheritance, helpers and maintenance.     
 ><i class="icon-quote-left"></i>*"Apply any immediate, or temporary, changes to a problematic legacy code"*<i class="icon-quote-right"></i>
 
+You can find the latest version of this project at [Nuget](#www.nuget.org/packages/Surrogates/)'s site. Or the nuget in Visual Studio. It is your call.
 ____
 ## Table of Contents
 
