@@ -73,7 +73,7 @@ _container.Map(m => m
 		Set4Property.OneSimpleSetter(a);
 	}));    
 ```
- <i class="icon-coffee"></i>Syntax for visiting:
+ :coffee: Syntax for visiting:
 ```c#
 _container.Map(m => m
 	.From<Dummy>()
