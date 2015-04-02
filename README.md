@@ -11,11 +11,38 @@ It hooks on your regular OOP and ables you to add highly abstracted features tha
 ____
 ## Table of Contents
 
+- [Welcome to Surrogates](#)
+- [API](#)
+	- [Mapping](#)
+		- [Expressions](#)
+		- [Surrogates Command Language (SCL)](#)
+	- [Intercepting](#)
+		- [ Replacing](#)
+		- [Visiting](#)
+		- [ Disabling](#)
+	- [Rules](#)
+		- [Rules for Methods and Properties](#)
+		- [Rules for Parameters](#)
+	- [ Special Parameters](#)
+		- [Special Parameters for Properties](#)
+		- [Special Parameters for methods](#)
+		- [The special s_method parameter](#)
+			- [How to name it:](#)
+			- [How to type it:](#)
+	- [ Usages](#)
+		- [Creating a pool aspect](#)
+		- [Depency Injection](#)
+		- [Disabling a method](#)
+		- [Adding instrumentation](#)
+		- [Adding Lazy loading Aspect](#)
+		- [Adding logs](#)
+		- [Intercepting specific methods](#)
+		- [Multi-dispatch delegate behaviour](#)
 ____
-## API
-### Mapping
+# API
+## Mapping
 Mapping is responsible for creating a bind between the base type and its interceptor type.
-#### Expressions
+### Expressions
 The mapping through __Expressions__ offers a sugar-like fluent synthax, that provides an easy to use and straight foward approach to the binding.    
 the syntax is supposed to be read as a sentence or a phrase:
 ```c#
@@ -60,33 +87,33 @@ _container.Map(m => m
 	.Disable
 	.Method("SetPropText_simple"));
 ```
-#### Surrogates Command Language (*SCL*)
-### Intercepting
+### Surrogates Command Language (*SCL*)
+## Intercepting
 Intercepting
 There are three basic kinds of interception: __Replace__, __Visit__ and __Disable__. Each will intercept and act differently withn the base method or property. 
 
-#### <i class="icon-pencil"></i> Replacing 
+### <i class="icon-pencil"></i> Replacing 
 To replace a method means that the new code will be called instead of the original one. You still can call the original method, using the parameter [s_method](#user-content-the-special-s_method-parameter), with wich you can conditionate or alter the its outcome, per example.    
 
 >**About the return**: If the new method has a return, and that return is either the same type of the original return or some type that can be deduced from the original, it will be returned. Otherwise, the return will be discarded, and the original will return a default value.    
 
-#### <i class="icon-coffee"></i>Visiting
+### <i class="icon-coffee"></i>Visiting
 To visit a method means that your new code will be called before the original method. _If the new method has a return, this result will be discarded.     
 >**About the return**: If the new code does not throws an exception, it will not interrupt the original flow.     
 
-#### <i class="icon-trash"></i> Disabling
+### <i class="icon-trash"></i> Disabling
 It is meant to disable any method, or property. 
 >**About the return**: By disable, you should read: *it will be only returned Null for a reference type and the default for value type.*
       
-### Rules
+## Rules
 
-#### Rules for Methods and Properties
+### Rules for Methods and Properties
 The methods or properties in order to be intercepted, have to be non-static and marked as virtual.
 Can come from a super (inherited) type. 
 Either protected and public modifiers are acceptable. 
 *So, to sum it up, any static, non-virtual, internal or private will not work out.*
 
-#### Rules for Parameters
+### Parameter for Properties
 Every single parameter from the original can be passed on, as long as it respects these rules:      
 
 +   Same exact name,
@@ -94,18 +121,18 @@ Every single parameter from the original can be passed on, as long as it respect
 
 _(The order does not matter.)_
    
-### <i class="icon-exchange"> </i>Special Parameters
+## <i class="icon-exchange"> </i>Special Parameters
 For all that it matters, just being able to execute an action in a method, inside another just seem too limited, so this framework  made some special parameters to be used, hopefully, a lot. 
 Those special parameters are different for Methods and for Properties.      
 
-#### Special Parameters for Properties
+### Special Parameters for Properties
 Type       | Parameter     | Contents
 --------   |---------------| -------------
 `System.String`   | __s_name__    | it contains the original property's name
 Same or one that can be inferred from the original parameter | __s_value__     | it contains the value of the value set to the property. This only works for the setter, otherwise, it will be passed as `default(type)` 
 Same or can be inferred from the original class | __s_instance__      | It contains a pointer to the instance of the original class     
 
-#### Special Parameters for methods
+### Special Parameters for methods
 Type       | Parameter     | Contents
 --------   |---------------| -------------
 `System.Object[]` | __s_arguments__     | It contains the value of all arguments of that original method 
@@ -115,9 +142,9 @@ Same or one that can be inferred from the original class | __s_instance__      |
 
 <a id="methodParameter" title="methodParameter" class="toc-item"></a>
 
-#### <i class="icon-rocket"></i>The special s_method parameter
+### <i class="icon-rocket"></i>The special s_method parameter
 When passing the method as parameter, there are some restrictions and a few rules, to ease its use. It can only be a protected or public instance method. 
-#####How to name it:
+####How to name it:
 You can make use of the original method name, in any letter case, led by "__s___".    
 Per example, if you have the original method named __GetCommand__, any of the following is acceptable:
 
@@ -126,7 +153,7 @@ Per example, if you have the original method named __GetCommand__, any of the fo
  - __s_getcommand__      
  
 _(You can just simply name it __s_method__, which serves for any method.)_
-#####**How to type it**:
+####**How to type it**:
 The original method will be exposed through delegate or a derived type, like an ``System.Action`` or a ``System.Func<>``:   
 
 - A __`System.Delegate`__  : Making use of this type, to call the method, you can use the `DynamicInvoke` method. It accepts an array of objects and returns an object. As it calls a late-bound call as it demands boxing and unboxing, it may give a small overhead compared to regular call. 
@@ -159,8 +186,8 @@ asyncResult.AsyncWaitHandle.WaitOne();
 
 ____
 
-### <i class="icon-align-left"></i> Usages
-#### Creating a pool aspect
+## <i class="icon-align-left"></i> Usages
+### Creating a pool aspect
 Take a simple factory:
 ```c#
 public IService GetService(string key)
@@ -240,13 +267,13 @@ Or you need to temporarily add some triggers to a project, so you can run a new 
 The list goes on and on. Access logic in memory, disable partially an website, create a fast and simple dependency injection logic, etc.     
 ><i class="icon-info-circled"></i> As this is a non-linear line of thought, **it can turn, very easily, into a big mess**. So please, **use it wisely** and **document it as much as you might think you will need**.
 
-#### Depency Injection
+### Depency Injection
 _to_be_documented_
-#### Disabling a method
+### Disabling a method
 _to_be_documented_
-#### Adding instrumentation
+### Adding instrumentation
 _to_be_documented_
-#### Adding Lazy loading Aspect 
+### Adding Lazy loading Aspect 
 One of the most admirable features of [Nhibernate](http://nhforge.org/) has to be the lazy loading feature. To be able to create a domain model clean, without a single infrastructure feature, and it will have, even then, a high abstractioned feature, it is something to be inspired.     
 Following you will find one example on how to do it.       
 The model:
@@ -316,9 +343,9 @@ And the usage:
             }
         }
 ``` 
-#### Adding logs
+### Adding logs
 _to_be_documented_
-#### Intercepting specific methods
+### Intercepting specific methods
 _to_be_documented_
-#### Multi-dispatch delegate behaviour
+### Multi-dispatch delegate behaviour
 _to_be_documented_
