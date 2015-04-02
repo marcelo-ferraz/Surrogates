@@ -176,7 +176,7 @@ Each type will change slightly the way a method is called.
  ```Func<string, int>```| ```s_method("something")```, ```s_method.DynamicInvoke("str")```, ```s_method.Invoke("something", 1)```
 
 When using ```Func<>``` or ```Action```, there is the possibility of asynchronously call the method. 
-
+For more info, please read [this](#msdn.microsoft.com/en-us/library/22t547yb(v=vs.90).aspx) and [this](#msdn.microsoft.com/en-us/library/2e08f6yc.aspx).
 ```c#
 // this will call this method asynchronously, 
 //and with the return, you can wait for it to finish
