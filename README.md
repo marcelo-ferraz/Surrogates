@@ -11,7 +11,7 @@ It hooks on your regular OOP and ables you to add highly abstracted features tha
 ____
 ## Table of Contents
 
-[toc]
+{:toc}
 
 ____
 ## API
