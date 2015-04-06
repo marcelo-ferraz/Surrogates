@@ -17,8 +17,7 @@ namespace Surrogates.Utilities
 
             return field != null;
         }
-
-
+        
         public static Type DelegateTypeFrom(MethodInfo baseMethod)
         {
             var isFunc =

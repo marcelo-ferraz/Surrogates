@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using Surrogates.Tests.Expressions.Entities;
-using Surrogates.Tests.Strategies.Methods.Substitute;
 using System;
 
 namespace Surrogates.Tests.Strategies.Methods.Visit

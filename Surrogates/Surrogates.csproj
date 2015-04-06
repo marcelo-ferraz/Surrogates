@@ -50,6 +50,7 @@
     <Compile Include="Expressions\ReplaceExpression.cs" />
     <Compile Include="Expressions\VisitExpression.cs" />
     <Compile Include="Expressions\InterferenceExpression.cs" />
+    <Compile Include="IExtension.cs" />
     <Compile Include="IncoherentBody4PropertyException.cs" />
     <Compile Include="MethodNotFoundException.cs" />
     <Compile Include="PropertyNotFoundException.cs" />
@@ -75,6 +76,8 @@
     <Compile Include="Utilities\Clone.cs" />
     <Compile Include="Utilities\Mixins\PropertyMixins.cs" />
     <Compile Include="Utilities\Mixins\TypeMixins.cs" />
+    <Compile Include="Utilities\Pass.cs" />
+    <Compile Include="Utilities\PropGetterMixins.cs" />
     <Compile Include="Utilities\SDILReader\Globals.cs" />
     <Compile Include="Utilities\SDILReader\ILInstruction.cs" />
     <Compile Include="Utilities\SDILReader\MethodBodyReader.cs" />
@@ -83,7 +86,7 @@
     <Compile Include="Utilities\Mixins\ILGeneratorMixins.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\Mixins\TypeBuilderMixins.cs" />
-    <Compile Include="Utilities\Detect.cs" />
+    <Compile Include="Utilities\Infer.cs" />
     <Compile Include="Utilities\StringMixins.cs" />
     <Compile Include="Utilities\WhizzoDev\Cloning.cs" />
     <Compile Include="Utilities\Set4Property.cs" />

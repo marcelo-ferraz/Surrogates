@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using Surrogates.Tactics;
 using Surrogates.Tests.Expressions.Entities;
-using Surrogates.Tests.Strategies;
 using System;
 
 namespace Surrogates.Tests.Strategies.Methods.Disable

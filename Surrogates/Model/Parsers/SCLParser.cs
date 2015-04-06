@@ -2,8 +2,8 @@
 using Surrogates.Tactics;
 using Surrogates.Utilities.Mixins;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime;
 using System.Text.RegularExpressions;
 

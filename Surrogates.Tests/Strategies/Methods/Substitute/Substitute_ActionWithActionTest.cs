@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using Surrogates.Tactics;
 using Surrogates.Tests.Expressions.Entities;
 using System;
 

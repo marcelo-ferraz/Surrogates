@@ -16,7 +16,7 @@ namespace Surrogates.Applications.Interlocking
             _lock.Dispose();
         }
 
-        protected abstract T GetField(T field);        
+        protected abstract T GetField(T field);
 
         public T Get(T s_field)
         { 

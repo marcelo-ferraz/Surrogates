@@ -39,11 +39,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionR.cs" />
+    <Compile Include="IoCMixins.cs" />
+    <Compile Include="ShallowExtension.cs" />
+    <Compile Include="Interlocking\InterlockedMethodsInterceptor.cs" />
     <Compile Include="Interlocking\InterlockedPropertyInterceptor.cs" />
     <Compile Include="Interlocking\InterlockedRefPropertyInterceptor.cs" />
     <Compile Include="Interlocking\InterlockedValuePropertyInterceptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SurrogatesContainerExtended.cs" />
+    <Compile Include="InterlockingMixins.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Surrogates\Surrogates.csproj">

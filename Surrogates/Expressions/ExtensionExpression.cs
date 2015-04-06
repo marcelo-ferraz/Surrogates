@@ -2,13 +2,14 @@
 
 namespace Surrogates.Expressions
 {
-    public class ExtensionExpression<TBase>
-      : Expression<TBase, Strategy>
+    public class ApplyExpression<TBase>      
     {
-        public Strategies Strategies { get; set; }
-        public Strategy CurrentStrategy { get; set; }
+        internal ExpressionFactory<TBase> Factory { get; set; }
+        internal Strategies Strategies { get; set; }
 
-        public ExtensionExpression(Strategy current, Strategies strategies)
-            : base(current, strategies) { }        
-    }
+        public ApplyExpression(Strategies strategies, ExpressionFactory<TBase> factory)            
+        {
+            this.Factory = factory;
+        }
+    }    
 }
