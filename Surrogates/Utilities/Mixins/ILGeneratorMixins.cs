@@ -26,7 +26,7 @@ namespace Surrogates.Utilities.Mixins
 
             var baseParams =
                 originalMethod.GetParameters();
-
+            
             if (TryAddArgsParam(gen, param, pType, baseParams))
             { return true; }
 
@@ -264,17 +264,21 @@ namespace Surrogates.Utilities.Mixins
                 
                 if (interfere != null && interfere(param))
                 { continue; }
-                
+
+
+                var isSpecialParam =
+                    param.Name[0] == 's' && param.Name[1] == '_';
+
                 // tries to find any method as parameter 
-                if (TryPassAnyMethodAsParameter(gen, baseType, param))
+                if (isSpecialParam && TryPassAnyMethodAsParameter(gen, baseType, param))
                 { continue; }
 
                 // tries to find any field as parameter 
-                if (TryPassAnyFieldAsParameter(gen, baseType, fields, param, pType))
+                if (isSpecialParam && TryPassAnyFieldAsParameter(gen, baseType, fields, param, pType))
                 { continue; }
 
                 // tries to find any property as parameter 
-                if (TryPassAnyPropertyAsParameter(gen, baseType, fields, param, pType))
+                if (isSpecialParam && TryPassAnyPropertyAsParameter(gen, baseType, fields, param, pType))
                 { continue; }
 
                 if (!pType.IsValueType)
