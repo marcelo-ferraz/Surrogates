@@ -1,6 +1,7 @@
 ﻿
 using Surrogates.Tactics;
 using Surrogates.Utilities;
+using Surrogates.Utilities.Mixins;
 using System;
 using System.Collections.Generic;
 using System.Reflection;

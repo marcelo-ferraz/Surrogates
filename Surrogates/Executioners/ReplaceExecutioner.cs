@@ -16,7 +16,7 @@ namespace Surrogates.Executioners
             LocalBuilder baseMethodReturn = null;
 
             var gen = strategy.TypeBuilder.EmitOverride(
-                strategy.BaseType, strategy.Interceptor.Method, baseAction, GetField(strategy.Interceptor, strategy.Fields), out baseMethodReturn);
+                strategy.BaseType, strategy.Interceptor.Method, baseAction, GetField(strategy.Interceptor, strategy.Fields), strategy.Fields, out baseMethodReturn);
 
             if (baseMethodReturn != null)
             { gen.EmitDefaultValue(baseAction.ReturnType, baseMethodReturn); }
@@ -34,6 +34,7 @@ namespace Surrogates.Executioners
                 strategy.Interceptor.Method,
                 baseFunction,
                 GetField(strategy.Interceptor, strategy.Fields),
+                strategy.Fields,
                 out baseMethodReturnBuilder);
 
             //the base method is void, discard the value
@@ -67,6 +68,7 @@ namespace Surrogates.Executioners
 
             var @params = gen.EmitParameters(
                 strategy.BaseType,
+                strategy.Fields,
                 strategy.Getter.Method,
                 p => property.EmitPropertyNameAndField(pType, gen, p));
 
@@ -102,6 +104,7 @@ namespace Surrogates.Executioners
 
             var @params = gen.EmitParameters(
                 strategy.BaseType,
+                strategy.Fields,
                 strategy.Setter.Method,
                 p => property.EmitPropertyNameAndField(pType, gen, p));
 

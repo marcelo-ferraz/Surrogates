@@ -30,9 +30,9 @@ namespace Surrogates.Utilities.Mixins
             if (TryAddArgsParam(gen, param, pType, baseParams))
             { return true; }
 
-            if (TryAddTheMethodAsParameter(gen, originalMethod, param, baseParams))
+            if (TryAddTheMethodAsParameter(gen, originalMethod, param))
             { return true; }
-
+            
             for (int i = 0; i < baseParams.Length; i++)
             {
                 if (baseParams[i].Name == param.Name)
@@ -51,20 +51,12 @@ namespace Surrogates.Utilities.Mixins
             return false;
         }
 
-        /// <summary>
-        /// Tries to add the current method as a parameter
-        /// </summary>
-        /// <param name="gen"></param>
-        /// <param name="baseMethod"></param>
-        /// <param name="param"></param>
-        /// <param name="pType"></param>
-        /// <param name="baseParams"></param>
-        /// <returns></returns>
-        private static bool TryAddTheMethodAsParameter(ILGenerator gen, MethodInfo baseMethod, ParameterInfo param, ParameterInfo[] baseParams)
+        private static bool TryAddMethodAsParameter(ILGenerator gen, MethodInfo baseMethod, ParameterInfo param)
         {
-            if (param.Name != "s_method" && 
-                param.Name.ToLower() == string.Concat("s_", baseMethod.Name.ToLower())) 
-            { return false; }
+            if (param.Name.ToLower() == string.Concat("s_", baseMethod.Name.ToLower()))
+            {  
+                return false; 
+            }
 
             if (!baseMethod.IsFamily && !baseMethod.IsPrivate && !baseMethod.IsPublic)
             { throw new NotSupportedException("You cannot use an internal property to be passed as a parameter."); }
@@ -86,6 +78,33 @@ namespace Surrogates.Utilities.Mixins
             return false;
         }
 
+        private static bool TryAddAnyMethodAsParameter(ILGenerator gen, Type baseType, ParameterInfo param)
+        {
+            var method = baseType.GetMethod4Surrogacy(
+                param.Name.Substring(2), throwExWhenNotFound: false);
+
+            return method != null ?
+                TryAddMethodAsParameter(gen, method, param) : 
+                false;
+        }
+
+        /// <summary>
+        /// Tries to add the current method as a parameter
+        /// </summary>
+        /// <param name="gen"></param>
+        /// <param name="baseMethod"></param>
+        /// <param name="param"></param>
+        /// <param name="pType"></param>
+        /// <param name="baseParams"></param>
+        /// <returns></returns>
+        private static bool TryAddTheMethodAsParameter(ILGenerator gen, MethodInfo baseMethod, ParameterInfo param)
+        {
+            if (param.Name != "s_method") 
+            { return false; }
+
+            return TryAddMethodAsParameter(gen, baseMethod, param);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -96,10 +115,11 @@ namespace Surrogates.Utilities.Mixins
         /// <returns></returns>
         private static bool TryAddArgsParam(ILGenerator gen, ParameterInfo param, Type pType, ParameterInfo[] baseParams)
         {
-            if (pType != typeof(object[]) || param.Name != "s_arguments")
+            if (pType != typeof(object[]) && param.Name != "s_arguments" && param.Name != "s_args")
             {
                 return false;
             }
+
             var arguments =
                 gen.DeclareLocal(typeof(object[]));
 
@@ -130,7 +150,30 @@ namespace Surrogates.Utilities.Mixins
 
             return true;
         }
+
+        private static bool TryAddAnyFieldAsParameter(ILGenerator gen, Type baseType, FieldList fields, ParameterInfo param, Type pType)
+        {       
+            var fName = 
+                param.Name.Substring(2);
+
+            var field = 
+                baseType.GetField(
+                fName,
+                BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+
+            if (field == null)
+            { field = fields[fName]; }
+
+            if (field == null || !field.FieldType.IsAssignableFrom(param.ParameterType)) 
+            { return false; }
+            
+            gen.Emit(OpCodes.Ldarg_0);
+            gen.Emit(OpCodes.Ldfld, field);
+
+            return true;
+        }
         
+
         internal static void EmitDefaultParameterValue(this ILGenerator gen, Type type, LocalBuilder local = null)
         {
             bool isInteger =
@@ -182,12 +225,7 @@ namespace Surrogates.Utilities.Mixins
             gen.Emit(OpCodes.Ldloc, local);
         }
 
-        internal static Type[] EmitParameters4<TBase>(this ILGenerator gen, Type baseType, MethodInfo newMethod, Func<ParameterInfo, bool> interfere = null)
-        {
-            return EmitParameters(gen, typeof(TBase), newMethod, interfere);
-        }
-
-        internal static Type[] EmitParameters(this ILGenerator gen, Type baseType, MethodInfo newMethod, Func<ParameterInfo, bool> interfere = null)
+        internal static Type[] EmitParameters(this ILGenerator gen, Type baseType, FieldList fields, MethodInfo newMethod, Func<ParameterInfo, bool> interfere = null)
         {
             var newParams = new List<Type>();
 
@@ -207,7 +245,13 @@ namespace Surrogates.Utilities.Mixins
                 
                 if (interfere != null && interfere(param))
                 { continue; }
-                
+
+                if (TryAddAnyMethodAsParameter(gen, baseType, param))
+                { continue; }
+
+                if (TryAddAnyFieldAsParameter(gen, baseType, fields, param, pType))
+                { continue; }
+
                 if (!pType.IsValueType)
                 { gen.Emit(OpCodes.Ldnull); }
                 else
@@ -218,15 +262,18 @@ namespace Surrogates.Utilities.Mixins
             return newParams.ToArray();
         }
 
-        internal static Type[] EmitParametersForSelf(this ILGenerator gen, Type baseType, MethodInfo baseMethod)
+
+
+        internal static Type[] EmitParametersForSelf(this ILGenerator gen, Type baseType, FieldList fields, MethodInfo baseMethod)
         {
-            return EmitParameters(gen, baseType, baseMethod, baseMethod);
+            return EmitParameters(gen, baseType, fields, baseMethod, baseMethod);
         }
 
-        internal static Type[] EmitParameters(this ILGenerator gen, Type baseType,MethodInfo newMethod, MethodInfo baseMethod)
+        internal static Type[] EmitParameters(this ILGenerator gen, Type baseType, FieldList fields, MethodInfo newMethod, MethodInfo baseMethod)
         {
             return gen.EmitParameters(
                 baseType,
+                fields,
                 newMethod,
                 p =>  EmitArgumentsBasedOnOriginal(gen, baseMethod, p, p.ParameterType)); 
         }

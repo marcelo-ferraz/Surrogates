@@ -19,13 +19,14 @@ namespace Surrogates.Executioners
                 strategy.BaseType,
                 strategy.Interceptor.Method, 
                 baseAction, 
-                GetField(strategy.Interceptor, strategy.Fields), 
+                GetField(strategy.Interceptor, strategy.Fields),
+                strategy.Fields, 
                 out baseMethodReturn);
 
             gen.Emit(OpCodes.Ldarg_0);
 
             var @params =
-                gen.EmitParametersForSelf(strategy.BaseType, baseAction);
+                gen.EmitParametersForSelf(strategy.BaseType, strategy.Fields, baseAction);
 
             gen.Emit(OpCodes.Call, baseAction);
             gen.Emit(OpCodes.Ret);
@@ -41,6 +42,7 @@ namespace Surrogates.Executioners
                 strategy.Interceptor.Method,
                 baseFunction,
                 GetField(strategy.Interceptor, strategy.Fields),
+                strategy.Fields,
                 out baseMethodReturn);
 
             gen.Emit(OpCodes.Pop);
@@ -48,7 +50,7 @@ namespace Surrogates.Executioners
             gen.Emit(OpCodes.Ldarg_0);
 
             var @params =
-                gen.EmitParametersForSelf(strategy.BaseType, baseFunction);
+                gen.EmitParametersForSelf(strategy.BaseType, strategy.Fields, baseFunction);
 
             gen.Emit(OpCodes.Call, baseFunction);
 
@@ -74,6 +76,7 @@ namespace Surrogates.Executioners
 
             var @params = gen.EmitParameters(
                 strategy.BaseType,
+                strategy.Fields,
                 strategy.Getter.Method,
                 p => property.EmitPropertyNameAndField(pType, gen, p));
 
@@ -113,6 +116,7 @@ namespace Surrogates.Executioners
 
             var @params = gen.EmitParameters(
                 strategy.BaseType,
+                strategy.Fields,
                 strategy.Setter.Method,
                 p => property.EmitPropertyNameAndFieldAndValue(pType, gen, p));
 

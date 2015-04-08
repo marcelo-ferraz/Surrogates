@@ -1,5 +1,7 @@
 ﻿using Surrogates.Expressions;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Surrogates
 {

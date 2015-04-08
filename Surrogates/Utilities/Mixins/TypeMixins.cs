@@ -7,7 +7,7 @@ namespace Surrogates.Utilities.Mixins
 {
     public static class TypeMixins
     {
-        public static MethodInfo GetMethod4Surrogacy(this Type self, string name)
+        public static MethodInfo GetMethod4Surrogacy(this Type self, string name, bool throwExWhenNotFound = true)
         {
             Func<BindingFlags, MethodInfo> get = flags =>
                 self.GetMethod(name, BindingFlags.Instance | flags);
@@ -16,7 +16,7 @@ namespace Surrogates.Utilities.Mixins
 
             if ((method = get(BindingFlags.NonPublic)) == null)
             {
-                if ((method = get(BindingFlags.Public)) == null)
+                if ((method = get(BindingFlags.Public)) == null && throwExWhenNotFound)
                 {
                     throw new KeyNotFoundException(string.Format(
                         "The method '{0}' wans not found withn the type '{1}'", name, self.Name));

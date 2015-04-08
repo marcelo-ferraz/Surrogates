@@ -3,11 +3,14 @@ using System.Runtime.Serialization;
 
 namespace Surrogates.Expressions
 {
-    public abstract class Expression<TBase, TStrat>
+    public abstract class Expression<T>
     {
-        protected Strategies Strategies;
-        protected virtual TStrat CurrentStrategy { get; set; }
+        internal virtual Strategies Strategies { get; set; }
+        internal virtual T CurrentStrategy { get; set; }
+    }
 
+    public abstract class Expression<TBase, TStrat> : Expression<TStrat> 
+    {
         protected Expression(TStrat strategy, Strategies strategies)
         {
             this.CurrentStrategy = strategy;

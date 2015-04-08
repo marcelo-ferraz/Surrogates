@@ -11,13 +11,13 @@ namespace Surrogates.Tests.Strategies
     [TestFixture]
     public class ExpressionTests : StrategiesTests
     {
-        protected static T FirstStrategy<T>(AndExpression<Dummy> exp)
+        protected static T First<T>(AndExpression<Dummy> exp)
             where T : Strategy
         {
-            var field = typeof(AndExpression<Dummy>)
-                .GetField("Strategies", BindingFlags.Instance | BindingFlags.NonPublic);
+            var prop = typeof(AndExpression<Dummy>)
+                .GetProperty("Strategies", BindingFlags.Instance | BindingFlags.NonPublic);
 
-            return FirstStrategy<T>((Surrogates.Tactics.Strategies)field.GetValue(exp));
+            return FirstStrategy<T>((Surrogates.Tactics.Strategies)prop.GetValue(exp));
         }
 
         protected NewExpression GetExp()
@@ -40,7 +40,7 @@ namespace Surrogates.Tests.Strategies
                 .Methods("SetPropText_simple", "GetTheNumberTwo")
                 .Using<InterferenceObject>("AccomplishNothing");
 
-            var strategy = FirstStrategy<Strategy.ForMethods>(exp);
+            var strategy = First<Strategy.ForMethods>(exp);
 
             Assert.AreEqual("SetPropText_simple", strategy.Methods[0].Name);
             Assert.AreEqual("GetTheNumberTwo", strategy.Methods[1].Name);
@@ -53,7 +53,7 @@ namespace Surrogates.Tests.Strategies
                 .These(d => (Action) d.SetPropText_simple, d => (Func<int>) d.GetTheNumberTwo)
                 .Using<InterferenceObject>(i => (Action) i.AccomplishNothing);
 
-            strategy = FirstStrategy<Strategy.ForMethods>(exp);
+            strategy = First<Strategy.ForMethods>(exp);
 
             Assert.AreEqual("SetPropText_simple", strategy.Methods[0].Name);
             Assert.AreEqual("GetTheNumberTwo", strategy.Methods[1].Name);
@@ -70,7 +70,7 @@ namespace Surrogates.Tests.Strategies
                 .Methods("SetPropText_simple", "GetTheNumberTwo")
                 .Using<InterferenceObject>("AccomplishNothing");
 
-            var strategy = FirstStrategy<Strategy.ForMethods>(exp);
+            var strategy = First<Strategy.ForMethods>(exp);
 
             Assert.AreEqual("SetPropText_simple", strategy.Methods[0].Name);
             Assert.AreEqual("GetTheNumberTwo", strategy.Methods[1].Name);
@@ -83,7 +83,7 @@ namespace Surrogates.Tests.Strategies
                 .These(d => (Action)d.SetPropText_simple, d => (Func<int>)d.GetTheNumberTwo)
                 .Using<InterferenceObject>(i => (Action)i.AccomplishNothing);
 
-            strategy = FirstStrategy<Strategy.ForMethods>(exp);
+            strategy = First<Strategy.ForMethods>(exp);
 
             Assert.AreEqual("SetPropText_simple", strategy.Methods[0].Name);
             Assert.AreEqual("GetTheNumberTwo", strategy.Methods[1].Name);
@@ -99,7 +99,7 @@ namespace Surrogates.Tests.Strategies
                 .Disable
                 .Methods("SetPropText_simple", "GetTheNumberTwo");
 
-            var strategy = FirstStrategy<Strategy.ForMethods>(exp);
+            var strategy = First<Strategy.ForMethods>(exp);
 
             Assert.AreEqual("SetPropText_simple", strategy.Methods[0].Name);
             Assert.AreEqual("GetTheNumberTwo", strategy.Methods[1].Name);
@@ -111,7 +111,7 @@ namespace Surrogates.Tests.Strategies
                 .Disable
                 .These(d => (Action)d.SetPropText_simple, d => (Func<int>)d.GetTheNumberTwo);
 
-            strategy = FirstStrategy<Strategy.ForMethods>(exp);
+            strategy = First<Strategy.ForMethods>(exp);
 
             Assert.AreEqual("SetPropText_simple", strategy.Methods[0].Name);
             Assert.AreEqual("GetTheNumberTwo", strategy.Methods[1].Name);

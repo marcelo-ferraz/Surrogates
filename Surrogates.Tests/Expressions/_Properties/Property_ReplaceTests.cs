@@ -42,7 +42,7 @@ namespace Surrogates.Tests.Expressions._Properties
                 .Replace
                 .This(d => d.AccessItWillThrowException)
                 .Accessors(a =>
-                    a.Getter.Using<InterferenceObject>(d => (Func<int>) d.AccomplishNothing_Return2))).Save();
+                    a.Getter.Using<InterferenceObject>(d => (Func<int>)d.AccomplishNothing_Return2)));
 
             var proxy =
                 container.Invoke<Dummy>();

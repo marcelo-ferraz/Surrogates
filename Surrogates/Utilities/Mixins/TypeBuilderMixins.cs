@@ -25,27 +25,33 @@ namespace Surrogates.Utilities.Mixins
             ctrGen.EmitConstructor(baseType, fields);
         }
 
-        internal static ILGenerator EmitOverride<TBase>(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField)
+        internal static ILGenerator EmitOverride<TBase>(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, FieldList fields)
         {
-            return EmitOverride(typeBuilder, typeof(TBase), newMethod, baseMethod, interceptorField);
+            return EmitOverride(typeBuilder, typeof(TBase), newMethod, baseMethod, interceptorField, fields);
         }
 
-        internal static ILGenerator EmitOverride(this TypeBuilder typeBuilder, Type baseType, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField)
+        internal static ILGenerator EmitOverride(this TypeBuilder typeBuilder, Type baseType, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, FieldList fields)
         {
             LocalBuilder @return = null;
-            return EmitOverride(typeBuilder, baseType, newMethod, baseMethod, interceptorField, out @return);
+            return EmitOverride(typeBuilder, baseType, newMethod, baseMethod, interceptorField, fields, out @return);
         }
 
-        internal static ILGenerator EmitOverride<TBase>(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, out LocalBuilder returnField)
+        internal static ILGenerator EmitOverride<TBase>(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, FieldList fields, out LocalBuilder returnField)
         {
-            return EmitOverride(typeBuilder, typeof(TBase), newMethod, baseMethod, interceptorField, out returnField);
+            return EmitOverride(typeBuilder, typeof(TBase), newMethod, baseMethod, interceptorField, fields, out returnField);
         }
 
-        internal static ILGenerator EmitOverride(this TypeBuilder typeBuilder, Type baseType, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, out LocalBuilder returnField)
+        internal static ILGenerator EmitOverride(this TypeBuilder typeBuilder, Type baseType, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, FieldList fields, out LocalBuilder returnField)
         {
+            var attrs = MethodAttributes.Virtual;
+            
+            attrs |= ((baseMethod.Attributes | MethodAttributes.Public) != MethodAttributes.Public ? MethodAttributes.Public : MethodAttributes.FamANDAssem);
+            
             var builder = typeBuilder.DefineMethod(
                 baseMethod.Name,
-                MethodAttributes.Public | MethodAttributes.Virtual,
+                attrs
+                //MethodAttributes.FamANDAssem | MethodAttributes.Family | MethodAttributes.Virtual | MethodAttributes.HideBySig | MethodAttributes.VtableLayoutMask,	
+,
                 baseMethod.ReturnType,
                 baseMethod.GetParameters().Select(p => p.ParameterType).ToArray());
 
@@ -60,7 +66,7 @@ namespace Surrogates.Utilities.Mixins
             gen.Emit(OpCodes.Ldfld, interceptorField);
 
             var @params =
-                gen.EmitParameters(baseType, newMethod, baseMethod);
+                gen.EmitParameters(baseType, fields, newMethod, baseMethod);
 
             gen.EmitCall(newMethod, @params);
 

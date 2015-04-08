@@ -28,9 +28,7 @@ namespace Surrogates.Expressions
                 Strategy.ForMethods(CurrentStrategy);
 
             CurrentStrategy = strat;
-
-
-
+            
             foreach (var methodName in methodNames)
             {
                 MethodInfo method;

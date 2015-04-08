@@ -3,7 +3,7 @@ using Surrogates.Utilities.SDILReader;
 using System;
 using System.Reflection;
 
-namespace Surrogates.Utilities
+namespace Surrogates.Utilities.Mixins
 {
     public static class PropGetterMixins
     {        
