@@ -1,6 +1,7 @@
 ﻿using Surrogates.Applications.Interlocking;
 using Surrogates.Expressions;
 using Surrogates.Utilities;
+using Surrogates.Utilities.Mixins;
 using System;
 using System.Runtime.Serialization;
 

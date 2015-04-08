@@ -78,7 +78,7 @@ namespace Surrogates.Utilities.Mixins
             return false;
         }
 
-        private static bool TryAddAnyMethodAsParameter(ILGenerator gen, Type baseType, ParameterInfo param)
+        private static bool TryPassAnyMethodAsParameter(ILGenerator gen, Type baseType, ParameterInfo param)
         {
             var method = baseType.GetMethod4Surrogacy(
                 param.Name.Substring(2), throwExWhenNotFound: false);
@@ -150,8 +150,27 @@ namespace Surrogates.Utilities.Mixins
 
             return true;
         }
+        
+        private static bool TryPassAnyPropertyAsParameter(ILGenerator gen, Type baseType, FieldList fields, ParameterInfo param, Type pType)
+        {
+            var pName = 
+                param.Name.Substring(2);
 
-        private static bool TryAddAnyFieldAsParameter(ILGenerator gen, Type baseType, FieldList fields, ParameterInfo param, Type pType)
+            var prop =
+                baseType.GetProperty(
+                pName,
+                BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+
+            if (prop == null || !prop.PropertyType.IsAssignableFrom(param.ParameterType))
+            { return false; }
+
+            gen.Emit(OpCodes.Ldarg_0);
+            gen.EmitCall(prop.GetGetMethod());
+
+            return true;
+        }
+
+        private static bool TryPassAnyFieldAsParameter(ILGenerator gen, Type baseType, FieldList fields, ParameterInfo param, Type pType)
         {       
             var fName = 
                 param.Name.Substring(2);
@@ -245,24 +264,26 @@ namespace Surrogates.Utilities.Mixins
                 
                 if (interfere != null && interfere(param))
                 { continue; }
-
-                if (TryAddAnyMethodAsParameter(gen, baseType, param))
+                
+                // tries to find any method as parameter 
+                if (TryPassAnyMethodAsParameter(gen, baseType, param))
                 { continue; }
 
-                if (TryAddAnyFieldAsParameter(gen, baseType, fields, param, pType))
+                // tries to find any field as parameter 
+                if (TryPassAnyFieldAsParameter(gen, baseType, fields, param, pType))
+                { continue; }
+
+                // tries to find any property as parameter 
+                if (TryPassAnyPropertyAsParameter(gen, baseType, fields, param, pType))
                 { continue; }
 
                 if (!pType.IsValueType)
                 { gen.Emit(OpCodes.Ldnull); }
                 else
-                {
-                    gen.EmitDefaultParameterValue(pType);
-                }
+                { gen.EmitDefaultParameterValue(pType); }
             }
             return newParams.ToArray();
         }
-
-
 
         internal static Type[] EmitParametersForSelf(this ILGenerator gen, Type baseType, FieldList fields, MethodInfo baseMethod)
         {

@@ -49,9 +49,7 @@ namespace Surrogates.Utilities.Mixins
             
             var builder = typeBuilder.DefineMethod(
                 baseMethod.Name,
-                attrs
-                //MethodAttributes.FamANDAssem | MethodAttributes.Family | MethodAttributes.Virtual | MethodAttributes.HideBySig | MethodAttributes.VtableLayoutMask,	
-,
+                attrs,            
                 baseMethod.ReturnType,
                 baseMethod.GetParameters().Select(p => p.ParameterType).ToArray());
 

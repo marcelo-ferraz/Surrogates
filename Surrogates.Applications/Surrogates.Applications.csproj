@@ -40,7 +40,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionR.cs" />
+    <Compile Include="Pooling\LoadingMode.cs" />
     <Compile Include="IoCMixins.cs" />
+    <Compile Include="Pooling\AccessMode.cs" />
+    <Compile Include="Pooling\Pool.cs" />
+    <Compile Include="PoolPropertiesMixins.cs" />
+    <Compile Include="Pooling\PoolInterceptor.cs" />
     <Compile Include="ShallowExtension.cs" />
     <Compile Include="Interlocking\InterlockedMethodsInterceptor.cs" />
     <Compile Include="Interlocking\InterlockedPropertyInterceptor.cs" />
@@ -55,6 +60,7 @@
       <Name>Surrogates</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
