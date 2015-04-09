@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 
 namespace Surrogates.Utilities.Mixins
 {
@@ -20,9 +21,9 @@ namespace Surrogates.Utilities.Mixins
                 CallingConventions.Standard,
                 new Type[] { });
 
-            var ctrGen = ctorBuilder.GetILGenerator();
-
-            ctrGen.EmitConstructor(baseType, fields);
+            ctorBuilder
+                .GetILGenerator()
+                .EmitConstructor(baseType, fields);
         }
 
         internal static ILGenerator EmitOverride<TBase>(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, FieldList fields)
@@ -79,6 +80,67 @@ namespace Surrogates.Utilities.Mixins
                 '_', Char.ToLower(fieldName[0]), fieldName.Substring(1));
 
             return builder.DefineField(fieldName, prop.PropertyType, FieldAttributes.Private);
+        }
+        
+        internal static PropertyBuilder DefinePropertyStateBag(this TypeBuilder builder)
+        {
+            var dynamicAttrCtor = typeof(DynamicAttribute)
+                .GetConstructor(Type.EmptyTypes);
+            
+            var dynamicAttrBldr = new CustomAttributeBuilder(dynamicAttrCtor, new object[] {});
+            
+            FieldBuilder StateBldr = builder.DefineField(
+                "_stateBag", typeof(string), FieldAttributes.Private);
+
+            StateBldr.SetCustomAttribute(dynamicAttrBldr);
+
+            // The last argument of DefineProperty is null, because the 
+            // property has no parameters. (If you don't specify null, you must 
+            // specify an array of Type objects. For a parameterless property, 
+            // use an array with no elements: new Type[] {})
+            PropertyBuilder statePropBldr = 
+                builder.DefineProperty(
+                "StateBag",
+                PropertyAttributes.HasDefault,
+                typeof(object),
+                null);
+
+            statePropBldr.SetCustomAttribute(dynamicAttrBldr);
+
+            // The property set and property get methods require a special 
+            // set of attributes.
+            MethodAttributes getSetAttr =
+                MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
+
+            // Define the "get" accessor method for CustomerName.
+            MethodBuilder stateGetPropMthdBldr = builder.DefineMethod(
+                "get_StateBag", getSetAttr, typeof(object), Type.EmptyTypes);
+
+            ILGenerator getIL = 
+                stateGetPropMthdBldr.GetILGenerator();
+
+            getIL.Emit(OpCodes.Ldarg_0);
+            getIL.Emit(OpCodes.Ldfld, StateBldr);
+            getIL.Emit(OpCodes.Ret);
+
+            // Define the "set" accessor method for CustomerName.
+            MethodBuilder stateSetPropMthdBldr = builder.DefineMethod(
+                "set_StateBag", getSetAttr, null, new Type[] { typeof(object) });
+
+            ILGenerator setIL = 
+                stateSetPropMthdBldr.GetILGenerator();
+
+            setIL.Emit(OpCodes.Ldarg_0);
+            setIL.Emit(OpCodes.Ldarg_1);
+            setIL.Emit(OpCodes.Stfld, StateBldr);
+            setIL.Emit(OpCodes.Ret);
+
+            // Last, we must map the two methods created above to our PropertyBuilder to  
+            // their corresponding behaviors, "get" and "set" respectively. 
+            statePropBldr.SetGetMethod(stateGetPropMthdBldr);
+            statePropBldr.SetSetMethod(stateSetPropMthdBldr);
+            
+            return statePropBldr;
         }
     }
 }

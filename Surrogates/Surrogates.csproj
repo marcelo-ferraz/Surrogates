@@ -53,6 +53,7 @@
     <Compile Include="IExtension.cs" />
     <Compile Include="IncoherentBody4PropertyException.cs" />
     <Compile Include="MethodNotFoundException.cs" />
+    <Compile Include="Model\Entities\Entry.cs" />
     <Compile Include="PropertyNotFoundException.cs" />
     <Compile Include="Expressions\Accessors\PropertyAccessor.cs" />
     <Compile Include="Expressions\Accessors\AndExpression.cs" />

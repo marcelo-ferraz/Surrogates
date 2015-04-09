@@ -15,7 +15,7 @@ namespace Surrogates.Utilities.Mixins
         /// <param name="original"></param>
         /// <param name="param"></param>
         /// <param name="pType"></param>
-        private static bool EmitArgumentsBasedOnOriginal(ILGenerator gen, MethodInfo originalMethod, ParameterInfo param, Type pType)
+        private static bool EmitArgumentsBasedOnOriginal(this ILGenerator gen, MethodInfo originalMethod, ParameterInfo param, Type pType)
         {
             // get the method name if the parameter is named methodname
             if (pType == typeof(string) && param.Name == "s_name")
@@ -51,7 +51,7 @@ namespace Surrogates.Utilities.Mixins
             return false;
         }
 
-        private static bool TryAddMethodAsParameter(ILGenerator gen, MethodInfo baseMethod, ParameterInfo param)
+        private static bool TryAddMethodAsParameter(this ILGenerator gen, MethodInfo baseMethod, ParameterInfo param)
         {
             if (param.Name.ToLower() == string.Concat("s_", baseMethod.Name.ToLower()))
             {  
@@ -78,7 +78,7 @@ namespace Surrogates.Utilities.Mixins
             return false;
         }
 
-        private static bool TryPassAnyMethodAsParameter(ILGenerator gen, Type baseType, ParameterInfo param)
+        private static bool TryPassAnyMethodAsParameter(this ILGenerator gen, Type baseType, ParameterInfo param)
         {
             var method = baseType.GetMethod4Surrogacy(
                 param.Name.Substring(2), throwExWhenNotFound: false);
@@ -97,7 +97,7 @@ namespace Surrogates.Utilities.Mixins
         /// <param name="pType"></param>
         /// <param name="baseParams"></param>
         /// <returns></returns>
-        private static bool TryAddTheMethodAsParameter(ILGenerator gen, MethodInfo baseMethod, ParameterInfo param)
+        private static bool TryAddTheMethodAsParameter(this ILGenerator gen, MethodInfo baseMethod, ParameterInfo param)
         {
             if (param.Name != "s_method") 
             { return false; }
@@ -113,7 +113,7 @@ namespace Surrogates.Utilities.Mixins
         /// <param name="pType"></param>
         /// <param name="baseParams"></param>
         /// <returns></returns>
-        private static bool TryAddArgsParam(ILGenerator gen, ParameterInfo param, Type pType, ParameterInfo[] baseParams)
+        private static bool TryAddArgsParam(this ILGenerator gen, ParameterInfo param, Type pType, ParameterInfo[] baseParams)
         {
             if (pType != typeof(object[]) && param.Name != "s_arguments" && param.Name != "s_args")
             {
@@ -150,8 +150,8 @@ namespace Surrogates.Utilities.Mixins
 
             return true;
         }
-        
-        private static bool TryPassAnyPropertyAsParameter(ILGenerator gen, Type baseType, FieldList fields, ParameterInfo param, Type pType)
+
+        private static bool TryPassAnyPropertyAsParameter(this ILGenerator gen, Type baseType, FieldList fields, ParameterInfo param, Type pType)
         {
             var pName = 
                 param.Name.Substring(2);
@@ -170,7 +170,7 @@ namespace Surrogates.Utilities.Mixins
             return true;
         }
 
-        private static bool TryPassAnyFieldAsParameter(ILGenerator gen, Type baseType, FieldList fields, ParameterInfo param, Type pType)
+        private static bool TryPassAnyFieldAsParameter(this ILGenerator gen, Type baseType, FieldList fields, ParameterInfo param, Type pType)
         {       
             var fName = 
                 param.Name.Substring(2);
@@ -237,7 +237,7 @@ namespace Surrogates.Utilities.Mixins
             if (local == null)
             { local = gen.DeclareLocal(type); }
 
-            EmitDefaultParameterValue(gen, type, local);
+            gen.EmitDefaultParameterValue(type, local);
 
             gen.Emit(OpCodes.Stloc, local);
             gen.Emit(OpCodes.Br_S, local);
@@ -270,15 +270,15 @@ namespace Surrogates.Utilities.Mixins
                     param.Name[0] == 's' && param.Name[1] == '_';
 
                 // tries to find any method as parameter 
-                if (isSpecialParam && TryPassAnyMethodAsParameter(gen, baseType, param))
+                if (isSpecialParam && gen.TryPassAnyMethodAsParameter(baseType, param))
                 { continue; }
 
                 // tries to find any field as parameter 
-                if (isSpecialParam && TryPassAnyFieldAsParameter(gen, baseType, fields, param, pType))
+                if (isSpecialParam && gen.TryPassAnyFieldAsParameter(baseType, fields, param, pType))
                 { continue; }
 
                 // tries to find any property as parameter 
-                if (isSpecialParam && TryPassAnyPropertyAsParameter(gen, baseType, fields, param, pType))
+                if (isSpecialParam && gen.TryPassAnyPropertyAsParameter(baseType, fields, param, pType))
                 { continue; }
 
                 if (!pType.IsValueType)
@@ -291,7 +291,7 @@ namespace Surrogates.Utilities.Mixins
 
         internal static Type[] EmitParametersForSelf(this ILGenerator gen, Type baseType, FieldList fields, MethodInfo baseMethod)
         {
-            return EmitParameters(gen, baseType, fields, baseMethod, baseMethod);
+            return gen.EmitParameters(baseType, fields, baseMethod, baseMethod);
         }
 
         internal static Type[] EmitParameters(this ILGenerator gen, Type baseType, FieldList fields, MethodInfo newMethod, MethodInfo baseMethod)
@@ -300,7 +300,7 @@ namespace Surrogates.Utilities.Mixins
                 baseType,
                 fields,
                 newMethod,
-                p =>  EmitArgumentsBasedOnOriginal(gen, baseMethod, p, p.ParameterType)); 
+                p => gen.EmitArgumentsBasedOnOriginal(baseMethod, p, p.ParameterType)); 
         }
 
         /// <summary>
@@ -311,6 +311,8 @@ namespace Surrogates.Utilities.Mixins
         /// <param name="fields"></param>
         internal static void EmitConstructor(this ILGenerator gen, Type baseType, FieldList fields)
         {
+            //var ctr = baseType.GetConstructor()
+
             gen.Emit(OpCodes.Ldarg_0);
             gen.Emit(OpCodes.Call, baseType.GetConstructor(Type.EmptyTypes));
 
@@ -322,7 +324,7 @@ namespace Surrogates.Utilities.Mixins
                 gen.Emit(OpCodes.Ldarg_0);
                 gen.Emit(OpCodes.Newobj, type.GetConstructor(new Type[] { }));
                 gen.Emit(OpCodes.Stfld, fields[i]);
-            }
+            }                       
 
             gen.Emit(OpCodes.Ret);
         }

@@ -1,5 +1,6 @@
 ﻿
 using Surrogates.Expressions;
+using Surrogates.Model.Entities;
 using Surrogates.Model.Parsers;
 using Surrogates.Tactics;
 using System;
@@ -16,13 +17,13 @@ namespace Surrogates
         
         protected AssemblyBuilder AssemblyBuilder;
         protected ModuleBuilder ModuleBuilder;
-        
-        protected IDictionary<string, Type> Dictionary;
+
+        protected IDictionary<string, Entry> Dictionary;
 
         public BaseContainer4Surrogacy()
         {
             Dictionary =
-                new Dictionary<string, Type>();
+                new Dictionary<string, Entry>();
             CreateAssemblyAndModule();
         }
         
@@ -59,10 +60,10 @@ namespace Surrogates
 
             mapping(expression);
 
-            Type type =
+            var entry =
                 expression.Strategies.Apply();
                         
-            Dictionary.Add(type.Name, type);
+            Dictionary.Add(entry.Type.Name, entry);
         }
 
         protected virtual void InternalMap<T>(string cmd, params Type[] interceptors)
@@ -73,10 +74,10 @@ namespace Surrogates
             var strategies = 
                 ParseStrCmd(cmd, typeof(T), interceptors, ref aliases);
 
-            Type type =
+            var entry =
                 strategies.Apply();
 
-            Dictionary.Add(aliases[0], type);
+            Dictionary.Add(aliases[0], entry);
         }
 
         protected virtual Strategies ParseStrCmd(string cmd, Type baseType, Type[] interceptors, ref string[] aliases)

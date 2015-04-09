@@ -1,4 +1,5 @@
 ﻿using Surrogates.Model.Collections;
+using Surrogates.Model.Entities;
 using Surrogates.Utilities.Mixins;
 using System;
 using System.Collections.Generic;
@@ -30,30 +31,41 @@ namespace Surrogates.Tactics
             this.Fields = new FieldList(this);
         }
 
+        public Type BaseType { get; set; }
+
+        public TypeBuilder Builder { get; set; }
+        
+        public FieldList Fields { get; set; }
+               
         public void Add(Strategy strategy)
         {
             _strategies.Add(strategy);
         }
 
-        public TypeBuilder Builder
-        {
-            get { return _builder; }
-            set { _builder = value; }
-        }
-        public Type BaseType { get; set; }
-        public FieldList Fields { get; set; }
-
-        public Type Apply()
+        public Entry Apply()
         {
             foreach (var strategy in _strategies)
             {
-                strategy.Apply(BaseType, ref _builder);
+                strategy.Apply(
+                    this.BaseType, ref this._builder);
             }
 
             this.Builder
-                .CreateConstructor(this.BaseType, this.Fields);
+                .DefinePropertyStateBag();
 
-            return this.Builder.CreateType();
+            this.Builder.CreateConstructor(
+                this.BaseType, this.Fields);
+            
+            var type = 
+                this.Builder.CreateType();
+
+            var stateProp = 
+                type.GetProperty("State", BindingFlags.Instance | BindingFlags.Public);
+
+            return new Entry { 
+                Type = type,
+                StateProperty = stateProp
+            };
         } 
     }
 }

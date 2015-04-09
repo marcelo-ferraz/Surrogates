@@ -11,7 +11,7 @@ namespace Surrogates.Tests.Strategies.Methods.Substitute
             this.Strategy.Methods.Add(method.Method);
             this.Strategy.Interceptor = new Strategy.Interceptor(name, typeof(I), interceptor.Method);
 
-            return (T)Activator.CreateInstance(Strategies.Apply());
+            return (T)Activator.CreateInstance(Strategies.Apply().Type);
         }
     }
 }

@@ -16,13 +16,13 @@ namespace Surrogates.Applications.Pooling
         {
             _container = new SurrogatesContainer();
 
-            _container.Map(m =>
-                m.From<T>()
+            _container.Map(m => m
+                .From<T>()
                 .Visit
                 .This(x => (Action)x.Dispose)
-                .Using<PoolInterceptor<T>>(i => (Action<Pool<T>, T>) i.Dispose));
+                .Using<PoolInterceptor<T>>(i => (Action<object>) i.Dispose));
 
-            _pool = new Pool<T>(5, p => _container.Invoke<T>());
+            _pool = new Pool<T>(5, p => _container.Invoke<T>(stateBag: this));
         }                
         
         internal T Get()
@@ -30,9 +30,9 @@ namespace Surrogates.Applications.Pooling
             return _pool.Acquire();
         }
 
-        internal void Dispose(Pool<T> s_pool, T s_instance)
+        internal void Dispose(dynamic s_StateBag)
         {
-            _pool.Release(s_instance);            
+            s_StateBag._pool.Release(default(T));            
         }
     }
 }

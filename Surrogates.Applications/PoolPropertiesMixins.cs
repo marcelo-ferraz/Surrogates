@@ -26,7 +26,7 @@ namespace Surrogates.Applications
                 .Replace
                 .This(x => prop(x))
                 .Accessors(a =>
-                    a.Getter.Using<PoolInterceptor<P>>(i => (Func<P>)i.Get));
+                    a.Getter.Using<PoolInterceptor<P>>(i => (Func<P>) i.Get));
         }
     }
 }

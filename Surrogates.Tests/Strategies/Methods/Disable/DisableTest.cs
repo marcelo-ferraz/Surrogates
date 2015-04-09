@@ -18,7 +18,7 @@ namespace Surrogates.Tests.Strategies.Methods.Disable
                 new Dummy();
 
             var proxy = (Dummy)
-                Activator.CreateInstance(Strategies.Apply());
+                Activator.CreateInstance(Strategies.Apply().Type);
 
             dummy.SetPropText_simple();
             proxy.SetPropText_simple();
@@ -36,7 +36,7 @@ namespace Surrogates.Tests.Strategies.Methods.Disable
                 new Dummy();
 
             var proxy = (Dummy)
-                Activator.CreateInstance(Strategies.Apply());
+                Activator.CreateInstance(Strategies.Apply().Type);
 
             var dummyRes =
                 dummy.Call_SetPropText_simple_Return_1();
