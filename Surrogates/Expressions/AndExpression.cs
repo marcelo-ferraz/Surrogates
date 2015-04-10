@@ -4,12 +4,12 @@ namespace Surrogates.Expressions
 {
     public class AndExpression<TBase> : Expression<TBase, Strategy>
     {
-        public AndExpression(Strategy current, Strategies strategies)
-            : base(current, strategies) { }
+        public AndExpression(BaseContainer4Surrogacy container, Strategy current, Strategies strategies)
+            : base(container, current, strategies) { }
 
         public ExpressionFactory<TBase> And 
         {
-            get { return new ExpressionFactory<TBase>(CurrentStrategy, Strategies); }
+            get { return new ExpressionFactory<TBase>(Container, CurrentStrategy, Strategies); }
         }
     }
 }

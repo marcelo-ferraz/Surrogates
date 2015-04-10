@@ -26,7 +26,36 @@ namespace Surrogates
                 new Dictionary<string, Entry>();
             CreateAssemblyAndModule();
         }
-        
+
+        /// <summary>
+        /// Invokes the asked surrogated type, either by name, or by the base type
+        /// </summary>
+        /// <typeparam name="T">The base type</typeparam>
+        /// <param name="name">The choosen name</param>
+        /// <returns></returns>
+        public abstract T Invoke<T>(string name = null, dynamic stateBag = null, params object[] args);
+
+        /// <summary>
+        /// Invokes the asked surrogated type, either by name, or by the base type
+        /// </summary>
+        /// <param name="type">The base type</typeparam>
+        /// <param name="name">The choosen name</param>
+        /// <returns></returns>
+        public abstract object Invoke(Type type, string name = null, dynamic stateBag = null, params object[] args);
+
+        /// <summary>
+        /// Adds a map of what needs to be changed in the instance into the container
+        /// </summary>
+        /// <param name="mapping"></param>
+        /// <returns></returns>
+        public abstract BaseContainer4Surrogacy Map(Action<NewExpression> mapping);
+     
+        public abstract BaseContainer4Surrogacy Map<T>(string cmd);
+
+        public abstract BaseContainer4Surrogacy Map<T, I>(string cmd);
+
+        public abstract BaseContainer4Surrogacy Map<T, I1, I2>(string cmd);
+
         protected virtual void CreateAssemblyAndModule()
         {
             Interlocked.Increment(ref _assemblyNumber);
@@ -46,8 +75,7 @@ namespace Surrogates
                 string.Concat("Dynamic.Module.Proxies_", _assemblyNumber),
                 string.Concat(AssemblyBuilder.GetName().Name, ".dll"));
         }
-
-
+        
         /// <summary>
         /// It represents a map, from wich the container will follow to create a proxy to that class
         /// </summary>
@@ -56,7 +84,7 @@ namespace Surrogates
         protected virtual void InternalMap(Action<NewExpression> mapping)
         {
             var expression =
-                new NewExpression(ModuleBuilder);
+                new NewExpression(ModuleBuilder, this);
 
             mapping(expression);
 

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Surrogates.Applications.Pooling
 {
@@ -121,13 +118,12 @@ namespace Surrogates.Applications.Pooling
         private int _count;
         private Semaphore _sync;
 
-        private Func<Pool<T>, T> _factory;
-        private Func<T, T> _release;
+        private Func<Pool<T>, T> _factory;        
 
         public Pool(int size, Func<Pool<T>, T> factory)
-            : this(size, factory, null, LoadingMode.Lazy, AccessMode.FIFO) { }
+            : this(size, factory, LoadingMode.Lazy, AccessMode.FIFO) { }
 
-        public Pool(int size, Func<Pool<T>, T> factory, Func<T, T> release, LoadingMode loadingMode, AccessMode accessMode)
+        public Pool(int size, Func<Pool<T>, T> factory, LoadingMode loadingMode, AccessMode accessMode)
         {
             if (size <= 0)
             { 
@@ -140,8 +136,7 @@ namespace Surrogates.Applications.Pooling
 
             this._size = size;
             this._factory = factory;
-            this._release = release;
-
+            
             this._sync = 
                 new Semaphore(size, size);
             
@@ -252,9 +247,6 @@ namespace Surrogates.Applications.Pooling
         {
             lock (_itemStore)
             {
-                if (_release != null)
-                { _release(item); }
-                
                 _itemStore.Store(item);
             }
             _sync.Release();

@@ -7,5 +7,7 @@ namespace Surrogates.Applications
     {
         public Strategies Strategies { get; set; }
         public ExpressionFactory<T> Factory { get; set; }
+        
+        public BaseContainer4Surrogacy Container { get; set; }
     }
 }

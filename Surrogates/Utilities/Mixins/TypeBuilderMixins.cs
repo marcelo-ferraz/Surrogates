@@ -14,7 +14,66 @@ namespace Surrogates.Utilities.Mixins
             return (attrs | other) != other;
         }
 
+        private static PropertyBuilder DefineProperty<T>(this TypeBuilder builder, string name, Func<TypeBuilder, FieldBuilder, PropertyBuilder> getProp)
+        {
+            var getSetAttr =
+                MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 
+            #region get_StateBag
+
+            Func<FieldBuilder, MethodBuilder> get_Prop =
+                f =>
+                {
+                    // Define the "get" accessor method for CustomerName.
+                    MethodBuilder getterBuilder = builder.DefineMethod(
+                        string.Concat("get_", name), getSetAttr, typeof(T), Type.EmptyTypes);
+
+                    ILGenerator getIL =
+                        getterBuilder.GetILGenerator();
+
+                    getIL.Emit(OpCodes.Ldarg_0);
+                    getIL.Emit(OpCodes.Ldfld, f);
+                    getIL.Emit(OpCodes.Ret);
+
+                    return getterBuilder;
+                };
+
+            #endregion
+
+            #region set_StateBag
+
+            Func<FieldBuilder, MethodBuilder> set_StateBag =
+                f =>
+                {
+                    // Define the "set" accessor method for CustomerName.
+                    MethodBuilder setterBuilder = builder.DefineMethod(
+                        string.Concat("set_", name), getSetAttr, null, new Type[] { typeof(T) });
+
+                    ILGenerator setIL =
+                        setterBuilder.GetILGenerator();
+
+                    setIL.Emit(OpCodes.Ldarg_0);
+                    setIL.Emit(OpCodes.Ldarg_1);
+                    setIL.Emit(OpCodes.Stfld, f);
+                    setIL.Emit(OpCodes.Ret);
+
+                    return setterBuilder;
+                };
+
+            #endregion
+
+            FieldBuilder field = builder.DefineField(
+                string.Format("_{0}{1}", name.Substring(0, 1).ToLower(), name.Substring(1)), typeof(T), FieldAttributes.Private);
+
+            var propBldr =
+                getProp(builder, field);
+
+            propBldr.SetGetMethod(get_Prop(field));
+            propBldr.SetSetMethod(set_StateBag(field));
+
+            return propBldr;
+        }
+        
         internal static void CreateConstructor4<T>(this TypeBuilder typeBuilder, FieldList fields)
         {
             typeBuilder.CreateConstructor(typeof(T), fields);
@@ -52,8 +111,7 @@ namespace Surrogates.Utilities.Mixins
             if (!hasParameterlessCtr)
             { define4(Type.EmptyTypes, MethodAttributes.Public); }
         }
-
-
+        
         internal static ILGenerator EmitOverride<TBase>(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, FieldList fields)
         {
             return EmitOverride(typeBuilder, typeof(TBase), newMethod, baseMethod, interceptorField, fields);
@@ -141,66 +199,6 @@ namespace Surrogates.Utilities.Mixins
                 (bldr, field) =>
                     bldr.DefineProperty(
                         "Container", PropertyAttributes.HasDefault, typeof(SurrogatesContainer), null));
-        }
-
-        private static PropertyBuilder DefineProperty<T>(this TypeBuilder builder, string name, Func<TypeBuilder, FieldBuilder, PropertyBuilder> getProp )
-        {
-            var getSetAttr = 
-                MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
-
-            #region get_StateBag
-
-            Func<FieldBuilder, MethodBuilder> get_Prop =
-                f =>
-                {
-                    // Define the "get" accessor method for CustomerName.
-                    MethodBuilder getterBuilder = builder.DefineMethod(
-                        string.Concat("get_", name), getSetAttr, typeof(T), Type.EmptyTypes);
-
-                    ILGenerator getIL =
-                        getterBuilder.GetILGenerator();
-
-                    getIL.Emit(OpCodes.Ldarg_0);
-                    getIL.Emit(OpCodes.Ldfld, f);
-                    getIL.Emit(OpCodes.Ret);
-
-                    return getterBuilder;
-                };
-
-            #endregion
-
-            #region set_StateBag
-
-            Func<FieldBuilder, MethodBuilder> set_StateBag =
-                f =>
-                {
-                    // Define the "set" accessor method for CustomerName.
-                    MethodBuilder setterBuilder = builder.DefineMethod(
-                        string.Concat("set_", name), getSetAttr, null, new Type[] { typeof(T) });
-
-                    ILGenerator setIL =
-                        setterBuilder.GetILGenerator();
-
-                    setIL.Emit(OpCodes.Ldarg_0);
-                    setIL.Emit(OpCodes.Ldarg_1);
-                    setIL.Emit(OpCodes.Stfld, f);
-                    setIL.Emit(OpCodes.Ret);
-
-                    return setterBuilder;
-                };
-
-            #endregion
-
-            FieldBuilder field = builder.DefineField(
-                string.Format("_{0}{1}", name.Substring(0,1).ToLower(), name.Substring(1)), typeof(T), FieldAttributes.Private);
-
-            var statePropBldr = 
-                getProp(builder, field);
-
-            statePropBldr.SetGetMethod(get_Prop(field));
-            statePropBldr.SetSetMethod(set_StateBag(field));
-            
-            return statePropBldr;
         }
     }
 }

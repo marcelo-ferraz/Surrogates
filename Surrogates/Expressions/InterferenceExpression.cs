@@ -10,13 +10,13 @@ namespace Surrogates.Expressions
     public abstract class InterferenceExpression<TBase, TReturn>
        : InterferenceExpression<TBase, TReturn, TReturn>
     {
-        public InterferenceExpression(Strategy current, Strategies strategies)
-            : base(current, strategies) { }
+        public InterferenceExpression(BaseContainer4Surrogacy container, Strategy current, Strategies strategies)
+            : base(container, current, strategies) { }
     }
     public abstract class InterferenceExpression<TBase, T4Prop, T4Method> : Expression<TBase, Strategy>
     {
-        public InterferenceExpression(Strategy current, Strategies strategies)
-            : base(current, strategies) { }
+        public InterferenceExpression(BaseContainer4Surrogacy container, Strategy current, Strategies strategies)
+            : base(container, current, strategies) { }
 
         public T4Method Method(string methodName)
         {
@@ -40,7 +40,7 @@ namespace Surrogates.Expressions
                 strat.Methods.Add(method);
             }
 
-            return (T4Method)Activator.CreateInstance(typeof(T4Method), strat, Strategies);
+            return (T4Method)Activator.CreateInstance(typeof(T4Method), Container, strat, Strategies);
         }
 
         public T4Method This(Func<TBase, Delegate> method)
@@ -61,7 +61,7 @@ namespace Surrogates.Expressions
                     methodGetter(base.GetNotInit<TBase>()).Method);
             }
 
-            return (T4Method)Activator.CreateInstance(typeof(T4Method), strat, Strategies);
+            return (T4Method)Activator.CreateInstance(typeof(T4Method), Container, strat, Strategies);
         }
 
         public T4Prop This(Func<TBase, object> prop)
@@ -83,7 +83,7 @@ namespace Surrogates.Expressions
                     GetProp(propGetter));
             }
 
-            return (T4Prop)Activator.CreateInstance(typeof(T4Prop), strat, Strategies);
+            return (T4Prop)Activator.CreateInstance(typeof(T4Prop), Container, strat, Strategies);
         }
 
         public T4Prop Property(string propName)
@@ -108,7 +108,7 @@ namespace Surrogates.Expressions
                 strat.Properties.Add(prop);
             }
 
-            return (T4Prop)Activator.CreateInstance(typeof(T4Prop), strat, Strategies);
+            return (T4Prop)Activator.CreateInstance(typeof(T4Prop), Container, strat, Strategies);
         }
 
         protected virtual PropertyInfo GetProp(Func<TBase, object> propGetter)

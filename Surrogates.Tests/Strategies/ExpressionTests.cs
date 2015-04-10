@@ -25,10 +25,12 @@ namespace Surrogates.Tests.Strategies
             var modField = typeof(SurrogatesContainer)
                 .GetField("ModuleBuilder", BindingFlags.Instance | BindingFlags.NonPublic);
 
-            var mod = (ModuleBuilder)modField
-                .GetValue(new SurrogatesContainer());
+            var c = new SurrogatesContainer();
 
-            return new NewExpression(mod);
+            var mod = (ModuleBuilder)modField
+                .GetValue(c);
+
+            return new NewExpression(mod, c);
         }
 
         [Test]

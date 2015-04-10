@@ -7,6 +7,7 @@ namespace Surrogates.Utilities
     {
         public static void On<T>(ApplyExpression<T> baseExp, IExtension<T> ext)
         {
+            ext.Container = baseExp.Container;
             ext.Strategies = baseExp.Strategies;
             ext.Factory = baseExp.Factory;
         }

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Surrogates.Applications.Pooling
 {
@@ -10,29 +6,30 @@ namespace Surrogates.Applications.Pooling
         where T : IDisposable
     {
         private Pool<T> _pool;
-        private SurrogatesContainer _container;
+        
+        private bool _initiated;
 
         public PoolInterceptor()
         {
-            _container = new SurrogatesContainer();
+        }
 
-            _container.Map(m => m
-                .From<T>()
-                .Visit
-                .This(x => (Action)x.Dispose)
-                .Using<PoolInterceptor<T>>(i => (Action<object>) i.Dispose));
-
-            _pool = new Pool<T>(5, p => _container.Invoke<T>(stateBag: this));
-        }                
-        
-        internal T Get()
+        internal T Get(dynamic s_StateBag, SurrogatesContainer s_Container)
         {
+            if (!_initiated)
+            {
+                _pool = new Pool<T>(
+                    (int) s_StateBag.Size, 
+                    p => s_Container.Invoke<T>(stateBag: this),
+                    (LoadingMode) s_StateBag.LoadingMode,
+                    (AccessMode) s_StateBag.AccessMode);
+            }
+
             return _pool.Acquire();
         }
 
-        internal void Dispose(dynamic s_StateBag)
+        internal void Dispose(dynamic s_StateBag, T s_instance)
         {
-            s_StateBag._pool.Release(default(T));            
+            s_StateBag._pool.Release();            
         }
     }
 }

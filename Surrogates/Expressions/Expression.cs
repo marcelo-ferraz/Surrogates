@@ -7,12 +7,14 @@ namespace Surrogates.Expressions
     {
         internal virtual Strategies Strategies { get; set; }
         internal virtual T CurrentStrategy { get; set; }
+        internal virtual BaseContainer4Surrogacy Container { get; set; }
     }
 
     public abstract class Expression<TBase, TStrat> : Expression<TStrat> 
     {
-        protected Expression(TStrat strategy, Strategies strategies)
+        protected Expression(BaseContainer4Surrogacy container, TStrat strategy, Strategies strategies)
         {
+            this.Container = container;
             this.CurrentStrategy = strategy;
             this.Strategies = strategies;
         }

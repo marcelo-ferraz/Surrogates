@@ -4,8 +4,8 @@ namespace Surrogates.Expressions
 {
     public class ExpressionFactory<TBase> : Expression<TBase, Strategy>
     {
-        internal ExpressionFactory(Strategy current, Strategies strategies)
-            : base(current, strategies)
+        internal ExpressionFactory(BaseContainer4Surrogacy container, Strategy current, Strategies strategies)
+            : base(container, current, strategies)
         { }
 
         public ReplaceExpression<TBase> Replace
@@ -13,7 +13,7 @@ namespace Surrogates.Expressions
             get
             {
                 CurrentStrategy.Kind = InterferenceKind.Replace;
-                return new ReplaceExpression<TBase>(CurrentStrategy, Strategies);
+                return new ReplaceExpression<TBase>(Container, CurrentStrategy, Strategies);
             }
         }
 
@@ -22,7 +22,7 @@ namespace Surrogates.Expressions
             get
             {
                 CurrentStrategy.Kind = InterferenceKind.Disable;
-                return new DisableExpression<TBase>(CurrentStrategy, Strategies);
+                return new DisableExpression<TBase>(Container, CurrentStrategy, Strategies);
             }
         }
 
@@ -31,7 +31,7 @@ namespace Surrogates.Expressions
             get
             {
                 CurrentStrategy.Kind = InterferenceKind.Visit;
-                return new VisitExpression<TBase>(CurrentStrategy, Strategies);
+                return new VisitExpression<TBase>(Container, CurrentStrategy, Strategies);
             }
         }
 
@@ -40,7 +40,7 @@ namespace Surrogates.Expressions
             get
             {
                 CurrentStrategy.Kind = InterferenceKind.Extensions;
-                return new ApplyExpression<TBase>(Strategies, this);
+                return new ApplyExpression<TBase>(Container, Strategies, this);
             }
         }
     }

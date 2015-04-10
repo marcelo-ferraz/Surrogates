@@ -6,8 +6,8 @@ namespace Surrogates.Expressions
 {
     public class UsingInterferenceExpression<TBase> : Expression<TBase, Strategy.ForMethods>
     {
-        public UsingInterferenceExpression(Strategy.ForMethods current, Strategies strategies)
-            : base(current, strategies) { }
+        public UsingInterferenceExpression(BaseContainer4Surrogacy container, Strategy.ForMethods current, Strategies strategies)
+            : base(container, current, strategies) { }
 
         public AndExpression<TBase> Using<T>(string method)
         {
@@ -23,7 +23,7 @@ namespace Surrogates.Expressions
 
             Strategies.Add(CurrentStrategy);
 
-            return new AndExpression<TBase>(new Strategy(Strategies), Strategies);
+            return new AndExpression<TBase>(Container, new Strategy(Strategies), Strategies);
         }
 
         public AndExpression<TBase> Using<T>(Func<T, Delegate> method)
@@ -40,7 +40,7 @@ namespace Surrogates.Expressions
 
             Strategies.Add(CurrentStrategy);
 
-            return new AndExpression<TBase>(new Strategy(Strategies), Strategies);
+            return new AndExpression<TBase>(Container, new Strategy(Strategies), Strategies);
         }
     }
 }

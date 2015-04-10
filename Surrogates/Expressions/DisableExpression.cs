@@ -6,8 +6,8 @@ namespace Surrogates.Expressions
     public class DisableExpression<TBase>
       : InterferenceExpression<TBase, AndExpression<TBase>>
     {
-        public DisableExpression(Strategy currentStrategy, Strategies strategies)
-            : base(currentStrategy, strategies) { }
+        public DisableExpression(BaseContainer4Surrogacy container, Strategy currentStrategy, Strategies strategies)
+            : base(container, currentStrategy, strategies) { }
         public override AndExpression<TBase> Methods(params string[] methodNames)
         {
             var result = base.Methods(methodNames);

@@ -7,13 +7,14 @@ namespace Surrogates.Expressions
     public class NewExpression
     {
         private ModuleBuilder _moduleBuilder;
-
+        private BaseContainer4Surrogacy _container;
         public Strategies Strategies { get; set; }
         public string Name { get; set; }
 
-        public NewExpression(ModuleBuilder moduleBuilder)
+        public NewExpression(ModuleBuilder moduleBuilder, BaseContainer4Surrogacy container)
         {
             this._moduleBuilder = moduleBuilder;
+            this._container = container;
         }
 
         public ExpressionFactory<T> From<T>(string name = "")
@@ -24,7 +25,9 @@ namespace Surrogates.Expressions
                 typeof(T), name, _moduleBuilder);
             
             return new ExpressionFactory<T>(
-                new Strategy(Strategies), Strategies);
+                _container,
+                new Strategy(Strategies), 
+                Strategies);
         }
     }
 }

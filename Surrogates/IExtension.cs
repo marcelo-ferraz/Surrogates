@@ -8,5 +8,7 @@ namespace Surrogates
         Strategies Strategies { get; set; }
 
         ExpressionFactory<TBase> Factory { get; set; }
+
+        BaseContainer4Surrogacy Container { get; set; }
     }
 }
