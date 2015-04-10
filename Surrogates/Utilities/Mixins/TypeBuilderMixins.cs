@@ -9,6 +9,12 @@ namespace Surrogates.Utilities.Mixins
 {
     internal static class TypeBuilderMixins
     {
+        private static bool Has(this MethodAttributes attrs, MethodAttributes other)
+        {
+            return (attrs | other) != other;
+        }
+
+
         internal static void CreateConstructor4<T>(this TypeBuilder typeBuilder, FieldList fields)
         {
             typeBuilder.CreateConstructor(typeof(T), fields);
@@ -16,15 +22,37 @@ namespace Surrogates.Utilities.Mixins
 
         internal static void CreateConstructor(this TypeBuilder typeBuilder, Type baseType, FieldList fields)
         {
-            var ctorBuilder = typeBuilder.DefineConstructor(
-                MethodAttributes.Public,
-                CallingConventions.Standard,
-                new Type[] { });
+            Action<Type[], MethodAttributes> define4 =
+                (types, attr) =>
+                    typeBuilder.DefineConstructor(attr, CallingConventions.Standard, types)
+                        .GetILGenerator()
+                        .EmitConstructor(baseType, fields, types);
 
-            ctorBuilder
-                .GetILGenerator()
-                .EmitConstructor(baseType, fields);
+            var ctrs = baseType
+                .GetConstructors(BindingFlags.Instance | BindingFlags.Public);
+                //.Concat(baseType.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic));
+
+            bool hasParameterlessCtr = false;
+
+            foreach (var ctr in ctrs)
+            {
+                var pTypes = 
+                    ctr.GetParameters().Select(p => p.ParameterType).ToArray();
+
+                if (pTypes.Length < 1) 
+                { hasParameterlessCtr = true; }
+
+                var attrs = ctr.Attributes.Has(MethodAttributes.Public) ? 
+                    MethodAttributes.Public:  
+                    MethodAttributes.FamANDAssem;
+
+                define4(pTypes, attrs);
+            }
+
+            if (!hasParameterlessCtr)
+            { define4(Type.EmptyTypes, MethodAttributes.Public); }
         }
+
 
         internal static ILGenerator EmitOverride<TBase>(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, FieldList fields)
         {
@@ -45,8 +73,12 @@ namespace Surrogates.Utilities.Mixins
         internal static ILGenerator EmitOverride(this TypeBuilder typeBuilder, Type baseType, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, FieldList fields, out LocalBuilder returnField)
         {
             var attrs = MethodAttributes.Virtual;
-            
-            attrs |= ((baseMethod.Attributes | MethodAttributes.Public) != MethodAttributes.Public ? MethodAttributes.Public : MethodAttributes.FamANDAssem);
+
+            if (baseMethod.Attributes.Has(MethodAttributes.Public))
+            { attrs |= MethodAttributes.Public; }
+
+            if (baseMethod.Attributes.Has(MethodAttributes.FamANDAssem))
+            { attrs |= MethodAttributes.FamANDAssem; }
             
             var builder = typeBuilder.DefineMethod(
                 baseMethod.Name,
@@ -84,61 +116,69 @@ namespace Surrogates.Utilities.Mixins
         
         internal static PropertyBuilder DefinePropertyStateBag(this TypeBuilder builder)
         {
+            var getSetAttr = 
+                MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
+
+            #region get_StateBag
+
+            Func<FieldBuilder, MethodBuilder> get_StateBag =
+                f =>
+                {
+                    // Define the "get" accessor method for CustomerName.
+                    MethodBuilder getterBuilder = builder.DefineMethod(
+                        "get_StateBag", getSetAttr, typeof(object), Type.EmptyTypes);
+
+                    ILGenerator getIL =
+                        getterBuilder.GetILGenerator();
+
+                    getIL.Emit(OpCodes.Ldarg_0);
+                    getIL.Emit(OpCodes.Ldfld, f);
+                    getIL.Emit(OpCodes.Ret);
+
+                    return getterBuilder;
+                };
+
+            #endregion
+
+            #region set_StateBag
+
+            Func<FieldBuilder, MethodBuilder> set_StateBag =
+                f =>
+                {
+                    // Define the "set" accessor method for CustomerName.
+                    MethodBuilder setterBuilder = builder.DefineMethod(
+                        "set_StateBag", getSetAttr, null, new Type[] { typeof(object) });
+
+                    ILGenerator setIL =
+                        setterBuilder.GetILGenerator();
+
+                    setIL.Emit(OpCodes.Ldarg_0);
+                    setIL.Emit(OpCodes.Ldarg_1);
+                    setIL.Emit(OpCodes.Stfld, f);
+                    setIL.Emit(OpCodes.Ret);
+
+                    return setterBuilder;
+                };
+
+            #endregion
+
             var dynamicAttrCtor = typeof(DynamicAttribute)
                 .GetConstructor(Type.EmptyTypes);
             
             var dynamicAttrBldr = new CustomAttributeBuilder(dynamicAttrCtor, new object[] {});
             
-            FieldBuilder StateBldr = builder.DefineField(
+            FieldBuilder field = builder.DefineField(
                 "_stateBag", typeof(string), FieldAttributes.Private);
 
-            StateBldr.SetCustomAttribute(dynamicAttrBldr);
-
-            // The last argument of DefineProperty is null, because the 
-            // property has no parameters. (If you don't specify null, you must 
-            // specify an array of Type objects. For a parameterless property, 
-            // use an array with no elements: new Type[] {})
-            PropertyBuilder statePropBldr = 
-                builder.DefineProperty(
-                "StateBag",
-                PropertyAttributes.HasDefault,
-                typeof(object),
-                null);
+            field.SetCustomAttribute(dynamicAttrBldr);
+            
+            PropertyBuilder statePropBldr = builder.DefineProperty(
+                "StateBag", PropertyAttributes.HasDefault, typeof(object), null);
 
             statePropBldr.SetCustomAttribute(dynamicAttrBldr);
 
-            // The property set and property get methods require a special 
-            // set of attributes.
-            MethodAttributes getSetAttr =
-                MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
-
-            // Define the "get" accessor method for CustomerName.
-            MethodBuilder stateGetPropMthdBldr = builder.DefineMethod(
-                "get_StateBag", getSetAttr, typeof(object), Type.EmptyTypes);
-
-            ILGenerator getIL = 
-                stateGetPropMthdBldr.GetILGenerator();
-
-            getIL.Emit(OpCodes.Ldarg_0);
-            getIL.Emit(OpCodes.Ldfld, StateBldr);
-            getIL.Emit(OpCodes.Ret);
-
-            // Define the "set" accessor method for CustomerName.
-            MethodBuilder stateSetPropMthdBldr = builder.DefineMethod(
-                "set_StateBag", getSetAttr, null, new Type[] { typeof(object) });
-
-            ILGenerator setIL = 
-                stateSetPropMthdBldr.GetILGenerator();
-
-            setIL.Emit(OpCodes.Ldarg_0);
-            setIL.Emit(OpCodes.Ldarg_1);
-            setIL.Emit(OpCodes.Stfld, StateBldr);
-            setIL.Emit(OpCodes.Ret);
-
-            // Last, we must map the two methods created above to our PropertyBuilder to  
-            // their corresponding behaviors, "get" and "set" respectively. 
-            statePropBldr.SetGetMethod(stateGetPropMthdBldr);
-            statePropBldr.SetSetMethod(stateSetPropMthdBldr);
+            statePropBldr.SetGetMethod(get_StateBag(field));
+            statePropBldr.SetSetMethod(set_StateBag(field));
             
             return statePropBldr;
         }

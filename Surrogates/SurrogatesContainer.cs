@@ -27,9 +27,9 @@ namespace Surrogates
         /// <typeparam name="T">The base type</typeparam>
         /// <param name="name">The choosen name</param>
         /// <returns></returns>
-        public virtual T Invoke<T>(string name = null, dynamic stateBag = null)
+        public virtual T Invoke<T>(string name = null, dynamic stateBag = null, params object[] args)
         {
-            return (T)Invoke(typeof(T), name, stateBag);
+            return (T)Invoke(typeof(T), name, stateBag, args);
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace Surrogates
         /// <param name="type">The base type</typeparam>
         /// <param name="name">The choosen name</param>
         /// <returns></returns>
-        public virtual object Invoke(Type type, string name = null, dynamic stateBag = null)
+        public virtual object Invoke(Type type, string name = null, dynamic stateBag = null, params object[] args)
         {
             if (string.IsNullOrEmpty(name))
             { name = string.Concat(type.Name, "Proxy"); }
@@ -46,7 +46,7 @@ namespace Surrogates
             var entry = Dictionary[name];
 
             var obj = Activator
-                .CreateInstance(entry.Type);
+                .CreateInstance(entry.Type, args);
 
             if (stateBag != null)
             { entry.StateProperty.SetValue(obj, stateBag, null); }

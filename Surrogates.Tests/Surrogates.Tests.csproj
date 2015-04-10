@@ -81,6 +81,10 @@
     <Compile Include="Strategies\UnitTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Surrogates.Applications\Surrogates.Applications.csproj">
+      <Project>{3e36c990-db6d-489d-aad3-477456b32655}</Project>
+      <Name>Surrogates.Applications</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Surrogates\Surrogates.csproj">
       <Project>{88494f9c-37b8-40a6-88fd-ee03762ff284}</Project>
       <Name>Surrogates</Name>

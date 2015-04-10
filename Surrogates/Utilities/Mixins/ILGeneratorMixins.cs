@@ -8,6 +8,31 @@ namespace Surrogates.Utilities.Mixins
 {
     internal static class ILGeneratorMixins
     {
+        private static bool TryToAddAnythingElseAsParameter(this ILGenerator gen, Type baseType, FieldList fields, ParameterInfo param, Type pType)
+        {
+            var isSpecialParam =
+                param.Name[0] == 's' && param.Name[1] == '_';
+
+            // tries to add any method as parameter 
+            if (isSpecialParam && gen.TryPassAnyMethodAsParameter(baseType, param))
+            { return true; }
+
+            // tries to add any field as parameter 
+            if (isSpecialParam && gen.TryPassAnyFieldAsParameter(baseType, fields, param, pType))
+            { return true; }
+
+            // tries to add any property as parameter 
+            if (isSpecialParam && gen.TryPassAnyPropertyAsParameter(baseType, fields, param, pType))
+            { return true; }
+
+            if (!pType.IsValueType)
+            { gen.Emit(OpCodes.Ldnull); }
+            else
+            { gen.EmitDefaultParameterValue(pType); }
+
+            return false;
+        }
+
         /// <summary>
         /// Setter the original method's parameters if they have the same name and type or are assinable from the type do not forget to 
         /// </summary>
@@ -265,26 +290,8 @@ namespace Surrogates.Utilities.Mixins
                 if (interfere != null && interfere(param))
                 { continue; }
 
-
-                var isSpecialParam =
-                    param.Name[0] == 's' && param.Name[1] == '_';
-
-                // tries to find any method as parameter 
-                if (isSpecialParam && gen.TryPassAnyMethodAsParameter(baseType, param))
+                if(gen.TryToAddAnythingElseAsParameter(baseType, fields, param, pType))
                 { continue; }
-
-                // tries to find any field as parameter 
-                if (isSpecialParam && gen.TryPassAnyFieldAsParameter(baseType, fields, param, pType))
-                { continue; }
-
-                // tries to find any property as parameter 
-                if (isSpecialParam && gen.TryPassAnyPropertyAsParameter(baseType, fields, param, pType))
-                { continue; }
-
-                if (!pType.IsValueType)
-                { gen.Emit(OpCodes.Ldnull); }
-                else
-                { gen.EmitDefaultParameterValue(pType); }
             }
             return newParams.ToArray();
         }
@@ -309,25 +316,35 @@ namespace Surrogates.Utilities.Mixins
         /// <typeparam name="T"></typeparam>
         /// <param name="gen"></param>
         /// <param name="fields"></param>
-        internal static void EmitConstructor(this ILGenerator gen, Type baseType, FieldList fields)
+        internal static void EmitConstructor(this ILGenerator gen, Type baseType, FieldList fields, params Type[] types)
         {
-            //var ctr = baseType.GetConstructor()
+            var baseParams =
+                baseType.GetConstructor(types).GetParameters();
+
+            int i = 0;
 
             gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Call, baseType.GetConstructor(Type.EmptyTypes));
 
-            for (int i = 0; i < fields.Count; i++)
+            for (; i < baseParams.Length; i++)
+            {
+                gen.Emit(OpCodes.Ldarg, i + 1);
+            }
+
+            gen.Emit(OpCodes.Call, baseType.GetConstructor(types.Length < 1 ? Type.EmptyTypes : types));
+
+            for (int j = 0; j < fields.Count; j++)
             {
                 var type =
-                    fields[i].FieldType;
+                    fields[j].FieldType;
 
                 gen.Emit(OpCodes.Ldarg_0);
                 gen.Emit(OpCodes.Newobj, type.GetConstructor(new Type[] { }));
-                gen.Emit(OpCodes.Stfld, fields[i]);
-            }                       
+                gen.Emit(OpCodes.Stfld, fields[j]);
+            }
 
             gen.Emit(OpCodes.Ret);
         }
+
 
         /// <summary>
         /// 

@@ -4,6 +4,16 @@ namespace Surrogates.Tests.Expressions.Entities
 {
     public class Dummy
     {
+        public Dummy()
+        {
+
+        }
+
+        public Dummy(string txt)
+        {
+            Text = txt;
+        }
+
         public class EvenMore
         {
             public string SomeText { get; set; }

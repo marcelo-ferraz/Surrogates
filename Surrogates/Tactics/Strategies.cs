@@ -60,7 +60,7 @@ namespace Surrogates.Tactics
                 this.Builder.CreateType();
 
             var stateProp = 
-                type.GetProperty("State", BindingFlags.Instance | BindingFlags.Public);
+                type.GetProperty("StateBag", BindingFlags.Instance | BindingFlags.Public);
 
             return new Entry { 
                 Type = type,

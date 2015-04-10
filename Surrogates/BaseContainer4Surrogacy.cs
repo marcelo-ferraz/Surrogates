@@ -116,7 +116,7 @@ namespace Surrogates
         public virtual void Save()
         {
             AssemblyBuilder.Save(string.Concat(AssemblyBuilder.GetName().Name, ".dll"));
-            //save the dictionary, with all the types, surrogates and names
+            //TODO: save the dictionary, with all the types, surrogates and names serialized in a file
         }
     }
 }

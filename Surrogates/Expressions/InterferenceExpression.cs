@@ -3,6 +3,7 @@ using Surrogates.Utilities.Mixins;
 using Surrogates.Utilities.SDILReader;
 using System;
 using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace Surrogates.Expressions
 {
@@ -112,6 +113,14 @@ namespace Surrogates.Expressions
 
         protected virtual PropertyInfo GetProp(Func<TBase, object> propGetter)
         {
+            if (propGetter.Method.ReturnType is Func<TBase, object>)
+            {
+                var obj = (TBase) FormatterServices
+                    .GetUninitializedObject(typeof(TBase));
+
+                return GetProp((Func<TBase, object>) propGetter(obj));
+            }
+
             var reader =
                 new MethodBodyReader(propGetter.Method);
 
