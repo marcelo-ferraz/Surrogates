@@ -51,7 +51,10 @@ namespace Surrogates.Tactics
             }
 
             this.Builder
-                .DefinePropertyStateBag();
+                .DefineStateBagProperty();
+
+            this.Builder
+                .DefineContainerProperty();
 
             this.Builder.CreateConstructor(
                 this.BaseType, this.Fields);
@@ -62,9 +65,13 @@ namespace Surrogates.Tactics
             var stateProp = 
                 type.GetProperty("StateBag", BindingFlags.Instance | BindingFlags.Public);
 
+            var containerProp =
+                type.GetProperty("Container", BindingFlags.Instance | BindingFlags.Public);
+
             return new Entry { 
                 Type = type,
-                StateProperty = stateProp
+                StateProperty = stateProp,
+                ContainerProperty = containerProp
             };
         } 
     }

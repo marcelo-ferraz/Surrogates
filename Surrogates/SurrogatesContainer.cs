@@ -51,6 +51,8 @@ namespace Surrogates
             if (stateBag != null)
             { entry.StateProperty.SetValue(obj, stateBag, null); }
 
+            entry.ContainerProperty.SetValue(obj, this, null);
+
             return obj;
         }
 

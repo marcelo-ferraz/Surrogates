@@ -10,6 +10,7 @@ namespace Surrogates.Model.Entities
     {
         public Type Type { get; set; }
         public PropertyInfo StateProperty { get; set; }
+        public PropertyInfo ContainerProperty { get; set; }
     }
 
 }

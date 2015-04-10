@@ -113,20 +113,49 @@ namespace Surrogates.Utilities.Mixins
 
             return builder.DefineField(fieldName, prop.PropertyType, FieldAttributes.Private);
         }
-        
-        internal static PropertyBuilder DefinePropertyStateBag(this TypeBuilder builder)
+
+        internal static PropertyBuilder DefineStateBagProperty(this TypeBuilder builder)
+        {
+            return builder.DefineProperty<object>("StateBag", 
+                (bldr, field) =>
+                {
+                    var dynamicAttrCtor = typeof(DynamicAttribute)
+                        .GetConstructor(Type.EmptyTypes);
+                    
+                    field.SetCustomAttribute(
+                        new CustomAttributeBuilder(dynamicAttrCtor, new object[] { }));
+                    
+                    var statePropBldr = bldr.DefineProperty(
+                        "StateBag", PropertyAttributes.HasDefault, typeof(object), null);
+
+                    statePropBldr.SetCustomAttribute(
+                        new CustomAttributeBuilder(dynamicAttrCtor, new object[] { }));
+                    
+                    return statePropBldr;
+                });
+        }
+
+        internal static PropertyBuilder DefineContainerProperty(this TypeBuilder builder)
+        {
+            return builder.DefineProperty<SurrogatesContainer>("Container",
+                (bldr, field) =>
+                    bldr.DefineProperty(
+                        "Container", PropertyAttributes.HasDefault, typeof(SurrogatesContainer), null));
+        }
+
+        private static PropertyBuilder DefineProperty<T>(this TypeBuilder builder, string name, Func<TypeBuilder, FieldBuilder, PropertyBuilder> getProp )
         {
             var getSetAttr = 
                 MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 
             #region get_StateBag
 
-            Func<FieldBuilder, MethodBuilder> get_StateBag =
+            Func<FieldBuilder, MethodBuilder> get_Prop =
                 f =>
                 {
                     // Define the "get" accessor method for CustomerName.
                     MethodBuilder getterBuilder = builder.DefineMethod(
-                        "get_StateBag", getSetAttr, typeof(object), Type.EmptyTypes);
+                        string.Concat("get_", name), getSetAttr, typeof(T), Type.EmptyTypes);
 
                     ILGenerator getIL =
                         getterBuilder.GetILGenerator();
@@ -147,7 +176,7 @@ namespace Surrogates.Utilities.Mixins
                 {
                     // Define the "set" accessor method for CustomerName.
                     MethodBuilder setterBuilder = builder.DefineMethod(
-                        "set_StateBag", getSetAttr, null, new Type[] { typeof(object) });
+                        string.Concat("set_", name), getSetAttr, null, new Type[] { typeof(T) });
 
                     ILGenerator setIL =
                         setterBuilder.GetILGenerator();
@@ -162,22 +191,13 @@ namespace Surrogates.Utilities.Mixins
 
             #endregion
 
-            var dynamicAttrCtor = typeof(DynamicAttribute)
-                .GetConstructor(Type.EmptyTypes);
-            
-            var dynamicAttrBldr = new CustomAttributeBuilder(dynamicAttrCtor, new object[] {});
-            
             FieldBuilder field = builder.DefineField(
-                "_stateBag", typeof(string), FieldAttributes.Private);
+                string.Format("_{0}{1}", name.Substring(0,1).ToLower(), name.Substring(1)), typeof(T), FieldAttributes.Private);
 
-            field.SetCustomAttribute(dynamicAttrBldr);
-            
-            PropertyBuilder statePropBldr = builder.DefineProperty(
-                "StateBag", PropertyAttributes.HasDefault, typeof(object), null);
+            var statePropBldr = 
+                getProp(builder, field);
 
-            statePropBldr.SetCustomAttribute(dynamicAttrBldr);
-
-            statePropBldr.SetGetMethod(get_StateBag(field));
+            statePropBldr.SetGetMethod(get_Prop(field));
             statePropBldr.SetSetMethod(set_StateBag(field));
             
             return statePropBldr;

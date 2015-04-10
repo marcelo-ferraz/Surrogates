@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using Surrogates.Tests.Expressions.Entities;
 using System;
-using Surrogates.Applications;
 
 namespace Surrogates.Tests.Expressions.Methods.Substitute
 {
@@ -17,7 +16,7 @@ namespace Surrogates.Tests.Expressions.Methods.Substitute
                 .From<Dummy>()
                 .Replace
                 .Method("SetPropText_simple")
-                .Using<InterferenceObject>(r => (Func<int>)r.AccomplishNothing_Return2));
+                .Using<InterferenceObject>(r => (Func<int>)r.AccomplishNothing_Return2)).Save();
 
             var dummy =
                 new Dummy();
