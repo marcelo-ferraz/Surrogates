@@ -1,35 +1,79 @@
 ﻿using System;
+using System.Threading;
 
 namespace Surrogates.Applications.Pooling
 {
-    public class PoolInterceptor<T>
+    public abstract class PoolInterceptor<T>
         where T : IDisposable
     {
-        private Pool<T> _pool;
-        
-        private bool _initiated;
-
-        public PoolInterceptor()
+        /// <summary>
+        /// To be used alongside with the holder of the property
+        /// </summary>
+        public class ToGet : PoolInterceptor<T>
         {
-        }
+            private bool _initiated;
 
-        internal T Get(dynamic s_StateBag, SurrogatesContainer s_Container)
-        {
-            if (!_initiated)
+            private object _sync;
+
+            public ToGet()
             {
-                _pool = new Pool<T>(
-                    (int) s_StateBag.Size, 
-                    p => s_Container.Invoke<T>(stateBag: this),
-                    (LoadingMode) s_StateBag.LoadingMode,
-                    (AccessMode) s_StateBag.AccessMode);
+                this._sync = new object();
             }
 
-            return _pool.Acquire();
+            protected Pool<T> GetPool(dynamic bag, SurrogatesContainer s_Container)
+            {
+                bool lockAcquired = false;
+                try
+                {
+                    try { }
+                    finally
+                    {
+                        if (lockAcquired = (base.Pool == null && (Monitor.TryEnter(_sync, 500) && !this._initiated)))
+                        {
+                            base.Pool = new Pool<T>(
+                                (int)bag.Size,
+                                p => s_Container.Invoke<T>(stateBag: this),
+                                (LoadingMode)bag.LoadingMode,
+                                (AccessMode)bag.AccessMode);
+
+                            this._initiated = true;
+                        }
+                    }
+                }
+                finally
+                {
+                    if (lockAcquired)
+                    { Monitor.Exit(_sync); }
+                }
+
+                return Pool;
+            }
+
+            public T Get(State s_PoolState, SurrogatesContainer s_Container)
+            {
+                return GetPool(s_PoolState, s_Container)
+                    .Acquire();
+            }
         }
 
-        internal void Dispose(dynamic s_StateBag, T s_instance)
+        /// <summary>
+        /// To be used in the item, so that it can be properly released
+        /// </summary>
+        public class ToRelease: PoolInterceptor<T>
         {
-            s_StateBag._pool.Release();            
+            public void Dispose(dynamic s_StateBag, T s_instance)
+            {
+                s_StateBag.Pool.Release();
+            }
         }
+
+        public class State
+        { 
+            public int PoolSize { get; set; }
+            public LoadingMode LoadingMode { get; set; }
+            public AccessMode AccessMode { get; set; }
+        }
+
+        protected Pool<T> Pool;
     }
 }

@@ -6,7 +6,7 @@ namespace Surrogates.Utilities
 {
     public static class Infer
     {
-        public static bool IsAutomatic(Property prop)
+        public static bool IsAutomatic(SurrogatedProperty prop)
         {
             var owner = 
                 prop.Original.ReflectedType;
@@ -18,6 +18,11 @@ namespace Surrogates.Utilities
             return field != null;
         }
         
+        /// <summary>
+        /// Infers a delegate type from the method passed, so it can be compared to the parameter
+        /// </summary>
+        /// <param name="baseMethod"></param>
+        /// <returns></returns>
         public static Type DelegateTypeFrom(MethodInfo baseMethod)
         {
             var isFunc =

@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Surrogates.Model.Collections
 {
-    public class PropertyList : List<Property>
+    public class PropertyList : List<SurrogatedProperty>
     {
         private Strategy _owner;
 
@@ -20,7 +20,7 @@ namespace Surrogates.Model.Collections
         public void Add(PropertyInfo property)
         {
             var prop =
-                new Property(_owner) { Original = property };
+                new SurrogatedProperty(_owner) { Original = property };
 
             var index =
                 this.BinarySearch(prop);

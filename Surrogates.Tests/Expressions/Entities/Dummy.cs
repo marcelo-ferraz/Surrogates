@@ -74,4 +74,54 @@ namespace Surrogates.Tests.Expressions.Entities
             return 1;
         }
     }
+
+
+    public class DummyProxy2 : Dummy
+    {
+        private InterferenceObject _interceptor;
+
+        private object _stateBag;
+
+        private SurrogatesContainer _container;
+
+        public SurrogatesContainer Container
+        {
+            get
+            {
+                return this._container;
+            }
+            set
+            {
+                this._container = value;
+            }
+        }
+
+        public object StateBag
+        {
+            get
+            {
+                return this._stateBag;
+            }
+            set
+            {
+                this._stateBag = value;
+            }
+        }
+
+        public DummyProxy2()
+        {
+            this._interceptor = new InterferenceObject();
+        }
+
+        public DummyProxy2(string str)
+            : base(str)
+        {
+            this._interceptor = new InterferenceObject();
+        }
+
+        public override void SetPropText_complex(string str, DateTime dateTime, Dummy.EvenMore evenMore)
+        {
+            this._interceptor.AddToPropText__MethodName(null, this, new DateTime(), null, null);
+        }
+    }
 }

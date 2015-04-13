@@ -40,7 +40,7 @@ namespace Surrogates.Tests.Expressions.Methods.Substitute
                 m.From<Dummy>()
                 .Replace
                 .This(d => (Action<string, DateTime, Dummy.EvenMore>) d.SetPropText_complex)
-                .Using<InterferenceObject>(r => (Action<string, Dummy, DateTime, string, Dummy.EvenMore>)r.AddToPropText__MethodName));
+                .Using<InterferenceObject>(r => (Action<string, Dummy, DateTime, string, Dummy.EvenMore>)r.AddToPropText__MethodName)).Save();
 
             var dummy =
                 new Dummy();

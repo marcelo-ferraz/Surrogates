@@ -6,14 +6,14 @@ using System.Reflection.Emit;
 
 namespace Surrogates.Model
 {
-    public class Property : IComparable
+    public class SurrogatedProperty : IComparable
     {
         private FieldBuilder _field;
         private TypeBuilder _typeBuilder;
         private PropertyBuilder _propBuilder;
         private Strategy _owner;
 
-        internal Property(Strategy strategy)
+        internal SurrogatedProperty(Strategy strategy)
         {
             _owner = strategy;
             _typeBuilder = strategy.TypeBuilder;
@@ -48,8 +48,8 @@ namespace Surrogates.Model
 
         public int CompareTo(object obj)
         {
-            if (obj is Property)
-            { return this.CompareTo(((Property)obj).Original); }
+            if (obj is SurrogatedProperty)
+            { return this.CompareTo(((SurrogatedProperty)obj).Original); }
 
             if (!(obj is PropertyInfo))
             { throw new NotSupportedException(); }

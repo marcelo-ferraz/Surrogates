@@ -1,4 +1,5 @@
 ﻿using Surrogates.Tactics;
+using Surrogates.Utilities.Mixins;
 using System;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -22,15 +23,29 @@ namespace Surrogates.Expressions.Accessors
             return Using<T>(null, interceptor);
         }
 
+        public Accessors.AndExpression Using<T>(string name, string interceptor)
+        {
+            return Using<T>(name, typeof(T).GetMethod4Surrogacy(interceptor));
+        }
+
+        public Accessors.AndExpression Using<T>(string interceptor)
+        {
+            return Using<T>(null, typeof(T).GetMethod4Surrogacy(interceptor));
+        }
+
+
         public Accessors.AndExpression Using<T>(string name, Func<T, Delegate> interceptor)
         {
-            var holder = (T)FormatterServices
+            var holder = (T) FormatterServices
                 .GetSafeUninitializedObject(typeof(T));
-                
-            //_strategy.Fields.TryAdd<T>(ref name);
 
+            return Using<T>(name, interceptor(holder).Method);
+        }
+
+        private AndExpression Using<T>(string name, MethodInfo method)
+        {
             var @int =
-              new Strategy.Interceptor(name, typeof(T), interceptor(holder).Method);
+              new Strategy.Interceptor(name, typeof(T), method);
 
             if (_caller == PropertyAccessor.Set)
             {

@@ -1,5 +1,6 @@
 ﻿using Surrogates.Executioners;
 using Surrogates.Model.Collections;
+using Surrogates.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -89,6 +90,10 @@ namespace Surrogates.Tactics
         public TypeBuilder TypeBuilder
         {
             get { return _owner.Builder; }
+        }
+        public List<NewProperty> NewProperties
+        {
+            get { return _owner.NewProperties; }
         }
 
         public InterferenceKind Kind { get; set; }

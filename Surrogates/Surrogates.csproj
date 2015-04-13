@@ -51,9 +51,11 @@
     <Compile Include="Expressions\VisitExpression.cs" />
     <Compile Include="Expressions\InterferenceExpression.cs" />
     <Compile Include="IExtension.cs" />
+    <Compile Include="IncohenerentNewProperty.cs" />
     <Compile Include="IncoherentBody4PropertyException.cs" />
     <Compile Include="MethodNotFoundException.cs" />
     <Compile Include="Model\Entities\Entry.cs" />
+    <Compile Include="Model\Entities\NewProperty.cs" />
     <Compile Include="PropertyNotFoundException.cs" />
     <Compile Include="Expressions\Accessors\PropertyAccessor.cs" />
     <Compile Include="Expressions\Accessors\AndExpression.cs" />
@@ -67,7 +69,7 @@
     <Compile Include="InterferenceKind.cs" />
     <Compile Include="Model\Collections\FieldList.cs" />
     <Compile Include="Model\Collections\PropertyList.cs" />
-    <Compile Include="Model\Entities\Property.cs" />
+    <Compile Include="Model\Entities\SurrogatedProperty.cs" />
     <Compile Include="Model\Parsers\SCLParser.cs" />
     <Compile Include="Tactics\Strategies.cs" />
     <Compile Include="Tactics\Strategy.cs" />
@@ -76,6 +78,7 @@
     <Compile Include="ProxyAlreadyMadeException.cs" />
     <Compile Include="Utilities\Clone.cs" />
     <Compile Include="Utilities\Mixins\PropertyMixins.cs" />
+    <Compile Include="Utilities\Mixins\StrategyMixins.cs" />
     <Compile Include="Utilities\Mixins\TypeMixins.cs" />
     <Compile Include="Utilities\Pass.cs" />
     <Compile Include="Utilities\Mixins\PropGetterMixins.cs" />
@@ -89,6 +92,7 @@
     <Compile Include="Utilities\Mixins\TypeBuilderMixins.cs" />
     <Compile Include="Utilities\Infer.cs" />
     <Compile Include="Utilities\Mixins\StringMixins.cs" />
+    <Compile Include="Utilities\Try2Add.cs" />
     <Compile Include="Utilities\WhizzoDev\Cloning.cs" />
     <Compile Include="Utilities\Set4Property.cs" />
   </ItemGroup>

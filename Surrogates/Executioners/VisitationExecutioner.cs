@@ -26,7 +26,8 @@ namespace Surrogates.Executioners
             gen.Emit(OpCodes.Ldarg_0);
 
             var @params =
-                gen.EmitParametersForSelf(strategy.BaseType, strategy.Fields, baseAction);
+                //gen.EmitParametersForSelf(strategy.BaseType, strategy.Fields, baseAction);
+                gen.EmitParametersForSelf(strategy, baseAction);
 
             gen.Emit(OpCodes.Call, baseAction);
             gen.Emit(OpCodes.Ret);
@@ -50,14 +51,14 @@ namespace Surrogates.Executioners
             gen.Emit(OpCodes.Ldarg_0);
 
             var @params =
-                gen.EmitParametersForSelf(strategy.BaseType, strategy.Fields, baseFunction);
+                gen.EmitParametersForSelf(strategy, baseFunction);
 
             gen.Emit(OpCodes.Call, baseFunction);
 
             gen.Emit(OpCodes.Ret);
         }
 
-        protected MethodBuilder VisitGetter(Property property, Strategy.ForProperties strategy)
+        protected MethodBuilder VisitGetter(SurrogatedProperty property, Strategy.ForProperties strategy)
         {
             var pType =
                 property.Original.PropertyType;
@@ -100,7 +101,7 @@ namespace Surrogates.Executioners
             return getter;
         }
 
-        protected MethodBuilder VisitSetter(Property property, Strategy.ForProperties strategy)
+        protected MethodBuilder VisitSetter(SurrogatedProperty property, Strategy.ForProperties strategy)
         {
             var pType =
                 property.Original.PropertyType;

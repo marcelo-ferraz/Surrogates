@@ -30,7 +30,7 @@ namespace Surrogates.Utilities
         /// </summary>
         /// <param name="strategy">the strategy respnsible for </param>
         /// <param name="prop">The original property </param>
-        internal static void OneSimpleGetter(Strategy.ForProperties strategy, Property prop)
+        internal static void OneSimpleGetter(Strategy.ForProperties strategy, SurrogatedProperty prop)
         {
             MethodBuilder getter = strategy.TypeBuilder.DefineMethod(
                 string.Concat("get_", prop.Original.Name),
@@ -68,7 +68,7 @@ namespace Surrogates.Utilities
             }
         }
         
-        internal static void OneSimpleSetter(Strategy.ForProperties strategy, Property prop)
+        internal static void OneSimpleSetter(Strategy.ForProperties strategy, SurrogatedProperty prop)
         {
             //insert a basic set
             MethodBuilder setter = strategy.TypeBuilder.DefineMethod(

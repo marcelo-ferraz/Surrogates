@@ -1,4 +1,5 @@
-﻿using Surrogates.Tactics;
+﻿using Surrogates.Model.Entities;
+using Surrogates.Tactics;
 
 namespace Surrogates.Expressions
 {
@@ -42,6 +43,19 @@ namespace Surrogates.Expressions
                 CurrentStrategy.Kind = InterferenceKind.Extensions;
                 return new ApplyExpression<TBase>(Container, Strategies, this);
             }
+        }
+
+        public AndExpression<TBase> AddProperty<T>(string name, T defaultValue = default(T))
+        {
+            Strategies.NewProperties.Add(
+                new NewProperty(this.Strategies.Builder) {  
+                    DefaultValue = defaultValue,
+                    Type = typeof(T),
+                    Name = name
+                });
+
+            return new AndExpression<TBase>(
+                this.Container, this.CurrentStrategy, this.Strategies);
         }
     }
 }

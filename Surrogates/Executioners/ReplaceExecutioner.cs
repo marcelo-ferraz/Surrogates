@@ -51,7 +51,7 @@ namespace Surrogates.Executioners
         }
 
         [TargetedPatchingOptOut("")]
-        protected static void ReplaceGetter(Property property, Strategy.ForProperties strategy)
+        protected static void ReplaceGetter(SurrogatedProperty property, Strategy.ForProperties strategy)
         {
             var pType =
                 property.Original.PropertyType;
@@ -89,7 +89,7 @@ namespace Surrogates.Executioners
         }
 
         [TargetedPatchingOptOut("")]
-        protected static MethodBuilder ReplaceSetter(Property property, Strategy.ForProperties strategy)
+        protected static MethodBuilder ReplaceSetter(SurrogatedProperty property, Strategy.ForProperties strategy)
         {
             var pType =
                 property.Original.PropertyType;

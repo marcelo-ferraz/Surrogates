@@ -29,19 +29,40 @@ namespace Surrogates.Tactics
             this.BaseType = baseType;
             this._strategies = new List<Strategy>();
             this.Fields = new FieldList(this);
-        }
+            
+            this.NewProperties = 
+                new List<NewProperty>();
 
+            this.AddProperty<dynamic>("StateBag");
+            this.AddProperty<SurrogatesContainer>("Container");
+        }
+        
         public Type BaseType { get; set; }
 
         public TypeBuilder Builder { get; set; }
         
         public FieldList Fields { get; set; }
-               
+
+        public List<NewProperty> NewProperties { get; set; }
+
+        private void AddProperty<T>(string name)
+        {
+            this.NewProperties.Add(new NewProperty(Builder) { 
+                Name = name,
+                Type = typeof(T)
+            });
+        }
+
+        private PropertyInfo GetProperty(string name, Type holder)
+        {
+            return holder.GetProperty(name, BindingFlags.Instance | BindingFlags.Public);
+        }
+
         public void Add(Strategy strategy)
         {
             _strategies.Add(strategy);
         }
-
+        
         public Entry Apply()
         {
             foreach (var strategy in _strategies)
@@ -50,26 +71,26 @@ namespace Surrogates.Tactics
                     this.BaseType, ref this._builder);
             }
 
-            this.Builder
-                .DefineStateBagProperty();
-
-            this.Builder
-                .DefineContainerProperty();
-
+            // this will define all the properties not previously asked before
+            foreach (var property in NewProperties)
+            {
+                property.GetBuilder();
+            }
+            
             this.Builder.CreateConstructor(
                 this.BaseType, this.Fields);
             
-            var type = 
+            var newType = 
                 this.Builder.CreateType();
 
             var stateProp = 
-                type.GetProperty("StateBag", BindingFlags.Instance | BindingFlags.Public);
+                GetProperty("StateBag", newType);
 
             var containerProp =
-                type.GetProperty("Container", BindingFlags.Instance | BindingFlags.Public);
+                GetProperty("Container", newType);
 
             return new Entry { 
-                Type = type,
+                Type = newType,
                 StateProperty = stateProp,
                 ContainerProperty = containerProp
             };

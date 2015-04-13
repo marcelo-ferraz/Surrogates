@@ -10,8 +10,8 @@ namespace Surrogates.Utilities.Mixins
         private static readonly MethodAttributes _flags =
             MethodAttributes.Virtual | MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 
-        internal static Property EmitDefaultSet(
-            this Property that, TypeBuilder builder)
+        internal static SurrogatedProperty EmitDefaultSet(
+            this SurrogatedProperty that, TypeBuilder builder)
         {
             //insert a basic set
             MethodBuilder setter = builder.DefineMethod(
@@ -40,8 +40,8 @@ namespace Surrogates.Utilities.Mixins
             return that;
         }
 
-        internal static Property EmitBaseGetter(
-            this Property that, TypeBuilder builder)
+        internal static SurrogatedProperty EmitBaseGetter(
+            this SurrogatedProperty that, TypeBuilder builder)
         {
             MethodBuilder getter = builder.DefineMethod(
                 string.Concat("get_", that.Original.Name),

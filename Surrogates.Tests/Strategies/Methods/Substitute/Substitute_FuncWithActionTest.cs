@@ -92,7 +92,6 @@ namespace Surrogates.Tests.Strategies.Methods.Substitute
                 null,
                 (Action<Dummy, string>) new InterferenceObject().SetPropText_InstanceAndMethodName);
 
-
             var dummyRes =
                 dummy.Call_SetPropText_simple_Return_1();
             var proxyRes =

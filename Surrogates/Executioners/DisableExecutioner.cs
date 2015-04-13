@@ -25,7 +25,7 @@ namespace Surrogates.Executioners
             gen.Emit(OpCodes.Ret);
         }
                 
-        protected static void DisableSetter(Strategy.ForProperties strategy, Model.Property property)
+        protected static void DisableSetter(Strategy.ForProperties strategy, Model.SurrogatedProperty property)
         {
             var setter =
                 CreateSetter(strategy, property.Original);
@@ -36,7 +36,7 @@ namespace Surrogates.Executioners
             property.Builder.SetSetMethod(setter);
         }
         
-        protected static void DisableGetter(Strategy.ForProperties strategy, Model.Property property)
+        protected static void DisableGetter(Strategy.ForProperties strategy, Model.SurrogatedProperty property)
         {
             var getter =
                 CreateGetter(strategy, property.Original);
