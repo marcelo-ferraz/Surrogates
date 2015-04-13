@@ -9,7 +9,6 @@ using System.Reflection.Emit;
 
 namespace Surrogates.Utilities.Mixins
 {
-
     internal static class ILGeneratorMixins
     {
         /// <summary>
@@ -106,11 +105,11 @@ namespace Surrogates.Utilities.Mixins
             gen.Emit(OpCodes.Ldloc, local);
         }
 
-        internal static Type[] EmitParameters(this ILGenerator gen, Type baseType, FieldList fields, MethodInfo newMethod, Func<ParameterInfo, bool> interfere = null)
+        internal static Type[] EmitParameters(this ILGenerator gen, Strategy strategy, MethodInfo method, Func<ParameterInfo, bool> interfere = null)
         {
             var newParams = new List<Type>();
 
-            foreach (var param in newMethod.GetParameters())
+            foreach (var param in method.GetParameters())
             {
                 var pType =
                     param.ParameterType;
@@ -118,7 +117,7 @@ namespace Surrogates.Utilities.Mixins
                 newParams.Add(pType);
 
                 // get the instance if the parameter of the interceptor is named instance
-                if (pType.IsAssignableFrom(baseType) && param.Name == "s_instance")
+                if (pType.IsAssignableFrom(strategy.BaseType) && param.Name == "s_instance")
                 {
                     gen.Emit(OpCodes.Ldarg_0);
                     continue;
@@ -127,7 +126,7 @@ namespace Surrogates.Utilities.Mixins
                 if (interfere != null && interfere(param))
                 { continue; }
 
-                if (Try2Add.AnythingElseAsParameter(gen, baseType, fields, param, pType))
+                if (Try2Add.AnythingElseAsParameter(gen, strategy.BaseType, strategy.Fields, strategy.NewProperties, param, pType))
                 { continue; }
             }
             return newParams.ToArray();
@@ -135,15 +134,14 @@ namespace Surrogates.Utilities.Mixins
 
         internal static Type[] EmitParametersForSelf(this ILGenerator gen, Strategy strategy, MethodInfo baseMethod)
         {
-            return gen.EmitParameters(strategy.BaseType, strategy.Fields, baseMethod, baseMethod);
+            return gen.EmitParameters(strategy, baseMethod, baseMethod);
         }
 
-        internal static Type[] EmitParameters(this ILGenerator gen, Type baseType, FieldList fields, MethodInfo newMethod, MethodInfo baseMethod)
+        internal static Type[] EmitParameters(this ILGenerator gen, Strategy strategy, MethodInfo method, MethodInfo baseMethod)
         {
             return gen.EmitParameters(
-                baseType,
-                fields,
-                newMethod,
+                strategy,
+                method,
                 p => gen.EmitArgumentsBasedOnOriginal(baseMethod, p, p.ParameterType)); 
         }
 
@@ -153,10 +151,10 @@ namespace Surrogates.Utilities.Mixins
         /// <typeparam name="T"></typeparam>
         /// <param name="gen"></param>
         /// <param name="fields"></param>
-        internal static void EmitConstructor(this ILGenerator gen, Type baseType, FieldList fields, params Type[] types)
+        internal static void EmitConstructor(this ILGenerator gen, Strategies strategies, params Type[] types)
         {
             var baseParams =
-                baseType.GetConstructor(types).GetParameters();
+                strategies.BaseType.GetConstructor(types).GetParameters();
 
             int i = 0;
 
@@ -167,16 +165,26 @@ namespace Surrogates.Utilities.Mixins
                 gen.Emit(OpCodes.Ldarg, i + 1);
             }
 
-            gen.Emit(OpCodes.Call, baseType.GetConstructor(types.Length < 1 ? Type.EmptyTypes : types));
+            gen.Emit(OpCodes.Call, strategies.BaseType.GetConstructor(types.Length < 1 ? Type.EmptyTypes : types));
 
-            for (int j = 0; j < fields.Count; j++)
+            for (int j = 0; j < strategies.Fields.Count; j++)
             {
                 var type =
-                    fields[j].FieldType;
+                    strategies.Fields[j].FieldType;
 
                 gen.Emit(OpCodes.Ldarg_0);
                 gen.Emit(OpCodes.Newobj, type.GetConstructor(new Type[] { }));
-                gen.Emit(OpCodes.Stfld, fields[j]);
+                gen.Emit(OpCodes.Stfld, strategies.Fields[j]);
+            }
+
+            for (int j = 0; j < strategies.NewProperties.Count; j++)
+            {
+                var type =
+                    strategies.NewProperties[j].GetBuilder().PropertyType;
+
+                //gen.Emit(OpCodes.Ldarg_0);
+                //gen.Emit(OpCodes.Newobj, type.GetConstructor(new Type[] { }));
+                //?? gen.Emit(OpCodes.Stfld, strategies.NewProperties[j]);
             }
 
             gen.Emit(OpCodes.Ret);

@@ -12,7 +12,7 @@ namespace Surrogates.Utilities
 {
     internal static class Try2Add
     {
-        internal static bool AnythingElseAsParameter(ILGenerator gen, Type baseType, FieldList fields, ParameterInfo param, Type pType)
+        internal static bool AnythingElseAsParameter(ILGenerator gen, Type baseType, FieldList fields, List<NewProperty> newProps, ParameterInfo param, Type pType)
         {
             var isSpecialParam =
                 param.Name[0] == 's' && param.Name[1] == '_';
@@ -26,7 +26,11 @@ namespace Surrogates.Utilities
             { return true; }
 
             // tries to add any property as parameter 
-            if (isSpecialParam && Try2Add.AnyPropertyAsParameter(gen, baseType, fields, param, pType))
+            if (isSpecialParam && Try2Add.AnyBasePropertyAsParameter(gen, baseType, fields, param, pType))
+            { return true; }
+
+            // tries to add any property as parameter 
+            if (isSpecialParam && Try2Add.AnyNewPropertyAsParameter(gen, baseType, newProps, param, pType))
             { return true; }
 
             if (!pType.IsValueType)
@@ -138,7 +142,7 @@ namespace Surrogates.Utilities
             return true;
         }
 
-        internal static bool AnyPropertyAsParameter(ILGenerator gen, Type baseType, FieldList fields, ParameterInfo param, Type pType)
+        internal static bool AnyBasePropertyAsParameter(ILGenerator gen, Type baseType, FieldList fields, ParameterInfo param, Type pType)
         {
             var pName =
                 param.Name.Substring(2);

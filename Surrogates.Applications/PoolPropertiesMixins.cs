@@ -14,22 +14,31 @@ namespace Surrogates.Applications
         {
             var ext = new ShallowExtension<T>();
             Pass.On<T>(self, ext);
-       
+
+            string pooledKey =
+                string.Concat(typeof(P).Name, '+', typeof(T).Name, "Pooled_", new Random(new Random().Next(new Random().Next())).Next());
+
             //maps the type that will be dispatched                        
             ext.Container.Map(m => m
                 .From<P>()
                 .Visit
                 .This(x => (Action)x.Dispose)
-                .Using<PoolInterceptor<P>.ToRelease>(i => (Action<object, P>)i.Dispose)
-                .And
-                .AddProperty<dynamic>("PoolState", new { Size = poolSize, LoadingMode = loadingMode, AccessMode = accessMode }));
-                        
+                .Using<PoolInterceptor<P>.ToRelease>(i => (Action<object, P>)i.Dispose));
+
             return ext
                 .Factory
                 .Replace
                 .This(x => prop(x))
                 .Accessors(a =>
-                    a.Getter.Using<PoolInterceptor<P>.ToGet>(interceptor: "Get"));
+                    a.Getter.Using<PoolInterceptor<P>.ToGet>(interceptor: "Get"))
+                .And
+                .AddProperty<dynamic>("PoolState", 
+                new { 
+                    Size = poolSize, 
+                    LoadingMode = loadingMode, 
+                    AccessMode = accessMode, 
+                    PooledKey = pooledKey 
+                });
         }
     }
 }

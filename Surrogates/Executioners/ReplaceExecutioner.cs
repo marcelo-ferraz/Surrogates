@@ -15,8 +15,8 @@ namespace Surrogates.Executioners
         {
             LocalBuilder baseMethodReturn = null;
 
-            var gen = strategy.TypeBuilder.EmitOverride(
-                strategy.BaseType, strategy.Interceptor.Method, baseAction, GetField(strategy.Interceptor, strategy.Fields), strategy.Fields, out baseMethodReturn);
+            var gen = strategy.Override(
+                baseAction, out baseMethodReturn);
 
             if (baseMethodReturn != null)
             { gen.EmitDefaultValue(baseAction.ReturnType, baseMethodReturn); }
@@ -27,24 +27,19 @@ namespace Surrogates.Executioners
         [TargetedPatchingOptOut("")]
         protected static void ReplaceFunction(MethodInfo baseFunction, Strategy.ForMethods strategy)
         {
-            LocalBuilder baseMethodReturnBuilder = null;
+            LocalBuilder baseMethodReturn = null;
 
-            var gen = strategy.TypeBuilder.EmitOverride(
-                strategy.BaseType,
-                strategy.Interceptor.Method,
-                baseFunction,
-                GetField(strategy.Interceptor, strategy.Fields),
-                strategy.Fields,
-                out baseMethodReturnBuilder);
+            var gen = strategy.Override(
+                baseFunction, out baseMethodReturn);
 
             //the base method is void, discard the value
-            if (baseMethodReturnBuilder == null)
+            if (baseMethodReturn == null)
             {
                 gen.Emit(OpCodes.Pop);
             }
             else if (!strategy.Interceptor.Method.ReturnType.IsAssignableFrom(baseFunction.ReturnType))
             {
-                gen.EmitDefaultValue(strategy.Interceptor.Method.ReturnType, baseMethodReturnBuilder);
+                gen.EmitDefaultValue(strategy.Interceptor.Method.ReturnType, baseMethodReturn);
             }
 
             gen.Emit(OpCodes.Ret);
@@ -67,8 +62,7 @@ namespace Surrogates.Executioners
             gen.Emit(OpCodes.Ldfld, GetField(strategy.Getter, strategy.Fields));
 
             var @params = gen.EmitParameters(
-                strategy.BaseType,
-                strategy.Fields,
+                strategy,
                 strategy.Getter.Method,
                 p => property.EmitPropertyNameAndField(pType, gen, p));
 
@@ -103,8 +97,7 @@ namespace Surrogates.Executioners
             gen.Emit(OpCodes.Ldfld, GetField(strategy.Setter, strategy.Fields));
 
             var @params = gen.EmitParameters(
-                strategy.BaseType,
-                strategy.Fields,
+                strategy,
                 strategy.Setter.Method,
                 p => property.EmitPropertyNameAndField(pType, gen, p));
 

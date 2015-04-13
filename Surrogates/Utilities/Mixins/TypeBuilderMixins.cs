@@ -1,5 +1,7 @@
 ﻿using Surrogates.Model.Collections;
+using Surrogates.Tactics;
 using System;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -14,20 +16,15 @@ namespace Surrogates.Utilities.Mixins
             return (attrs | other) != other;
         }
 
-        internal static void CreateConstructor4<T>(this TypeBuilder typeBuilder, FieldList fields)
-        {
-            typeBuilder.CreateConstructor(typeof(T), fields);
-        }
-
-        internal static void CreateConstructor(this TypeBuilder typeBuilder, Type baseType, FieldList fields)
+        internal static void CreateConstructor(this Strategies strats)
         {
             Action<Type[], MethodAttributes> define4 =
                 (types, attr) =>
-                    typeBuilder.DefineConstructor(attr, CallingConventions.Standard, types)
+                    strats.Builder.DefineConstructor(attr, CallingConventions.Standard, types)
                         .GetILGenerator()
-                        .EmitConstructor(baseType, fields, types);
+                        .EmitConstructor(strats, types);
 
-            var ctrs = baseType
+            var ctrs = strats.BaseType
                 .GetConstructors(BindingFlags.Instance | BindingFlags.Public);
                 //.Concat(baseType.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic));
 
@@ -52,56 +49,7 @@ namespace Surrogates.Utilities.Mixins
             { define4(Type.EmptyTypes, MethodAttributes.Public); }
         }
         
-        internal static ILGenerator EmitOverride<TBase>(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, FieldList fields)
-        {
-            return EmitOverride(typeBuilder, typeof(TBase), newMethod, baseMethod, interceptorField, fields);
-        }
-
-        internal static ILGenerator EmitOverride(this TypeBuilder typeBuilder, Type baseType, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, FieldList fields)
-        {
-            LocalBuilder @return = null;
-            return EmitOverride(typeBuilder, baseType, newMethod, baseMethod, interceptorField, fields, out @return);
-        }
-
-        internal static ILGenerator EmitOverride<TBase>(this TypeBuilder typeBuilder, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, FieldList fields, out LocalBuilder returnField)
-        {
-            return EmitOverride(typeBuilder, typeof(TBase), newMethod, baseMethod, interceptorField, fields, out returnField);
-        }
-
-        internal static ILGenerator EmitOverride(this TypeBuilder typeBuilder, Type baseType, MethodInfo newMethod, MethodInfo baseMethod, FieldInfo interceptorField, FieldList fields, out LocalBuilder returnField)
-        {
-            var attrs = MethodAttributes.Virtual;
-
-            if (baseMethod.Attributes.Has(MethodAttributes.Public))
-            { attrs |= MethodAttributes.Public; }
-
-            if (baseMethod.Attributes.Has(MethodAttributes.FamANDAssem))
-            { attrs |= MethodAttributes.FamANDAssem; }
-            
-            var builder = typeBuilder.DefineMethod(
-                baseMethod.Name,
-                attrs,            
-                baseMethod.ReturnType,
-                baseMethod.GetParameters().Select(p => p.ParameterType).ToArray());
-
-            var gen = builder.GetILGenerator();
-
-            returnField = baseMethod.ReturnType != typeof(void) ?
-                gen.DeclareLocal(baseMethod.ReturnType) : 
-                null;
-
-            //gen.Emit(OpCodes.Nop);
-            gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldfld, interceptorField);
-
-            var @params =
-                gen.EmitParameters(baseType, fields, newMethod, baseMethod);
-
-            gen.EmitCall(newMethod, @params);
-
-            return gen;
-        }
-
+     
         internal static FieldBuilder DefineFieldFromProperty(this TypeBuilder builder, PropertyInfo prop)
         {
             var fieldName = prop.Name;
@@ -112,7 +60,7 @@ namespace Surrogates.Utilities.Mixins
             return builder.DefineField(fieldName, prop.PropertyType, FieldAttributes.Private);
         }
 
-        internal static PropertyBuilder DefineNewProperty(this TypeBuilder builder, Type type, string name, object defaultValue)
+        internal static PropertyBuilder DefineNewProperty(this TypeBuilder builder, Type type, string name, object defaultValue=null)
         {
             var getSetAttr =
                 MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
@@ -166,7 +114,7 @@ namespace Surrogates.Utilities.Mixins
             var propBldr = builder.DefineProperty(
                 name, PropertyAttributes.HasDefault, type, null);
 
-            if (type.IsDefined(typeof(DynamicAttribute), true))
+            if (type.IsAssignableFrom(typeof(IDynamicMetaObjectProvider)))
             {
                 var dynamicAttrCtor = typeof(DynamicAttribute)
                     .GetConstructor(Type.EmptyTypes);

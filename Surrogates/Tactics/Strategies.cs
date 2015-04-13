@@ -70,15 +70,8 @@ namespace Surrogates.Tactics
                 strategy.Apply(
                     this.BaseType, ref this._builder);
             }
-
-            // this will define all the properties not previously asked before
-            foreach (var property in NewProperties)
-            {
-                property.GetBuilder();
-            }
-            
-            this.Builder.CreateConstructor(
-                this.BaseType, this.Fields);
+                       
+            this.CreateConstructor();
             
             var newType = 
                 this.Builder.CreateType();

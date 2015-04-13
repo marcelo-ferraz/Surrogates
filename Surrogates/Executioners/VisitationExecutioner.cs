@@ -15,13 +15,8 @@ namespace Surrogates.Executioners
         {
             LocalBuilder baseMethodReturn = null;
 
-            var gen = strategy.TypeBuilder.EmitOverride(
-                strategy.BaseType,
-                strategy.Interceptor.Method, 
-                baseAction, 
-                GetField(strategy.Interceptor, strategy.Fields),
-                strategy.Fields, 
-                out baseMethodReturn);
+            var gen = strategy.Override( 
+                baseAction, out baseMethodReturn);
 
             gen.Emit(OpCodes.Ldarg_0);
 
@@ -38,14 +33,9 @@ namespace Surrogates.Executioners
         {
             LocalBuilder baseMethodReturn = null;
 
-            var gen = strategy.TypeBuilder.EmitOverride(
-                strategy.BaseType,
-                strategy.Interceptor.Method,
-                baseFunction,
-                GetField(strategy.Interceptor, strategy.Fields),
-                strategy.Fields,
-                out baseMethodReturn);
-
+            var gen = strategy.Override(
+                baseFunction, out baseMethodReturn);
+            
             gen.Emit(OpCodes.Pop);
 
             gen.Emit(OpCodes.Ldarg_0);
@@ -76,8 +66,7 @@ namespace Surrogates.Executioners
             gen.Emit(OpCodes.Ldfld, GetField(strategy.Getter, strategy.Fields));
 
             var @params = gen.EmitParameters(
-                strategy.BaseType,
-                strategy.Fields,
+                strategy,
                 strategy.Getter.Method,
                 p => property.EmitPropertyNameAndField(pType, gen, p));
 
@@ -116,8 +105,7 @@ namespace Surrogates.Executioners
             gen.Emit(OpCodes.Ldfld, GetField(strategy.Setter, strategy.Fields));
 
             var @params = gen.EmitParameters(
-                strategy.BaseType,
-                strategy.Fields,
+                strategy,
                 strategy.Setter.Method,
                 p => property.EmitPropertyNameAndFieldAndValue(pType, gen, p));
 

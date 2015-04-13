@@ -8,52 +8,43 @@ using System.Text;
 
 namespace Surrogates.Utilities.Mixins
 {
-    //public static class StrategyMixins
-    //{
-    //    private static bool Has(this MethodAttributes attrs, MethodAttributes other)
-    //    {
-    //        return (attrs | other) != other;
-    //    }
+    public static class StrategyMixins
+    {
+        internal static ILGenerator Override(this Strategy.ForMethods strat, MethodInfo baseMethod, out LocalBuilder returnField)
+        {
+            var attrs = MethodAttributes.Virtual;
 
-    //    internal static ILGenerator EmitOverride(this Strategy.ForMethods strategy, MethodInfo baseMethod, out LocalBuilder returnField)            
-    //    {
-    //        var attrs = MethodAttributes.Virtual;
+            var field = strat.Fields
+                .Get(strat.Interceptor.DeclaredType, strat.Interceptor.Name);
 
-    //        if (baseMethod.Attributes.HasFlag(MethodAttributes.Public))
-    //        { attrs |= MethodAttributes.Public; }
+            if (baseMethod.Attributes.HasFlag(MethodAttributes.Public))
+            { attrs |= MethodAttributes.Public; }
 
-    //        if (baseMethod.Attributes.HasFlag(MethodAttributes.FamANDAssem))
-    //        { attrs |= MethodAttributes.FamANDAssem; }
+            if (baseMethod.Attributes.HasFlag(MethodAttributes.FamANDAssem))
+            { attrs |= MethodAttributes.FamANDAssem; }
 
-    //        var builder = strategy.TypeBuilder.DefineMethod(
-    //            baseMethod.Name,
-    //            attrs,
-    //            baseMethod.ReturnType,
-    //            baseMethod.GetParameters().Select(p => p.ParameterType).ToArray());
+            var builder = strat.TypeBuilder.DefineMethod(
+                baseMethod.Name,
+                attrs,
+                baseMethod.ReturnType,
+                baseMethod.GetParameters().Select(p => p.ParameterType).ToArray());
 
-    //        var gen = builder.GetILGenerator();
+            var gen = builder.GetILGenerator();
 
-    //        returnField = baseMethod.ReturnType != typeof(void) ?
-    //            gen.DeclareLocal(baseMethod.ReturnType) :
-    //            null;
+            returnField = baseMethod.ReturnType != typeof(void) ?
+                gen.DeclareLocal(baseMethod.ReturnType) :
+                null;
 
-    //        //gen.Emit(OpCodes.Nop);
-    //        gen.Emit(OpCodes.Ldarg_0);
-    //        gen.Emit(OpCodes.Ldfld, strategy.Fields.Get(
-    //            strategy.Interceptor.DeclaredType, strategy.Interceptor.Name));
+            //gen.Emit(OpCodes.Nop);
+            gen.Emit(OpCodes.Ldarg_0);
+            gen.Emit(OpCodes.Ldfld, field);
 
-    //        var @params =
-    //            gen.EmitParameters(strategy, strategy.Interceptor.Method);
+            var @params =
+                gen.EmitParameters(strat, strat.Interceptor.Method, baseMethod);
 
-    //        gen.EmitCall(strategy.Interceptor.Method, @params);
+            gen.EmitCall(strat.Interceptor.Method, @params);
 
-    //        return gen;
-    //    }
-
-    //    internal static ILGenerator EmitOverride(this Strategy.ForMethods strategy, MethodInfo baseMethod)
-    //    {
-    //        LocalBuilder @return = null;
-    //        return strategy.EmitOverride(baseMethod, out @return);
-    //    }
-    //}
+            return gen;
+        }        
+    }
 }
