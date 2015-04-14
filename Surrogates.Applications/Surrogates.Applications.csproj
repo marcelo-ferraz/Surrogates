@@ -41,6 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionR.cs" />
+    <Compile Include="ExecuteElsewhereMixins.cs" />
+    <Compile Include="ExecutingElsewhere\ElsewhereExpression.cs" />
+    <Compile Include="ExecutingElsewhere\ExecuteInOtherDomainInterceptor.cs" />
     <Compile Include="Pooling\LoadingMode.cs" />
     <Compile Include="IoCMixins.cs" />
     <Compile Include="Pooling\AccessMode.cs" />
