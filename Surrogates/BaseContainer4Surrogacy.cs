@@ -18,11 +18,11 @@ namespace Surrogates
         protected AssemblyBuilder AssemblyBuilder;
         protected ModuleBuilder ModuleBuilder;
 
-        protected IDictionary<string, Entry> Dictionary;
+        protected IDictionary<string, Entry> Cache;
 
         public BaseContainer4Surrogacy()
         {
-            Dictionary =
+            Cache =
                 new Dictionary<string, Entry>();
             CreateAssemblyAndModule();
         }
@@ -91,7 +91,7 @@ namespace Surrogates
             var entry =
                 expression.Strategies.Apply();
                         
-            Dictionary.Add(entry.Type.Name, entry);
+            Cache.Add(entry.Type.Name, entry);
         }
 
         protected virtual void InternalMap<T>(string cmd, params Type[] interceptors)
@@ -105,7 +105,7 @@ namespace Surrogates
             var entry =
                 strategies.Apply();
 
-            Dictionary.Add(aliases[0], entry);
+            Cache.Add(aliases[0], entry);
         }
 
         protected virtual Strategies ParseStrCmd(string cmd, Type baseType, Type[] interceptors, ref string[] aliases)
@@ -135,7 +135,8 @@ namespace Surrogates
             if (string.IsNullOrEmpty(key))
             { key = string.Concat(type.Name, "Proxy"); }
 
-            return Dictionary.ContainsKey(key);
+            return Cache.ContainsKey(key) && 
+                Cache[key].Type.IsAssignableFrom(type);
         }
 
         /// <summary>

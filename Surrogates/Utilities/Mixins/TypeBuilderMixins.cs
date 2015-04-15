@@ -128,10 +128,7 @@ namespace Surrogates.Utilities.Mixins
 
             propBldr.SetGetMethod(get_Prop(field));
             propBldr.SetSetMethod(set_StateBag(field));
-
-            if (defaultValue != null)
-            { propBldr.SetConstant(defaultValue); }
-
+            
             return propBldr;
         }
     }

@@ -179,12 +179,11 @@ namespace Surrogates.Utilities.Mixins
 
             for (int j = 0; j < strategies.NewProperties.Count; j++)
             {
-                var type =
-                    strategies.NewProperties[j].GetBuilder().PropertyType;
+                var b = strategies.NewProperties[j].GetBuilder();
 
-                //gen.Emit(OpCodes.Ldarg_0);
-                //gen.Emit(OpCodes.Newobj, type.GetConstructor(new Type[] { }));
-                //?? gen.Emit(OpCodes.Stfld, strategies.NewProperties[j]);
+                gen.Emit(OpCodes.Ldarg_0);
+                gen.Emit(OpCodes.Newobj, b.PropertyType.GetConstructor(Type.EmptyTypes));
+                gen.EmitCall(b.GetSetMethod());
             }
 
             gen.Emit(OpCodes.Ret);
@@ -198,13 +197,23 @@ namespace Surrogates.Utilities.Mixins
         /// <param name="params"></param>
         internal static void EmitCall(this ILGenerator gen, MethodInfo method, Type[] @params = null)
         {
-            if ((method.CallingConvention | CallingConventions.VarArgs) == CallingConventions.VarArgs)
+            try
             {
-                gen.Emit(OpCodes.Call, method);
+                if ((method.CallingConvention | CallingConventions.VarArgs) == CallingConventions.VarArgs)
+                {
+                    gen.Emit(OpCodes.Call, method);
+                }
+                else
+                {
+                    gen.EmitCall(OpCodes.Callvirt, method, @params ?? Type.EmptyTypes);
+                }
             }
-            else
+            catch (InvalidOperationException ex)
             {
-                gen.EmitCall(OpCodes.Callvirt, method, @params ?? Type.EmptyTypes);
+                if(ex.Message == "Calling convention must be VarArgs.")
+                {
+                    gen.Emit(OpCodes.Call, method);
+                }
             }
         }
     }

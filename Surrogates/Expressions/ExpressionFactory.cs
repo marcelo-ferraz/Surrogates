@@ -49,9 +49,9 @@ namespace Surrogates.Expressions
         {
             Strategies.NewProperties.Add(
                 new NewProperty(this.Strategies.Builder) {  
-                    DefaultValue = defaultValue,
                     Type = typeof(T),
-                    Name = name
+                    Name = name,
+                    DefaultValue = defaultValue,
                 });
 
             return new AndExpression<TBase>(

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Surrogates.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security;
@@ -8,16 +9,17 @@ using System.Text;
 
 namespace Surrogates.Applications.ExecutingElsewhere
 {
-    public class ExecuteInOtherDomainInterceptor
+    public class ExecuteInOtherDomainState
     {
-        public class State
-        {
-            public SecurityZone SecurityZone { get; set; }
+        public SecurityZone SecurityZone { get; set; }
 
-            public IPermission[] Permissions { get; set; }
+        public IPermission[] Permissions { get; set; }
 
-            public string Name { get; set; }
-        }
+        public string Name { get; set; }
+    }
+
+    public class ExecuteInOtherDomainInterceptor<R>
+    {
 
         [Serializable]
         public class Worker : MarshalByRefObject
@@ -36,7 +38,7 @@ namespace Surrogates.Applications.ExecutingElsewhere
 
         private AppDomain _thisDomain;
 
-        private void TryInitDomain(State state)
+        private void TryInitDomain(ExecuteInOtherDomainState state)
         {
             if (_thisDomain != null) { return; }
 
@@ -44,36 +46,37 @@ namespace Surrogates.Applications.ExecutingElsewhere
                 new[] { new Zone(state.SecurityZone) },
                 null);
 
-            var setup = new AppDomainSetup
-            {
-                ApplicationBase = System.Environment.CurrentDirectory
-            };
+            var setup =
+                new AppDomainSetup
+                {
+                    ApplicationBase = Environment.CurrentDirectory
+                };
 
-            PermissionSet permissionSet = null;
+            var permissionSet = 
+                new PermissionSet(PermissionState.Unrestricted);
 
             for (int i = 0; i < state.Permissions.Length; i++)
             {
-                (permissionSet ??
-                    (permissionSet = new PermissionSet(PermissionState.Unrestricted)))
-                    .AddPermission(state.Permissions[i]);
+                permissionSet.AddPermission(state.Permissions[i]);
             }
 
             _thisDomain = AppDomain
                 .CreateDomain(state.Name, evidence, setup, permissionSet);
         }
 
-        public object Execute(State s_State, Delegate s_method)
+        public R Execute(ExecuteInOtherDomainState s_State, Delegate s_method)
         {
             TryInitDomain(s_State);
 
             var worker = (Worker)this._thisDomain.CreateInstanceAndUnwrap(
                 this.GetType().Assembly.FullName,
                 typeof(Worker).FullName);
-
+            //add serializable attribute somehow
             worker.Action = s_method;
+
             worker.Execute();
 
-            return worker.Result;
+            return (R)worker.Result;
         }
     }
 }

@@ -2,6 +2,7 @@
 using Surrogates.Model.Entities;
 using Surrogates.Utilities.Mixins;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -76,6 +77,14 @@ namespace Surrogates.Tactics
             var newType = 
                 this.Builder.CreateType();
 
+            var props = this
+                .NewProperties
+                .Select(p => new Entry.Prop{ 
+                    Info = GetProperty(p.GetBuilder().Name, newType), 
+                    Value = p.DefaultValue
+                })
+                .ToArray();
+            
             var stateProp = 
                 GetProperty("StateBag", newType);
 
@@ -85,7 +94,8 @@ namespace Surrogates.Tactics
             return new Entry { 
                 Type = newType,
                 StateProperty = stateProp,
-                ContainerProperty = containerProp
+                ContainerProperty = containerProp,
+                Properties = props
             };
         } 
     }

@@ -41,9 +41,9 @@ namespace Surrogates.Tests.Strategies
                 .GetValue(new SurrogatesContainer());
 
             var ctr = typeof(Surrogates.Tactics.Strategies).GetConstructor(
-                BindingFlags.Instance | BindingFlags.NonPublic, 
-                null, 
-                new Type[] {typeof(Type), typeof(string), typeof(ModuleBuilder)},
+                BindingFlags.Instance | BindingFlags.NonPublic,
+                null,
+                new Type[] { typeof(Type), typeof(string), typeof(ModuleBuilder) },
                 null);
 
             return (Surrogates.Tactics.Strategies)ctr.Invoke(new object[] { typeof(T), name, mod });

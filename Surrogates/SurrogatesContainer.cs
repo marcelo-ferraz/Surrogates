@@ -30,7 +30,7 @@ namespace Surrogates
             if (string.IsNullOrEmpty(name))
             { name = string.Concat(type.Name, "Proxy"); }
 
-            var entry = Dictionary[name];
+            var entry = Cache[name];
 
             var obj = Activator
                 .CreateInstance(entry.Type, args);
@@ -39,6 +39,14 @@ namespace Surrogates
             { entry.StateProperty.SetValue(obj, stateBag, null); }
 
             entry.ContainerProperty.SetValue(obj, this, null);
+
+            foreach (var prop in entry.Properties)
+            {
+                if (prop.Value != null)
+                {
+                    prop.Info.SetValue(obj, prop.Value, null);
+                }
+            }
 
             return obj;
         }

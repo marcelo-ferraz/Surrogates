@@ -1,15 +1,14 @@
 ﻿
 using Surrogates.Expressions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using State = Surrogates.Applications.ExecutingElsewhere.ExecuteInOtherDomainInterceptor.State;
+using System.Security;
+using System.Threading;
 
 namespace Surrogates.Applications.ExecutingElsewhere
 {
     public class ElsewhereExpression<T>
     {
+        private static long _domainIndex = 0;
         private UsingInterferenceExpression<T> _previousExpression;
 
         public ElsewhereExpression(UsingInterferenceExpression<T> usingInterferenceExpression)
@@ -17,15 +16,34 @@ namespace Surrogates.Applications.ExecutingElsewhere
             this._previousExpression = usingInterferenceExpression;
         }
 
-        public AndExpression<T> InAnotherDomain(string name, SecurityZone securityZone = SecurityZone.MyComputer)
+        /// <summary>
+        /// Every call will be send to another thread, and executed there. 
+        /// </summary>
+        /// <param name="andForget">About the send and forget methodology. if true, it starts the new thread and dont bother waiting for it to finish. The return of the method will be the default of the type</param>
+        /// <returns></returns>
+        public AndExpression<T> InOtherThread(bool andForget = false)
         {
-            var state = new State { Name = name, SecurityZone = securityZone };
-
-            return _previousExpression.Using<ExecuteInOtherDomainInterceptor>(
-                elsewhere =>
-                    (Func<State, Delegate, object>)elsewhere.Execute)
+            return _previousExpression
+                .Using<ExecuteInOtherThreadInterceptor>(i => (Func<Delegate, object[], bool, object>) i.Execute)
                 .And
-                .AddProperty<State>("State", state);
+                .AddProperty<bool>("s_Forget", andForget);
+        }
+
+        public AndExpression<T> InOtherDomain(string domainName = null, SecurityZone securityZone = SecurityZone.MyComputer, params IPermission[] permissions)
+        {
+            //var state = 
+            //    new State 
+            //    { 
+            //        Name = domainName ?? string.Concat("DynamicDomain_", Interlocked.Increment(ref _domainIndex)), 
+            //        Permissions = permissions,
+            //        SecurityZone = securityZone 
+            //    };
+
+            //return _previousExpression
+            //    .Using<ExecuteInOtherDomainInterceptor<object>>(i => (Func<State, Delegate, object>) i.Execute)
+            //    .And
+            //    .AddProperty<State>("State", state);
+            return null;
         }
     }
 }

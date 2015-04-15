@@ -17,7 +17,6 @@ namespace Surrogates.Tests.Expressions.Methods.Substitute
                 .Replace
                 .This(d => (Func<int>)d.Call_SetPropText_simple_Return_1)
                 .Using<InterferenceObject>(r => (Func<int>)r.AccomplishNothing_Return2))
-                .Save()
                 ;
 
             var dummy =

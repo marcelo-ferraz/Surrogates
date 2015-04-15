@@ -116,9 +116,9 @@ namespace Surrogates.Utilities.WhizzoDev
                 generator.Emit(OpCodes.Newobj, cInfo);
                 generator.Emit(OpCodes.Stloc_0);
                 foreach (FieldInfo field in myObject.GetType().GetFields(
-                        System.Reflection.BindingFlags.Instance
-                        | System.Reflection.BindingFlags.NonPublic
-                        | System.Reflection.BindingFlags.Public))
+                        BindingFlags.Instance
+                        | BindingFlags.NonPublic
+                        | BindingFlags.Public))
                 {
                     generator.Emit(OpCodes.Ldloc_0);
                     generator.Emit(OpCodes.Ldarg_0);
@@ -149,19 +149,63 @@ namespace Surrogates.Utilities.WhizzoDev
                 generator.Emit(OpCodes.Newobj, cInfo);
                 generator.Emit(OpCodes.Stloc_0);
 
-                foreach (FieldInfo field in typeof(T).GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public))
+                foreach (FieldInfo field in typeof(T).GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
                 {
                     if (field.FieldType.IsValueType || field.FieldType == typeof(string))
-                        CopyValueType(generator, field);
+                    { CopyValueType(generator, field); }
                     else if (field.FieldType.IsClass)
-                        CopyReferenceType(generator, field);
+                    { CopyReferenceType(generator, field); }
                 }
+
                 generator.Emit(OpCodes.Ldloc_0);
                 generator.Emit(OpCodes.Ret);
+                
                 myExec = dymMethod.CreateDelegate(typeof(Func<T, T>));
+             
                 _cachedILDeep.Add(typeof(T), myExec);
             }
             return ((Func<T, T>)myExec)(myObject);
+        }
+
+        internal T CloneObjectWithILDeep<T>(T source, T receiver)
+        {
+            Delegate myExec = null;
+            if (!_cachedILDeep.TryGetValue(typeof(T), out myExec))
+            {
+                // Create ILGenerator (both DM declarations work)
+                // DynamicMethod dymMethod = new DynamicMethod("DoClone", typeof(T), 
+                //      new Type[] { typeof(T) }, true);
+                DynamicMethod dymMethod = new DynamicMethod(
+                    "DoCloneWithTwo", 
+                    typeof(T),
+                    new Type[] { typeof(T), typeof(T) }, 
+                    Assembly.GetExecutingAssembly().ManifestModule, 
+                    true);
+                
+                //ConstructorInfo cInfo = myObject.GetType().GetConstructor(new Type[] { });
+                
+                ILGenerator generator = dymMethod.GetILGenerator();
+                LocalBuilder lbf = generator.DeclareLocal(typeof(T));
+                
+                generator.Emit(OpCodes.Ldarg_1);
+                generator.Emit(OpCodes.Stloc_0);
+
+                foreach (FieldInfo field in typeof(T).GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
+                {
+                    if (field.FieldType.IsValueType || field.FieldType == typeof(string))
+                    { CopyValueType(generator, field); }
+                    else if (field.FieldType.IsClass)
+                    { CopyReferenceType(generator, field); }
+                }
+
+                generator.Emit(OpCodes.Ldloc_0);
+                generator.Emit(OpCodes.Ret);
+
+                myExec = dymMethod.CreateDelegate(typeof(Func<T, T, T>));
+
+                _cachedILDeep.Add(typeof(T), myExec);
+            }
+            return ((Func<T, T, T>)myExec)(source, receiver);
         }
     }
 }

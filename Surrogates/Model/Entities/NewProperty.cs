@@ -34,7 +34,7 @@ namespace Surrogates.Model.Entities
             get { return _defaultValue; }
             set 
             {
-                if (Type.IsAssignableFrom(value.GetType()))
+                if (!Type.IsAssignableFrom(value.GetType()))
                 {
                     throw new IncohenerentNewProperty(
                         "The default value for the newly informed property '{0}' is of type incorrect. Informed Type: {1}; Default's value: {2};", 
