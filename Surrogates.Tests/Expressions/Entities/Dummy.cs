@@ -2,6 +2,7 @@
 
 namespace Surrogates.Tests.Expressions.Entities
 {
+    [Serializable]
     public class Dummy
     {
         public object Obj { get; set; }
@@ -15,10 +16,7 @@ namespace Surrogates.Tests.Expressions.Entities
         {
             Text = txt;
         }
-
         
-
-
         public class EvenMore
         {
             public string SomeText { get; set; }

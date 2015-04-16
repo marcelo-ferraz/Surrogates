@@ -55,6 +55,7 @@
     <Compile Include="IncoherentBody4PropertyException.cs" />
     <Compile Include="MethodNotFoundException.cs" />
     <Compile Include="Model\Entities\Entry.cs" />
+    <Compile Include="Model\Entities\NewAttribute.cs" />
     <Compile Include="Model\Entities\NewProperty.cs" />
     <Compile Include="PropertyNotFoundException.cs" />
     <Compile Include="Expressions\Accessors\PropertyAccessor.cs" />

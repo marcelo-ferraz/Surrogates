@@ -23,6 +23,8 @@ namespace Surrogates.Applications
 
         public static AndExpression<T> CallToOtherDomain<T, P>(this ApplyExpression<T> self, Func<T, Delegate> method, string domainName = null, SecurityZone securityZone = SecurityZone.MyComputer, params IPermission[] permissions)
         {
+            if (!typeof(T).IsDefined(typeof(SerializableAttribute), true))
+            { throw new ArgumentException("The surrogated type must be marked as Serializable"); }
 
             var ext =
                 new ShallowExtension<T>();
@@ -30,7 +32,7 @@ namespace Surrogates.Applications
             Pass.On<T>(self, ext);
 
             var state =
-                new ExecuteInOtherDomainState
+                new ExecuteInOtherDomain.State
                 {
                     Name = domainName ?? string.Concat("DynamicDomain_", Interlocked.Increment(ref _domainIndex)),
                     Permissions = permissions,
@@ -41,9 +43,11 @@ namespace Surrogates.Applications
                 .Factory
                 .Replace
                 .This(method)
-                .Using<ExecuteInOtherDomainInterceptor<P>>(i => (Func<ExecuteInOtherDomainState, Delegate, P>) i.Execute)
+                .Using<ExecuteInOtherDomain.Interceptor<P>>(i => (Func<ExecuteInOtherDomain.State, Delegate, P>) i.Execute)
                 .And
-                .AddProperty<ExecuteInOtherDomainState>("State", state);
+                .AddProperty<ExecuteInOtherDomain.State>("State", state)
+                .And
+                .AddAttribute<SerializableAttribute>();
         }
     }
 }

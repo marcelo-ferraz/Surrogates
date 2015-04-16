@@ -6,6 +6,7 @@ namespace Surrogates
     /// <summary>
     /// The main container, from which you can Map And Invoke your surrogated types
     /// </summary>
+    [Serializable]
     public class SurrogatesContainer : BaseContainer4Surrogacy
     {
         /// <summary>
@@ -38,7 +39,7 @@ namespace Surrogates
             if (stateBag != null)
             { entry.StateProperty.SetValue(obj, stateBag, null); }
 
-            entry.ContainerProperty.SetValue(obj, this, null);
+            //entry.ContainerProperty.SetValue(obj, this, null);
 
             foreach (var prop in entry.Properties)
             {

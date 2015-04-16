@@ -1,5 +1,6 @@
 ﻿using Surrogates.Model.Entities;
 using Surrogates.Tactics;
+using System;
 
 namespace Surrogates.Expressions
 {
@@ -48,10 +49,26 @@ namespace Surrogates.Expressions
         public AndExpression<TBase> AddProperty<T>(string name, T defaultValue = default(T))
         {
             Strategies.NewProperties.Add(
-                new NewProperty(this.Strategies.Builder) {  
+                new NewProperty(this.Strategies.Builder)
+                {
                     Type = typeof(T),
                     Name = name,
                     DefaultValue = defaultValue,
+                });
+
+            return new AndExpression<TBase>(
+                this.Container, this.CurrentStrategy, this.Strategies);
+        }
+
+        public AndExpression<TBase> AddAttribute<T>(string memberName = null, AttributeTargets targets = AttributeTargets.All, params object[] args)
+            where T: Attribute
+        {
+            Strategies.NewAttributes.Add(
+                new NewAttribute { 
+                    MemberName = memberName,
+                    Type = typeof(T),
+                    Targets = targets,
+                    Arguments = args
                 });
 
             return new AndExpression<TBase>(

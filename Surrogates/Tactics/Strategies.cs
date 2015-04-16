@@ -31,11 +31,14 @@ namespace Surrogates.Tactics
             this._strategies = new List<Strategy>();
             this.Fields = new FieldList(this);
             
+            this.NewAttributes = 
+                new List<NewAttribute>();
+            
             this.NewProperties = 
                 new List<NewProperty>();
 
             this.AddProperty<dynamic>("StateBag");
-            this.AddProperty<SurrogatesContainer>("Container");
+            //this.AddProperty<SurrogatesContainer>("Container");
         }
         
         public Type BaseType { get; set; }
@@ -45,6 +48,8 @@ namespace Surrogates.Tactics
         public FieldList Fields { get; set; }
 
         public List<NewProperty> NewProperties { get; set; }
+
+        public List<NewAttribute> NewAttributes { get; set; }
 
         private void AddProperty<T>(string name)
         {
@@ -66,6 +71,8 @@ namespace Surrogates.Tactics
         
         public Entry Apply()
         {
+            this.ApplyAttributes();
+
             foreach (var strategy in _strategies)
             {
                 strategy.Apply(
@@ -97,6 +104,48 @@ namespace Surrogates.Tactics
                 ContainerProperty = containerProp,
                 Properties = props
             };
+        }
+
+        private void ApplyAttributes()
+        {
+            foreach (var attr in NewAttributes)
+            { 
+                bool forAll = 
+                    attr.Targets.HasFlag(AttributeTargets.All);
+                
+                var ctr = attr.Arguments != null && attr.Arguments.Length > 0 ?
+                        attr.Type.GetConstructor(attr.Arguments.Select(arg => arg.GetType()).ToArray()) :
+                        attr.Type.GetConstructor(Type.EmptyTypes);
+
+                var attrBuilder = 
+                    new CustomAttributeBuilder(ctr, attr.Arguments);
+
+                if (string.IsNullOrEmpty(attr.MemberName) && (forAll || attr.Targets.HasFlag(AttributeTargets.Class)))
+                {
+                    Builder.SetCustomAttribute(attrBuilder);
+                    continue;
+                }
+                
+                foreach (var prop in this.NewProperties)
+                {
+                    var p = prop.GetBuilder();
+
+                    if (p.Name == attr.MemberName && (forAll || attr.Targets.HasFlag(AttributeTargets.Property)))
+                    {
+                        p.SetCustomAttribute(attrBuilder);
+                        continue;
+                    }
+                }
+
+                for (int i = 0; i < this.Fields.Count; i++)
+			    {                    
+                    if (this.Fields[i].Name == attr.MemberName && (forAll || attr.Targets.HasFlag(AttributeTargets.Field)))
+                    {
+                        this.Fields[i].SetCustomAttribute(attrBuilder);
+                        continue;
+                    }
+                }
+            }
         } 
     }
 }

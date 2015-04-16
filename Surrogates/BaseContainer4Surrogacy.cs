@@ -11,11 +11,13 @@ using System.Threading;
 
 namespace Surrogates
 {
+    [Serializable]
     public abstract class BaseContainer4Surrogacy
     {
         private static int _assemblyNumber = 0;
-        
+                
         protected AssemblyBuilder AssemblyBuilder;
+                
         protected ModuleBuilder ModuleBuilder;
 
         protected IDictionary<string, Entry> Cache;
