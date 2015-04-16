@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using Surrogates.Tests.Expressions.Entities;
 using System;
-using Surrogates.Applications;
 
 namespace Surrogates.Tests.Expressions.Methods.Visit
 {
@@ -114,22 +113,6 @@ namespace Surrogates.Tests.Expressions.Methods.Visit
             Assert.IsNotNullOrEmpty(proxy.Text);
             Assert.AreEqual("simple", proxy.Text);
             Assert.AreEqual(dummyRes, proxyRes);
-        }
-        
-        [Test]
-        public void ________ExecuteElsewhere()
-        {
-            var container = new SurrogatesContainer();
-
-            container.Map(m => m
-                .From<Dummy>()
-                .Apply
-                .CallToOtherDomain<Dummy, int>(d => (Func<int>)d.Call_SetPropText_simple_Return_1)).Save();
-
-            var proxy =
-                container.Invoke<Dummy>(args: "baymax");
-
-            proxy.Call_SetPropText_simple_Return_1();
         }
     }
 }

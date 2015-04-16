@@ -11,14 +11,14 @@ namespace Surrogates.Applications
     {
         private static long _domainIndex = 0;
 
-        public static ElsewhereExpression<T> Call<T>(this ApplyExpression<T> self, params Func<T, Delegate>[] methods)
+        public static ElsewhereExpression<T> Call<T>(this ApplyExpression<T> self, Func<T, Delegate> method)
         {
             var ext =
                 new ShallowExtension<T>();
 
             Pass.On<T>(self, ext);
 
-            return new ElsewhereExpression<T>(ext.Factory.Replace.These(methods));
+            return new ElsewhereExpression<T>(ext.Factory.Replace.This(method));
         }
 
         public static AndExpression<T> CallToOtherDomain<T, P>(this ApplyExpression<T> self, Func<T, Delegate> method, string domainName = null, SecurityZone securityZone = SecurityZone.MyComputer, params IPermission[] permissions)

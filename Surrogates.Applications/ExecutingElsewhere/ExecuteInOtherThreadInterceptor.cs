@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Surrogates.Applications.ExecutingElsewhere
 {
-    public class ExecuteInOtherThreadInterceptor
+    public class ExecuteInOtherThreadInterceptor<T>
     {
-        internal object Execute(Delegate s_method, object[] s_args, bool s_Forget)
+        internal T Execute(Delegate s_method, object[] s_args, bool s_Forget)
         {
             object result = null;
 
@@ -17,7 +17,9 @@ namespace Surrogates.Applications.ExecutingElsewhere
 
             if (!s_Forget) { task.Wait(); }
 
-            return result;
+            return result == null ?
+                default(T) :
+                (T) result;
         }
     }
 }
