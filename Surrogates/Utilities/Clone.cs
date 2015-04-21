@@ -23,7 +23,7 @@ namespace Surrogates.Utilities
             return _replicator.CloneObjectWithILDeep<T>(obj);
         }
         
-        public static T This<T>(T source, T receiver)
+        public static T IntoTheSecond<T>(T source, T receiver)
         {
             return _replicator.CloneObjectWithILDeep<T>(source, receiver);
         }

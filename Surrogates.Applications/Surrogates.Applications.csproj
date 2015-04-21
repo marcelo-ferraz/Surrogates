@@ -45,12 +45,15 @@
     <Compile Include="ExecutingElsewhere\ElsewhereExpression.cs" />
     <Compile Include="ExecutingElsewhere\ExecuteInOtherDomainInterceptor.cs" />
     <Compile Include="ExecutingElsewhere\ExecuteInOtherThreadInterceptor.cs" />
+    <Compile Include="LazyLoadingMixins.cs" />
+    <Compile Include="NotifyPropertyChangedMixins.cs" />
     <Compile Include="Pooling\LoadingMode.cs" />
     <Compile Include="IoCMixins.cs" />
     <Compile Include="Pooling\AccessMode.cs" />
     <Compile Include="Pooling\Pool.cs" />
     <Compile Include="PoolPropertiesMixins.cs" />
     <Compile Include="Pooling\PoolInterceptor.cs" />
+    <Compile Include="ReadOnlyMixins.cs" />
     <Compile Include="ShallowExtension.cs" />
     <Compile Include="Interlocking\InterlockedMethodsInterceptor.cs" />
     <Compile Include="Interlocking\InterlockedPropertyInterceptor.cs" />

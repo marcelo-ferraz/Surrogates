@@ -8,8 +8,8 @@ namespace Surrogates.Expressions
     {
         private ModuleBuilder _moduleBuilder;
         private BaseContainer4Surrogacy _container;
-        public Strategies Strategies { get; set; }
-        public string Name { get; set; }
+        internal Strategies Strategies { get; set; }
+        internal string Name { get; set; }
 
         public NewExpression(ModuleBuilder moduleBuilder, BaseContainer4Surrogacy container)
         {

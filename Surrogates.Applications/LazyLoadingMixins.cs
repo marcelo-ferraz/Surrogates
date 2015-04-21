@@ -14,14 +14,10 @@ namespace Surrogates.Applications
             private T _value;
             private bool _isDirty = false;
 
-            //private MockedRepository _repository = new MockedRepository();
-
-            private static Func<string, T> Get { get; set; }
-
-            public T Load(string s_name)
+            public T Load(string s_name, Func<string, T> s_Getter)
             {
                 return object.Equals(_value, default(T)) ?
-                    (_value = Get(s_name)) :
+                    (_value = s_Getter(s_name)) :
                     _value;
             }
 
@@ -32,19 +28,21 @@ namespace Surrogates.Applications
             }
         }
 
-        public static AndExpression<T> LazyLoading<T, P>(this ApplyExpression<T> that, Func<T, object> prop)
+        public static AndExpression<T> LazyLoading<T, R>(this ApplyExpression<T> that, Func<T, object> prop, Func<string, R> howToGet)
         {
             var ext = new ShallowExtension<T>();
             Pass.On(that, ext);
 
             return ext
                 .Factory
+                .AddProperty("Getter", howToGet)
+                .And
                 .Replace
                 .This(prop)
                 .Accessors(a => a
-                    .Getter.Using<IdLazyLoaderInterceptor<P>>("idLoader", i => (Func<string, P>) i.Load)
+                    .Getter.Using<IdLazyLoaderInterceptor<R>>("idLoader", i => (Func<string, Func<string, R>, R>) i.Load)
                     .And
-                    .Setter.Using<IdLazyLoaderInterceptor<P>>("idLoader", i => (Action<P>) i.MarkAsDirty));
+                    .Setter.Using<IdLazyLoaderInterceptor<R>>("idLoader", i => (Action<R>) i.MarkAsDirty));
         }
     }
 }

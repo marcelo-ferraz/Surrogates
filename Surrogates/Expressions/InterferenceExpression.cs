@@ -23,6 +23,26 @@ namespace Surrogates.Expressions
             return Methods(methodName);
         }
 
+        public virtual T4Method Methods(Func<MethodInfo, bool> predicate)
+        {
+            var strat = new
+                Strategy.ForMethods(CurrentStrategy);
+            
+            CurrentStrategy = strat;
+
+            var methods = Strategies
+                .BaseType
+                .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);                
+
+            foreach (var method in methods)
+            {
+                if(predicate(method))
+                { strat.Methods.Add(method); }
+            }
+
+            return (T4Method) Activator.CreateInstance(typeof(T4Prop), Container, strat, Strategies);
+        }
+
         public virtual T4Method Methods(params string[] methodNames)
         {
             var strat = new
@@ -89,6 +109,26 @@ namespace Surrogates.Expressions
         public T4Prop Property(string propName)
         {
             return this.Properties(propName);
+        }
+
+        public virtual T4Prop Properties(Func<PropertyInfo, bool> predicate)
+        {
+            var strat = new
+                Strategy.ForProperties(CurrentStrategy);
+            
+            CurrentStrategy = strat;
+
+            var props = Strategies
+                .BaseType
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);                
+
+            foreach (var prop in props)
+            {
+                if(predicate(prop))
+                { strat.Properties.Add(prop); }
+            }
+
+            return (T4Prop)Activator.CreateInstance(typeof(T4Prop), Container, strat, Strategies);
         }
 
         public virtual T4Prop Properties(params string[] propNames)

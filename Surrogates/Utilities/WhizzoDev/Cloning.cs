@@ -176,7 +176,7 @@ namespace Surrogates.Utilities.WhizzoDev
                 // DynamicMethod dymMethod = new DynamicMethod("DoClone", typeof(T), 
                 //      new Type[] { typeof(T) }, true);
                 DynamicMethod dymMethod = new DynamicMethod(
-                    "DoCloneWithTwo", 
+                    "DoCloneIntoSecond", 
                     typeof(T),
                     new Type[] { typeof(T), typeof(T) }, 
                     Assembly.GetExecutingAssembly().ManifestModule, 
