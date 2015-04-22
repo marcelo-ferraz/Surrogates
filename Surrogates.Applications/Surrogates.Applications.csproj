@@ -63,7 +63,7 @@
     <Compile Include="ValidatorMixins.cs" />
     <Compile Include="Validators\BaseValidator.cs" />
     <Compile Include="Validators\IDictionary.cs" />
-    <Compile Include="Validators\MethodsValidator.cs" />
+    <Compile Include="Validators\ParametersValidator.cs" />
     <Compile Include="Validators\PropertiesValidator.cs" />
     <Compile Include="Validators\Validators.cs" />
   </ItemGroup>

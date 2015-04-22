@@ -1,5 +1,6 @@
 ﻿using Surrogates.Applications.Validators;
 using Surrogates.Expressions;
+using Surrogates.Utilities;
 using Surrogates.Utilities.Mixins;
 using System;
 using System.Collections.Generic;
@@ -11,12 +12,22 @@ namespace Surrogates.Applications
 {
     public static class ValidatorMixins
     {
-        public static AndExpression<T> Validators<T>(this ApplyExpression<T> that, params Func<Validators<T>, Func<T, bool>>[] validators )
-        {
-            throw new NotImplementedException("");
+        public class ValidatorInterceptor
+        { 
 
-            Validators(null,
-                v => v.Parameters. )
+        }
+
+        public static AndExpression<T> Validators<T>(this ApplyExpression<T> that, params Func<Validators<T>, IDictionary<string, Func<object[], bool>>>[] validators)
+        {
+            var ext = 
+                new ShallowExtension<T>();
+
+            Pass.On(that, to: ext);
+
+            ext.Factory.Replace
+                .This
+
+            throw new Exception();
         }
     }
 }

@@ -61,8 +61,16 @@ namespace Surrogates.Applications.Validators
                     }
                 }
 
-                if (methodValidator != null)
-                { result.Add(method.Name, methodValidator); }
+                try
+                {
+                    if (methodValidator != null)
+                    { result.Add(method.Name, methodValidator); }
+                }
+                catch (ArgumentException e)
+                {
+                    //TODO: throw a right exception saying that this method was already validated
+                    throw e;
+                }
             }
 
             return result;
