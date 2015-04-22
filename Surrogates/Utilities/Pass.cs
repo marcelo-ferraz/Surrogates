@@ -5,11 +5,11 @@ namespace Surrogates.Utilities
 {
     public static class Pass
     {
-        public static void On<T>(ApplyExpression<T> baseExp, IExtension<T> ext)
+        public static void On<T>(ApplyExpression<T> baseExp, IExtension<T> to)
         {
-            ext.Container = baseExp.Container;
-            ext.Strategies = baseExp.Strategies;
-            ext.Factory = baseExp.Factory;
+            to.Container = baseExp.Container;
+            to.Strategies = baseExp.Strategies;
+            to.Factory = baseExp.Factory;
         }
 
         public static T Current<T>(Expression<T> exp)
