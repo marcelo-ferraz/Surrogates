@@ -9,8 +9,12 @@ using System.Reflection;
 
 namespace Surrogates.Applications.Validators
 {
-    public class ParametersValidator<T> : BaseValidator
+    public class ParametersValidator<T> : BaseValidator<T>
     {
+        public ParametersValidator(Validators<T> owner)
+            :base(owner)
+        { }
+        
         private static T _uninitObj = (T)
             FormatterServices.GetUninitializedObject(typeof(T));
 

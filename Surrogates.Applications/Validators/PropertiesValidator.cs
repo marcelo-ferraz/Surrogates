@@ -7,8 +7,11 @@ using Surrogates.Utilities.Mixins;
 
 namespace Surrogates.Applications.Validators
 {
-    public class PropertiesValidator<T> : BaseValidator
-    {        
+    public class PropertiesValidator<T> : BaseValidator<T>
+    {
+        public PropertiesValidator(Validators<T> owner)
+            :base(owner) { }
+
         private Func<T, P>[] ToProps<P>(params string[] names)
         {
             var props = (Func<T, P>[])

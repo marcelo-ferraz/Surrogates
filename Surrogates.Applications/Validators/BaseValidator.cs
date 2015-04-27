@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Surrogates.Applications.Validators
 {
-    public class BaseValidator
+    public class BaseValidator<T>
     {
         protected static Regex EmailRegexpr;
         protected static Regex UrlRegexpr;
@@ -22,5 +22,11 @@ namespace Surrogates.Applications.Validators
 @"^([0-9]+)(.|,)?([0-9]*)$", RegexOptions.Compiled);
         }
 
+        protected Validators<T> Owner;
+
+        public BaseValidator(Validators<T> owner)
+        {
+            this.Owner = owner;
+        }
     }
 }
