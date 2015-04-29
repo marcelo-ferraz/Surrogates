@@ -6,13 +6,13 @@ using System.Text.RegularExpressions;
 
 namespace Surrogates.Applications.Validators
 {
-    public class BaseValidator<T>
+    internal static class BaseValidators
     {
-        protected static Regex EmailRegexpr;
-        protected static Regex UrlRegexpr;
-        protected static Regex IsNumberRegexpr;
+        public static Regex EmailRegexpr;
+        public static Regex UrlRegexpr;
+        public static Regex IsNumberRegexpr;
 
-        static BaseValidator()
+        static BaseValidators()
         {
             EmailRegexpr = new Regex(
 @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -22,11 +22,53 @@ namespace Surrogates.Applications.Validators
 @"^([0-9]+)(.|,)?([0-9]*)$", RegexOptions.Compiled);
         }
 
-        protected Validators<T> Owner;
-
-        public BaseValidator(Validators<T> owner)
+        public static void ValidateRegex(Regex expr, string arg)
         {
-            this.Owner = owner;
+            if (!expr.IsMatch(arg))
+            { throw new Exception("Not Valid"); }
         }
+
+        public static void ValidateLowerThan<P>(P lower, P arg) 
+            where P : struct
+        {
+            if ((Comparer<P>.Default.Compare(lower, arg) < 0))
+            { throw new Exception("Not in between"); }            
+        }
+
+        public static void ValidateBiggerThan<P>(P higher, P arg) 
+            where P : struct
+        {
+            if (Comparer<P>.Default.Compare(higher, arg) < 0)
+            {
+                throw new Exception("Not in between");
+            }            
+        }
+
+        public static void ValidateInBetween<P>(P min, P max, P arg) 
+            where P : struct
+        {
+            if (Comparer<P>.Default.Compare(min, arg) < 0 &&
+                Comparer<P>.Default.Compare(max, arg) > 0)
+            {
+                throw new Exception("Not in between");
+            }
+        }
+
+        public static void ValidateRequired(object val, Type t)
+        {
+            if (!t.IsValueType &&
+                Nullable.GetUnderlyingType(t) != null &&
+                val == null)
+            { throw new Exception("Required!"); }
+            else if (val == Activator.CreateInstance(t))
+            { throw new Exception("Required!"); }
+        }
+
+        public static void ValidateRequiredString(object val)
+        {
+            if (string.IsNullOrEmpty((string)val))
+            { throw new Exception("Required!"); }
+        }
+
     }
 }
