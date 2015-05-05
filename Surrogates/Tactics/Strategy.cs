@@ -82,6 +82,10 @@ namespace Surrogates.Tactics
             this.Kind = @base.Kind;
         }
 
+        public InterferenceKind Kind { get; set; }
+
+        public string KindExtended { get; set; }
+
         public Type BaseType
         {
             get { return _owner.BaseType; }
@@ -91,20 +95,22 @@ namespace Surrogates.Tactics
         {
             get { return _owner.Builder; }
         }
+
         public List<NewProperty> NewProperties
         {
             get { return _owner.NewProperties; }
         }
 
-        public InterferenceKind Kind { get; set; }
-        
-
-        public string KindExtended { get; set; }
+        public Access Permissions
+        {
+            get { return _owner.Accesses; }
+        }
 
         public FieldList Fields 
         {
             get { return _owner.Fields; }
         }
+
         public BaseMethods BaseMethods
         {
             get { return _owner.BaseMethods; }

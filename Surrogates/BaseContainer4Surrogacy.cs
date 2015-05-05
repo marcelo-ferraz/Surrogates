@@ -22,10 +22,16 @@ namespace Surrogates
 
         protected IDictionary<string, Entry> Cache;
 
+        internal Access DefaultPermissions { get; set; }
+
         public BaseContainer4Surrogacy()
         {
+            DefaultPermissions =
+                Access.Container | Access.StateBag | Access.AnyMethod | Access.AnyField | Access.AnyBaseProperty | Access.AnyNewProperty | Access.Instance;
+
             Cache =
                 new Dictionary<string, Entry>();
+
             CreateAssemblyAndModule();
         }
 
@@ -126,7 +132,7 @@ namespace Surrogates
             { throw new FormatException("Could not extract 'Aliases' from the command written"); }
 
             var strategies =
-                new Strategies(baseType, aliases[0], ModuleBuilder);
+                new Strategies(baseType, aliases[0], ModuleBuilder, this.DefaultPermissions);
 
             if (!parser.TryGetOperations(cmd, aliases, interceptors, ref strategies))
             { throw new FormatException("Could extract an expression from the command written"); }
@@ -134,6 +140,16 @@ namespace Surrogates
             return strategies;
         }
 
+        public virtual void SetDefaults(Access permissions)
+        {
+            this.DefaultPermissions = permissions;
+        }
+
+        public virtual void RemoveDefaults(Access permissions)
+        {
+            this.DefaultPermissions &= ~permissions;
+        }
+        
         public virtual bool Has<T>(string key = null)
         {
             return this.Has(typeof(T), key);

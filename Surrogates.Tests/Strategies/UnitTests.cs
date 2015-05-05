@@ -1,5 +1,6 @@
 ﻿
 using NUnit.Framework;
+using Surrogates.Model.Entities;
 using Surrogates.Tactics;
 using Surrogates.Tests.Expressions.Entities;
 using System;
@@ -43,10 +44,10 @@ namespace Surrogates.Tests.Strategies
             var ctr = typeof(Surrogates.Tactics.Strategies).GetConstructor(
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
-                new Type[] { typeof(Type), typeof(string), typeof(ModuleBuilder) },
+                new Type[] { typeof(Type), typeof(string), typeof(ModuleBuilder), typeof(Access) },
                 null);
 
-            return (Surrogates.Tactics.Strategies)ctr.Invoke(new object[] { typeof(T), name, mod });
+            return (Surrogates.Tactics.Strategies)ctr.Invoke(new object[] { typeof(T), name, mod, Access.Container | Access.StateBag | Access.AnyMethod | Access.AnyField | Access.AnyBaseProperty | Access.AnyNewProperty | Access.Instance });
         }
 
         protected static T FirstStrategy<T>(Surrogates.Tactics.Strategies strats)

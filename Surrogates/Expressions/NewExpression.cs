@@ -1,4 +1,5 @@
 ﻿
+using Surrogates.Model.Entities;
 using Surrogates.Tactics;
 using System.Reflection.Emit;
 
@@ -17,12 +18,21 @@ namespace Surrogates.Expressions
             this._container = container;
         }
 
-        public ExpressionFactory<T> From<T>(string name = "")
+        public ExpressionFactory<T> From<T>(string name = "", Access? permissions = null, Access? excludeAccess = null)
         {
             Name = name;
 
+            var p = permissions.HasValue ? 
+                permissions.Value : 
+                _container.DefaultPermissions;
+
+            if (excludeAccess.HasValue)
+            {
+                p &= ~excludeAccess.Value;
+            }
+
             Strategies = new Strategies(
-                typeof(T), name, _moduleBuilder);
+                typeof(T), name, _moduleBuilder, p);
             
             return new ExpressionFactory<T>(
                 _container,

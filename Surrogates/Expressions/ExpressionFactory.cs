@@ -70,7 +70,7 @@ namespace Surrogates.Expressions
         {
             return AddProperty(typeof(T), name, defaultValue);
         }
-
+        
         public AndExpression<TBase> AddAttribute(Type type, string memberName = null, AttributeTargets targets = AttributeTargets.All, params object[] args)            
         {
             if (type.GetType().IsAssignableFrom(typeof(Attribute)))

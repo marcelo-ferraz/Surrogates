@@ -111,8 +111,7 @@ namespace Surrogates.Utilities.Mixins
             gen.Emit(OpCodes.Br_S, local);
             gen.Emit(OpCodes.Ldloc, local);
         }
-
-        
+                
         internal static Type[] EmitParameters(this ILGenerator gen, Strategy strategy, MethodInfo method, Func<ParameterInfo, int, bool> interfere = null)
         {
             var newParams = new List<Type>();
@@ -125,18 +124,11 @@ namespace Surrogates.Utilities.Mixins
                     @params[i].ParameterType;
 
                 newParams.Add(pType);
-
-                // get the instance if the parameter of the interceptor is named instance
-                if (pType.IsAssignableFrom(strategy.BaseType) && @params[i].Name == "s_instance")
-                {
-                    gen.Emit(OpCodes.Ldarg_0);
-                    continue;
-                }
-
+                              
                 if (interfere != null && interfere(@params[i], i))
                 { continue; }
 
-                if (Try2Add.AnythingElseAsParameter(gen, strategy.BaseType, strategy.Fields, strategy.NewProperties, @params[i], strategy.BaseMethods.Field))
+                if (Try2Add.AnythingElseAsParameter(gen, strategy, @params[i]))
                 { continue; }
             }
             return newParams.ToArray();

@@ -1,4 +1,5 @@
 ﻿using Surrogates.Expressions;
+using Surrogates.Model.Entities;
 using System;
 
 namespace Surrogates
@@ -46,10 +47,11 @@ namespace Surrogates
             var obj = Activator
                 .CreateInstance(entry.Type, args);
 
-            if (stateBag != null)
+            if (entry.StateProperty != null && stateBag != null)
             { entry.StateProperty.SetValue(obj, stateBag, null); }
 
-           // entry.ContainerProperty.SetValue(obj, this, null);
+            if (entry.ContainerProperty != null)
+            { entry.ContainerProperty.SetValue(obj, this, null); }
 
             foreach (var prop in entry.Properties)
             {

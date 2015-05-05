@@ -1,5 +1,6 @@
 ﻿
 using Surrogates.Expressions;
+using Surrogates.Model.Entities;
 using Surrogates.Tactics;
 using Surrogates.Utilities;
 using System;
@@ -58,7 +59,8 @@ namespace Surrogates.Applications.ExecutingElsewhere
                 .And
                 .AddAttribute<SerializableAttribute>()
                 .And
-                .AddProperty<ExecuteInOtherDomain.State>("State", state);
+                .AddProperty<ExecuteInOtherDomain.State>("State", state)
+                ;
         }
     }
 }

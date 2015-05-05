@@ -7,34 +7,59 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Surrogates.Utilities.Mixins;
+using Surrogates.Tactics;
 
 namespace Surrogates.Utilities
 {
     internal static class Try2Add
     {
-        internal static bool AnythingElseAsParameter(ILGenerator gen, Type baseType, FieldList fields, List<NewProperty> newProps, ParameterInfo param, FieldInfo baseMethodsField)
+        internal static bool AnythingElseAsParameter(ILGenerator gen, Strategy strategy, ParameterInfo param)
         {
             var isSpecialParam =
                 param.Name[0] == 's' && param.Name[1] == '_';
 
+            // get the instance if the parameter of the interceptor is named instance
+            if (isSpecialParam && 
+                strategy.Permissions.HasFlag(Access.Instance) &&
+                InstanceAsParameter(gen, strategy, param))
+            { return true; }
+
             // tries to add any method as parameter 
-            if (isSpecialParam && Try2Add.AnyMethodAsParameter(gen, baseType, param, baseMethodsField))
+            if (isSpecialParam && 
+                strategy.Permissions.HasFlag(Access.AnyMethod) &&
+                Try2Add.AnyMethodAsParameter(gen, strategy.BaseType, param, strategy.BaseMethods.Field))
             { return true; }
 
             // tries to add any field as parameter 
-            if (isSpecialParam && Try2Add.AnyFieldAsParameter(gen, baseType, fields, param, param.ParameterType))
+            if (isSpecialParam &&
+                strategy.Permissions.HasFlag(Access.AnyField) &&
+                Try2Add.AnyFieldAsParameter(gen, strategy.BaseType, strategy.Fields, param, param.ParameterType))
             { return true; }
 
             // tries to add any property as parameter 
-            if (isSpecialParam && Try2Add.AnyBasePropertyAsParameter(gen, baseType, fields, param, param.ParameterType))
+            if (isSpecialParam &&
+                strategy.Permissions.HasFlag(Access.AnyBaseProperty) &&
+                Try2Add.AnyBasePropertyAsParameter(gen, strategy.BaseType, strategy.Fields, param, param.ParameterType))
             { return true; }
-
+            
             // tries to add any property as parameter 
-            if (isSpecialParam && Try2Add.AnyNewPropertyAsParameter(gen, baseType, newProps, param, param.ParameterType))
+            if (isSpecialParam &&
+                strategy.Permissions.HasFlag(Access.AnyNewProperty) &&
+                Try2Add.AnyNewPropertyAsParameter(gen, strategy.BaseType, strategy.NewProperties, param, param.ParameterType))
             { return true; }
 
             gen.EmitDefaultParameterValue(param.ParameterType); 
 
+            return false;
+        }
+
+        private static bool InstanceAsParameter(ILGenerator gen, Strategy strategy, ParameterInfo param)
+        {
+            if (param.ParameterType.IsAssignableFrom(strategy.BaseType) && param.Name == "s_instance")
+            {
+                gen.Emit(OpCodes.Ldarg_0);
+                return true;
+            }
             return false;
         }
 
@@ -108,7 +133,7 @@ namespace Surrogates.Utilities
         }
 
         /// <summary>
-        /// 
+        /// Adds all parameters as an array of objects
         /// </summary>
         /// <param name="gen"></param>
         /// <param name="param"></param>

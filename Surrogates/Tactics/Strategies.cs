@@ -9,14 +9,14 @@ using System.Reflection.Emit;
 
 namespace Surrogates.Tactics
 {
-
-
     public class Strategies 
     {
         private TypeBuilder _builder;
         private IList<Strategy> _strategies;
 
-        internal Strategies(Type baseType, string name, ModuleBuilder moduleBuilder)
+        private List<NewProperty> _newProperties;
+
+        internal Strategies(Type baseType, string name, ModuleBuilder moduleBuilder, Access permissions)
         {            
             if (string.IsNullOrEmpty(name))
             { name = string.Concat(baseType, "Proxy"); }
@@ -39,28 +39,53 @@ namespace Surrogates.Tactics
             
             this.NewAttributes = 
                 new List<NewAttribute>();
-            
-            this.NewProperties = 
-                new List<NewProperty>();
-            
+
             this.BaseMethods =
                 new BaseMethods();
-
-            this.AddProperty<dynamic>("StateBag");
-            //this.AddProperty<SurrogatesContainer>("Container");
+            
+            this.Accesses = permissions;           
         }
-        
+        private Func<Strategies, List<NewProperty>> _getNewProperties =
+            self =>
+            {
+                self._newProperties = new List<NewProperty>();
+
+                self.CreateDefaultNewProperties();
+
+                self._getNewProperties =
+                    st => st._newProperties;
+
+                return self._newProperties;
+            };
+
+        public Access Accesses { get; set; }
+
         public Type BaseType { get; set; }
 
         public TypeBuilder Builder { get; set; }
         
         public FieldList Fields { get; set; }
-
-        public List<NewProperty> NewProperties { get; set; }
-
+        
         public List<NewAttribute> NewAttributes { get; set; }
 
         public BaseMethods BaseMethods { get; set; }
+
+        public List<NewProperty> NewProperties 
+        {
+            get { return _getNewProperties(this); }
+            set { _newProperties = value; }
+        }
+
+        private void CreateDefaultNewProperties()
+        {
+            _newProperties = new List<NewProperty>(); 
+
+            if (this.Accesses.HasFlag(Access.StateBag))
+            { this.AddProperty<dynamic>("StateBag"); }
+
+            if (this.Accesses.HasFlag(Access.Container))
+            { this.AddProperty<SurrogatesContainer>("Container"); }
+        }
 
         private void ApplyAttributes()
         {
@@ -106,7 +131,7 @@ namespace Surrogates.Tactics
         
         private void AddProperty<T>(string name)
         {
-            this.NewProperties.Add(new NewProperty(Builder) { 
+            this._newProperties.Add(new NewProperty(Builder) { 
                 Name = name,
                 Type = typeof(T)
             });
@@ -116,7 +141,6 @@ namespace Surrogates.Tactics
         {
             return holder.GetProperty(name, BindingFlags.Instance | BindingFlags.Public);
         }
-               
 
         public void Add(Strategy strategy)
         {
@@ -145,20 +169,13 @@ namespace Surrogates.Tactics
                 .Select(p => new Entry.Prop{ 
                     Info = GetProperty(p.GetBuilder().Name, newType), 
                     Value = p.DefaultValue
-                })
-                .ToArray();
-            
-            var stateProp = 
-                GetProperty("StateBag", newType);
-
-            //var containerProp =
-            //    GetProperty("Container", newType);
+                });
 
             return new Entry { 
                 Type = newType,
-                StateProperty = stateProp,
-                //ContainerProperty = containerProp,
-                Properties = props
+                Properties = props.ToArray(),
+                StateProperty = GetProperty("StateBag", newType),
+                ContainerProperty = GetProperty("Container", newType)                
             };
         }
     }
