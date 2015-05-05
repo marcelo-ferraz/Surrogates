@@ -1,5 +1,6 @@
 ﻿using Surrogates.Applications.ExecutingElsewhere;
 using Surrogates.Expressions;
+using Surrogates.Tactics;
 using Surrogates.Utilities;
 using System;
 using System.Security;
@@ -11,7 +12,7 @@ namespace Surrogates.Applications
     {
         private static long _domainIndex = 0;
 
-        public static ElsewhereExpression<T> Call<T>(this ApplyExpression<T> self, Func<T, Delegate> method)
+        public static ElsewhereExpression<T> Calls<T>(this ApplyExpression<T> self, Func<T, Delegate> method)
         {
             var ext =
                 new ShallowExtension<T>();
@@ -21,7 +22,7 @@ namespace Surrogates.Applications
             return new ElsewhereExpression<T>(ext.Factory.Replace.This(method));
         }
 
-        public static AndExpression<T> CallToOtherDomain<T, P>(this ApplyExpression<T> self, Func<T, Delegate> method, string domainName = null, SecurityZone securityZone = SecurityZone.MyComputer, params IPermission[] permissions)
+        public static AndExpression<T> CallToOtherDomain<T>(this ApplyExpression<T> self, Func<T, Delegate> method, string domainName = null, SecurityZone securityZone = SecurityZone.MyComputer, params IPermission[] permissions)
         {
             if (!typeof(T).IsDefined(typeof(SerializableAttribute), true))
             { throw new ArgumentException("The surrogated type must be marked as Serializable"); }
@@ -43,7 +44,7 @@ namespace Surrogates.Applications
                 .Factory
                 .Replace
                 .This(method)
-                .Using<ExecuteInOtherDomain.Interceptor<P>>(i => (Func<ExecuteInOtherDomain.State, Delegate, P>) i.Execute)
+                .Using<ExecuteInOtherDomain.Interceptor>(i => (Func<ExecuteInOtherDomain.State, Delegate, object>) i.Execute)
                 .And
                 .AddProperty<ExecuteInOtherDomain.State>("State", state)
                 .And

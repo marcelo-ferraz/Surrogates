@@ -1,10 +1,10 @@
 ﻿
 namespace Surrogates.Applications.Interlocking
 {
-    public class InterlockedValuePropertyInterceptor<T>
-        : InterlockedPropertyInterceptor<T>
+    public class InterlockedValuePropertyInterceptor
+        : InterlockedPropertyInterceptor
     {
-        protected override T GetField(T field)
+        protected override object GetField(object field)
         {
             return field;
         }

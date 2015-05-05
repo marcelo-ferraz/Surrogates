@@ -1,6 +1,7 @@
 ﻿using Surrogates.Model;
 using System;
 using System.Reflection;
+using Surrogates.Utilities.Mixins;
 
 namespace Surrogates.Utilities
 {
@@ -60,5 +61,36 @@ namespace Surrogates.Utilities
             return delType;
         }
 
+        public static Func<object, Delegate> Delegate(Type owner, string methodName)
+        {
+            Type delType = null;
+            return Delegate(owner, methodName, ref delType);
+        }
+
+        public static Func<object, Delegate> Delegate(Type owner, string methodName, ref Type delType)
+        {
+            var method = owner
+                .GetMethod4Surrogacy(methodName);
+
+            var handle = method
+                .MethodHandle
+                .GetFunctionPointer();
+
+            var type = delType ?? 
+                (delType = DelegateTypeFrom(method));
+
+            return ctx => (Delegate)
+                Activator.CreateInstance(type, ctx, handle);
+        }
+
+        public static Func<object, Delegate> Delegate<T>(string methodName, ref Type delType)
+        {
+            return Delegate(typeof(T), methodName, ref delType);
+        }
+        public static Func<object, Delegate> Delegate<T>(string methodName)
+        {
+            Type delType = null;
+            return Delegate(typeof(T), methodName, ref delType);
+        }
     }
 }

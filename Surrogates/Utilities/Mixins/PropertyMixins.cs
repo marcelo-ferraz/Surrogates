@@ -7,7 +7,7 @@ namespace Surrogates.Utilities.Mixins
 {
     public static class PropertyMixins
     {
-        public static bool EmitPropertyNameAndField(this SurrogatedProperty property, Type pType, ILGenerator gen, ParameterInfo p)
+        public static bool EmitPropertyNameAndField(this SurrogatedProperty property, ILGenerator gen, ParameterInfo p)
         {
             if (p.Name == "s_name" && p.ParameterType == typeof(string))
             {
@@ -15,34 +15,27 @@ namespace Surrogates.Utilities.Mixins
                 return true;
             }
 
-            if (p.Name == "s_field" && p.ParameterType == pType)
+            if (p.Name == "s_field" && p.ParameterType.IsAssignableFrom(p.ParameterType))
             {
                 gen.Emit(OpCodes.Ldarg_0);
                 gen.Emit(OpCodes.Ldfld, property.Field);
+
                 return true;
             }
 
             return false;
         }
 
-        public static bool EmitPropertyNameAndFieldAndValue(this SurrogatedProperty property, Type pType, ILGenerator gen, ParameterInfo p)
+        public static bool EmitPropertyNameAndFieldAndValue(this SurrogatedProperty property, ILGenerator gen, ParameterInfo p, int pIndex)
         {
-            if (p.Name == "propertyName" && p.ParameterType == typeof(string))
+            if (EmitPropertyNameAndField(property, gen, p))
             {
-                gen.Emit(OpCodes.Ldstr, property.Original.Name);
                 return true;
             }
 
-            if (p.Name == "field" && p.ParameterType == pType)
+            if (p.Name == "s_value" && p.ParameterType.IsAssignableFrom(property.Original.PropertyType))
             {
-                gen.Emit(OpCodes.Ldarg_0);
-                gen.Emit(OpCodes.Ldfld, property.Field);
-                return true;
-            }
-
-            if (p.Name == "value" && p.ParameterType.IsAssignableFrom(property.Original.PropertyType))
-            {
-                gen.Emit(OpCodes.Ldarg_1);
+                gen.EmitArg(1);
                 return true;
             }
 

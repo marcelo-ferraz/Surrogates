@@ -105,6 +105,10 @@ namespace Surrogates.Tactics
         {
             get { return _owner.Fields; }
         }
+        public BaseMethods BaseMethods
+        {
+            get { return _owner.BaseMethods; }
+        }
 
         public void Apply(Type baseType, ref TypeBuilder builder)
         {

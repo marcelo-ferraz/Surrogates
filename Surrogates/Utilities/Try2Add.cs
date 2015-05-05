@@ -12,42 +12,34 @@ namespace Surrogates.Utilities
 {
     internal static class Try2Add
     {
-        internal static bool AnythingElseAsParameter(ILGenerator gen, Type baseType, FieldList fields, List<NewProperty> newProps, ParameterInfo param, Type pType)
+        internal static bool AnythingElseAsParameter(ILGenerator gen, Type baseType, FieldList fields, List<NewProperty> newProps, ParameterInfo param, FieldInfo baseMethodsField)
         {
             var isSpecialParam =
                 param.Name[0] == 's' && param.Name[1] == '_';
 
             // tries to add any method as parameter 
-            if (isSpecialParam && Try2Add.AnyMethodAsParameter(gen, baseType, param))
+            if (isSpecialParam && Try2Add.AnyMethodAsParameter(gen, baseType, param, baseMethodsField))
             { return true; }
 
             // tries to add any field as parameter 
-            if (isSpecialParam && Try2Add.AnyFieldAsParameter(gen, baseType, fields, param, pType))
+            if (isSpecialParam && Try2Add.AnyFieldAsParameter(gen, baseType, fields, param, param.ParameterType))
             { return true; }
 
             // tries to add any property as parameter 
-            if (isSpecialParam && Try2Add.AnyBasePropertyAsParameter(gen, baseType, fields, param, pType))
+            if (isSpecialParam && Try2Add.AnyBasePropertyAsParameter(gen, baseType, fields, param, param.ParameterType))
             { return true; }
 
             // tries to add any property as parameter 
-            if (isSpecialParam && Try2Add.AnyNewPropertyAsParameter(gen, baseType, newProps, param, pType))
+            if (isSpecialParam && Try2Add.AnyNewPropertyAsParameter(gen, baseType, newProps, param, param.ParameterType))
             { return true; }
 
-            if (!pType.IsValueType)
-            { gen.Emit(OpCodes.Ldnull); }
-            else
-            { gen.EmitDefaultParameterValue(pType); }
+            gen.EmitDefaultParameterValue(param.ParameterType); 
 
             return false;
         }
 
-        internal static bool MethodAsParameter(ILGenerator gen, MethodInfo baseMethod, ParameterInfo param)
+        internal static bool MethodAsParameter(ILGenerator gen, MethodInfo baseMethod, ParameterInfo param, FieldInfo baseMethodsField)
         {
-            if (param.Name.ToLower() == string.Concat("s_", baseMethod.Name.ToLower()))
-            {
-                return false;
-            }
-
             if (!baseMethod.IsFamily && !baseMethod.IsPrivate && !baseMethod.IsPublic)
             { throw new NotSupportedException("You cannot use an internal property to be passed as a parameter."); }
 
@@ -59,9 +51,23 @@ namespace Surrogates.Utilities
 
             if (param.ParameterType == typeof(Delegate) || param.ParameterType == delType)
             {
+                //gen.Emit(OpCodes.Ldarg_0);
+                //gen.Emit(OpCodes.Dup);
+                                
+                //gen.Emit(OpCodes.Ldvirtftn, baseMethod);
+                ////gen.Emit(OpCodes.Ldftn, baseMethod);                
+                //gen.Emit(OpCodes.Newobj, delType.GetConstructors()[0]);
+
+                //IL_0018: ldsfld class [mscorlib]System.Collections.Generic.Dictionary`2<string, class [mscorlib]System.Func`2<object, class [mscorlib]System.Delegate>> Surrogates.Applications.Tests.SimpleProxy3::_baseMethods
+                gen.Emit(OpCodes.Ldsfld, baseMethodsField);
+                //IL_001d: ldstr "Add2List"
+                gen.Emit(OpCodes.Ldstr, baseMethod.Name);
+                //IL_0022: callvirt instance class [mscorlib]System.Func`2<object, class [mscorlib]System.Delegate> class [mscorlib]System.Collections.Generic.Dictionary`2<string, class [mscorlib]System.Func`2<object, class [mscorlib]System.Delegate>>::get_Item(!0)
+                gen.EmitCall(typeof(Dictionary<string, Func<object, Delegate>>).GetMethod4Surrogacy("get_Item"));
+                //IL_0027: ldarg.0
                 gen.Emit(OpCodes.Ldarg_0);
-                gen.Emit(OpCodes.Ldftn, baseMethod);
-                gen.Emit(OpCodes.Newobj, delType.GetConstructors()[0]);
+                //IL_0028: callvirt instance class [mscorlib]System.Delegate class [mscorlib]System.Func`2<object, class [mscorlib]System.Delegate>::Invoke(!0)
+                gen.EmitCall(typeof(Func<object, Delegate>).GetMethod("Invoke", BindingFlags.Public | BindingFlags.Instance), new [] { typeof(object) });
 
                 return true;
             }
@@ -69,13 +75,18 @@ namespace Surrogates.Utilities
             return false;
         }
 
-        internal static bool AnyMethodAsParameter(ILGenerator gen, Type baseType, ParameterInfo param)
+        internal static bool AnyMethodAsParameter(ILGenerator gen, Type baseType, ParameterInfo param, FieldInfo baseMethodsField)
         {
             var method = baseType.GetMethod4Surrogacy(
                 param.Name.Substring(2), throwExWhenNotFound: false);
 
+            if (method == null || param.Name.ToLower() != string.Concat("s_", method.Name.ToLower()))
+            {
+                return false;
+            }
+
             return method != null ?
-                Try2Add.MethodAsParameter(gen, method, param) :
+                Try2Add.MethodAsParameter(gen, method, param, baseMethodsField) :
                 false;
         }
 
@@ -88,12 +99,12 @@ namespace Surrogates.Utilities
         /// <param name="pType"></param>
         /// <param name="baseParams"></param>
         /// <returns></returns>
-        internal static bool OriginalMethodAsParameter(ILGenerator gen, MethodInfo baseMethod, ParameterInfo param)
+        internal static bool OriginalMethodAsParameter(ILGenerator gen, MethodInfo baseMethod, ParameterInfo param, FieldInfo baseMethodsField)
         {
             if (param.Name != "s_method")
             { return false; }
 
-            return Try2Add.MethodAsParameter(gen, baseMethod, param);
+            return Try2Add.MethodAsParameter(gen, baseMethod, param, baseMethodsField);
         }
 
         /// <summary>
@@ -104,13 +115,45 @@ namespace Surrogates.Utilities
         /// <param name="pType"></param>
         /// <param name="baseParams"></param>
         /// <returns></returns>
-        internal static bool ArgsParam(ILGenerator gen, ParameterInfo param, Type pType, ParameterInfo[] baseParams)
+        internal static bool ArgsParam(ILGenerator gen, ParameterInfo param, int paramIndex, Type pType, ParameterInfo[] baseParams)
         {
             if (pType != typeof(object[]) && param.Name != "s_arguments" && param.Name != "s_args")
             {
                 return false;
             }
 
+            //var arguments =
+            //    gen.DeclareLocal(typeof(object[]));
+
+            //gen.Emit(OpCodes.Ldc_I4, baseParams.Length);
+            //gen.Emit(OpCodes.Newarr, typeof(object));
+
+            //if (baseParams.Length < 1) { return true; }
+
+            //gen.EmitStloc(paramIndex);
+
+            //for (int i = 0; i < baseParams.Length; i++)
+            //{
+            //    gen.EmitLdloc(i + 1);
+            //    gen.Emit(OpCodes.Ldc_I4, i);
+
+            //    gen.EmitArg(i + 1);
+
+
+            //    if (baseParams[i].ParameterType.IsValueType)
+            //    {
+            //        gen.Emit(
+            //            OpCodes.Box,
+            //            baseParams[i].ParameterType);
+            //    }
+
+            //    gen.Emit(OpCodes.Stelem_Ref);
+            //}
+
+            //gen.Emit(OpCodes.Ldloc_1);
+
+            //return true;
+            //original that works
             var arguments =
                 gen.DeclareLocal(typeof(object[]));
 

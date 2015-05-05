@@ -18,10 +18,10 @@ namespace Surrogates.Utilities.Mixins
         /// <param name="original"></param>
         /// <param name="param"></param>
         /// <param name="pType"></param>
-        private static bool EmitArgumentsBasedOnOriginal(this ILGenerator gen, MethodInfo originalMethod, ParameterInfo param, Type pType)
+        private static bool EmitArgumentsBasedOnOriginal(this ILGenerator gen, MethodInfo originalMethod, ParameterInfo param, int paramIndex, FieldInfo baseMethodsField)
         {
             // get the method name if the parameter is named methodname
-            if (pType == typeof(string) && param.Name == "s_name")
+            if (param.ParameterType == typeof(string) && param.Name == "s_name")
             {
                 gen.Emit(OpCodes.Ldstr, originalMethod.Name);
                 return true;
@@ -30,10 +30,10 @@ namespace Surrogates.Utilities.Mixins
             var baseParams =
                 originalMethod.GetParameters();
 
-            if (Try2Add.ArgsParam(gen, param, pType, baseParams))
+            if (Try2Add.ArgsParam(gen, param, paramIndex, param.ParameterType, baseParams))
             { return true; }
 
-            if (Try2Add.OriginalMethodAsParameter(gen, originalMethod, param))
+            if (Try2Add.OriginalMethodAsParameter(gen, originalMethod, param, baseMethodsField))
             { return true; }
 
             for (int i = 0; i < baseParams.Length; i++)
@@ -41,7 +41,7 @@ namespace Surrogates.Utilities.Mixins
                 if (baseParams[i].Name == param.Name)
                 {
                     var compatible =
-                        pType.IsAssignableFrom(baseParams[i].ParameterType);
+                        param.ParameterType.IsAssignableFrom(baseParams[i].ParameterType);
 
                     if (compatible)
                     {
@@ -56,6 +56,17 @@ namespace Surrogates.Utilities.Mixins
 
         internal static void EmitDefaultParameterValue(this ILGenerator gen, Type type, LocalBuilder local = null)
         {
+            if (type == typeof(string))
+            {
+                gen.Emit(OpCodes.Ldstr, string.Empty);
+                return;
+            }
+            if (type.IsInterface || !type.IsValueType)
+            {
+                gen.Emit(OpCodes.Ldnull);
+                return;
+            }
+
             bool isInteger =
                 type == typeof(sbyte) || type == typeof(byte) ||
                 type == typeof(ushort) || type == typeof(short) ||
@@ -81,10 +92,6 @@ namespace Surrogates.Utilities.Mixins
             {
                 gen.Emit(OpCodes.Ldc_R4, 0.0);
             }
-            else if (type == typeof(string))
-            {
-                gen.Emit(OpCodes.Ldstr, string.Empty);
-            }
             else { throw new NotSupportedException(string.Format("The type {0} is not supporte, yet.", type)); }
         }
        
@@ -105,28 +112,31 @@ namespace Surrogates.Utilities.Mixins
             gen.Emit(OpCodes.Ldloc, local);
         }
 
-        internal static Type[] EmitParameters(this ILGenerator gen, Strategy strategy, MethodInfo method, Func<ParameterInfo, bool> interfere = null)
+        
+        internal static Type[] EmitParameters(this ILGenerator gen, Strategy strategy, MethodInfo method, Func<ParameterInfo, int, bool> interfere = null)
         {
             var newParams = new List<Type>();
 
-            foreach (var param in method.GetParameters())
+            var @params = method.GetParameters();
+
+            for (int i = 0; i < @params.Length; i++)
             {
                 var pType =
-                    param.ParameterType;
+                    @params[i].ParameterType;
 
                 newParams.Add(pType);
 
                 // get the instance if the parameter of the interceptor is named instance
-                if (pType.IsAssignableFrom(strategy.BaseType) && param.Name == "s_instance")
+                if (pType.IsAssignableFrom(strategy.BaseType) && @params[i].Name == "s_instance")
                 {
                     gen.Emit(OpCodes.Ldarg_0);
                     continue;
                 }
-                
-                if (interfere != null && interfere(param))
+
+                if (interfere != null && interfere(@params[i], i))
                 { continue; }
 
-                if (Try2Add.AnythingElseAsParameter(gen, strategy.BaseType, strategy.Fields, strategy.NewProperties, param, pType))
+                if (Try2Add.AnythingElseAsParameter(gen, strategy.BaseType, strategy.Fields, strategy.NewProperties, @params[i], strategy.BaseMethods.Field))
                 { continue; }
             }
             return newParams.ToArray();
@@ -142,7 +152,7 @@ namespace Surrogates.Utilities.Mixins
             return gen.EmitParameters(
                 strategy,
                 method,
-                p => gen.EmitArgumentsBasedOnOriginal(baseMethod, p, p.ParameterType)); 
+                (p, i) => gen.EmitArgumentsBasedOnOriginal(baseMethod, p, i, strategy.BaseMethods.Field)); 
         }
 
         /// <summary>
@@ -155,18 +165,7 @@ namespace Surrogates.Utilities.Mixins
         {
             var baseParams =
                 strategies.BaseType.GetConstructor(types).GetParameters();
-
-            int i = 0;
-
-            gen.Emit(OpCodes.Ldarg_0);
-
-            for (; i < baseParams.Length; i++)
-            {
-                gen.Emit(OpCodes.Ldarg, i + 1);
-            }
-
-            gen.Emit(OpCodes.Call, strategies.BaseType.GetConstructor(types.Length < 1 ? Type.EmptyTypes : types));
-
+            
             for (int j = 0; j < strategies.Fields.Count; j++)
             {
                 var type =
@@ -186,8 +185,20 @@ namespace Surrogates.Utilities.Mixins
                 gen.EmitCall(b.GetSetMethod());
             }
 
+            int i = 0;
+
+            gen.Emit(OpCodes.Ldarg_0);
+
+            for (; i < baseParams.Length; i++)
+            {
+                gen.Emit(OpCodes.Ldarg, i + 1);
+            }
+
+            gen.Emit(OpCodes.Call, strategies.BaseType.GetConstructor(types.Length < 1 ? Type.EmptyTypes : types));
+            
             gen.Emit(OpCodes.Ret);
         }
+
         
         /// <summary>
         /// 
@@ -215,6 +226,46 @@ namespace Surrogates.Utilities.Mixins
                     gen.Emit(OpCodes.Call, method);
                 }
             }
+        }
+
+        internal static void EmitArg(this ILGenerator gen, int index) 
+        {
+            if (index <= 3)
+            {
+                gen.Emit(
+                    index == 0 ? OpCodes.Ldarg_0 :
+                    index == 1 ? OpCodes.Ldarg_1 :
+                    index == 2 ? OpCodes.Ldarg_2 :
+                    OpCodes.Ldarg_3);
+            }
+            else 
+            { gen.Emit(OpCodes.Ldarg, index); }
+        }
+
+        internal static void EmitStloc(this ILGenerator gen, int index)
+        {
+            if (index <= 3)
+            {
+                gen.Emit(
+                    index == 0 ? OpCodes.Stloc_0 :
+                    index == 1 ? OpCodes.Stloc_1 :
+                    index == 2 ? OpCodes.Stloc_2 :
+                    OpCodes.Stloc_3);
+            }
+            //else { //TODO: discover what to do }
+        }
+
+        internal static void EmitLdloc(this ILGenerator gen, int index)
+        {
+            if (index <= 3)
+            {
+                gen.Emit(
+                    index == 0 ? OpCodes.Ldloc_0 :
+                    index == 1 ? OpCodes.Ldloc_1 :
+                    index == 2 ? OpCodes.Ldloc_2 :
+                    OpCodes.Ldloc_3);
+            }
+            //else { //TODO: discover what to do }
         }
     }
 }

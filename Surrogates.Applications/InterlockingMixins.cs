@@ -10,13 +10,13 @@ namespace Surrogates.Applications
     public static class InterlockingMixins
     {
         private static AndExpression<T> RW<T, I>(this IExtension<T> self, Func<T, object> prop)
-            where I: InterlockedPropertyInterceptor<T>
+            where I: InterlockedPropertyInterceptor
         {
             return self.Factory.Replace.This(prop)
                         .Accessors(m => m
-                            .Getter.Using<I>(i => (Func<T, T>)i.Get)
+                            .Getter.Using<I>(i => (Func<object>)i.Get)
                             .And
-                            .Setter.Using<I>(i => (ActionR<T, T>)i.Set));
+                            .Setter.Using<I>(i => (Action<object>)i.Set));
         }
         public static AndExpression<T> ReadAndWrite<T>(this ApplyExpression<T> self, params Func<T, object>[] properties)
         {
@@ -30,12 +30,13 @@ namespace Surrogates.Applications
             foreach (var prop in properties)
             {
                 exp = prop.GetPropType().IsValueType ?
-                    ext.RW<T, InterlockedValuePropertyInterceptor<T>>(prop) :
-                    ext.RW<T, InterlockedRefPropertyInterceptor<T>>(prop);
+                    ext.RW<T, InterlockedValuePropertyInterceptor>(prop) :
+                    ext.RW<T, InterlockedRefPropertyInterceptor>(prop);
             }
 
             return exp;
         }
+
         public static AndExpression<T> ReadAndWrite<T>(this ApplyExpression<T> self, Func<T, Delegate> reader, Func<T, Delegate> writer)
         {
             var ext =
@@ -49,7 +50,7 @@ namespace Surrogates.Applications
             var and =
                 reader(val).Method.ReturnType == typeof(void) ?
                 ext.Factory.Replace.This(reader).Using<InterlockedActionInterceptor>("Read").And :
-                ext.Factory.Replace.This(reader).Using<InterlockedFuncInterceptor<T>>("Read").And;
+                ext.Factory.Replace.This(reader).Using<InterlockedFuncInterceptor>("Read").And;
 
             return and.Replace.This(writer).Using<InterlockedMethodInterceptor>("Write");
         }

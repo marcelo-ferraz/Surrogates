@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Surrogates.Tests.Expressions.Entities;
 using Surrogates.Utilities;
+using Surrogates.Utilities.SDILReader;
 using System;
 
 namespace Surrogates.Tests.Expressions._Properties
@@ -49,7 +50,7 @@ namespace Surrogates.Tests.Expressions._Properties
             var proxy =
                 container.Invoke<Dummy>();
 
-            Except(
+            IgnoreException(
                 () => proxy.AccessItWillThrowException = 2,
                 () => { int res = proxy.AccessItWillThrowException; });
 
@@ -68,12 +69,13 @@ namespace Surrogates.Tests.Expressions._Properties
                 .This(d => d.AccessItWillThrowException)
                 .Accessors(a =>
                     a.Setter.Using<InterferenceObject>(d => (Func<int, Dummy, int>) d.SetPropText_info_Return_FieldPlus1)))
+                //.Save()
                 ;
 
             var proxy =
                 container.Invoke<Dummy>();
 
-            Except(
+            IgnoreException(
                 () => proxy.AccessItWillThrowException = 2,
                 () => { int res = proxy.AccessItWillThrowException; });
 
@@ -91,14 +93,25 @@ namespace Surrogates.Tests.Expressions._Properties
                 .Visit
                 .This(d => d.AccessItWillThrowException)
                 .Accessors(a =>
-                  a.Getter.Using<InterferenceObject>(d => (Action<Dummy, int>) d.SetPropText_TypeName)));
+                    a.Getter.Using<InterferenceObject>(d => (Action<Dummy, int>) d.SetPropText_TypeName))).Save();                              
 
             var proxy =
                 container.Invoke<Dummy>();
             
-            Except(
+            IgnoreException(
                 () => proxy.AccessItWillThrowException = 2,
                 () => { int res = proxy.AccessItWillThrowException; });
+            
+            var reader = 
+                new MethodBodyReader(proxy.GetType().GetProperty("AccessItWillThrowException").GetGetMethod());
+
+            var b = "";
+
+            foreach (var inst in reader.Instructions)
+            {
+                b += string.Concat(inst.Code, '.', inst.Offset, '-', inst.Operand, ':', inst.OperandData, " \n");
+            }
+
 
             Assert.IsTrue(proxy.Text.Contains("Dummy"));
         }
@@ -120,14 +133,14 @@ namespace Surrogates.Tests.Expressions._Properties
             var proxy =
                 container.Invoke<Dummy>();
 
-            Except(
+            IgnoreException(
                 () => proxy.AccessItWillThrowException = 2, 
                 () => { int res = proxy.AccessItWillThrowException; });
 
             Assert.IsTrue(proxy.Text.Contains("was added"));
         }
 
-        public void Except(params Action[] actions)
+        public void IgnoreException(params Action[] actions)
         {
             for (int i = 0; i < actions.Length; i++)
             {
@@ -136,9 +149,73 @@ namespace Surrogates.Tests.Expressions._Properties
                 {
                     actions[i]();
                     Assert.Fail();
-                }
+                }                
                 catch { }
             }
+        }
+    }
+
+
+    public class DummyProxy2 : Dummy
+    {
+        private InterferenceObject _interceptor = new InterferenceObject();
+
+        private int _accessItWillThrowException;
+
+        private dynamic _stateBag;
+
+        private SurrogatesContainer _container;
+
+        public override int AccessItWillThrowException
+        {
+            get
+            {
+                this._interceptor.SetPropText_TypeName(this, _accessItWillThrowException);
+                return _accessItWillThrowException;
+            }
+            set
+            {
+                this._accessItWillThrowException = value;
+            }
+        }
+
+        public SurrogatesContainer Container
+        {
+            get
+            {
+                return this._container;
+            }
+            set
+            {
+                this._container = value;
+            }
+        }
+
+        public dynamic StateBag
+        {
+            get
+            {
+                return this._stateBag;
+            }
+            set
+            {
+                this._stateBag = value;
+            }
+        }
+
+        public DummyProxy2()
+        {
+            this._interceptor = new InterferenceObject();
+            this.StateBag = new object();
+            this.Container = new SurrogatesContainer();            
+        }
+
+        public DummyProxy2(string str)
+            : base(str)
+        {
+            this._interceptor = new InterferenceObject();
+            this.StateBag = new object();
+            this.Container = new SurrogatesContainer();            
         }
     }
 }

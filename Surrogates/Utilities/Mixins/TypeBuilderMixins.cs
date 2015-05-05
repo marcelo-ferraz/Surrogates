@@ -1,6 +1,7 @@
 ﻿using Surrogates.Model.Collections;
 using Surrogates.Tactics;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
@@ -14,6 +15,60 @@ namespace Surrogates.Utilities.Mixins
         private static bool Has(this MethodAttributes attrs, MethodAttributes other)
         {
             return (attrs | other) != other;
+        }
+
+        internal static void CreateStaticCtor(this Strategies strats)
+        {
+            if (strats.BaseMethods.Count < 1) { return; }
+
+            // get the Dictionary type
+            var dicType = typeof(Dictionary<,>).MakeGenericType(
+                typeof(string),
+                typeof(Func<,>).MakeGenericType(typeof(object), typeof(Delegate)));
+
+            // gets the Add method from dictionary
+            var dicAddMethod = dicType.GetMethod("Add");
+
+            // creates the _baseMethods field
+            var baseMethodsField =
+                strats.Builder.DefineField("_baseMethods", dicType, FieldAttributes.Private | FieldAttributes.Static);
+
+            strats.BaseMethods.Field = baseMethodsField;
+
+            // creates the static constructor
+            var cctr = strats
+                .Builder
+                .DefineConstructor(MethodAttributes.Static | MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+
+            // gets the Infer.Delegate method
+            var getDel = typeof(Infer)
+                .GetMethod("Delegate", new[] { typeof(string) })
+                .MakeGenericMethod(strats.BaseType);
+
+            var gen = cctr.GetILGenerator();
+
+            //IL_0001: newobj instance void class [mscorlib]System.Collections.Generic.Dictionary`2<string, class [mscorlib]System.Func`2<class Surrogates.Applications.Tests.SimpleProxy, class [mscorlib]System.Delegate>>::.ctor()
+            gen.Emit(OpCodes.Newobj, dicType.GetConstructor(Type.EmptyTypes));
+            //IL_0006: stsfld class [mscorlib]System.Collections.Generic.Dictionary`2<string, class [mscorlib]System.Func`2<class Surrogates.Applications.Tests.SimpleProxy, class [mscorlib]System.Delegate>> Surrogates.Applications.Tests.SimpleProxy::_baseMethods
+            gen.Emit(OpCodes.Stsfld, baseMethodsField);
+
+            foreach (var method in strats.BaseMethods)
+            {
+                //IL_000b: ldsfld class [mscorlib]System.Collections.Generic.Dictionary`2<string, class [mscorlib]System.Func`2<class Surrogates.Applications.Tests.SimpleProxy, class [mscorlib]System.Delegate>> Surrogates.Applications.Tests.SimpleProxy::_baseMethods
+                gen.Emit(OpCodes.Ldsfld, baseMethodsField);
+                //IL_0010: ldstr "Add2List"
+                gen.Emit(OpCodes.Ldstr, method.Name);
+                //IL_0015: ldstr "Add2List"
+                gen.Emit(OpCodes.Ldstr, method.Name);
+                //IL_001a: call class [mscorlib]System.Func`2<object, class [mscorlib]System.Delegate> [Surrogates]Surrogates.Utilities.Infer::Delegate<class Surrogates.Applications.Tests.Simple>(string)
+                gen.Emit(OpCodes.Call, getDel);
+                //IL_001f: callvirt instance void class [mscorlib]System.Collections.Generic.Dictionary`2<string, class [mscorlib]System.Func`2<class Surrogates.Applications.Tests.SimpleProxy, class [mscorlib]System.Delegate>>::Add(!0,  !1)
+                gen.EmitCall(dicAddMethod);
+            }
+
+            //IL_0024: nop
+            //IL_0025: ret
+            gen.Emit(OpCodes.Ret);
         }
 
         internal static void CreateConstructor(this Strategies strats)
@@ -48,8 +103,7 @@ namespace Surrogates.Utilities.Mixins
             if (!hasParameterlessCtr)
             { define4(Type.EmptyTypes, MethodAttributes.Public); }
         }
-        
-     
+             
         internal static FieldBuilder DefineFieldFromProperty(this TypeBuilder builder, PropertyInfo prop)
         {
             var fieldName = prop.Name;

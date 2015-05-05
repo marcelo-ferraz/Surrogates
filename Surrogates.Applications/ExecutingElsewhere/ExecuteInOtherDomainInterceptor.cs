@@ -18,7 +18,7 @@ namespace Surrogates.Applications.ExecutingElsewhere
             public string Name { get; set; }
         }
         [Serializable]
-        public class Interceptor<R>
+        public class Interceptor
         {
             [Serializable]
             public class Worker : MarshalByRefObject
@@ -65,7 +65,7 @@ namespace Surrogates.Applications.ExecutingElsewhere
                     .CreateDomain(state.Name, evidence, setup, permissionSet);
             }
 
-            public R Execute(ExecuteInOtherDomain.State s_State, Delegate s_method)
+            public object Execute(ExecuteInOtherDomain.State s_State, Delegate s_method)
             {
                 TryInitDomain(s_State);
 
@@ -77,7 +77,7 @@ namespace Surrogates.Applications.ExecutingElsewhere
 
                 worker.Execute();
 
-                return (R)worker.Result;
+                return worker.Result;
             }
         }
     }

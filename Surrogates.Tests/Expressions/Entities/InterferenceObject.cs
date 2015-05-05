@@ -59,5 +59,10 @@ namespace Surrogates.Tests.Expressions.Entities
         {
              s_instance.Text =  s_instance.GetType().Name;
         }
+
+        public void SetPropText_TypeName2(int s_value)
+        {
+            //s_instance.Text = s_instance.GetType().Name;
+        }
     }
 }

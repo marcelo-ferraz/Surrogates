@@ -9,6 +9,8 @@ using System.Reflection.Emit;
 
 namespace Surrogates.Tactics
 {
+
+
     public class Strategies 
     {
         private TypeBuilder _builder;
@@ -28,14 +30,21 @@ namespace Surrogates.Tactics
             { throw new ProxyAlreadyMadeException(baseType, name, argEx); }
 
             this.BaseType = baseType;
-            this._strategies = new List<Strategy>();
-            this.Fields = new FieldList(this);
+            
+            this._strategies = 
+                new List<Strategy>();
+            
+            this.Fields = 
+                new FieldList(this);
             
             this.NewAttributes = 
                 new List<NewAttribute>();
             
             this.NewProperties = 
                 new List<NewProperty>();
+            
+            this.BaseMethods =
+                new BaseMethods();
 
             this.AddProperty<dynamic>("StateBag");
             //this.AddProperty<SurrogatesContainer>("Container");
@@ -51,6 +60,50 @@ namespace Surrogates.Tactics
 
         public List<NewAttribute> NewAttributes { get; set; }
 
+        public BaseMethods BaseMethods { get; set; }
+
+        private void ApplyAttributes()
+        {
+            foreach (var attr in NewAttributes)
+            {
+                bool forAll =
+                    attr.Targets.HasFlag(AttributeTargets.All);
+
+                var ctr = attr.Arguments != null && attr.Arguments.Length > 0 ?
+                        attr.Type.GetConstructor(attr.Arguments.Select(arg => arg.GetType()).ToArray()) :
+                        attr.Type.GetConstructor(Type.EmptyTypes);
+
+                var attrBuilder =
+                    new CustomAttributeBuilder(ctr, attr.Arguments);
+
+                if (string.IsNullOrEmpty(attr.MemberName) && (forAll || attr.Targets.HasFlag(AttributeTargets.Class)))
+                {
+                    Builder.SetCustomAttribute(attrBuilder);
+                    continue;
+                }
+
+                foreach (var prop in this.NewProperties)
+                {
+                    var p = prop.GetBuilder();
+
+                    if (p.Name == attr.MemberName && (forAll || attr.Targets.HasFlag(AttributeTargets.Property)))
+                    {
+                        p.SetCustomAttribute(attrBuilder);
+                        continue;
+                    }
+                }
+
+                for (int i = 0; i < this.Fields.Count; i++)
+                {
+                    if (this.Fields[i].Name == attr.MemberName && (forAll || attr.Targets.HasFlag(AttributeTargets.Field)))
+                    {
+                        this.Fields[i].SetCustomAttribute(attrBuilder);
+                        continue;
+                    }
+                }
+            }
+        } 
+        
         private void AddProperty<T>(string name)
         {
             this.NewProperties.Add(new NewProperty(Builder) { 
@@ -63,6 +116,7 @@ namespace Surrogates.Tactics
         {
             return holder.GetProperty(name, BindingFlags.Instance | BindingFlags.Public);
         }
+               
 
         public void Add(Strategy strategy)
         {
@@ -73,12 +127,14 @@ namespace Surrogates.Tactics
         {
             this.ApplyAttributes();
 
+            this.CreateStaticCtor();
+
             foreach (var strategy in _strategies)
             {
                 strategy.Apply(
                     this.BaseType, ref this._builder);
-            }
-                       
+            }            
+
             this.CreateConstructor();
             
             var newType = 
@@ -95,57 +151,15 @@ namespace Surrogates.Tactics
             var stateProp = 
                 GetProperty("StateBag", newType);
 
-            var containerProp =
-                GetProperty("Container", newType);
+            //var containerProp =
+            //    GetProperty("Container", newType);
 
             return new Entry { 
                 Type = newType,
                 StateProperty = stateProp,
-                ContainerProperty = containerProp,
+                //ContainerProperty = containerProp,
                 Properties = props
             };
         }
-
-        private void ApplyAttributes()
-        {
-            foreach (var attr in NewAttributes)
-            { 
-                bool forAll = 
-                    attr.Targets.HasFlag(AttributeTargets.All);
-                
-                var ctr = attr.Arguments != null && attr.Arguments.Length > 0 ?
-                        attr.Type.GetConstructor(attr.Arguments.Select(arg => arg.GetType()).ToArray()) :
-                        attr.Type.GetConstructor(Type.EmptyTypes);
-
-                var attrBuilder = 
-                    new CustomAttributeBuilder(ctr, attr.Arguments);
-
-                if (string.IsNullOrEmpty(attr.MemberName) && (forAll || attr.Targets.HasFlag(AttributeTargets.Class)))
-                {
-                    Builder.SetCustomAttribute(attrBuilder);
-                    continue;
-                }
-                
-                foreach (var prop in this.NewProperties)
-                {
-                    var p = prop.GetBuilder();
-
-                    if (p.Name == attr.MemberName && (forAll || attr.Targets.HasFlag(AttributeTargets.Property)))
-                    {
-                        p.SetCustomAttribute(attrBuilder);
-                        continue;
-                    }
-                }
-
-                for (int i = 0; i < this.Fields.Count; i++)
-			    {                    
-                    if (this.Fields[i].Name == attr.MemberName && (forAll || attr.Targets.HasFlag(AttributeTargets.Field)))
-                    {
-                        this.Fields[i].SetCustomAttribute(attrBuilder);
-                        continue;
-                    }
-                }
-            }
-        } 
     }
 }

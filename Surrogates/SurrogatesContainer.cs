@@ -31,6 +31,16 @@ namespace Surrogates
             if (string.IsNullOrEmpty(name))
             { name = string.Concat(type.Name, "Proxy"); }
 
+            return Invoke(name, stateBag, args);
+        }
+
+        /// <summary>
+        /// Invokes the asked surrogated type, either by name, or by the base type
+        /// </summary>
+        /// <param name="name">The choosen name</param>
+        /// <returns></returns>
+        public override object Invoke(string name, dynamic stateBag = null, params object[] args)
+        {
             var entry = Cache[name];
 
             var obj = Activator
@@ -39,7 +49,7 @@ namespace Surrogates
             if (stateBag != null)
             { entry.StateProperty.SetValue(obj, stateBag, null); }
 
-            //entry.ContainerProperty.SetValue(obj, this, null);
+           // entry.ContainerProperty.SetValue(obj, this, null);
 
             foreach (var prop in entry.Properties)
             {

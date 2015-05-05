@@ -41,6 +41,22 @@ namespace Surrogates.Executioners
             {
                 gen.EmitDefaultValue(strategy.Interceptor.Method.ReturnType, baseMethodReturn);
             }
+            else // in case the new method's return needs to be cast 
+                if (strategy.Interceptor.Method.ReturnType != baseFunction.ReturnType)
+                { 
+                    if(baseFunction.ReturnType.IsValueType)
+                    {                        
+                        gen.Emit(OpCodes.Unbox_Any, baseFunction.ReturnType);
+
+                        gen.Emit(OpCodes.Stloc_0);
+                        //gen.Emit(OpCodes.Br_S, IL_0032
+                        gen.Emit(OpCodes.Ldloc_0);
+                    }
+                    else
+                    {
+                        gen.Emit(OpCodes.Castclass, baseFunction.ReturnType); 
+                    }
+                }
 
             gen.Emit(OpCodes.Ret);
         }
@@ -64,8 +80,8 @@ namespace Surrogates.Executioners
             var @params = gen.EmitParameters(
                 strategy,
                 strategy.Getter.Method,
-                p => property.EmitPropertyNameAndField(pType, gen, p));
-
+                (p, i) => property.EmitPropertyNameAndField(gen, p));
+            
             gen.EmitCall(strategy.Getter.Method, @params);
 
             // in case the new method does not have return or is not assignable from property type
@@ -76,6 +92,20 @@ namespace Surrogates.Executioners
 
                 gen.EmitDefaultValue(pType, returnField);
             }
+            else // in case the new method's return needs to be cast 
+                if (strategy.Getter.Method.ReturnType != property.Original.PropertyType)
+                {
+                    if (property.Original.PropertyType.IsValueType)
+                    {
+                        //IL_002a: unbox.any [mscorlib]System.Int32
+                        gen.Emit(OpCodes.Unbox_Any, property.Original.PropertyType);
+                    }
+                    else
+                    {
+                        gen.Emit(OpCodes.Castclass, property.Original.PropertyType); 
+                    }
+                }           
+
 
             gen.Emit(OpCodes.Ret);
 
@@ -83,7 +113,7 @@ namespace Surrogates.Executioners
         }
 
         [TargetedPatchingOptOut("")]
-        protected static MethodBuilder ReplaceSetter(SurrogatedProperty property, Strategy.ForProperties strategy)
+        protected static void ReplaceSetter(SurrogatedProperty property, Strategy.ForProperties strategy)
         {
             var pType =
                 property.Original.PropertyType;
@@ -99,7 +129,7 @@ namespace Surrogates.Executioners
             var @params = gen.EmitParameters(
                 strategy,
                 strategy.Setter.Method,
-                p => property.EmitPropertyNameAndField(pType, gen, p));
+                (p, i) => property.EmitPropertyNameAndFieldAndValue(gen, p, i));
 
             gen.EmitCall(strategy.Setter.Method, @params);
 
@@ -115,7 +145,7 @@ namespace Surrogates.Executioners
 
             gen.Emit(OpCodes.Ret);
 
-            return setter;
+            property.Builder.SetSetMethod(setter);
         }
 
         public override void Execute4Properties(Strategy.ForProperties strategy)

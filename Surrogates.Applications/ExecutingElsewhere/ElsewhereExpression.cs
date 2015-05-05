@@ -1,5 +1,7 @@
 ﻿
 using Surrogates.Expressions;
+using Surrogates.Tactics;
+using Surrogates.Utilities;
 using System;
 using System.Security;
 using System.Threading;
@@ -21,19 +23,28 @@ namespace Surrogates.Applications.ExecutingElsewhere
         /// </summary>
         /// <param name="andForget">About the send and forget methodology. if true, it starts the new thread and dont bother waiting for it to finish. The return of the method will be the default of the type</param>
         /// <returns></returns>
-        public AndExpression<T> InOtherThread<P>(bool andForget = false)
+        public AndExpression<T> InOtherThread(bool andForget = false)
         {
             return _previousExpression
-                .Using<ExecuteInOtherThreadInterceptor<P>>(i => (Func<Delegate, object[], bool, P>) i.Execute)
+                .Using<ExecuteInOtherThreadInterceptor>(i => (Func<Delegate, object[], bool, object>) i.Execute)
                 .And
                 .AddProperty<bool>("s_Forget", andForget);
         }
                 
-        public AndExpression<T> InOtherDomain<P>(string domainName = null, SecurityZone securityZone = SecurityZone.MyComputer, params IPermission[] permissions)
+        public AndExpression<T> InOtherDomain(string domainName = null, SecurityZone securityZone = SecurityZone.MyComputer, params IPermission[] permissions)
         {
             if (!typeof(T).IsDefined(typeof(SerializableAttribute), true))
             { throw new ArgumentException("The surrogated type must be marked as Serializable"); }
 
+            foreach(var m in Pass.Current<Strategy.ForMethods>(_previousExpression).Methods)
+            {
+                if (!m.IsPublic) 
+                {
+                    // TODO: create custom exception
+                    throw new Exception(string.Format("The method '{0}' must be public, to be sent to another domain.", m.Name));
+                }
+            }
+            
             var state =
                 new ExecuteInOtherDomain.State
                 {
@@ -43,7 +54,7 @@ namespace Surrogates.Applications.ExecutingElsewhere
                 };
 
             return _previousExpression
-                .Using<ExecuteInOtherDomain.Interceptor<P>>(i => (Func<ExecuteInOtherDomain.State, Delegate, P>) i.Execute)
+                .Using<ExecuteInOtherDomain.Interceptor>(i => (Func<ExecuteInOtherDomain.State, Delegate, object>) i.Execute)
                 .And
                 .AddAttribute<SerializableAttribute>()
                 .And

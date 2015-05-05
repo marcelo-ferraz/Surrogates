@@ -9,9 +9,9 @@ namespace Surrogates.Tests.Github.Examples.RegularJoe
             Quantity = 2;
         }
 
-        public void NewMethod(Delegate method, int i)
+        public void NewMethod(Delegate s_method, int i)
         {
-            method.DynamicInvoke(i);
+            s_method.DynamicInvoke(i);
         }
     }
 }

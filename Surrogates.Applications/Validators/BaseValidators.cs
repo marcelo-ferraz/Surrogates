@@ -69,6 +69,5 @@ namespace Surrogates.Applications.Validators
             if (string.IsNullOrEmpty((string)val))
             { throw new Exception("Required!"); }
         }
-
     }
 }

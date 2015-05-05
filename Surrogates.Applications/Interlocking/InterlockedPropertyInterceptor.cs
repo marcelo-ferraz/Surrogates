@@ -2,10 +2,10 @@
 
 namespace Surrogates.Applications.Interlocking
 {
-    public abstract class InterlockedPropertyInterceptor<T>
+    public abstract class InterlockedPropertyInterceptor
     {
-        ReaderWriterLockSlim _lock;
-
+        private ReaderWriterLockSlim _lock;
+        protected object _field;
         public InterlockedPropertyInterceptor() 
         {
             _lock = new ReaderWriterLockSlim();
@@ -16,11 +16,11 @@ namespace Surrogates.Applications.Interlocking
             _lock.Dispose();
         }
 
-        protected abstract T GetField(T field);
+        protected abstract object GetField(object field);
 
-        public T Get(T s_field)
-        { 
-            T ret = default(T);
+        public object Get()
+        {            
+            object ret = null;
             bool lockWasHeld = false;
             try
             {
@@ -29,7 +29,7 @@ namespace Surrogates.Applications.Interlocking
                     lockWasHeld = _lock.TryEnterReadLock(500);
                 }
 
-                if (lockWasHeld) { ret = GetField(s_field); }
+                if (lockWasHeld) { ret = GetField(_field); }
             }
             finally
             {
@@ -38,15 +38,15 @@ namespace Surrogates.Applications.Interlocking
             return ret;
         }
 
-        public void Set(ref T s_field, T s_value)
-        {
+        public void Set(object s_value)
+        {            
             bool lockWasHeld = false;
             try
             {
                 try { } finally
-                { lockWasHeld = _lock.TryEnterReadLock(500); }
+                { lockWasHeld = _lock.TryEnterWriteLock(500); }
 
-                if (lockWasHeld) { s_field = s_value; }
+                if (lockWasHeld) { _field = s_value; }
             }
             finally
             { 

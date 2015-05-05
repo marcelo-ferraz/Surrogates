@@ -2,10 +2,10 @@
 
 namespace Surrogates.Applications.Interlocking
 {
-    public class InterlockedRefPropertyInterceptor<T> 
-        : InterlockedPropertyInterceptor<T>
+    public class InterlockedRefPropertyInterceptor 
+        : InterlockedPropertyInterceptor
     {
-        protected override T GetField(T field)
+        protected override object GetField(object field)
         {
             return Clone.This(field);
         }

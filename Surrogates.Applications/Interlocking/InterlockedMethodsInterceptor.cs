@@ -3,12 +3,12 @@ using System.Threading;
 
 namespace Surrogates.Applications.Interlocking
 {
-    public class InterlockedFuncInterceptor<T>
+    public class InterlockedFuncInterceptor
         : InterlockedMethodInterceptor
     {
-        public T Read(Delegate s_method, object[] s_arguments)
+        public object Read(Delegate s_method, object[] s_arguments)
         {
-            T ret = default(T);
+            object ret = null;
             bool lockWasHeld = false;
             try
             {
@@ -18,7 +18,7 @@ namespace Surrogates.Applications.Interlocking
                     lockWasHeld = Lock.TryEnterReadLock(500);
                 }
 
-                if (lockWasHeld) { ret = (T)s_method.DynamicInvoke(s_arguments); }
+                if (lockWasHeld) { ret = s_method.DynamicInvoke(s_arguments); }
             }
             finally
             {
@@ -63,20 +63,32 @@ namespace Surrogates.Applications.Interlocking
         {
             Lock.Dispose();
         }
-        
+
+        public void Write2(object[] s_arguments, Delegate s_method)
+        { 
+
+        }
+
         public void Write(Delegate s_method, object[] s_arguments)
         {
             bool lockWasHeld = false;
             try
             {
-                try { } finally
-                { lockWasHeld = Lock.TryEnterReadLock(500); }
+                try { }
+                finally
+                {
+                    if (Lock.IsWriteLockHeld)
+                    { Lock.ExitWriteLock(); }
 
-                if (lockWasHeld) { s_method.DynamicInvoke(s_arguments); }
+                    lockWasHeld = Lock.TryEnterWriteLock(500);
+                }
+
+                if (lockWasHeld) { s_method.DynamicInvoke(s_arguments); }                
             }
             finally
-            { 
-                if (lockWasHeld) { Lock.ExitWriteLock(); } 
+            {
+                if (lockWasHeld)
+                { Lock.ExitWriteLock(); } 
             }
         }
     }

@@ -39,8 +39,8 @@ namespace Surrogates.Tests.Expressions.Methods.Visit
             container.Map(m =>
                 m.From<Dummy>()
                 .Visit
-                .This(d => (Action<string, DateTime, Dummy.EvenMore>)d.SetPropText_complex)
-                .Using<InterferenceObject>(r => (Action<string, Dummy, DateTime, string, Dummy.EvenMore>)r.AddToPropText__MethodName));
+                .This(d => (Action<string, DateTime, Dummy.EvenMore>) d.SetPropText_complex)
+                .Using<InterferenceObject>(r => (Action<string, Dummy, DateTime, string, Dummy.EvenMore>) r.AddToPropText__MethodName));
 
             var dummy =
                 new Dummy();

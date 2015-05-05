@@ -44,6 +44,13 @@ namespace Surrogates
         /// <param name="name">The choosen name</param>
         /// <returns></returns>
         public abstract object Invoke(Type type, string name = null, dynamic stateBag = null, params object[] args);
+        
+        /// <summary>
+        /// Invokes the asked surrogated type, by name
+        /// </summary>
+        /// <param name="name">The choosen name</param>
+        /// <returns></returns>
+        public abstract object Invoke(string name = null, dynamic stateBag = null, params object[] args);
 
         /// <summary>
         /// Adds a map of what needs to be changed in the instance into the container

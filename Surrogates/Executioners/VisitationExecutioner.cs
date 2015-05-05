@@ -21,7 +21,6 @@ namespace Surrogates.Executioners
             gen.Emit(OpCodes.Ldarg_0);
 
             var @params =
-                //gen.EmitParametersForSelf(strategy.BaseType, strategy.Fields, baseAction);
                 gen.EmitParametersForSelf(strategy, baseAction);
 
             gen.Emit(OpCodes.Call, baseAction);
@@ -48,7 +47,7 @@ namespace Surrogates.Executioners
             gen.Emit(OpCodes.Ret);
         }
 
-        protected MethodBuilder VisitGetter(SurrogatedProperty property, Strategy.ForProperties strategy)
+        protected void VisitGetter(SurrogatedProperty property, Strategy.ForProperties strategy)
         {
             var pType =
                 property.Original.PropertyType;
@@ -68,7 +67,7 @@ namespace Surrogates.Executioners
             var @params = gen.EmitParameters(
                 strategy,
                 strategy.Getter.Method,
-                p => property.EmitPropertyNameAndField(pType, gen, p));
+                (p, i) => property.EmitPropertyNameAndField(gen, p));
 
             gen.EmitCall(strategy.Getter.Method, @params);
 
@@ -87,10 +86,10 @@ namespace Surrogates.Executioners
 
             gen.Emit(OpCodes.Ret);
 
-            return getter;
+            property.Builder.SetGetMethod(getter);
         }
 
-        protected MethodBuilder VisitSetter(SurrogatedProperty property, Strategy.ForProperties strategy)
+        protected void VisitSetter(SurrogatedProperty property, Strategy.ForProperties strategy)
         {
             var pType =
                 property.Original.PropertyType;
@@ -107,7 +106,7 @@ namespace Surrogates.Executioners
             var @params = gen.EmitParameters(
                 strategy,
                 strategy.Setter.Method,
-                p => property.EmitPropertyNameAndFieldAndValue(pType, gen, p));
+                (p, i) => property.EmitPropertyNameAndFieldAndValue(gen, p, i));
 
             gen.EmitCall(strategy.Setter.Method, @params);
 
@@ -120,7 +119,7 @@ namespace Surrogates.Executioners
 
             gen.Emit(OpCodes.Ret);
 
-            return setter;
+            property.Builder.SetSetMethod(setter);
         }
 
         public override void Execute4Properties(Strategy.ForProperties strategy)

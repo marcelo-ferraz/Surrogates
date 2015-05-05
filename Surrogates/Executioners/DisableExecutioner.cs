@@ -45,6 +45,8 @@ namespace Surrogates.Executioners
 
             gen.EmitDefaultValue(property.Original.PropertyType);
             gen.Emit(OpCodes.Ret);
+
+            property.Builder.SetGetMethod(getter);
         }
 
         public override void Execute4Properties(Strategy.ForProperties strategy)

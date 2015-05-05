@@ -23,16 +23,38 @@ namespace Surrogates.Applications
             }
         }
 
-        public static AndExpression<T> IoC<T>(this ApplyExpression<T> self, params Func<T, object>[] properties)
-        { 
+        public static AndExpression<T> IoC<T, I>(this ApplyExpression<T> self, params Func<T, object>[] properties)
+        {
             var ext = new ShallowExtension<T>();
             Pass.On<T>(self, ext);
 
             return ext.Factory.Replace.These(properties).Accessors(
                 m => m
-                    .Getter.Using<IoCInterceptor4<T>>(ioc => (Func<T>)ioc.Get)
+                    .Getter.Using<IoCInterceptor4<I>>(ioc => (Func<I>)ioc.Get)
                     .And
-                    .Setter.Using<IoCInterceptor4<T>>(ioc => (Action<T>)ioc.Set));
+                    .Setter.Using<IoCInterceptor4<I>>(ioc => (Action<I>)ioc.Set));
+        }
+
+        public static AndExpression<T> IoC<T>(this ApplyExpression<T> self, params Func<T, object>[] properties)
+        {
+            return self.IoC<T, T>(properties);
+        }
+
+        public static AndExpression<T> IoC<T>(this ApplyExpression<T> self, params string[] properties)
+        {
+            return self.IoC<T, T>(properties);
+        }
+
+        public static AndExpression<T> IoC<T, I>(this ApplyExpression<T> self, params string[] properties)
+        {
+            var ext = new ShallowExtension<T>();
+            Pass.On<T>(self, ext);
+
+            return ext.Factory.Replace.Properties(properties).Accessors(
+                m => m
+                    .Getter.Using<IoCInterceptor4<I>>(ioc => (Func<I>)ioc.Get)
+                    .And
+                    .Setter.Using<IoCInterceptor4<I>>(ioc => (Action<I>)ioc.Set));
         }
     }
 }
