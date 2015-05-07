@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
+using Surrogates.Utilities.SDILReader;
 
 namespace Surrogates
 {
@@ -105,7 +106,10 @@ namespace Surrogates
 
             var entry =
                 expression.Strategies.Apply();
-                        
+
+            var instructions =
+                new MethodBodyReader(entry.Type.GetMethod("Call_SetPropText_simple_Return_1")).Instructions;
+
             Cache.Add(entry.Type.Name, entry);
         }
 

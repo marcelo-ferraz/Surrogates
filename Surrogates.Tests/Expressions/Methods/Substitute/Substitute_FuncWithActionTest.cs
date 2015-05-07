@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Surrogates.Tests.Expressions.Entities;
 using System;
+using Surrogates.Utilities.SDILReader;
 
 namespace Surrogates.Tests.Expressions.Methods.Substitute
 {
@@ -108,7 +109,7 @@ namespace Surrogates.Tests.Expressions.Methods.Substitute
                 .From<Dummy>()
                 .Replace
                 .This(d => (Func<int>)d.Call_SetPropText_simple_Return_1)
-                .Using<InterferenceObject>(r => (Action<Dummy, string>)r.SetPropText_InstanceAndMethodName));
+                .Using<InterferenceObject>(r => (Action<dynamic>)r.SetPropText_InstanceAndMethodName)).Save();
 
             var dummy =
                 new Dummy();

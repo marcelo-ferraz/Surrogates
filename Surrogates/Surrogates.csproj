@@ -77,9 +77,9 @@
     <Compile Include="Model\Parsers\SCLParser.cs" />
     <Compile Include="Tactics\Strategies.cs" />
     <Compile Include="Tactics\Strategy.cs" />
-    <Compile Include="Utilities\ExecutionersAct.cs" />
     <Compile Include="ProxyAlreadyMadeException.cs" />
     <Compile Include="Utilities\Clone.cs" />
+    <Compile Include="Utilities\Invoke.cs" />
     <Compile Include="Utilities\Mixins\PropertyMixins.cs" />
     <Compile Include="Utilities\Mixins\StrategyMixins.cs" />
     <Compile Include="Utilities\Mixins\TypeMixins.cs" />

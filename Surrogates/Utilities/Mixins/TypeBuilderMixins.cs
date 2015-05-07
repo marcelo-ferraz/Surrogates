@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using Surrogates.Model.Entities;
 
 namespace Surrogates.Utilities.Mixins
 {
@@ -114,12 +115,17 @@ namespace Surrogates.Utilities.Mixins
             return builder.DefineField(fieldName, prop.PropertyType, FieldAttributes.Private);
         }
 
-        internal static PropertyBuilder DefineNewProperty(this TypeBuilder builder, Type type, string name, object defaultValue=null)
+        internal static PropertyBuilder DefineNewProperty<T>(this TypeBuilder builder, string name)
+        {
+            return builder.DefineNewProperty(typeof(T), name); 
+        }
+
+        internal static PropertyBuilder DefineNewProperty(this TypeBuilder builder, Type type, string name)
         {
             var getSetAttr =
                 MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 
-            #region get_StateBag
+            #region getter
 
             Func<FieldBuilder, MethodBuilder> get_Prop =
                 f =>
@@ -140,9 +146,9 @@ namespace Surrogates.Utilities.Mixins
 
             #endregion
 
-            #region set_StateBag
+            #region setter
 
-            Func<FieldBuilder, MethodBuilder> set_StateBag =
+            Func<FieldBuilder, MethodBuilder> set_Prop =
                 f =>
                 {
                     // Define the "set" accessor method for CustomerName.
@@ -181,9 +187,59 @@ namespace Surrogates.Utilities.Mixins
             }
 
             propBldr.SetGetMethod(get_Prop(field));
-            propBldr.SetSetMethod(set_StateBag(field));
+            propBldr.SetSetMethod(set_Prop(field));
             
             return propBldr;
+        }
+
+        public static Type DefineThisBigNested_Type(this TypeBuilder self, Strategies strats)
+        {
+            Func<Access, bool> can = 
+                a => strats.Accesses.HasFlag(a);
+
+            var builder = 
+                self.DefineNestedType("ThisBig_", TypeAttributes.Class | TypeAttributes.NestedPublic);
+
+            var props = new List<PropertyBuilder>();
+
+            if (can(Access.Container))
+            { props.Add(builder.DefineNewProperty<BaseContainer4Surrogacy>("Container")); }
+
+            if (can(Access.StateBag))
+            { props.Add(builder.DefineNewProperty<dynamic>("Bag")); }
+
+            if(can(Access.Instance))
+            { props.Add(builder.DefineNewProperty<object>("Instance")); }
+
+            props.Add(builder.DefineNewProperty<string>("MethodName"));
+            props.Add(builder.DefineNewProperty<string>("ClassName"));
+            props.Add(builder.DefineNewProperty<Delegate>("BaseMethod"));
+            props.Add(builder.DefineNewProperty<object[]>("Arguments"));
+
+            var ctor = builder.DefineConstructor(
+                MethodAttributes.Public, CallingConventions.Standard, props.Select(p => p.PropertyType).ToArray());
+
+            var gen = ctor.GetILGenerator();
+            
+            int pIndex = 0;
+            var @params = props.Select(
+                p => ctor.DefineParameter(++pIndex, ParameterAttributes.None, 
+                    string.Concat(p.Name[0].ToString().ToLower(), p.Name.Substring(1)))).ToArray(); 
+            
+            for (int i = 0; i < props.Count; i++)
+            {
+                var type =
+                    props[i].PropertyType;
+
+                gen.Emit(OpCodes.Ldarg_0);
+
+                gen.Emit(OpCodes.Ldarg, (sbyte) i + 1); 
+                gen.EmitCall(props[i].GetSetMethod());
+            }
+
+            gen.Emit(OpCodes.Ret);
+
+            return builder.CreateType();
         }
     }
 }

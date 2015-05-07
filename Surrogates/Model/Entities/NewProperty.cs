@@ -26,7 +26,7 @@ namespace Surrogates.Model.Entities
 
         public PropertyBuilder GetBuilder()
         {
-            return _builder ?? (_builder = _typeBuilder.DefineNewProperty(Type, Name, DefaultValue)); 
+            return _builder ?? (_builder = _typeBuilder.DefineNewProperty(Type, Name)); 
         }
 
         public object DefaultValue

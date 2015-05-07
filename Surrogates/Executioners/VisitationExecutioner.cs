@@ -66,7 +66,8 @@ namespace Surrogates.Executioners
 
             var @params = gen.EmitParameters(
                 strategy,
-                strategy.Getter.Method,
+                strategy.Getter,
+                property.Original.GetGetMethod(),
                 (p, i) => property.EmitPropertyNameAndField(gen, p));
 
             gen.EmitCall(strategy.Getter.Method, @params);
@@ -105,7 +106,8 @@ namespace Surrogates.Executioners
 
             var @params = gen.EmitParameters(
                 strategy,
-                strategy.Setter.Method,
+                strategy.Setter,
+                property.Original.GetSetMethod(),
                 (p, i) => property.EmitPropertyNameAndFieldAndValue(gen, p, i));
 
             gen.EmitCall(strategy.Setter.Method, @params);

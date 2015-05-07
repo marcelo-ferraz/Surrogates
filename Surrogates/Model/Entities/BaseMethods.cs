@@ -32,7 +32,7 @@ namespace Surrogates.Model.Entities
 
                 MethodInfo paramMethod;
 
-                if (arg.Name.ToLower() == "s_method")
+                if (arg.Name.ToLower() == "s_method" || arg.Name == "_")
                 {
                     foreach (var m in current.Methods)
                     { _methods.Add(m); }
@@ -42,7 +42,7 @@ namespace Surrogates.Model.Entities
 
                 paramMethod = current
                     .BaseType
-                    .GetMethod4Surrogacy(arg.Name.Substring(2));
+                    .GetMethod4Surrogacy(arg.Name.Length < 2 ? arg.Name : arg.Name.Substring(2), false);
 
                 if (paramMethod == null) { continue; }
 

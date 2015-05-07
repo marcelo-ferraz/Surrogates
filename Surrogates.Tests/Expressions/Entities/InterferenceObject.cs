@@ -9,9 +9,14 @@ namespace Surrogates.Tests.Expressions.Entities
             //Don't do anything
         }
 
-        public void SetPropText_InstanceAndMethodName(Dummy  s_instance, string  s_name)
+        public void SetPropText_InstanceAndMethodName(Dummy s_instance, string s_name)
         {
-             s_instance.Text =  s_instance.GetType().Name + "+" +  s_name;
+            s_instance.Text = s_instance.GetType().Name + "+" + s_name;
+        }
+
+        public void SetPropText_InstanceAndMethodName(dynamic _)
+        {
+            _.Instance.Text = _.Instance.ClassName + "+" + _.MethodName;
         }
 
         public void AddToPropText__MethodName(string text, Dummy  s_instance, DateTime date, string  s_name, Dummy.EvenMore someInstance)

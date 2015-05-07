@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Surrogates.Tests.Expressions.Entities;
 using System;
+using Surrogates.Utilities;
 
 namespace Surrogates.Tests.Expressions.Methods.Disable
 {
@@ -15,7 +16,7 @@ namespace Surrogates.Tests.Expressions.Methods.Disable
             container.Map(m => m
                 .From<Dummy>()
                 .Disable
-                .Method("SetPropText_simple"));
+                .Method("SetPropText_simple")).Save();
 
             var dummy =
                 new Dummy();
@@ -55,5 +56,303 @@ namespace Surrogates.Tests.Expressions.Methods.Disable
             Assert.AreNotEqual(dummyRes, proxyRes);
             Assert.AreEqual(0, proxyRes);
         }
+
     }
+
+            public class ThisBig_2
+        {
+            private BaseContainer4Surrogacy _container;
+
+            private dynamic _bag;
+
+            private dynamic _instance;
+
+            private string _methodName;
+
+            private string _className;
+
+            private Delegate _baseMethod;
+
+            private object[] _arguments;
+
+            public object[] Arguments
+            {
+                get
+                {
+                    return this._arguments;
+                }
+                set
+                {
+                    this._arguments = value;
+                }
+            }
+
+            public dynamic Bag
+            {
+                get
+                {
+                    return this._bag;
+                }
+                set
+                {
+                    this._bag = value;
+                }
+            }
+
+            public Delegate BaseMethod
+            {
+                get
+                {
+                    return this._baseMethod;
+                }
+                set
+                {
+                    this._baseMethod = value;
+                }
+            }
+
+            public string ClassName
+            {
+                get
+                {
+                    return this._className;
+                }
+                set
+                {
+                    this._className = value;
+                }
+            }
+
+            public BaseContainer4Surrogacy Container
+            {
+                get
+                {
+                    return this._container;
+                }
+                set
+                {
+                    this._container = value;
+                }
+            }
+
+            public dynamic Instance
+            {
+                get
+                {
+                    return this._instance;
+                }
+                set
+                {
+                    this._instance = value;
+                }
+            }
+
+            public string MethodName
+            {
+                get
+                {
+                    return this._methodName;
+                }
+                set
+                {
+                    this._methodName = value;
+                }
+            }
+
+            public ThisBig_2(BaseContainer4Surrogacy container, object bag, object instance, string methodName, string className, Delegate baseMethod, object[] args)
+            {
+                Container = container;
+                Bag = bag;
+                Instance = instance;
+                MethodName = methodName;
+                ClassName = className;
+                BaseMethod = baseMethod;
+                Arguments = args;
+
+                var obj = new object[] {
+                    this.Container, this.Bag, null, "mname", "cname"
+                };
+
+                Activator.CreateInstance(typeof(ThisBig_2), obj);
+            }
+        }
+
+
+
+            public class DummyProxy : Dummy
+            {
+                private dynamic _stateBag;
+
+                private SurrogatesContainer _container;
+
+                public SurrogatesContainer Container
+                {
+                    get
+                    {
+                        return this._container;
+                    }
+                    set
+                    {
+                        this._container = value;
+                    }
+                }
+
+                public dynamic StateBag
+                {
+                    get
+                    {
+                        return this._stateBag;
+                    }
+                    set
+                    {
+                        this._stateBag = value;
+                    }
+                }
+
+                public DummyProxy()
+                {
+                    this.StateBag = new object();
+                    this.Container = new SurrogatesContainer();
+                }
+
+                public DummyProxy(string str)
+                    : base(str)
+                {
+                    this.StateBag = new object();
+                    this.Container = new SurrogatesContainer();
+                }
+
+                public override void SetPropText_simple()
+                {
+                    var args = new object[] { };
+
+                    var obj = new object [7];
+                    obj[0] = this.Container; 
+                    obj[1] = this.StateBag;
+                    obj[2] = this;
+                    obj[3] = "";
+                    obj[4] = ""; 
+                    obj[5] = null;
+                    obj[6] = args;
+
+                    Nhonho(Activator.CreateInstance(Type.GetType("strategy.ThisDynamic_Type.FullName"), obj));
+                }
+
+                public void Nhonho(dynamic _)
+                {
+
+                }
+
+                public class ThisBig_
+                {
+                    private BaseContainer4Surrogacy _container;
+
+                    private dynamic _bag;
+
+                    private dynamic _instance;
+
+                    private string _methodName;
+
+                    private string _className;
+
+                    private Delegate _baseMethod;
+
+                    private object[] _arguments;
+
+                    public object[] Arguments
+                    {
+                        get
+                        {
+                            return this._arguments;
+                        }
+                        set
+                        {
+                            this._arguments = value;
+                        }
+                    }
+
+                    public dynamic Bag
+                    {
+                        get
+                        {
+                            return this._bag;
+                        }
+                        set
+                        {
+                            this._bag = value;
+                        }
+                    }
+
+                    public Delegate BaseMethod
+                    {
+                        get
+                        {
+                            return this._baseMethod;
+                        }
+                        set
+                        {
+                            this._baseMethod = value;
+                        }
+                    }
+
+                    public string ClassName
+                    {
+                        get
+                        {
+                            return this._className;
+                        }
+                        set
+                        {
+                            this._className = value;
+                        }
+                    }
+
+                    public BaseContainer4Surrogacy Container
+                    {
+                        get
+                        {
+                            return this._container;
+                        }
+                        set
+                        {
+                            this._container = value;
+                        }
+                    }
+
+                    public dynamic Instance
+                    {
+                        get
+                        {
+                            return this._instance;
+                        }
+                        set
+                        {
+                            this._instance = value;
+                        }
+                    }
+
+                    public string MethodName
+                    {
+                        get
+                        {
+                            return this._methodName;
+                        }
+                        set
+                        {
+                            this._methodName = value;
+                        }
+                    }
+
+                    public ThisBig_(BaseContainer4Surrogacy container, object bag, object instance, string methodName, string className, Delegate baseMethod, object[] arguments)
+                    {
+                        this.Container = container;
+                        this.Bag = bag;
+                        this.Instance = instance;
+                        this.MethodName = methodName;
+                        this.ClassName = className;
+                        this.BaseMethod = baseMethod;
+                        this.Arguments = arguments;
+                    }
+                }
+            }
 }

@@ -76,15 +76,21 @@ namespace Surrogates.Tactics
             set { _newProperties = value; }
         }
 
+        public Type ThisDynamic_Type { get; set; }
+
+        public NewProperty ContainerProperty { get; set; }
+
+        public NewProperty StateBagProperty { get; set; }
+
         private void CreateDefaultNewProperties()
         {
             _newProperties = new List<NewProperty>(); 
 
             if (this.Accesses.HasFlag(Access.StateBag))
-            { this.AddProperty<dynamic>("StateBag"); }
+            { this.StateBagProperty = this.AddProperty<dynamic>("StateBag"); }
 
             if (this.Accesses.HasFlag(Access.Container))
-            { this.AddProperty<SurrogatesContainer>("Container"); }
+            { this.ContainerProperty = this.AddProperty<SurrogatesContainer>("Container"); }
         }
 
         private void ApplyAttributes()
@@ -127,14 +133,18 @@ namespace Surrogates.Tactics
                     }
                 }
             }
-        } 
-        
-        private void AddProperty<T>(string name)
+        }
+
+        private NewProperty AddProperty<T>(string name)
         {
-            this._newProperties.Add(new NewProperty(Builder) { 
-                Name = name,
-                Type = typeof(T)
-            });
+            var prop = 
+                new NewProperty(Builder)
+                {
+                    Name = name,
+                    Type = typeof(T)
+                };
+            this._newProperties.Add(prop);
+            return prop;
         }
 
         private PropertyInfo GetProperty(string name, Type holder)
@@ -149,6 +159,11 @@ namespace Surrogates.Tactics
         
         public Entry Apply()
         {
+            ThisDynamic_Type = 
+                this.Builder.DefineThisBigNested_Type(this);
+
+            this.CreateDefaultNewProperties();
+
             this.ApplyAttributes();
 
             this.CreateStaticCtor();

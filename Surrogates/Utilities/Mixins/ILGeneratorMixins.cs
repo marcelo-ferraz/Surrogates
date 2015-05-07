@@ -12,13 +12,13 @@ namespace Surrogates.Utilities.Mixins
     internal static class ILGeneratorMixins
     {
         /// <summary>
-        /// Setter the original method's parameters if they have the same name and type or are assinable from the type do not forget to 
+        /// 
         /// </summary>
         /// <param name="gen"></param>
         /// <param name="original"></param>
         /// <param name="param"></param>
         /// <param name="pType"></param>
-        private static bool EmitArgumentsBasedOnOriginal(this ILGenerator gen, MethodInfo originalMethod, ParameterInfo param, int paramIndex, FieldInfo baseMethodsField)
+        public static bool EmitArgumentsBasedOnOriginal(this ILGenerator gen, MethodInfo originalMethod, ParameterInfo param, int paramIndex, FieldInfo baseMethodsField)
         {
             // get the method name if the parameter is named methodname
             if (param.ParameterType == typeof(string) && param.Name == "s_name")
@@ -112,11 +112,11 @@ namespace Surrogates.Utilities.Mixins
             gen.Emit(OpCodes.Ldloc, local);
         }
                 
-        internal static Type[] EmitParameters(this ILGenerator gen, Strategy strategy, MethodInfo method, Func<ParameterInfo, int, bool> interfere = null)
+        internal static Type[] EmitParameters(this ILGenerator gen, Strategy strategy, Strategy.Interceptor interceptor, MethodInfo baseMethod, Func<ParameterInfo, int, bool> interfere = null)
         {
             var newParams = new List<Type>();
 
-            var @params = method.GetParameters();
+            var @params = interceptor.Method.GetParameters();
 
             for (int i = 0; i < @params.Length; i++)
             {
@@ -128,7 +128,7 @@ namespace Surrogates.Utilities.Mixins
                 if (interfere != null && interfere(@params[i], i))
                 { continue; }
 
-                if (Try2Add.AnythingElseAsParameter(gen, strategy, @params[i]))
+                if (Try2Add.AnythingAsParameter(gen, strategy, interceptor, baseMethod, @params[i]))
                 { continue; }
             }
             return newParams.ToArray();
@@ -136,15 +136,18 @@ namespace Surrogates.Utilities.Mixins
 
         internal static Type[] EmitParametersForSelf(this ILGenerator gen, Strategy strategy, MethodInfo baseMethod)
         {
-            return gen.EmitParameters(strategy, baseMethod, baseMethod);
-        }
+            var @params = baseMethod.GetParameters();
+            
+            var newParams = new Type[@params.Length];
 
-        internal static Type[] EmitParameters(this ILGenerator gen, Strategy strategy, MethodInfo method, MethodInfo baseMethod)
-        {
-            return gen.EmitParameters(
-                strategy,
-                method,
-                (p, i) => gen.EmitArgumentsBasedOnOriginal(baseMethod, p, i, strategy.BaseMethods.Field)); 
+            for (int i = 0; i < @params.Length; i++)
+            {
+                newParams[i] = @params[i].ParameterType;
+
+                gen.EmitArgumentsBasedOnOriginal(baseMethod, @params[i], i, strategy.BaseMethods.Field);
+            }
+
+            return newParams;
         }
 
         /// <summary>

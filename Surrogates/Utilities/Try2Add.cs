@@ -13,45 +13,131 @@ namespace Surrogates.Utilities
 {
     internal static class Try2Add
     {
-        internal static bool AnythingElseAsParameter(ILGenerator gen, Strategy strategy, ParameterInfo param)
+        internal static bool AnythingAsParameter(ILGenerator gen, Strategy strategy, Strategy.Interceptor interceptor, MethodInfo originalMethod, ParameterInfo param)
         {
             var isSpecialParam =
                 param.Name[0] == 's' && param.Name[1] == '_';
+            
+            if (param.ParameterType == typeof(string) && param.Name == "s_name")
+            {
+                gen.Emit(OpCodes.Ldstr, originalMethod.Name);
+                return true;
+            }
 
             // get the instance if the parameter of the interceptor is named instance
             if (isSpecialParam && 
-                strategy.Permissions.HasFlag(Access.Instance) &&
+                strategy.Accesses.HasFlag(Access.Instance) &&
                 InstanceAsParameter(gen, strategy, param))
             { return true; }
 
             // tries to add any method as parameter 
             if (isSpecialParam && 
-                strategy.Permissions.HasFlag(Access.AnyMethod) &&
+                strategy.Accesses.HasFlag(Access.AnyMethod) &&
                 Try2Add.AnyMethodAsParameter(gen, strategy.BaseType, param, strategy.BaseMethods.Field))
             { return true; }
 
             // tries to add any field as parameter 
             if (isSpecialParam &&
-                strategy.Permissions.HasFlag(Access.AnyField) &&
+                strategy.Accesses.HasFlag(Access.AnyField) &&
                 Try2Add.AnyFieldAsParameter(gen, strategy.BaseType, strategy.Fields, param, param.ParameterType))
             { return true; }
 
             // tries to add any property as parameter 
             if (isSpecialParam &&
-                strategy.Permissions.HasFlag(Access.AnyBaseProperty) &&
+                strategy.Accesses.HasFlag(Access.AnyBaseProperty) &&
                 Try2Add.AnyBasePropertyAsParameter(gen, strategy.BaseType, strategy.Fields, param, param.ParameterType))
             { return true; }
             
             // tries to add any property as parameter 
             if (isSpecialParam &&
-                strategy.Permissions.HasFlag(Access.AnyNewProperty) &&
+                strategy.Accesses.HasFlag(Access.AnyNewProperty) &&
                 Try2Add.AnyNewPropertyAsParameter(gen, strategy.BaseType, strategy.NewProperties, param, param.ParameterType))
             { return true; }
+
+            if (param.Name[0] == '_' && param.ParameterType == typeof(object))
+            {
+                bool canSeeContainer = strategy.Accesses.HasFlag(Access.Container);
+                bool canSeeStateBag = strategy.Accesses.HasFlag(Access.StateBag);
+                bool canSeeInstance = strategy.Accesses.HasFlag(Access.Instance);
+                int offset = (canSeeInstance?1:0) + (canSeeContainer?1:0) + (canSeeStateBag?1:0);
+
+                var ldloc = interceptor.ArgsLocal == null?
+                    OpCodes.Ldloc_0 : OpCodes.Ldloc_1;
+
+                var stloc = interceptor.ArgsLocal == null?
+                    OpCodes.Stloc_0 : OpCodes.Stloc_1;
+
+
+                gen.Emit(OpCodes.Ldc_I4, (sbyte)(4 + offset));
+                gen.Emit(OpCodes.Newarr, typeof(object));
+                gen.Emit(stloc);
+
+                //BaseContainer4Surrogacy container, 
+                if (canSeeContainer)
+                {
+                    gen.Emit(ldloc);
+                    gen.Emit(OpCodes.Ldc_I4_0);
+                    gen.Emit(OpCodes.Ldarg_0);
+                    gen.EmitCall(strategy.ContainerProperty.GetBuilder().GetGetMethod());
+                    gen.Emit(OpCodes.Stelem_Ref);
+                }
+                
+                //object bag, 
+                if (canSeeStateBag)
+                {
+                    gen.Emit(ldloc);
+                    gen.Emit(OpCodes.Ldc_I4, canSeeContainer ? 1 : 0);
+                    gen.Emit(OpCodes.Ldarg_0);
+                    gen.EmitCall(strategy.StateBagProperty.GetBuilder().GetGetMethod());
+                    gen.Emit(OpCodes.Stelem_Ref);
+                }
+                
+                //object instance, 
+                if (canSeeInstance)
+                {
+                    gen.Emit(ldloc);
+                    gen.Emit(OpCodes.Ldc_I4, (canSeeContainer ? 1 : 0) + (canSeeStateBag ? 1 : 0));
+                    gen.Emit(OpCodes.Ldarg_0);
+                    gen.Emit(OpCodes.Stelem_Ref);
+                }
+                //string methodName,
+                gen.Emit(ldloc);
+                gen.Emit(OpCodes.Ldc_I4, offset++);
+                gen.Emit(OpCodes.Ldstr, originalMethod.Name);
+                gen.Emit(OpCodes.Stelem_Ref);
+
+                //string className, 
+                gen.Emit(ldloc);
+                gen.Emit(OpCodes.Ldc_I4, offset++);
+                gen.Emit(OpCodes.Ldstr, strategy.BaseType.FullName);
+                gen.Emit(OpCodes.Stelem_Ref);
+
+                //Delegate baseMethod, 
+                gen.Emit(ldloc);
+                gen.Emit(OpCodes.Ldc_I4, offset++);
+                MethodAsParameter(gen, interceptor.Method, param, strategy.BaseMethods.Field);
+                gen.Emit(OpCodes.Stelem_Ref);
+                //object[] args
+                gen.Emit(ldloc);
+                gen.Emit(OpCodes.Ldc_I4, offset++);
+                ArgsParam(gen, param, 0, param.ParameterType, interceptor.Method.GetParameters());
+                gen.Emit(OpCodes.Stelem_Ref);
+
+                gen.Emit(OpCodes.Ldarg_0);
+                gen.Emit(OpCodes.Ldstr, strategy.ThisDynamic_Type.FullName);
+                gen.EmitCall(typeof(Type).GetMethod("GetType", new [] { typeof(string) }), new [] { typeof(string) });
+                gen.Emit(ldloc);
+                gen.EmitCall(OpCodes.Call, typeof(Activator).GetMethod("CreateInstance", new[] { typeof(Type), typeof(object[]) }), new[] { typeof(Type), typeof(object[]) });
+        
+                //gen.Emit(OpCodes.Call, strategy.ThisBig_Type.GetConstructors()[0]);
+
+            }
 
             gen.EmitDefaultParameterValue(param.ParameterType); 
 
             return false;
         }
+
 
         private static bool InstanceAsParameter(ILGenerator gen, Strategy strategy, ParameterInfo param)
         {

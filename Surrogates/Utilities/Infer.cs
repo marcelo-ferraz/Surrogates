@@ -87,6 +87,7 @@ namespace Surrogates.Utilities
         {
             return Delegate(typeof(T), methodName, ref delType);
         }
+
         public static Func<object, Delegate> Delegate<T>(string methodName)
         {
             Type delType = null;

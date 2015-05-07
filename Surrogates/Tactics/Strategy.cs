@@ -22,6 +22,9 @@ namespace Surrogates.Tactics
             public string Name { get; set; }
             public Type DeclaredType { get; set; }
             public MethodInfo Method { get; set; }
+
+            public LocalBuilder ThisDynamic_Local { get; set; }
+            public LocalBuilder ArgsLocal { get; set; }
         }
 
         public class ForProperties : Strategy
@@ -69,16 +72,16 @@ namespace Surrogates.Tactics
 
         public static IDictionary<string, Action<Strategy>> Executioners { get; set; }
 
-        private Strategies _owner;
+        private Strategies _parent;
 
         public Strategy(Strategies owner)
         {
-            this._owner = owner;
+            this._parent = owner;
         }
 
         public Strategy(Strategy @base)
         {
-            this._owner = @base._owner;
+            this._parent = @base._parent;
             this.Kind = @base.Kind;
         }
 
@@ -88,32 +91,47 @@ namespace Surrogates.Tactics
 
         public Type BaseType
         {
-            get { return _owner.BaseType; }
+            get { return _parent.BaseType; }
         }
         
         public TypeBuilder TypeBuilder
         {
-            get { return _owner.Builder; }
+            get { return _parent.Builder; }
         }
 
         public List<NewProperty> NewProperties
         {
-            get { return _owner.NewProperties; }
+            get { return _parent.NewProperties; }
         }
 
-        public Access Permissions
+        public Access Accesses
         {
-            get { return _owner.Accesses; }
+            get { return _parent.Accesses; }
         }
 
         public FieldList Fields 
         {
-            get { return _owner.Fields; }
+            get { return _parent.Fields; }
         }
 
         public BaseMethods BaseMethods
         {
-            get { return _owner.BaseMethods; }
+            get { return _parent.BaseMethods; }
+        }
+
+        public NewProperty ContainerProperty
+        {
+            get { return _parent.ContainerProperty; }
+        }
+
+        public NewProperty StateBagProperty
+        {
+            get { return _parent.StateBagProperty; }
+        }
+
+        public Type ThisDynamic_Type
+        {
+            get { return _parent.ThisDynamic_Type; }
         }
 
         public void Apply(Type baseType, ref TypeBuilder builder)
@@ -121,8 +139,7 @@ namespace Surrogates.Tactics
             var executionerName =
                 this.Kind != InterferenceKind.Extensions ?
                 Enum.GetName(typeof(InterferenceKind), Kind).ToLower() : 
-                KindExtended;
-            
+                KindExtended;            
 
             Executioners[executionerName](this);
         }
