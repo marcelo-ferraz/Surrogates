@@ -20,21 +20,8 @@ namespace Surrogates.Utilities.Mixins
         /// <param name="pType"></param>
         public static bool EmitArgumentsBasedOnOriginal(this ILGenerator gen, MethodInfo originalMethod, ParameterInfo param, int paramIndex, FieldInfo baseMethodsField)
         {
-            // get the method name if the parameter is named methodname
-            if (param.ParameterType == typeof(string) && param.Name == "s_name")
-            {
-                gen.Emit(OpCodes.Ldstr, originalMethod.Name);
-                return true;
-            }
-
             var baseParams =
                 originalMethod.GetParameters();
-
-            //if (Try2Add.InitializeArgsParam(gen, param, paramIndex, param.ParameterType, baseParams))
-            //{ return true; }
-
-            //if (Try2Add.InitializeOriginalMethodAsParameter(gen, originalMethod, param, baseMethodsField))
-            //{ return true; }
 
             for (int i = 0; i < baseParams.Length; i++)
             {

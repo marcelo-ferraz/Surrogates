@@ -1,6 +1,10 @@
 ﻿using Surrogates.Expressions;
 using Surrogates.Model.Entities;
 using System;
+using System.IO;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Surrogates
 {

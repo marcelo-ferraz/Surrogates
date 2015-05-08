@@ -40,9 +40,9 @@ namespace Surrogates.Applications.ExecutingElsewhere
             foreach(var m in Pass.Current<Strategy.ForMethods>(_previousExpression).Methods)
             {
                 if (!m.IsPublic) 
-                {
-                    // TODO: create custom exception
-                    throw new Exception(string.Format("The method '{0}' must be public, to be sent to another domain.", m.Name));
+                {                    
+                    throw new IncohenerentException(
+                        "The method '{0}' must be public, to be sent to another domain.", m.Name);
                 }
             }
             
@@ -59,8 +59,7 @@ namespace Surrogates.Applications.ExecutingElsewhere
                 .And
                 .AddAttribute<SerializableAttribute>()
                 .And
-                .AddProperty<ExecuteInOtherDomain.State>("State", state)
-                ;
+                .AddProperty<ExecuteInOtherDomain.State>("State", state);
         }
     }
 }

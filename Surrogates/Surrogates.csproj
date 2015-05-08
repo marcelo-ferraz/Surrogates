@@ -52,6 +52,7 @@
     <Compile Include="Expressions\InterferenceExpression.cs" />
     <Compile Include="FuncR.cs" />
     <Compile Include="IExtension.cs" />
+    <Compile Include="IncohenerentException.cs" />
     <Compile Include="IncohenerentNewProperty.cs" />
     <Compile Include="IncoherentBody4PropertyException.cs" />
     <Compile Include="MethodNotFoundException.cs" />
@@ -79,8 +80,7 @@
     <Compile Include="Tactics\Strategy.cs" />
     <Compile Include="ProxyAlreadyMadeException.cs" />
     <Compile Include="Utilities\Clone.cs" />
-    <Compile Include="Utilities\Initialize.cs" />
-    <Compile Include="Utilities\Invoke.cs" />
+    <Compile Include="Utilities\Set4Locals.cs" />
     <Compile Include="Utilities\Mixins\ParameterInfoMixins.cs" />
     <Compile Include="Utilities\Mixins\PropertyMixins.cs" />
     <Compile Include="Utilities\Mixins\StrategyMixins.cs" />

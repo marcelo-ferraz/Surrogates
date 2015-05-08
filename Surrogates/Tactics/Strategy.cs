@@ -17,16 +17,15 @@ namespace Surrogates.Tactics
                 this.Name = string.IsNullOrEmpty(name) ? "interceptor" : name;
                 this.DeclaredType = declaredType;
                 this.Method = method;
+
+                Locals = new Dictionary<string, LocalBuilder>();
             }
+
+            public IDictionary<string, LocalBuilder> Locals { get; set; }
 
             public string Name { get; set; }
             public Type DeclaredType { get; set; }
             public MethodInfo Method { get; set; }
-
-            public LocalBuilder ThisDynamic_Local { get; set; }
-            public LocalBuilder ArgsLocal { get; set; }
-
-            public LocalBuilder S_MethodParam { get; set; }
         }
 
         public class ForProperties : Strategy

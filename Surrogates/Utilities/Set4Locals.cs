@@ -10,7 +10,7 @@ using Surrogates.Utilities.Mixins;
 
 namespace Surrogates.Utilities
 {
-    public static class Initialize
+    public static class Set4Locals
     {
         public static LocalBuilder AllComplexParameters(Strategy.ForMethods strat, MethodInfo baseMethod, ILGenerator gen)
         {
@@ -19,30 +19,31 @@ namespace Surrogates.Utilities
                 null;
 
             foreach (var param in strat.Interceptor.Method.GetParameters())
-            {
-                bool isDynamic_ = param.IsDynamic_();
-
-                if (isDynamic_ || param.IsSelfArguments())
+            {                
+                if (param.IsSelfArguments())
                 {
-                    strat.Interceptor.ArgsLocal = Initialize.ArgsParam(
-                        gen, param, baseMethod.GetParameters());
+                    strat.Interceptor.Locals.Add("Args", 
+                        Set4Locals.ArgsParam(gen, param, baseMethod.GetParameters()));
                 }
 
-                if (isDynamic_ || param.IsSelfMethod())
+                if (param.IsSelfMethod())
                 {
-                    strat.Interceptor.S_MethodParam = Initialize.OriginalMethodAsParameter(
-                        gen, baseMethod, param, strat.BaseMethods.Field, isDynamic_);
+                    strat.Interceptor.Locals.Add("S_Method", 
+                        Set4Locals.OriginalMethodAsParameter(gen, baseMethod, param, strat.BaseMethods.Field));
                 }
 
-                if (isDynamic_)
+                if (param.IsDynamic_())
                 {
-                    strat.Interceptor.ThisDynamic_Local = Initialize.ThisDynamic_(
-                        gen, strat, strat.Interceptor, baseMethod, param);
+                    strat.Interceptor.Locals.Add("ThisDynamic_", 
+                        Set4Locals.ThisDynamic_(gen, strat, strat.Interceptor, baseMethod, param));
                 }
 
                 if (param.Is4SomeMethod())
                 {
-                    // still to do something 
+                    var key = string.Concat(param.Name, "+", param.ParameterType.Name);
+
+                    strat.Interceptor.Locals.Add(key, 
+                        Set4Locals.ThisDynamic_(gen, strat, strat.Interceptor, baseMethod, param));
                 }
             }
             return returnField;
@@ -96,11 +97,20 @@ namespace Surrogates.Utilities
         /// <param name="pType"></param>
         /// <param name="baseParams"></param>
         /// <returns></returns>
-        internal static LocalBuilder OriginalMethodAsParameter(ILGenerator gen, MethodInfo baseMethod, ParameterInfo param, FieldInfo baseMethodsField, bool isDynamic_ = false)
+        internal static LocalBuilder OriginalMethodAsParameter(ILGenerator gen, MethodInfo baseMethod, ParameterInfo param, FieldInfo baseMethodsField, bool is4Dynamic_ = false)
         {
-            return Initialize.MethodAsParameter(gen, baseMethod, param, baseMethodsField, isDynamic_);
+            return Set4Locals.MethodAsParameter(gen, baseMethod, param, baseMethodsField, is4Dynamic_);
         }
 
+        /// <summary>
+        /// Initializes a given method as a parameter 
+        /// </summary>
+        /// <param name="gen"></param>
+        /// <param name="baseMethod"></param>
+        /// <param name="param"></param>
+        /// <param name="baseMethodsField"></param>
+        /// <param name="isDynamic_"></param>
+        /// <returns></returns>
         internal static LocalBuilder MethodAsParameter(ILGenerator gen, MethodInfo baseMethod, ParameterInfo param, FieldInfo baseMethodsField, bool isDynamic_ = false)
         {
             if (!baseMethod.IsFamily && !baseMethod.IsPrivate && !baseMethod.IsPublic)
@@ -113,7 +123,7 @@ namespace Surrogates.Utilities
 
             Type delType =
                 Infer.DelegateTypeFrom(baseMethod);
-            
+
             gen.Emit(OpCodes.Ldsfld, baseMethodsField);
             gen.Emit(OpCodes.Ldstr, baseMethod.Name);
             gen.EmitCall(typeof(Dictionary<string, Func<object, Delegate>>).GetMethod4Surrogacy("get_Item"));
@@ -125,6 +135,14 @@ namespace Surrogates.Utilities
             return local;
         }
 
+        /// <summary>
+        /// It passes any method to a local variable and sets it  
+        /// </summary>
+        /// <param name="gen"></param>
+        /// <param name="baseType"></param>
+        /// <param name="param"></param>
+        /// <param name="baseMethodsField"></param>
+        /// <returns></returns>
         internal static LocalBuilder AnyMethodAsParameter(ILGenerator gen, Type baseType, ParameterInfo param, FieldInfo baseMethodsField)
         {
             MethodInfo method = null;
@@ -143,11 +161,11 @@ namespace Surrogates.Utilities
             {
                 var genDef = param
                     .ParameterType.GetGenericTypeDefinition();
-                
+
                 var genParams = param
                     .ParameterType.GetGenericArguments();
 
-                if (genDef == typeof(Func<>)) 
+                if (genDef == typeof(Func<>))
                 {
                     method = baseType.GetMethod4Surrogacy(
                          param.Name.Substring(2), Type.EmptyTypes, false);
@@ -160,17 +178,39 @@ namespace Surrogates.Utilities
                 else
                 {
                     method = baseType.GetMethod4Surrogacy(
-                        param.Name.Substring(2), genParams, false); 
+                        param.Name.Substring(2), genParams, false);
                 }
             }
 
             return method != null ?
-                Initialize.MethodAsParameter(gen, method, param, baseMethodsField) :
-                null; 
+                Set4Locals.MethodAsParameter(gen, method, param, baseMethodsField) :
+                null;
         }
 
+        /// <summary>
+        /// Creates the local for this dynamic underscore and sets its all values
+        /// </summary>
+        /// <param name="gen"></param>
+        /// <param name="strategy"></param>
+        /// <param name="interceptor"></param>
+        /// <param name="originalMethod"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
         internal static LocalBuilder ThisDynamic_(ILGenerator gen, Strategy strategy, Strategy.Interceptor interceptor, MethodInfo originalMethod, ParameterInfo param)
         {
+
+            if (!interceptor.Locals.ContainsKey("S_Method"))
+            { 
+                interceptor.Locals.Add("S_Method", 
+                    Set4Locals.OriginalMethodAsParameter(gen, originalMethod, param, strategy.BaseMethods.Field, is4Dynamic_: true)); 
+            }
+
+            if (!interceptor.Locals.ContainsKey("Args"))
+            {
+                interceptor.Locals.Add("Args", 
+                    Set4Locals.ArgsParam(gen, param, originalMethod.GetParameters()));
+            }
+
             var local =
                 gen.DeclareLocal(typeof(object[]));
 
@@ -199,7 +239,7 @@ namespace Surrogates.Utilities
             //BaseContainer4Surrogacy container, 
             if (canSeeContainer)
             {
-                emitAdd(0, 
+                emitAdd(0,
                     () =>
                     {
                         gen.Emit(OpCodes.Ldarg_0);
@@ -210,7 +250,7 @@ namespace Surrogates.Utilities
             ////object bag, 
             if (canSeeStateBag)
             {
-                emitAdd(canSeeContainer ? 1 : 0, 
+                emitAdd(canSeeContainer ? 1 : 0,
                     () =>
                     {
                         gen.Emit(OpCodes.Ldarg_0);
@@ -236,18 +276,18 @@ namespace Surrogates.Utilities
                 offset++,
                 () => gen.Emit(OpCodes.Ldstr, strategy.BaseType.FullName));
 
+
             //Delegate baseMethod, 
             emitAdd(
                 offset++,
-                () => gen.Emit(OpCodes.Ldloc, interceptor.S_MethodParam));
+                () => gen.Emit(OpCodes.Ldloc, interceptor.Locals["S_Method"]));
 
             //object[] args
             emitAdd(
                 offset++,
-                () => gen.Emit(OpCodes.Ldloc, interceptor.ArgsLocal));
+                () => gen.Emit(OpCodes.Ldloc, interceptor.Locals["Args"]));
 
             return local;
         }
-
     }
 }

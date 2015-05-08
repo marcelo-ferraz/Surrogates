@@ -47,10 +47,8 @@ namespace Surrogates.Executioners
                     if(baseFunction.ReturnType.IsValueType)
                     {                        
                         gen.Emit(OpCodes.Unbox_Any, baseFunction.ReturnType);
-
-                        gen.Emit(OpCodes.Stloc_0);
-                        //gen.Emit(OpCodes.Br_S, IL_0032
-                        gen.Emit(OpCodes.Ldloc_0);
+                        gen.Emit(OpCodes.Stloc, baseMethodReturn);
+                        gen.Emit(OpCodes.Ldloc, baseMethodReturn);
                     }
                     else
                     {

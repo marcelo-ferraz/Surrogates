@@ -42,7 +42,7 @@ namespace Surrogates.Utilities.Mixins
                 builder.DefineParameter(++pIndex, ParameterAttributes.None, param.Name);
             }
 
-            returnField = Initialize
+            returnField = Set4Locals
                 .AllComplexParameters(strat, baseMethod, gen);
             
             //gen.Emit(OpCodes.Nop);

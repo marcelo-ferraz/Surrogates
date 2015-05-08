@@ -18,16 +18,14 @@ namespace Surrogates.Utilities
             var isSpecialParam =
                 param.Name[0] == 's' && param.Name[1] == '_';
             
-            if (param.ParameterType == typeof(string) && param.Name == "s_name")
+            if (param.Is4Name())
             {
                 gen.Emit(OpCodes.Ldstr, originalMethod.Name);
                 return true;
             }
 
             // get the instance if the parameter of the interceptor is named instance
-            if (isSpecialParam && 
-                strategy.Accesses.HasFlag(Access.Instance) &&
-                param.IsInstance(strategy.BaseType))
+            if (strategy.Accesses.HasFlag(Access.Instance) && param.IsInstance(strategy.BaseType))
             {
                 gen.Emit(OpCodes.Ldarg_0);
                 return true;
@@ -35,15 +33,18 @@ namespace Surrogates.Utilities
 
             if (isSpecialParam && param.IsSelfArguments())
             {
-                gen.Emit(OpCodes.Ldloc, interceptor.ArgsLocal);
+                gen.Emit(OpCodes.Ldloc, interceptor.Locals["Args"]);
             }
 
             // tries to add any method as parameter - disabled, temporarily 
-            if (isSpecialParam &&
-                strategy.Accesses.HasFlag(Access.AnyMethod) &&
-                param.Is4SomeMethod() && false)
-            { 
-                return true; 
+            if (strategy.Accesses.HasFlag(Access.AnyMethod) && param.Is4SomeMethod())
+            {
+                var local = 
+                    interceptor.Locals[string.Concat(param.Name, "+", param.ParameterType.Name)];
+
+                gen.Emit(OpCodes.Ldloc, local);
+
+                return true;
             }
 
             // tries to add any field as parameter 
@@ -58,17 +59,23 @@ namespace Surrogates.Utilities
                 Try2Add.AnyBasePropertyAsParameter(gen, strategy.BaseType, strategy.Fields, param, param.ParameterType))
             { return true; }
             
-            // tries to add any property as parameter 
+            // tries to add any of the new properties as parameter 
             if (isSpecialParam &&
                 strategy.Accesses.HasFlag(Access.AnyNewProperty) &&
                 Try2Add.AnyNewPropertyAsParameter(gen, strategy.BaseType, strategy.NewProperties, param, param.ParameterType))
             { return true; }
 
-            if (param.Name[0] == '_' && param.ParameterType == typeof(object))
+            if (param.IsSelfMethod())
+            {
+                gen.Emit(OpCodes.Ldloc, interceptor.Locals["S_Method"]);
+                return true;
+            }
+
+            if (param.IsDynamic_())
             {                
                 gen.Emit(OpCodes.Ldstr, strategy.ThisDynamic_Type.FullName);
                 gen.EmitCall(OpCodes.Call, typeof(Type).GetMethod("GetType", new [] { typeof(string) }), new [] { typeof(string) });
-                gen.Emit(OpCodes.Ldloc, interceptor.ThisDynamic_Local);
+                gen.Emit(OpCodes.Ldloc, interceptor.Locals["ThisDynamic_"]);
                 gen.EmitCall(OpCodes.Call, typeof(Activator).GetMethod("CreateInstance", new[] { typeof(Type), typeof(object[]) }), new[] { typeof(Type), typeof(object[]) });
         
                 return true;

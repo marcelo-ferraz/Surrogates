@@ -37,7 +37,7 @@ namespace Surrogates.Applications
             return exp;
         }
 
-        public static AndExpression<T> ReadAndWrite<T>(this ApplyExpression<T> self, Func<T, Delegate> reader, Func<T, Delegate> writer)
+        public static AndExpression<T>  ReadAndWrite<T>(this ApplyExpression<T> self, Func<T, Delegate> reader, Func<T, Delegate> writer)
         {
             var ext =
                 new ShallowExtension<T>();

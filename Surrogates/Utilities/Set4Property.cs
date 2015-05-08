@@ -16,18 +16,6 @@ namespace Surrogates.Utilities
         /// <summary>
         /// It adds a very simple getter accessor to the property 
         /// </summary>
-        /// <param name="expression">The expression used for changing the accessor</param>
-        public static void OneSimpleGetter(Accessors.ModifierExpression expression)
-        {
-            foreach (var prop in expression.Strategy.Properties)
-            {
-                OneSimpleGetter(expression.Strategy, prop);
-            }
-        }
-
-        /// <summary>
-        /// It adds a very simple getter accessor to the property 
-        /// </summary>
         /// <param name="strategy">the strategy respnsible for </param>
         /// <param name="prop">The original property </param>
         internal static void OneSimpleGetter(Strategy.ForProperties strategy, SurrogatedProperty prop)
@@ -55,19 +43,6 @@ namespace Surrogates.Utilities
             prop.Builder.SetGetMethod(getter);
         }
 
-        /// <summary>
-        /// It adds a very simple setter accessor to the property 
-        /// </summary>
-        /// <param name="strategy">The expression used for changing the accessor</param> 
-        /// <param name="prop">The original property </param>
-        public static void OneSimpleSetter(Accessors.ModifierExpression expression)
-        {
-            foreach (var prop in expression.Strategy.Properties)
-            {
-                OneSimpleSetter(expression.Strategy, prop);
-            }
-        }
-        
         internal static void OneSimpleSetter(Strategy.ForProperties strategy, SurrogatedProperty prop)
         {
             //insert a basic set
@@ -86,6 +61,31 @@ namespace Surrogates.Utilities
             gen.Emit(OpCodes.Ret);
 
             prop.Builder.SetSetMethod(setter);
+        }
+
+        /// <summary>
+        /// It adds a very simple getter accessor to the property 
+        /// </summary>
+        /// <param name="expression">The expression used for changing the accessor</param>
+        public static void OneSimpleGetter(Accessors.ModifierExpression expression)
+        {
+            foreach (var prop in expression.Strategy.Properties)
+            {
+                OneSimpleGetter(expression.Strategy, prop);
+            }
+        }
+
+        /// <summary>
+        /// It adds a very simple setter accessor to the property 
+        /// </summary>
+        /// <param name="strategy">The expression used for changing the accessor</param> 
+        /// <param name="prop">The original property </param>
+        public static void OneSimpleSetter(Accessors.ModifierExpression expression)
+        {
+            foreach (var prop in expression.Strategy.Properties)
+            {
+                OneSimpleSetter(expression.Strategy, prop);
+            }
         }
     }
 }

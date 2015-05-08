@@ -21,7 +21,8 @@ namespace Surrogates.Applications.Tests
             Container.Map(m =>
                 m.From<Simple>()
                 .Apply
-                .ReadAndWrite(s => (Func<int, int>)s.GetFromList, s => (Action<int>)s.Add2List));
+                .ReadAndWrite(s => (Func<int, int>)s.GetFromList, s => (Action<int>)s.Add2List))
+                .Save();
 
             var max = 15000000;
 

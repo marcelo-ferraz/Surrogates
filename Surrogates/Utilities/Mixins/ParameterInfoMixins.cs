@@ -8,6 +8,11 @@ namespace Surrogates.Utilities.Mixins
 {
     public static class ParameterInfoMixins
     {
+        public static bool Is4Name(this ParameterInfo self)
+        {
+            return self.ParameterType == typeof(string) && self.Name == "s_name";
+        }
+
         public static bool IsSelfMethod(this ParameterInfo self)
         {
             return self.Name == "s_method" && self.ParameterType.IsAssignableFrom(typeof(Delegate));

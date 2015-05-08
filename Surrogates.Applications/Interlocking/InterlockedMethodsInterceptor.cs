@@ -64,12 +64,8 @@ namespace Surrogates.Applications.Interlocking
             Lock.Dispose();
         }
 
-        public void Write2(object[] s_arguments, Delegate s_method)
-        { 
-
-        }
-
-        public void Write(Delegate s_method, object[] s_arguments)
+        //public void Write(object[] s_arguments, Delegate s_method)
+        public void Write(dynamic _)
         {
             bool lockWasHeld = false;
             try
@@ -83,7 +79,7 @@ namespace Surrogates.Applications.Interlocking
                     lockWasHeld = Lock.TryEnterWriteLock(500);
                 }
 
-                if (lockWasHeld) { s_method.DynamicInvoke(s_arguments); }                
+                if (lockWasHeld) { _.Caller.DynamicInvoke(_.Arguments); }
             }
             finally
             {

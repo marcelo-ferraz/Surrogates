@@ -63,6 +63,8 @@ namespace Surrogates.Applications.ExecutingElsewhere
 
                 _thisDomain = AppDomain
                     .CreateDomain(state.Name, evidence, setup, permissionSet);
+
+                //_thisDomain.Load()
             }
 
             public object Execute(ExecuteInOtherDomain.State s_State, Delegate s_method)
