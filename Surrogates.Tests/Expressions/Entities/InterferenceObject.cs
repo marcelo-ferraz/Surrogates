@@ -16,7 +16,7 @@ namespace Surrogates.Tests.Expressions.Entities
 
         public void SetPropText_InstanceAndMethodName(dynamic _)
         {
-            _.Instance.Text = _.Instance.ClassName + "+" + _.MethodName;
+            _.Holder.Text = _.HolderName + "+" + _.CallerName;
         }
 
         public void AddToPropText__MethodName(string text, Dummy  s_instance, DateTime date, string  s_name, Dummy.EvenMore someInstance)

@@ -163,7 +163,7 @@ namespace Surrogates.Tactics
         public Entry Apply()
         {
             ThisDynamic_Type = 
-                this.Builder.DefineThisBigNested_Type(this);
+                this.Builder.DefineThisDynamic_NestedType(this);
 
             this.CreateDefaultNewProperties();
 

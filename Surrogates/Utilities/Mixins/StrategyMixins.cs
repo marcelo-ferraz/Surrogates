@@ -42,43 +42,8 @@ namespace Surrogates.Utilities.Mixins
                 builder.DefineParameter(++pIndex, ParameterAttributes.None, param.Name);
             }
 
-            returnField = baseMethod.ReturnType != typeof(void) ?
-                gen.DeclareLocal(baseMethod.ReturnType) :
-                null;
-
-
-            foreach (var param in strat.Interceptor.Method.GetParameters())
-            {
-                bool isDynamic_ = 
-                    param.Name == "_" && param.ParameterType == typeof(object);
-
-                if (isDynamic_ || (param.ParameterType == typeof(object[]) && (param.Name == "s_arguments" || param.Name == "s_args")))
-                {
-                    strat.Interceptor.ArgsLocal = 
-                        gen.DeclareLocal(typeof(object[]));
-                    
-                    Try2Add.InitializeArgsParam(
-                        gen, param, strat.Interceptor, baseMethod.GetParameters());
-                }
-
-                if (isDynamic_ || (param.Name == "s_method" && param.ParameterType.IsAssignableFrom(typeof(Delegate))))
-                {
-                    strat.Interceptor.S_MethodParam =
-                        gen.DeclareLocal(isDynamic_ ? typeof(Delegate) : param.ParameterType);
-
-                    Try2Add.InitializeOriginalMethodAsParameter(
-                        gen, baseMethod, param, strat.Interceptor, strat.BaseMethods.Field);
-                }
-
-                if (isDynamic_)
-                {
-                    strat.Interceptor.ThisDynamic_Local = 
-                        gen.DeclareLocal(typeof(object[]));
-                    
-                    Try2Add.InitializeThisDynamic_(
-                        gen, strat, strat.Interceptor, baseMethod, param);
-                }
-            }
+            returnField = Initialize
+                .AllComplexParameters(strat, baseMethod, gen);
             
             //gen.Emit(OpCodes.Nop);
             gen.Emit(OpCodes.Ldarg_0);
@@ -94,6 +59,6 @@ namespace Surrogates.Utilities.Mixins
             gen.EmitCall(strat.Interceptor.Method, @params);
 
             return gen;
-        }        
+        }
     }
 }

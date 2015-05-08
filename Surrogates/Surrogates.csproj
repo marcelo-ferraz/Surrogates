@@ -79,7 +79,9 @@
     <Compile Include="Tactics\Strategy.cs" />
     <Compile Include="ProxyAlreadyMadeException.cs" />
     <Compile Include="Utilities\Clone.cs" />
+    <Compile Include="Utilities\Initialize.cs" />
     <Compile Include="Utilities\Invoke.cs" />
+    <Compile Include="Utilities\Mixins\ParameterInfoMixins.cs" />
     <Compile Include="Utilities\Mixins\PropertyMixins.cs" />
     <Compile Include="Utilities\Mixins\StrategyMixins.cs" />
     <Compile Include="Utilities\Mixins\TypeMixins.cs" />

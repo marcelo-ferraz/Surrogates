@@ -192,13 +192,13 @@ namespace Surrogates.Utilities.Mixins
             return propBldr;
         }
 
-        public static Type DefineThisBigNested_Type(this TypeBuilder self, Strategies strats)
+        public static Type DefineThisDynamic_NestedType(this TypeBuilder self, Strategies strats)
         {
             Func<Access, bool> can = 
                 a => strats.Accesses.HasFlag(a);
 
-            var builder = 
-                self.DefineNestedType("ThisBig_", TypeAttributes.Class | TypeAttributes.NestedPublic);
+            var builder =
+                self.DefineNestedType("ThisDynamic_", TypeAttributes.Class | TypeAttributes.NestedPublic);
 
             var props = new List<PropertyBuilder>();
 
@@ -209,11 +209,11 @@ namespace Surrogates.Utilities.Mixins
             { props.Add(builder.DefineNewProperty<dynamic>("Bag")); }
 
             if(can(Access.Instance))
-            { props.Add(builder.DefineNewProperty<object>("Instance")); }
+            { props.Add(builder.DefineNewProperty<object>("Holder")); }
 
-            props.Add(builder.DefineNewProperty<string>("MethodName"));
-            props.Add(builder.DefineNewProperty<string>("ClassName"));
-            props.Add(builder.DefineNewProperty<Delegate>("BaseMethod"));
+            props.Add(builder.DefineNewProperty<string>("CallerName"));
+            props.Add(builder.DefineNewProperty<string>("HolderName"));
+            props.Add(builder.DefineNewProperty<Delegate>("Caller"));
             props.Add(builder.DefineNewProperty<object[]>("Arguments"));
 
             var ctor = builder.DefineConstructor(

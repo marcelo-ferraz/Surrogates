@@ -126,7 +126,7 @@ namespace Surrogates.Tests.Expressions.Methods.Substitute
             Assert.AreEqual("simple", dummy.Text);
 
             Assert.IsNotNullOrEmpty(proxy.Text);
-            Assert.AreEqual(typeof(Dummy).Name + "Proxy+Call_SetPropText_simple_Return_1", proxy.Text);
+            Assert.AreEqual(typeof(Dummy).FullName + "+Call_SetPropText_simple_Return_1", proxy.Text);
             Assert.AreNotEqual(dummyRes, proxyRes);
             Assert.AreEqual(0, proxyRes);
         }
