@@ -30,11 +30,11 @@ namespace Surrogates.Utilities.Mixins
             var baseParams =
                 originalMethod.GetParameters();
 
-            if (Try2Add.ArgsParam(gen, param, paramIndex, param.ParameterType, baseParams))
-            { return true; }
+            //if (Try2Add.InitializeArgsParam(gen, param, paramIndex, param.ParameterType, baseParams))
+            //{ return true; }
 
-            if (Try2Add.OriginalMethodAsParameter(gen, originalMethod, param, baseMethodsField))
-            { return true; }
+            //if (Try2Add.InitializeOriginalMethodAsParameter(gen, originalMethod, param, baseMethodsField))
+            //{ return true; }
 
             for (int i = 0; i < baseParams.Length; i++)
             {

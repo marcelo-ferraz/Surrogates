@@ -23,9 +23,9 @@ namespace Surrogates.Model.Entities
 
         public FieldInfo Field { get; set; }
    
-        public void Add(MethodInfo meth, Strategy.ForMethods current)
+        public void Add(MethodInfo method, Strategy.ForMethods current)
         {
-            foreach (var arg in meth.GetParameters())
+            foreach (var arg in method.GetParameters())
             {
                 if (!arg.ParameterType.IsAssignableFrom(typeof(Delegate)))
                 { continue; }
@@ -42,7 +42,7 @@ namespace Surrogates.Model.Entities
 
                 paramMethod = current
                     .BaseType
-                    .GetMethod4Surrogacy(arg.Name.Length < 2 ? arg.Name : arg.Name.Substring(2), false);
+                    .GetMethod4Surrogacy(arg.Name.Length < 2 ? arg.Name : arg.Name.Substring(2), null, false);
 
                 if (paramMethod == null) { continue; }
 

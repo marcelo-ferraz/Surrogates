@@ -84,7 +84,10 @@ namespace Surrogates.Tactics
 
         private void CreateDefaultNewProperties()
         {
-            _newProperties = new List<NewProperty>(); 
+            if(_newProperties != null) { return; } 
+
+            this._newProperties = 
+                new List<NewProperty>(); 
 
             if (this.Accesses.HasFlag(Access.StateBag))
             { this.StateBagProperty = this.AddProperty<dynamic>("StateBag"); }

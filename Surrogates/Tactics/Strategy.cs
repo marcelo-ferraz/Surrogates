@@ -25,6 +25,8 @@ namespace Surrogates.Tactics
 
             public LocalBuilder ThisDynamic_Local { get; set; }
             public LocalBuilder ArgsLocal { get; set; }
+
+            public LocalBuilder S_MethodParam { get; set; }
         }
 
         public class ForProperties : Strategy

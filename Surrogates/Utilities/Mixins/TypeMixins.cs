@@ -7,21 +7,48 @@ namespace Surrogates.Utilities.Mixins
 {
     public static class TypeMixins
     {
-        public static MethodInfo GetMethod4Surrogacy(this Type self, string name, bool throwExWhenNotFound = true)
+        public static MethodInfo GetMethod4Surrogacy(this Type self, string name, Type[] parameterTypes = null, bool throwExWhenNotFound = true)
         {
-            Func<BindingFlags, MethodInfo> get = flags =>
-                self.GetMethod(name, BindingFlags.Instance | flags);
+            MethodInfo method = null;
             
-            MethodInfo method;
-
-            if ((method = get(BindingFlags.NonPublic)) == null)
+            try
             {
-                if ((method = get(BindingFlags.Public)) == null && throwExWhenNotFound)
+                Func<BindingFlags, MethodInfo> get =
+                    parameterTypes == null || parameterTypes.Length < 1 ?
+                    (Func<BindingFlags, MethodInfo>)
+                    (flags => self.GetMethod(name, BindingFlags.Instance | flags)) :
+                    (flags => self.GetMethod(name, BindingFlags.Instance | flags, null, parameterTypes, null));
+
+                if ((method = get(BindingFlags.NonPublic)) == null)
                 {
-                    throw new KeyNotFoundException(string.Format(
-                        "The method '{0}' wans not found withn the type '{1}'", name, self.Name));
+                    if ((method = get(BindingFlags.Public)) == null && throwExWhenNotFound)
+                    {
+                        throw new KeyNotFoundException(string.Format(
+                            "The method '{0}' wans not found withn the type '{1}'", name, self.Name));
+                    }
                 }
             }
+            catch (AmbiguousMatchException ex)
+            {
+                foreach (var m in self.GetMethods(BindingFlags.Instance | BindingFlags.Public))
+                {
+                    if (name == m.Name)
+                    {
+                        method = m;
+                        break;
+                    }
+                }
+
+                foreach (var m in self.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic))
+                {
+                    if (name == m.Name)
+                    {
+                        method = m;
+                        break;
+                    }
+                }
+            }
+
             return method;
         }
 

@@ -36,45 +36,61 @@ namespace Surrogates.Utilities.Mixins
 
             var gen = builder.GetILGenerator();
 
-            int pIndex = 0;
-            bool hasThisDynamic_ = false;
-            bool hasArgs = false;
-           
+            int pIndex = 0;           
             foreach (var param in baseMethod.GetParameters())
             {
                 builder.DefineParameter(++pIndex, ParameterAttributes.None, param.Name);
-            } 
-            
-            foreach (var param in strat.Interceptor.Method.GetParameters())
-            {
-                if (param.Name == "_" && param.ParameterType == typeof(object))
-                { hasThisDynamic_ = true; }
-
-                if (param.ParameterType != typeof(object[]) && param.Name != "s_arguments" && param.Name != "s_args")
-                { hasArgs = true; }
             }
-
-            if (hasArgs)
-            { strat.Interceptor.ArgsLocal = gen.DeclareLocal(typeof(object[])); }
-
-            if (hasThisDynamic_)
-            { strat.Interceptor.ThisDynamic_Local = gen.DeclareLocal(typeof(object[])); }
 
             returnField = baseMethod.ReturnType != typeof(void) ?
                 gen.DeclareLocal(baseMethod.ReturnType) :
                 null;
 
+
+            foreach (var param in strat.Interceptor.Method.GetParameters())
+            {
+                bool isDynamic_ = 
+                    param.Name == "_" && param.ParameterType == typeof(object);
+
+                if (isDynamic_ || (param.ParameterType == typeof(object[]) && (param.Name == "s_arguments" || param.Name == "s_args")))
+                {
+                    strat.Interceptor.ArgsLocal = 
+                        gen.DeclareLocal(typeof(object[]));
+                    
+                    Try2Add.InitializeArgsParam(
+                        gen, param, strat.Interceptor, baseMethod.GetParameters());
+                }
+
+                if (isDynamic_ || (param.Name == "s_method" && param.ParameterType.IsAssignableFrom(typeof(Delegate))))
+                {
+                    strat.Interceptor.S_MethodParam =
+                        gen.DeclareLocal(isDynamic_ ? typeof(Delegate) : param.ParameterType);
+
+                    Try2Add.InitializeOriginalMethodAsParameter(
+                        gen, baseMethod, param, strat.Interceptor, strat.BaseMethods.Field);
+                }
+
+                if (isDynamic_)
+                {
+                    strat.Interceptor.ThisDynamic_Local = 
+                        gen.DeclareLocal(typeof(object[]));
+                    
+                    Try2Add.InitializeThisDynamic_(
+                        gen, strat, strat.Interceptor, baseMethod, param);
+                }
+            }
+            
             //gen.Emit(OpCodes.Nop);
             gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldfld, field);
+            gen.Emit(OpCodes.Ldfld, field); 
 
             var @params = gen.EmitParameters(
                 strat,
                 strat.Interceptor,
                 baseMethod,
                 (p, i) => 
-                    gen.EmitArgumentsBasedOnOriginal(baseMethod, p, i, strat.BaseMethods.Field)); 
-        
+                    gen.EmitArgumentsBasedOnOriginal(baseMethod, p, i, strat.BaseMethods.Field));
+                   
             gen.EmitCall(strat.Interceptor.Method, @params);
 
             return gen;

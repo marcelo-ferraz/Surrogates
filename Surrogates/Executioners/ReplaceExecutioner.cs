@@ -11,7 +11,7 @@ namespace Surrogates.Executioners
     public class ReplaceExecutioner: Executioner
     {
         [TargetedPatchingOptOut("")]
-        protected static void ReplaceAction(MethodInfo baseAction, Strategy.ForMethods strategy)
+        protected static void ReplaceWithAction(MethodInfo baseAction, Strategy.ForMethods strategy)
         {
             LocalBuilder baseMethodReturn = null;
 
@@ -25,7 +25,7 @@ namespace Surrogates.Executioners
         }
 
         [TargetedPatchingOptOut("")]
-        protected static void ReplaceFunction(MethodInfo baseFunction, Strategy.ForMethods strategy)
+        protected static void ReplaceWithFunction(MethodInfo baseFunction, Strategy.ForMethods strategy)
         {
             LocalBuilder baseMethodReturn = null;
 
@@ -171,9 +171,9 @@ namespace Surrogates.Executioners
             foreach (var method in strategy.Methods)
             {
                 if (strategy.Interceptor.Method.ReturnType == typeof(void))
-                { ReplaceAction(method, strategy); }
+                { ReplaceWithAction(method, strategy); }
                 else
-                { ReplaceFunction(method, strategy); }
+                { ReplaceWithFunction(method, strategy); }
             }
         }
     }
