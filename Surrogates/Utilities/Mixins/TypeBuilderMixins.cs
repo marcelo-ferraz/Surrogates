@@ -192,7 +192,7 @@ namespace Surrogates.Utilities.Mixins
             return propBldr;
         }
 
-        public static Type DefineThisDynamic_NestedType(this TypeBuilder self, Strategies strats)
+        internal static Type DefineThisDynamic_NestedType(this TypeBuilder self, Strategies strats)
         {
             Func<Access, bool> can = 
                 a => strats.Accesses.HasFlag(a);

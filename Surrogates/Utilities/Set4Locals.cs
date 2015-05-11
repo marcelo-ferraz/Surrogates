@@ -70,15 +70,17 @@ namespace Surrogates.Utilities
 
             if (baseParams.Length < 1) { return local; }
 
+            gen.Emit(OpCodes.Ldloc, local);
+
             for (int i = 0; i < baseParams.Length; i++)
             {
                 gen.Emit(OpCodes.Ldc_I4, i);
                 gen.Emit(OpCodes.Ldarg, i + 1);
 
+                // box the value to be set on the array
                 if (baseParams[i].ParameterType.IsValueType)
                 {
-                    gen.Emit(
-                        OpCodes.Box,
+                    gen.Emit(OpCodes.Box,
                         baseParams[i].ParameterType);
                 }
 

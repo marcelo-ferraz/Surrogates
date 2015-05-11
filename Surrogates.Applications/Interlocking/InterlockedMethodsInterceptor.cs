@@ -27,29 +27,7 @@ namespace Surrogates.Applications.Interlocking
             return ret;
         }
     }
-    public class InterlockedActionInterceptor
-        : InterlockedMethodInterceptor
-    {
-        public void Read(Delegate s_method, object[] s_arguments)
-        {
-            bool lockWasHeld = false;
-            try
-            {
-                try { }
-                finally
-                {
-                    lockWasHeld = Lock.TryEnterReadLock(500);
-                }
-
-                if (lockWasHeld) { s_method.DynamicInvoke(s_arguments); }
-            }
-            finally
-            {
-                if (lockWasHeld) { Lock.ExitReadLock(); }
-            }
-        }
-    }
-
+   
     public class InterlockedMethodInterceptor
     {
         protected ReaderWriterLockSlim Lock;
@@ -64,8 +42,7 @@ namespace Surrogates.Applications.Interlocking
             Lock.Dispose();
         }
 
-        //public void Write(object[] s_arguments, Delegate s_method)
-        public void Write(dynamic _)
+        public void Write(Delegate s_method, object[] s_arguments)
         {
             bool lockWasHeld = false;
             try
@@ -79,7 +56,7 @@ namespace Surrogates.Applications.Interlocking
                     lockWasHeld = Lock.TryEnterWriteLock(500);
                 }
 
-                if (lockWasHeld) { _.Caller.DynamicInvoke(_.Arguments); }
+                if (lockWasHeld) { s_method.DynamicInvoke(s_arguments); }
             }
             finally
             {

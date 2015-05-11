@@ -34,6 +34,7 @@ namespace Surrogates.Utilities
             if (isSpecialParam && param.IsSelfArguments())
             {
                 gen.Emit(OpCodes.Ldloc, interceptor.Locals["Args"]);
+                return true;
             }
 
             // tries to add any method as parameter - disabled, temporarily 

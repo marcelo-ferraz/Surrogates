@@ -4,6 +4,7 @@ using Surrogates.Utilities;
 using Surrogates.Utilities.Mixins;
 using System;
 using System.Runtime.Serialization;
+using Surrogates.Tactics;
 
 namespace Surrogates.Applications
 {
@@ -43,14 +44,16 @@ namespace Surrogates.Applications
                 new ShallowExtension<T>();
 
             Pass.On<T>(self, ext);
+            //var current = Pass.Current<Strategy.ForMethods>(ext.Factory.Replace);
 
             T val = (T) FormatterServices
                 .GetSafeUninitializedObject(typeof(T)); 
 
             var and =
-                reader(val).Method.ReturnType == typeof(void) ?
-                ext.Factory.Replace.This(reader).Using<InterlockedActionInterceptor>("Read").And :
+            //    reader(val).Method.ReturnType == typeof(void) ?
+            //    ext.Factory.Replace.This(reader).Using<InterlockedActionInterceptor>("Read").And :
                 ext.Factory.Replace.This(reader).Using<InterlockedFuncInterceptor>("Read").And;
+            //ext.Factory.Replace.This(reader).Using<InterlockedFuncInterceptor>(i => (Func<Delegate, object[], object>)i.Read).And;
 
             return and.Replace.This(writer).Using<InterlockedMethodInterceptor>("Write");
         }
