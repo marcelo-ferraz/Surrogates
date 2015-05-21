@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContractPreValidatorTests.cs" />
     <Compile Include="Model\Simple.cs" />
     <Compile Include="ContractsTests.cs" />
     <Compile Include="InterlockingTests.cs" />

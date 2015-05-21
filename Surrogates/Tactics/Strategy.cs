@@ -140,7 +140,15 @@ namespace Surrogates.Tactics
             var executionerName =
                 this.Kind != InterferenceKind.Extensions ?
                 Enum.GetName(typeof(InterferenceKind), Kind).ToLower() : 
-                KindExtended;            
+                KindExtended;
+
+            if (this.BaseType.IsInterface &&
+                (this.Kind == InterferenceKind.Visit ||
+                this.Kind == InterferenceKind.Disable))
+            {
+                throw new NotSupportedException(
+                    "Using an interface as base, you ought to use replace, or extensions only.");
+            }
 
             Executioners[executionerName](this);
         }

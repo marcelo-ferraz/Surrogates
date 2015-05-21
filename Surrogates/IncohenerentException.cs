@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Surrogates
 {
-    public class IncohenerentException : Exception
+    public class IncoherenceException : Exception
     {
-        public IncohenerentException(string msg, params object[] args)
+        public IncoherenceException(string msg, params object[] args)
             : base(string.Format(msg, args))
         { }
     }

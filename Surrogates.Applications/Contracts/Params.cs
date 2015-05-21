@@ -8,12 +8,17 @@ using System.Runtime.Serialization;
 using System.Reflection;
 using System.Linq.Expressions;
 
-namespace Surrogates.Applications.Validators
+namespace Surrogates.Applications.Contracts
 {
-    public static class Params
+    public static class These
     {
         public class Validators
         {
+            public IParamValidators Null(params string[] @params)
+            {
+                return ParameterAssertionMixins.Null(null, @params);
+            }
+
             public IParamValidators Required(params string[] @params)
             {
                 return ParameterAssertionMixins.Required(null, @params);
@@ -62,17 +67,27 @@ namespace Surrogates.Applications.Validators
                 return ParameterAssertionMixins.Regex(null, expr, @params);
             }
 
-            //public Assertion.ListFor.Parameters Complex<T>(string param, params PropertiesValidator<T>[] validators)
+            public IParamValidators Composite<T>(string param, params IPropValidators[] validators)
+            {
+                return ParameterAssertionMixins.ComplexObject<T>(null, param, validators);
+            }
+
+            public IParamValidators Composite<T>(string[] @params, params IPropValidators[] validators)
+            {
+                return ParameterAssertionMixins.Composite<T>(null, @params, validators);
+            }
+            
+            //public IParamValidators Composite<T>(string param, T)
             //{
-            //    return null;
+            //    return ParameterAssertionMixins.ComplexObject<T>(null, param, validators);
             //}
         }
          
         public static Validators Are { get; set; }
 
-        static Params()
+        static These()
         {
-            Are = new Params.Validators();             
+            Are = new These.Validators();             
         }
     }
 }

@@ -16,13 +16,12 @@ namespace Surrogates.Applications.Tests
     public class InterlockingTests : AppTests
     {
         [Test]
-        public void SimpleLock()
+        public void SimpleLock4Methods()
         {
             Container.Map(m =>
                 m.From<Simple>()
                 .Apply
-                .ReadAndWrite(s => (Func<int, int>)s.GetFromList, s => (Action<int>)s.Add2List))
-                .Save();
+                .ReadAndWrite(s => (Func<int, int>)s.GetFromList, s => (Action<int>)s.Add2List));
 
             var max = 15000000;
 

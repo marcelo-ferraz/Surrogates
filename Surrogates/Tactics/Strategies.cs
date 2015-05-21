@@ -23,8 +23,9 @@ namespace Surrogates.Tactics
             
             try
             {
-                Builder = moduleBuilder
-                    .DefineType(name, TypeAttributes.Public, baseType);
+                Builder = !baseType.IsInterface ?
+                    moduleBuilder.DefineType(name, TypeAttributes.Public, baseType) :
+                    moduleBuilder.DefineType(name, TypeAttributes.Public, typeof(object), new [] { baseType });
             }
             catch (ArgumentException argEx)
             { throw new ProxyAlreadyMadeException(baseType, name, argEx); }

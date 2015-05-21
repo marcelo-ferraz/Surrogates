@@ -1,4 +1,4 @@
-﻿using Surrogates.Applications.Validators;
+﻿using Surrogates.Applications.Contracts;
 using Surrogates.Utilities.Mixins;
 using System;
 using System.Collections.Generic;

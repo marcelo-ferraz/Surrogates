@@ -31,7 +31,7 @@ namespace Surrogates.Utilities
                 return true;
             }
 
-            if (isSpecialParam && param.IsSelfArguments())
+            if (param.IsSelfArguments())
             {
                 gen.Emit(OpCodes.Ldloc, interceptor.Locals["Args"]);
                 return true;

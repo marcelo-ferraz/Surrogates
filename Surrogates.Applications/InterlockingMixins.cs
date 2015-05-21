@@ -10,15 +10,22 @@ namespace Surrogates.Applications
 {
     public static class InterlockingMixins
     {
-        private static AndExpression<T> RW<T, I>(this IExtension<T> self, Func<T, object> prop)
+        public class InterlockedPair<T>
+        { 
+            public Func<T, Delegate> Reader { get; set; }
+            public Func<T, Delegate> Writer { get; set; }
+        }
+
+        private static AndExpression<T> RW<T, I>(this ExpressionFactory<T> self, Func<T, object> prop)
             where I: InterlockedPropertyInterceptor
         {
-            return self.Factory.Replace.This(prop)
+            return self.Replace.This(prop)
                         .Accessors(m => m
                             .Getter.Using<I>(i => (Func<object>)i.Get)
                             .And
                             .Setter.Using<I>(i => (Action<object>)i.Set));
         }
+
         public static AndExpression<T> ReadAndWrite<T>(this ApplyExpression<T> self, params Func<T, object>[] properties)
         {
             var ext = 
@@ -28,34 +35,52 @@ namespace Surrogates.Applications
 
             AndExpression<T> exp = null;
 
+            Func<ExpressionFactory<T>> getExp = () =>
+                (exp == null) ? ext.Factory : exp.And;
+
             foreach (var prop in properties)
             {
                 exp = prop.GetPropType().IsValueType ?
-                    ext.RW<T, InterlockedValuePropertyInterceptor>(prop) :
-                    ext.RW<T, InterlockedRefPropertyInterceptor>(prop);
+                    getExp().RW<T, InterlockedValuePropertyInterceptor>(prop) :
+                    getExp().RW<T, InterlockedRefPropertyInterceptor>(prop);
             }
 
             return exp;
         }
 
-        public static AndExpression<T>  ReadAndWrite<T>(this ApplyExpression<T> self, Func<T, Delegate> reader, Func<T, Delegate> writer)
+        public static AndExpression<T> ReadAndWrite<T>(this ApplyExpression<T> self, Func<T, Delegate> reader, Func<T, Delegate> writer)
+        {
+            return self.ReadAndWrite(new InterlockedPair<T>() { Reader = reader, Writer = writer });
+        }
+
+        public static AndExpression<T>  ReadAndWrite<T>(this ApplyExpression<T> self, params InterlockedPair<T>[] pairs)
         {
             var ext =
                 new ShallowExtension<T>();
 
-            Pass.On<T>(self, ext);
-            //var current = Pass.Current<Strategy.ForMethods>(ext.Factory.Replace);
+            Pass.On<T>(self, ext);            
 
             T val = (T) FormatterServices
-                .GetSafeUninitializedObject(typeof(T)); 
+                .GetSafeUninitializedObject(typeof(T));
 
-            var and =
-            //    reader(val).Method.ReturnType == typeof(void) ?
-            //    ext.Factory.Replace.This(reader).Using<InterlockedActionInterceptor>("Read").And :
-                ext.Factory.Replace.This(reader).Using<InterlockedFuncInterceptor>("Read").And;
-            //ext.Factory.Replace.This(reader).Using<InterlockedFuncInterceptor>(i => (Func<Delegate, object[], object>)i.Read).And;
+            AndExpression<T> exp = null;
 
-            return and.Replace.This(writer).Using<InterlockedMethodInterceptor>("Write");
+            Func<ExpressionFactory<T>> getExp = () =>
+                (exp == null) ? ext.Factory : exp.And;
+
+            foreach (var pair in pairs)
+            {
+                exp = getExp()
+                    .Replace
+                    .This(pair.Reader)
+                    .Using<InterlockedMethodInterceptor>("Read")
+                    .And
+                    .Replace
+                    .This(pair.Writer)
+                    .Using<InterlockedMethodInterceptor>("Write");
+            }
+
+            return exp;
         }
     }
 }

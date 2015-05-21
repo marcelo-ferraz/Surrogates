@@ -3,9 +3,20 @@ using System.Threading;
 
 namespace Surrogates.Applications.Interlocking
 {
-    public class InterlockedFuncInterceptor
-        : InterlockedMethodInterceptor
+    public class InterlockedMethodInterceptor
     {
+        private ReaderWriterLockSlim _lock;
+
+        public InterlockedMethodInterceptor()
+        {
+            _lock = new ReaderWriterLockSlim();
+        }
+
+        ~InterlockedMethodInterceptor()
+        {
+            _lock.Dispose();
+        }
+
         public object Read(Delegate s_method, object[] s_arguments)
         {
             object ret = null;
@@ -15,33 +26,18 @@ namespace Surrogates.Applications.Interlocking
                 try { }
                 finally
                 {
-                    lockWasHeld = Lock.TryEnterReadLock(500);
+                    lockWasHeld = _lock.TryEnterReadLock(500);
                 }
 
                 if (lockWasHeld) { ret = s_method.DynamicInvoke(s_arguments); }
             }
             finally
             {
-                if (lockWasHeld) { Lock.ExitReadLock(); }
+                if (lockWasHeld) { _lock.ExitReadLock(); }
             }
             return ret;
         }
-    }
-   
-    public class InterlockedMethodInterceptor
-    {
-        protected ReaderWriterLockSlim Lock;
-
-        public InterlockedMethodInterceptor() 
-        {
-            Lock = new ReaderWriterLockSlim();
-        }
-
-        ~InterlockedMethodInterceptor()
-        {
-            Lock.Dispose();
-        }
-
+        
         public void Write(Delegate s_method, object[] s_arguments)
         {
             bool lockWasHeld = false;
@@ -50,10 +46,10 @@ namespace Surrogates.Applications.Interlocking
                 try { }
                 finally
                 {
-                    if (Lock.IsWriteLockHeld)
-                    { Lock.ExitWriteLock(); }
+                    if (_lock.IsWriteLockHeld)
+                    { _lock.ExitWriteLock(); }
 
-                    lockWasHeld = Lock.TryEnterWriteLock(500);
+                    lockWasHeld = _lock.TryEnterWriteLock(500);
                 }
 
                 if (lockWasHeld) { s_method.DynamicInvoke(s_arguments); }
@@ -61,7 +57,7 @@ namespace Surrogates.Applications.Interlocking
             finally
             {
                 if (lockWasHeld)
-                { Lock.ExitWriteLock(); } 
+                { _lock.ExitWriteLock(); } 
             }
         }
     }

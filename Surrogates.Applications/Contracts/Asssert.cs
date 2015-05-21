@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Surrogates.Applications.Validators
+namespace Surrogates.Applications.Contracts
 {
     public class Assert
     {

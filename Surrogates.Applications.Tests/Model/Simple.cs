@@ -27,9 +27,16 @@ namespace Surrogates.Applications.Tests
             List.Add(val);
         }
 
+        public virtual void Set(string text)
+        {
+            this.Text = text;
+        }
+
         public virtual string GetDomainName()
         {
             return AppDomain.CurrentDomain.FriendlyName;
         }
+
+        public string Text { get; set; }
     }
 }

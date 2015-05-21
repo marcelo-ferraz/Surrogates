@@ -1,4 +1,4 @@
-﻿using Surrogates.Applications.Validators;
+﻿using Surrogates.Applications.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,14 +26,58 @@ namespace Surrogates.Applications
             return assertions;
         }
 
+        private static void Throw(string format, params object[] args)
+        { 
+            throw new ArgumentException(
+                string.Format(format, args)); 
+        }
+
+        public static IParamValidators Null(this IParamValidators self, params string[] @params)
+        {
+            return AddValidator(
+                self,
+                @params,
+                (i, p) => {
+                    if(p.ParameterType == typeof(string))
+                    {
+                        return args =>
+                        {
+                            if (BaseValidators.ValidateRequiredString(args[i]))
+                            { Throw("The given value for '{0}' is not the default of {1}!", p.Name, p.ParameterType); }
+                        };
+                    }
+
+                    return args =>
+                    {
+                        if (BaseValidators.ValidateRequired(args[i], p.ParameterType))
+                        { Throw("The given value for '{0}' is not the default of {1}!", p.Name, p.ParameterType); }
+                    };
+                });
+        }
+
+
         public static IParamValidators Required(this IParamValidators self, params string[] @params)
         {
             return AddValidator(
                 self,
                 @params,
-                (i, p) => p.ParameterType == typeof(string) ?
-                    (Action<object[]>)(args => BaseValidators.ValidateRequiredString(args[i])) :
-                    args => BaseValidators.ValidateRequired(args[i], args[i].GetType()));
+                (i, p) =>
+                {
+                    if (p.ParameterType == typeof(string))
+                    {
+                        return args =>
+                        {
+                            if (!BaseValidators.ValidateRequiredString(args[i]))
+                            { Throw("The given value for '{0}' is required!", p.Name); }
+                        };
+                    }
+
+                    return args =>
+                    {
+                        if (!BaseValidators.ValidateRequired(args[i], p.ParameterType))
+                        { Throw("The given value for '{0}' is required!", p.Name); }
+                    };
+                });
         }
 
         public static IParamValidators Email(this IParamValidators self, params string[] @params)
@@ -58,7 +102,10 @@ namespace Surrogates.Applications
                 self,
                 @params,
                 (i, p) =>
-                    args => BaseValidators.ValidateInBetween<P>(min, max, (P)args[i]));
+                    args => {
+                        if(!BaseValidators.ValidateInBetween<P>(min, max, (P)args[i]))
+                        { Throw("The given value for '{0}' is not in between of {1} and {2}!", p.Name, min, max); }                        
+                    });
         }
 
         public static IParamValidators BiggerThan<P>(this IParamValidators self, P higher, params string[] @params)
@@ -68,7 +115,10 @@ namespace Surrogates.Applications
                 self,
                 @params,
                 (i, p) =>
-                    args => BaseValidators.ValidateBiggerThan<P>(higher, (P)args[i]));
+                    args => {
+                        if(!BaseValidators.ValidateBiggerThan<P>(higher, (P)args[i]))
+                        { Throw("The given value for '{0}' is not bigger than {1}!", p.Name, higher); }                        
+                    });
         }
 
         public static IParamValidators LowerThan<P>(this IParamValidators self, P lower, params string[] @params)
@@ -78,7 +128,10 @@ namespace Surrogates.Applications
                 self,
                 @params,
                 (i, p) =>
-                    args => BaseValidators.ValidateLowerThan<P>(lower, (P)args[i]));
+                    args => {
+                        if(!BaseValidators.ValidateLowerThan<P>(lower, (P)args[i]))
+                        { Throw("The given value for '{0}' is not lower than {1}!", p.Name, lower); }                        
+                    });                    
         }
 
         public static IParamValidators Regex(this IParamValidators self, string expr, params string[] @params)
@@ -92,26 +145,33 @@ namespace Surrogates.Applications
                 self,
                 @params,
                 (i, p) =>
-                    args => BaseValidators.ValidateRegex(expr, (string)args[i]));
+                    args => {
+                        if(!BaseValidators.ValidateRegex(expr, (string)args[i]))
+                        { Throw("The given value for '{0}' does not match the expression '{1}'!", p.Name, expr.ToString()); }                        
+                    });                   
         }
 
-        public static IParamValidators Complex<T>(this IParamValidators self, string[] @params, IPropValidators validators)
-        {
-            Delegate assertion = null;
+        public static IParamValidators ComplexObject<T>(this IParamValidators self, string param, params IPropValidators[] validators)
+        { 
+            return Composite<T>(self, new string[] { param }, validators);
+        }
 
-            foreach (var validator in ((Assert.List4.Properties)validators).Validators)
+        public static IParamValidators Composite<T>(this IParamValidators self, string[] @params, params IPropValidators[] validators)
+        {
+            Func<T, bool> assertion = null;
+
+            foreach (var validator in validators.SelectMany(v => ((Assert.List4.Properties)v).Validators))                
             {
                 assertion = assertion != null ?
-                    Delegate.Combine(assertion, validator.Validation) :
-                    validator.Validation;
+                    (arg => assertion(arg) && (bool)validator.Validation.DynamicInvoke(arg)) :
+                    (Func<T, bool>)validator.Validation;
             }
 
             return AddValidator(
                 self,
                 @params,
                 (i, p) =>
-                    args => assertion.DynamicInvoke((T)args[i]));
+                    args => assertion((T)args[i]));
         }
     }
-
 }

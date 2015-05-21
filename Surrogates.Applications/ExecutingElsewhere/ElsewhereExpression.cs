@@ -41,7 +41,7 @@ namespace Surrogates.Applications.ExecutingElsewhere
             {
                 if (!m.IsPublic) 
                 {                    
-                    throw new IncohenerentException(
+                    throw new IncoherenceException(
                         "The method '{0}' must be public, to be sent to another domain.", m.Name);
                 }
             }

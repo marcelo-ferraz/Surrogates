@@ -7,7 +7,7 @@ using Surrogates.Utilities.Mixins;
 using System.Reflection;
 using System.Runtime.Serialization;
 
-namespace Surrogates.Applications.Validators
+namespace Surrogates.Applications.Contracts
 {       
     public static class PropertiesOf<T>
     {

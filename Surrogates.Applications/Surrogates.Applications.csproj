@@ -63,13 +63,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InterlockingMixins.cs" />
     <Compile Include="ContractsMixins.cs" />
-    <Compile Include="Validators\Asssert.cs" />
-    <Compile Include="Validators\BaseValidators.cs" />
-    <Compile Include="Validators\IPropValidators.cs" />
-    <Compile Include="Validators\IParamValidators.cs" />
-    <Compile Include="Validators\Params.cs" />
-    <Compile Include="Validators\PropertiesOf.cs" />
-    <Compile Include="Validators\Validators.cs" />
+    <Compile Include="Contracts\Asssert.cs" />
+    <Compile Include="Contracts\BaseValidators.cs" />
+    <Compile Include="Contracts\IPropValidators.cs" />
+    <Compile Include="Contracts\IParamValidators.cs" />
+    <Compile Include="Contracts\Params.cs" />
+    <Compile Include="Contracts\PropertiesOf.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Surrogates\Surrogates.csproj">

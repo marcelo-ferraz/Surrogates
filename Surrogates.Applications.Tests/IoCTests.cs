@@ -16,12 +16,12 @@ namespace Surrogates.Applications.Tests
     public class IoCTests : AppTests
     {
         [Test]
-        public void DefaultTest()
+        public void SimpleInjection()
         {
-            Container.Map(m =>
-                m.From<Simple>()
-                .Apply
-                .IoC(s => s.List));
+            //Container.Map(m =>
+            //    m.From<Simple>()
+            //    .Apply
+            //    .InjectOn(s => s.List).This<List<int>>());
         }
     }
 }
