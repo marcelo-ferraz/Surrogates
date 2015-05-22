@@ -61,5 +61,18 @@ namespace Surrogates.Applications.Tests
 
             proxy.Set("http://www.google.com");
         }
+
+        [Test]
+        public void CompositeTest()
+        {
+            Container.Map(m =>
+                  m.From<Simple>()
+                  .Apply
+                  .Contracts(s => (Action<string>)s.Set, These.Are.Composite(new Func<string, bool>(text => !string.IsNullOrEmpty(text)))));
+            
+            var proxy = Container.Invoke<Simple>();
+
+            proxy.Set(null);            
+        }
     }
 }

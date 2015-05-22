@@ -69,7 +69,7 @@ namespace Surrogates.Applications.Contracts
 
             public IParamValidators Composite<T>(string param, params IPropValidators[] validators)
             {
-                return ParameterAssertionMixins.ComplexObject<T>(null, param, validators);
+                return ParameterAssertionMixins.Composite<T>(null, param, validators);
             }
 
             public IParamValidators Composite<T>(string[] @params, params IPropValidators[] validators)
@@ -77,10 +77,10 @@ namespace Surrogates.Applications.Contracts
                 return ParameterAssertionMixins.Composite<T>(null, @params, validators);
             }
             
-            //public IParamValidators Composite<T>(string param, T)
-            //{
-            //    return ParameterAssertionMixins.ComplexObject<T>(null, param, validators);
-            //}
+            public IParamValidators Composite(params Delegate[] preValidators)
+            {
+                return ParameterAssertionMixins.Composite(null, preValidators);
+            }
         }
          
         public static Validators Are { get; set; }

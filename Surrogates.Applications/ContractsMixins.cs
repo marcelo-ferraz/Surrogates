@@ -81,7 +81,7 @@ namespace Surrogates.Applications
                     if (@params[i].Name != validator.ParameterName) { continue; }
 
                     paramValidate =
-                        validator.Action(i, @params[i]);
+                        validator.Action(i, @params);
 
                     preValidator = (Action<object[]>)(preValidator != null ?
                         Delegate.Combine(preValidator, paramValidate) :

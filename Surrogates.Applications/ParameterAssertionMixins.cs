@@ -10,12 +10,15 @@ namespace Surrogates.Applications
 {
     public static class ParameterAssertionMixins
     {
-        private static IParamValidators AddValidator(IParamValidators assertions, string[] @params, Func<int, ParameterInfo, Action<object[]>> validator)
+        private static IParamValidators AddValidator(IParamValidators assertions, string[] @params, Func<int, ParameterInfo[], Action<object[]>> validator)
         {
+            var ass = (Assert.List4.Parameters)
+                (assertions ?? (assertions = new Assert.List4.Parameters()));
+            
+
             for (int i = 0; i < @params.Length; i++)
             {
-                ((Assert.List4.Parameters)(assertions ?? (assertions = new Assert.List4.Parameters())))
-                    .Validators
+                ass.Validators
                     .Add(new Assert.Entry4.Parameters
                     {
                         ParameterName = @params[i],
@@ -26,7 +29,7 @@ namespace Surrogates.Applications
             return assertions;
         }
 
-        private static void Throw(string format, params object[] args)
+        public static void Throw(string format, params object[] args)
         { 
             throw new ArgumentException(
                 string.Format(format, args)); 
@@ -38,19 +41,22 @@ namespace Surrogates.Applications
                 self,
                 @params,
                 (i, p) => {
-                    if(p.ParameterType == typeof(string))
+                    var name = p[i].Name;
+                    var type = p[i].ParameterType;
+
+                    if(p[i].ParameterType == typeof(string))
                     {
                         return args =>
                         {
                             if (BaseValidators.ValidateRequiredString(args[i]))
-                            { Throw("The given value for '{0}' is not the default of {1}!", p.Name, p.ParameterType); }
+                            { Throw("The given value for '{0}' is not the default of {1}!", name, type); }
                         };
                     }
 
                     return args =>
                     {
-                        if (BaseValidators.ValidateRequired(args[i], p.ParameterType))
-                        { Throw("The given value for '{0}' is not the default of {1}!", p.Name, p.ParameterType); }
+                        if (BaseValidators.ValidateRequired(args[i], type))
+                        { Throw("The given value for '{0}' is not the default of {1}!", name, type); }
                     };
                 });
         }
@@ -63,19 +69,22 @@ namespace Surrogates.Applications
                 @params,
                 (i, p) =>
                 {
-                    if (p.ParameterType == typeof(string))
+                    var name = p[i].Name;
+                    var type = p[i].ParameterType;
+
+                    if (type == typeof(string))
                     {
                         return args =>
                         {
                             if (!BaseValidators.ValidateRequiredString(args[i]))
-                            { Throw("The given value for '{0}' is required!", p.Name); }
+                            { Throw("The given value for '{0}' is required!", name); }
                         };
                     }
 
                     return args =>
                     {
-                        if (!BaseValidators.ValidateRequired(args[i], p.ParameterType))
-                        { Throw("The given value for '{0}' is required!", p.Name); }
+                        if (!BaseValidators.ValidateRequired(args[i], type))
+                        { Throw("The given value for '{0}' is required!", name); }
                     };
                 });
         }
@@ -101,11 +110,17 @@ namespace Surrogates.Applications
             return AddValidator(
                 self,
                 @params,
-                (i, p) =>
-                    args => {
-                        if(!BaseValidators.ValidateInBetween<P>(min, max, (P)args[i]))
-                        { Throw("The given value for '{0}' is not in between of {1} and {2}!", p.Name, min, max); }                        
-                    });
+                (i, p) => {
+
+                    var name = p[i].Name;
+                    
+                    return 
+                        args => 
+                        {
+                            if(!BaseValidators.ValidateInBetween<P>(min, max, (P)args[i]))
+                            { Throw("The given value for '{0}' is not in between of {1} and {2}!", name, min, max); }                        
+                        };
+                });
         }
 
         public static IParamValidators BiggerThan<P>(this IParamValidators self, P higher, params string[] @params)
@@ -116,8 +131,10 @@ namespace Surrogates.Applications
                 @params,
                 (i, p) =>
                     args => {
+                        var name = p[i].Name;
+                        
                         if(!BaseValidators.ValidateBiggerThan<P>(higher, (P)args[i]))
-                        { Throw("The given value for '{0}' is not bigger than {1}!", p.Name, higher); }                        
+                        { Throw("The given value for '{0}' is not bigger than {1}!", name, higher); }                        
                     });
         }
 
@@ -127,11 +144,15 @@ namespace Surrogates.Applications
             return AddValidator(
                 self,
                 @params,
-                (i, p) =>
-                    args => {
-                        if(!BaseValidators.ValidateLowerThan<P>(lower, (P)args[i]))
-                        { Throw("The given value for '{0}' is not lower than {1}!", p.Name, lower); }                        
-                    });                    
+                (i, p) => {
+                    var name = p[i].Name;
+
+                    return args =>
+                    {
+                        if (!BaseValidators.ValidateLowerThan<P>(lower, (P)args[i]))
+                        { Throw("The given value for '{0}' is not lower than {1}!", name, lower); }
+                    };
+                });                    
         }
 
         public static IParamValidators Regex(this IParamValidators self, string expr, params string[] @params)
@@ -144,14 +165,17 @@ namespace Surrogates.Applications
             return AddValidator(
                 self,
                 @params,
-                (i, p) =>
-                    args => {
+                (i, p) =>{
+                    var name = p[i].Name;
+                    
+                    return args => {
                         if(!BaseValidators.ValidateRegex(expr, (string)args[i]))
-                        { Throw("The given value for '{0}' does not match the expression '{1}'!", p.Name, expr.ToString()); }                        
-                    });                   
+                        { Throw("The given value for '{0}' does not match the expression '{1}'!", name, expr.ToString()); }                        
+                    };
+                });                   
         }
 
-        public static IParamValidators ComplexObject<T>(this IParamValidators self, string param, params IPropValidators[] validators)
+        public static IParamValidators Composite<T>(this IParamValidators self, string param, params IPropValidators[] validators)
         { 
             return Composite<T>(self, new string[] { param }, validators);
         }
@@ -172,6 +196,70 @@ namespace Surrogates.Applications
                 @params,
                 (i, p) =>
                     args => assertion((T)args[i]));
+        }
+
+        public static IParamValidators Composite(this IParamValidators self, params Delegate[] preValidators)
+        {
+            var ass = (Assert.List4.Parameters)
+                (self ?? (self = new Assert.List4.Parameters()));
+            
+            foreach (var preValidator in preValidators)
+            {
+                var @params = 
+                    preValidator.Method.GetParameters();
+
+                if(@params.Length < 1) { continue; }
+
+                AddValidator(
+                    self,
+                    new [] { @params[0].Name },
+                    (j, p) => 
+                    {
+                        var indexes = new List<int>();
+                        foreach (var valParam in @params)
+                        {
+                            int index = -1;
+                            foreach (var baseParam in p)
+                            {
+                                index++;                             
+                                if (baseParam.Name != valParam.Name) { continue; }
+                                if (!baseParam.ParameterType.IsAssignableFrom(valParam.ParameterType)) { continue; }
+
+                                indexes.Add(index);
+                            }
+                        }
+                        
+                        return a =>
+                        {
+                            var args = (object[])
+                                Array.CreateInstance(typeof(object), indexes.Count);
+                            
+                            for (int i = 0; i < indexes.Count; i++)
+                            { args[i] = a[indexes[i]]; }
+
+                            var result = 
+                                preValidator.DynamicInvoke(args);
+
+                            if (result == null || (result is bool && !(bool)result))
+                            { 
+                                var sb = new StringBuilder();
+
+                                sb.Append("The values for the parameters [ ");
+
+                                for (int i = 0; i < p.Length; i++)
+                                {                                    
+                                    sb.AppendFormat(" '{0}'{1} ", p[i].Name, (i == p.Length - 1) ? "" : ",");
+                                }
+
+                                sb.Append("] did not match the composite pre validator!");
+
+                                Throw(sb.ToString());
+                            }
+                        };
+                    });
+            }
+
+            return self;
         }
     }
 }

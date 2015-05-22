@@ -13,7 +13,7 @@ namespace Surrogates.Applications.Contracts
             public class Parameters
             {
                 public string ParameterName { get; set; }
-                public Func<int, ParameterInfo, Action<object[]>> Action { get; set; }
+                public Func<int, ParameterInfo[], Action<object[]>> Action { get; set; }
             }
 
             public class Properties
