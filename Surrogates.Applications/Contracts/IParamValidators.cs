@@ -5,5 +5,5 @@ using System.Text;
 
 namespace Surrogates.Applications.Contracts
 {
-    public interface IParamValidators { }
+    public interface IPreValidator { }
 }

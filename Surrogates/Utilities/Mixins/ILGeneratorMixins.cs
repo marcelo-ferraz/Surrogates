@@ -115,8 +115,7 @@ namespace Surrogates.Utilities.Mixins
                 if (interfere != null && interfere(@params[i], i))
                 { continue; }
 
-                if (Try2Add.AnythingAsParameter(gen, strategy, interceptor, baseMethod, @params[i]))
-                { continue; }
+                Try2Add.AnythingAsParameter(gen, strategy, interceptor, baseMethod, @params[i]);
             }
             return newParams.ToArray();
         }

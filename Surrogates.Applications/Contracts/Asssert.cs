@@ -25,7 +25,7 @@ namespace Surrogates.Applications.Contracts
 
         public class List4
         {
-            public class Parameters : IParamValidators
+            public class Parameters : IPreValidator
             {
                 internal IList<Entry4.Parameters> Validators { get; set; }
 

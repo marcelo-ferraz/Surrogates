@@ -10,7 +10,7 @@ namespace Surrogates.Applications
 {
     public static class ParameterAssertionMixins
     {
-        private static IParamValidators AddValidator(IParamValidators assertions, string[] @params, Func<int, ParameterInfo[], Action<object[]>> validator)
+        private static IPreValidator AddValidator(IPreValidator assertions, string[] @params, Func<int, ParameterInfo[], Action<object[]>> validator)
         {
             var ass = (Assert.List4.Parameters)
                 (assertions ?? (assertions = new Assert.List4.Parameters()));
@@ -35,7 +35,7 @@ namespace Surrogates.Applications
                 string.Format(format, args)); 
         }
 
-        public static IParamValidators Null(this IParamValidators self, params string[] @params)
+        public static IPreValidator Null(this IPreValidator self, params string[] @params)
         {
             return AddValidator(
                 self,
@@ -62,7 +62,7 @@ namespace Surrogates.Applications
         }
 
 
-        public static IParamValidators Required(this IParamValidators self, params string[] @params)
+        public static IPreValidator Required(this IPreValidator self, params string[] @params)
         {
             return AddValidator(
                 self,
@@ -89,22 +89,22 @@ namespace Surrogates.Applications
                 });
         }
 
-        public static IParamValidators Email(this IParamValidators self, params string[] @params)
+        public static IPreValidator Email(this IPreValidator self, params string[] @params)
         {
             return Regex(self, BaseValidators.EmailRegexpr, @params);
         }
 
-        public static IParamValidators Url(this IParamValidators self, params string[] @params)
+        public static IPreValidator Url(this IPreValidator self, params string[] @params)
         {
             return Regex(self, BaseValidators.UrlRegexpr, @params);
         }
 
-        public static IParamValidators Number(this IParamValidators self, params string[] @params)
+        public static IPreValidator Number(this IPreValidator self, params string[] @params)
         {
             return Regex(self, BaseValidators.IsNumberRegexpr, @params);
         }
 
-        public static IParamValidators InBetween<P>(this IParamValidators self, P min, P max, params string[] @params)
+        public static IPreValidator InBetween<P>(this IPreValidator self, P min, P max, params string[] @params)
             where P : struct
         {
             return AddValidator(
@@ -123,7 +123,7 @@ namespace Surrogates.Applications
                 });
         }
 
-        public static IParamValidators BiggerThan<P>(this IParamValidators self, P higher, params string[] @params)
+        public static IPreValidator BiggerThan<P>(this IPreValidator self, P higher, params string[] @params)
             where P : struct
         {
             return AddValidator(
@@ -138,7 +138,7 @@ namespace Surrogates.Applications
                     });
         }
 
-        public static IParamValidators LowerThan<P>(this IParamValidators self, P lower, params string[] @params)
+        public static IPreValidator LowerThan<P>(this IPreValidator self, P lower, params string[] @params)
             where P : struct
         {
             return AddValidator(
@@ -155,12 +155,12 @@ namespace Surrogates.Applications
                 });                    
         }
 
-        public static IParamValidators Regex(this IParamValidators self, string expr, params string[] @params)
+        public static IPreValidator Regex(this IPreValidator self, string expr, params string[] @params)
         {
             return Regex(self, new Regex(expr), @params);
         }
 
-        public static IParamValidators Regex(this IParamValidators self, Regex expr, params string[] @params)
+        public static IPreValidator Regex(this IPreValidator self, Regex expr, params string[] @params)
         {
             return AddValidator(
                 self,
@@ -175,12 +175,12 @@ namespace Surrogates.Applications
                 });                   
         }
 
-        public static IParamValidators Composite<T>(this IParamValidators self, string param, params IPropValidators[] validators)
+        public static IPreValidator Composite<T>(this IPreValidator self, string param, params IPropValidators[] validators)
         { 
             return Composite<T>(self, new string[] { param }, validators);
         }
 
-        public static IParamValidators Composite<T>(this IParamValidators self, string[] @params, params IPropValidators[] validators)
+        public static IPreValidator Composite<T>(this IPreValidator self, string[] @params, params IPropValidators[] validators)
         {
             Func<T, bool> assertion = null;
 
@@ -198,7 +198,7 @@ namespace Surrogates.Applications
                     args => assertion((T)args[i]));
         }
 
-        public static IParamValidators Composite(this IParamValidators self, params Delegate[] preValidators)
+        public static IPreValidator Composite(this IPreValidator self, params Delegate[] preValidators)
         {
             var ass = (Assert.List4.Parameters)
                 (self ?? (self = new Assert.List4.Parameters()));

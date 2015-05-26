@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Surrogates.Applications.Tests
 {
+    [TestFixture]
     public class ContractPreValidatorTests: AppTests
     {
         [Test, ExpectedException(typeof(ArgumentException))]
@@ -65,14 +66,20 @@ namespace Surrogates.Applications.Tests
         [Test]
         public void CompositeTest()
         {
+            Func<string, bool> validator = text =>
+            {
+                return !string.IsNullOrEmpty(text) || text.ToLower().Contains("meat");
+            };
+
             Container.Map(m =>
                   m.From<Simple>()
                   .Apply
-                  .Contracts(s => (Action<string>)s.Set, These.Are.Composite(new Func<string, bool>(text => !string.IsNullOrEmpty(text)))));
+                  .Contracts(s => (Action<string>)s.Set, These.Are.Composite(validator)));
             
             var proxy = Container.Invoke<Simple>();
-
-            proxy.Set(null);            
+            // Check this style (nunit)
+            //NUnit.Framework.Assert.
+            proxy.Set("FishBallMeat");            
         }
     }
 }
