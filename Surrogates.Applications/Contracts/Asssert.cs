@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Surrogates.Applications.Contracts
 {
-    public class Assert
+    public class Assert_
     {
         public class Entry4
         {

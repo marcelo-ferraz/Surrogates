@@ -6,13 +6,13 @@ using System.Text.RegularExpressions;
 
 namespace Surrogates.Applications.Contracts
 {
-    internal static class BaseValidators
+    public static class _Validate
     {
-        public static Regex EmailRegexpr;
-        public static Regex UrlRegexpr;
-        public static Regex IsNumberRegexpr;
+        internal static Regex EmailRegexpr;
+        internal static Regex UrlRegexpr;
+        internal static Regex IsNumberRegexpr;
 
-        static BaseValidators()
+        static _Validate()
         {
             EmailRegexpr = new Regex(
                 @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -22,31 +22,31 @@ namespace Surrogates.Applications.Contracts
                 @"^([0-9]+)(.|,)?([0-9]*)$", RegexOptions.Compiled);
         }
 
-        public static bool ValidateRegex(Regex expr, string arg)
+        public static bool Regex(Regex expr, string arg)
         {
             return expr.IsMatch(arg);
         }
 
-        public static bool ValidateLowerThan<P>(P lower, P arg) 
+        public static bool LessThan<P>(P lower, P arg) 
             where P : struct
         {
             return Comparer<P>.Default.Compare(lower, arg) < 0;   
         }
 
-        public static bool ValidateBiggerThan<P>(P higher, P arg) 
+        public static bool GreatterThan<P>(P higher, P arg) 
             where P : struct
         {
             return Comparer<P>.Default.Compare(higher, arg) > 0;
         }
 
-        public static bool ValidateInBetween<P>(P min, P max, P arg) 
+        public static bool InBetween<P>(P min, P max, P arg) 
             where P : struct
         {
             return Comparer<P>.Default.Compare(min, arg) > 0 &&
                 Comparer<P>.Default.Compare(max, arg) < 0;
         }
 
-        public static bool ValidateRequired(object val, Type t)
+        public static bool Required(object val, Type t)
         {
             return // if is a reference type
                 (!t.IsValueType && Nullable.GetUnderlyingType(t) != null && val == null)
@@ -54,7 +54,7 @@ namespace Surrogates.Applications.Contracts
                 (val == Activator.CreateInstance(t));
         }
 
-        public static bool ValidateRequiredString(object val)
+        public static bool NotNullString(object val)
         {
             return !string.IsNullOrEmpty((string)val);
         }

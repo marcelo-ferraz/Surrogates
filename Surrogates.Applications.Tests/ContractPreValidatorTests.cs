@@ -16,7 +16,7 @@ namespace Surrogates.Applications.Tests
             Container.Map(m =>
                 m.From<Simple>()
                 .Apply
-                .Contracts(s => (Action<string>)s.Set, These.Are.Required("text")));
+                .Contracts(s => (Action<string>)s.Set, Opine.IsNotNullOrDefault("text")));
 
             var proxy = Container.Invoke<Simple>();
 
@@ -29,7 +29,7 @@ namespace Surrogates.Applications.Tests
             Container.Map(m =>
                 m.From<Simple>()
                 .Apply
-                .Contracts(s => (Action<string>)s.Set, These.Are.Null("text")));
+                .Contracts(s => (Action<string>)s.Set, Opine.IsNullOrDefault("text")));
 
             var proxy = Container.Invoke<Simple>();
 
@@ -42,7 +42,7 @@ namespace Surrogates.Applications.Tests
             Container.Map(m =>
                 m.From<Simple>()
                 .Apply
-                .Contracts(s => (Action<string>)s.Set, These.Are.Email("text")));
+                .Contracts(s => (Action<string>)s.Set, Opine.IsAnEmail("text")));
 
             var proxy = Container.Invoke<Simple>();
 
@@ -55,7 +55,7 @@ namespace Surrogates.Applications.Tests
             Container.Map(m =>
                 m.From<Simple>()
                 .Apply
-                .Contracts(s => (Action<string>)s.Set, These.Are.Url("text")));
+                .Contracts(s => (Action<string>)s.Set, Opine.IsAnUrl("text")));
 
             var proxy = Container.Invoke<Simple>();
 
@@ -68,7 +68,7 @@ namespace Surrogates.Applications.Tests
             Container.Map(m =>
                   m.From<Simple>()
                   .Apply
-                  .Contracts(s => (Action<string>)s.Set, These.Are.Composite(new Func<string, bool>(text => !string.IsNullOrEmpty(text)))));
+                  .Contracts(s => (Action<string>)s.Set, Opine.That(new Func<string, bool>(text => !string.IsNullOrEmpty(text)))));
             
             var proxy = Container.Invoke<Simple>();
 

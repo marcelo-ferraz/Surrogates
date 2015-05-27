@@ -33,7 +33,7 @@ namespace Surrogates.Applications
 
             var validators = validations
                 .SelectMany(ass => 
-                    ((Assert.List4.Parameters)ass).Validators);
+                    ((Assert_.List4.Parameters)ass).Validators);
 
             var preValidators =
                 new Dictionary<string, Action<object[]>>();
@@ -65,7 +65,7 @@ namespace Surrogates.Applications
                 .AddProperty<Dictionary<string, Action<object[]>>>("PreValidators", preValidators);
         }
 
-        private static Action<object[]> GetPreValidator4ThisMethod(MethodInfo method, IEnumerable<Assert.Entry4.Parameters> validators)
+        private static Action<object[]> GetPreValidator4ThisMethod(MethodInfo method, IEnumerable<Assert_.Entry4.Parameters> validators)
         {
             Action<object[]> preValidator = null;
 

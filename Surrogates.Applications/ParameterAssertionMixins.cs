@@ -12,14 +12,14 @@ namespace Surrogates.Applications
     {
         private static IParamValidators AddValidator(IParamValidators assertions, string[] @params, Func<int, ParameterInfo[], Action<object[]>> validator)
         {
-            var ass = (Assert.List4.Parameters)
-                (assertions ?? (assertions = new Assert.List4.Parameters()));
+            var ass = (Assert_.List4.Parameters)
+                (assertions ?? (assertions = new Assert_.List4.Parameters()));
             
 
             for (int i = 0; i < @params.Length; i++)
             {
                 ass.Validators
-                    .Add(new Assert.Entry4.Parameters
+                    .Add(new Assert_.Entry4.Parameters
                     {
                         ParameterName = @params[i],
                         Action = validator
@@ -35,7 +35,7 @@ namespace Surrogates.Applications
                 string.Format(format, args)); 
         }
 
-        public static IParamValidators Null(this IParamValidators self, params string[] @params)
+        public static IParamValidators IsNullOrDefault(this IParamValidators self, params string[] @params)
         {
             return AddValidator(
                 self,
@@ -48,21 +48,21 @@ namespace Surrogates.Applications
                     {
                         return args =>
                         {
-                            if (BaseValidators.ValidateRequiredString(args[i]))
+                            if (_Validate.NotNullString(args[i]))
                             { Throw("The given value for '{0}' is not the default of {1}!", name, type); }
                         };
                     }
 
                     return args =>
                     {
-                        if (BaseValidators.ValidateRequired(args[i], type))
+                        if (_Validate.Required(args[i], type))
                         { Throw("The given value for '{0}' is not the default of {1}!", name, type); }
                     };
                 });
         }
 
 
-        public static IParamValidators Required(this IParamValidators self, params string[] @params)
+        public static IParamValidators IsNotNullOrDefault(this IParamValidators self, params string[] @params)
         {
             return AddValidator(
                 self,
@@ -76,35 +76,65 @@ namespace Surrogates.Applications
                     {
                         return args =>
                         {
-                            if (!BaseValidators.ValidateRequiredString(args[i]))
+                            if (!_Validate.NotNullString(args[i]))
                             { Throw("The given value for '{0}' is required!", name); }
                         };
                     }
 
                     return args =>
                     {
-                        if (!BaseValidators.ValidateRequired(args[i], type))
+                        if (!_Validate.Required(args[i], type))
                         { Throw("The given value for '{0}' is required!", name); }
                     };
                 });
         }
 
-        public static IParamValidators Email(this IParamValidators self, params string[] @params)
+        public static IParamValidators IsAnEmail(this IParamValidators self, params string[] @params)
         {
-            return Regex(self, BaseValidators.EmailRegexpr, @params);
+            return ThisRegex(self, _Validate.EmailRegexpr, @params);
         }
 
-        public static IParamValidators Url(this IParamValidators self, params string[] @params)
+        public static IParamValidators IsAnUrl(this IParamValidators self, params string[] @params)
         {
-            return Regex(self, BaseValidators.UrlRegexpr, @params);
+            return ThisRegex(self, _Validate.UrlRegexpr, @params);
         }
 
-        public static IParamValidators Number(this IParamValidators self, params string[] @params)
+        public static IParamValidators IsNumber(this IParamValidators self, params string[] @params)
         {
-            return Regex(self, BaseValidators.IsNumberRegexpr, @params);
+            return AddValidator(
+                self,
+                @params,
+                (i, p) =>
+                {
+                    var name = p[i].Name;
+                    var expr = _Validate.IsNumberRegexpr;
+                    return args =>
+                    {
+                        if (!_Validate.Regex(expr, (string)args[i]))
+                        { Throw("The given value for '{0}' is not a number!", name); }
+                    };
+                }); 
         }
 
-        public static IParamValidators InBetween<P>(this IParamValidators self, P min, P max, params string[] @params)
+        internal static IParamValidators IsNaN(this IParamValidators self, string[] @params)
+        {
+            return AddValidator(
+                self,
+                @params,
+                (i, p) =>
+                {
+                    var name = p[i].Name;
+                    var expr = _Validate.IsNumberRegexpr;
+                    return args =>
+                    {
+                        if (_Validate.Regex(expr, (string)args[i]))
+                        { Throw("The given value for '{0}' is a number!", name); }
+                    };
+                });  
+        }
+
+
+        public static IParamValidators IsInBetween<P>(this IParamValidators self, P min, P max, params string[] @params)
             where P : struct
         {
             return AddValidator(
@@ -117,13 +147,13 @@ namespace Surrogates.Applications
                     return 
                         args => 
                         {
-                            if(!BaseValidators.ValidateInBetween<P>(min, max, (P)args[i]))
+                            if(!_Validate.InBetween<P>(min, max, (P)args[i]))
                             { Throw("The given value for '{0}' is not in between of {1} and {2}!", name, min, max); }                        
                         };
                 });
         }
-
-        public static IParamValidators BiggerThan<P>(this IParamValidators self, P higher, params string[] @params)
+        
+        public static IParamValidators Greater<P>(this IParamValidators self, P higher, params string[] @params)
             where P : struct
         {
             return AddValidator(
@@ -133,12 +163,12 @@ namespace Surrogates.Applications
                     args => {
                         var name = p[i].Name;
                         
-                        if(!BaseValidators.ValidateBiggerThan<P>(higher, (P)args[i]))
+                        if(!_Validate.GreatterThan<P>(higher, (P)args[i]))
                         { Throw("The given value for '{0}' is not bigger than {1}!", name, higher); }                        
                     });
         }
 
-        public static IParamValidators LowerThan<P>(this IParamValidators self, P lower, params string[] @params)
+        public static IParamValidators IsLowerThan<P>(this IParamValidators self, P lower, params string[] @params)
             where P : struct
         {
             return AddValidator(
@@ -149,18 +179,18 @@ namespace Surrogates.Applications
 
                     return args =>
                     {
-                        if (!BaseValidators.ValidateLowerThan<P>(lower, (P)args[i]))
+                        if (!_Validate.LessThan<P>(lower, (P)args[i]))
                         { Throw("The given value for '{0}' is not lower than {1}!", name, lower); }
                     };
                 });                    
         }
 
-        public static IParamValidators Regex(this IParamValidators self, string expr, params string[] @params)
+        public static IParamValidators ThisRegex(this IParamValidators self, string expr, params string[] @params)
         {
-            return Regex(self, new Regex(expr), @params);
+            return ThisRegex(self, new Regex(expr), @params);
         }
 
-        public static IParamValidators Regex(this IParamValidators self, Regex expr, params string[] @params)
+        public static IParamValidators ThisRegex(this IParamValidators self, Regex expr, params string[] @params)
         {
             return AddValidator(
                 self,
@@ -169,22 +199,22 @@ namespace Surrogates.Applications
                     var name = p[i].Name;
                     
                     return args => {
-                        if(!BaseValidators.ValidateRegex(expr, (string)args[i]))
+                        if(!_Validate.Regex(expr, (string)args[i]))
                         { Throw("The given value for '{0}' does not match the expression '{1}'!", name, expr.ToString()); }                        
                     };
                 });                   
         }
 
-        public static IParamValidators Composite<T>(this IParamValidators self, string param, params IPropValidators[] validators)
+        public static IParamValidators That<T>(this IParamValidators self, string param, params IPropValidators[] validators)
         { 
-            return Composite<T>(self, new string[] { param }, validators);
+            return That<T>(self, new string[] { param }, validators);
         }
 
-        public static IParamValidators Composite<T>(this IParamValidators self, string[] @params, params IPropValidators[] validators)
+        public static IParamValidators That<T>(this IParamValidators self, string[] @params, params IPropValidators[] validators)
         {
             Func<T, bool> assertion = null;
 
-            foreach (var validator in validators.SelectMany(v => ((Assert.List4.Properties)v).Validators))                
+            foreach (var validator in validators.SelectMany(v => ((Assert_.List4.Properties)v).Validators))                
             {
                 assertion = assertion != null ?
                     (arg => assertion(arg) && (bool)validator.Validation.DynamicInvoke(arg)) :
@@ -198,10 +228,10 @@ namespace Surrogates.Applications
                     args => assertion((T)args[i]));
         }
 
-        public static IParamValidators Composite(this IParamValidators self, params Delegate[] preValidators)
+        public static IParamValidators That(this IParamValidators self, params Delegate[] preValidators)
         {
-            var ass = (Assert.List4.Parameters)
-                (self ?? (self = new Assert.List4.Parameters()));
+            var ass = (Assert_.List4.Parameters)
+                (self ?? (self = new Assert_.List4.Parameters()));
             
             foreach (var preValidator in preValidators)
             {
@@ -260,6 +290,151 @@ namespace Surrogates.Applications
             }
 
             return self;
+        }
+
+        internal static IParamValidators AreEqual(this IParamValidators self, object expected, string[] @params)
+        {
+            return AddValidator(
+                self,
+                @params,
+                (i, p) =>
+                {
+                    var name = p[i].Name;
+
+                    return args =>
+                    {
+                        if (!object.Equals(expected, args[i]))
+                        { Throw("The given value for '{0}', {1} is not equals to {2}!", name, args[i], expected); }
+                    };
+                });  
+        }
+
+        internal static IParamValidators AreReferenceEqual(this IParamValidators self, object expected, string[] @params)
+        {
+            return AddValidator(
+                self,
+                @params,
+                (i, p) =>
+                {
+                    var name = p[i].Name;
+
+                    return args =>
+                    {
+                        if (!object.ReferenceEquals(expected, args[i]))
+                        { Throw("The given value for '{0}', {1} is not equals to {2}!", name, args[i], expected); }
+                    };
+                });  
+        }
+
+        internal static IParamValidators Contains(this IParamValidators self, object expected, string[] @params)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static IParamValidators DoesNotContains(this IParamValidators self, object expected, string[] @params)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static IParamValidators IsAssignableFrom<T>(this IParamValidators self, string[] @params)
+        {
+            return self.IsAssignableFrom(typeof(T), @params);
+        }
+
+        internal static IParamValidators IsAssignableFrom(this IParamValidators self, Type expectedType, string[] @params)
+        {
+            return AddValidator(
+                self,
+                @params,
+                (i, p) =>
+                {
+                    var name = p[i].Name;
+
+                    return args =>
+                    {
+                        if (args[i].GetType().IsAssignableFrom(expectedType))
+                        { Throw("The type, '{0}', of the parameter '{1}' is not assignable from {2} !", args[i].GetType(), name, expectedType); }
+                    };
+                });  
+        }
+
+        internal static IParamValidators IsNotAssignableFrom<T>(this IParamValidators self, string[] @params)
+        {
+            return self.IsNotAssignableFrom(typeof(T), @params);
+        }
+
+        internal static IParamValidators IsNotAssignableFrom(this IParamValidators self, Type expectedType, string[] @params)
+        {
+            return AddValidator(
+                self,
+                @params,
+                (i, p) =>
+                {
+                    var name = p[i].Name;
+
+                    return args =>
+                    {
+                        if (!args[i].GetType().IsAssignableFrom(expectedType))
+                        { Throw("The type, '{0}', of the parameter '{1}' is assignable from {2} !", args[i].GetType(), name, expectedType); }
+                    };
+                });  
+        }
+
+        internal static IParamValidators IsEmpty(this IParamValidators self, string[] @params)
+        {
+            throw new NotImplementedException();
+            // verify against string, Icollection and IList
+        }
+        internal static IParamValidators IsNotEmpty(this IParamValidators self, string[] @params)
+        {
+            throw new NotImplementedException();
+            // verify against string, Icollection and IList
+        }
+
+        internal static IParamValidators IsFalse(this IParamValidators self, string[] @params)
+        {
+            return AddValidator(
+                self,
+                @params,
+                (i, p) =>
+                {
+                    var name = p[i].Name;
+
+                    return args =>
+                    {
+                        if ((bool)args[i])
+                        { Throw("The given value for '{0}' is not false!", name); }
+                    };
+                });  
+        }
+
+        internal static IParamValidators IsTrue(this IParamValidators self, string[] @params)
+        {
+            return AddValidator(
+                self,
+                @params,
+                (i, p) =>
+                {
+                    var name = p[i].Name;
+
+                    return args =>
+                    {
+                        if (!(bool)args[i])
+                        { Throw("The given value for '{0}' is not true!", name); }
+                    };
+                });  
+        }
+
+        public static IParamValidators GreaterOrEqual<P>(this IParamValidators self, P greater, params string[] @params)
+            where P: struct
+        {
+            throw new NotImplementedException();
+        }
+
+        public static IParamValidators LessOrEqual<P>(this IParamValidators self, object higher, params string[] @params)
+            where P: struct
+        {
+            throw new NotImplementedException();
         }
     }
 }
