@@ -10,7 +10,7 @@ using System.Linq.Expressions;
 
 namespace Surrogates.Applications.Contracts
 {
-    public static class Opine
+    public static class Presume
     {        
         public static IParamValidators AreEqual(object expected, params string[] @params)
         {
@@ -21,8 +21,7 @@ namespace Surrogates.Applications.Contracts
         {
             return ParameterAssertionMixins.AreReferenceEqual(null, expected, @params);
         }
-
-
+        
         public static IParamValidators Contains(object expected, params string[] @params)
         {
             return ParameterAssertionMixins.Contains(null, expected, @params);

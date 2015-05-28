@@ -5,7 +5,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-
+using Surrogates.Applications.Mixins;
+using System.Collections;
 namespace Surrogates.Applications
 {
     public static class ParameterAssertionMixins
@@ -48,20 +49,19 @@ namespace Surrogates.Applications
                     {
                         return args =>
                         {
-                            if (_Validate.NotNullString(args[i]))
+                            if (!string.IsNullOrEmpty((string)args[i]))
                             { Throw("The given value for '{0}' is not the default of {1}!", name, type); }
                         };
                     }
 
                     return args =>
                     {
-                        if (_Validate.Required(args[i], type))
+                        if (!_Validate.IsNotNullOrDefault(args[i], type))
                         { Throw("The given value for '{0}' is not the default of {1}!", name, type); }
                     };
                 });
         }
-
-
+        
         public static IParamValidators IsNotNullOrDefault(this IParamValidators self, params string[] @params)
         {
             return AddValidator(
@@ -76,14 +76,14 @@ namespace Surrogates.Applications
                     {
                         return args =>
                         {
-                            if (!_Validate.NotNullString(args[i]))
+                            if (string.IsNullOrEmpty((string)(args[i])))
                             { Throw("The given value for '{0}' is required!", name); }
                         };
                     }
 
                     return args =>
                     {
-                        if (!_Validate.Required(args[i], type))
+                        if (!_Validate.IsNotNullOrDefault(args[i], type))
                         { Throw("The given value for '{0}' is required!", name); }
                     };
                 });
@@ -132,8 +132,7 @@ namespace Surrogates.Applications
                     };
                 });  
         }
-
-
+        
         public static IParamValidators IsInBetween<P>(this IParamValidators self, P min, P max, params string[] @params)
             where P : struct
         {
@@ -163,7 +162,7 @@ namespace Surrogates.Applications
                     args => {
                         var name = p[i].Name;
                         
-                        if(!_Validate.GreatterThan<P>(higher, (P)args[i]))
+                        if(!_Validate.Greater<P>(higher, (P)args[i]))
                         { Throw("The given value for '{0}' is not bigger than {1}!", name, higher); }                        
                     });
         }
@@ -179,7 +178,7 @@ namespace Surrogates.Applications
 
                     return args =>
                     {
-                        if (!_Validate.LessThan<P>(lower, (P)args[i]))
+                        if (!_Validate.Less<P>(lower, (P)args[i]))
                         { Throw("The given value for '{0}' is not lower than {1}!", name, lower); }
                     };
                 });                    
@@ -325,15 +324,45 @@ namespace Surrogates.Applications
                     };
                 });  
         }
-
+        
         internal static IParamValidators Contains(this IParamValidators self, object expected, string[] @params)
         {
-            throw new NotImplementedException();
+            return AddValidator(
+               self,
+               @params,
+               (i, p) =>
+               {
+                   var contains =
+                       _Validate.Contains(i, p, expected);
+
+                   var name = p[i].Name;
+
+                   return args =>
+                   {
+                       if (contains(args))
+                       { Throw("The supplied value '{0}', was not found on the given value of '{1}'!", expected, name); }
+                   };
+               });
         }
 
         internal static IParamValidators DoesNotContains(this IParamValidators self, object expected, string[] @params)
         {
-            throw new NotImplementedException();
+            return AddValidator(
+               self,
+               @params,
+               (i, p) =>
+               {
+                   var contains =
+                       _Validate.Contains(i, p, expected);
+
+                   var name = p[i].Name;
+
+                   return args =>
+                   {
+                       if (!contains(args))
+                       { Throw("The supplied value '{0}', was not found on the given value of '{1}'!", expected, name); }
+                   };
+               });
         }
 
         internal static IParamValidators IsAssignableFrom<T>(this IParamValidators self, string[] @params)
@@ -382,13 +411,43 @@ namespace Surrogates.Applications
 
         internal static IParamValidators IsEmpty(this IParamValidators self, string[] @params)
         {
-            throw new NotImplementedException();
-            // verify against string, Icollection and IList
+            return AddValidator(
+                self,
+                @params,
+                (i, p) =>
+                {
+                    var name =
+                        p[i].Name;
+                    
+                    var getCount =
+                        p[i].GetCount();
+
+                    return args =>
+                    {
+                        if (((int)getCount(args[i], null)) > 0)
+                        { Throw("The given value for '{0}' is not empty!", name, args[i]); }
+                    };
+                }); 
         }
         internal static IParamValidators IsNotEmpty(this IParamValidators self, string[] @params)
         {
-            throw new NotImplementedException();
-            // verify against string, Icollection and IList
+            return AddValidator(
+                self,
+                @params,
+                (i, p) =>
+                {
+                    var name =
+                        p[i].Name;
+
+                    var getCount =
+                        p[i].GetCount();
+
+                    return args =>
+                    {
+                        if (((int)getCount(args[i], null)) < 1)
+                        { Throw("The given value for '{0}' is empty!", name, args[i]); }
+                    };
+                }); 
         }
 
         internal static IParamValidators IsFalse(this IParamValidators self, string[] @params)
@@ -425,16 +484,36 @@ namespace Surrogates.Applications
                 });  
         }
 
-        public static IParamValidators GreaterOrEqual<P>(this IParamValidators self, P greater, params string[] @params)
+        public static IParamValidators GreaterOrEqual<P>(this IParamValidators self, P higher, params string[] @params)
             where P: struct
         {
-            throw new NotImplementedException();
+            return AddValidator(
+                self,
+                @params,
+                (i, p) =>
+                args =>
+                {
+                    var name = p[i].Name;
+
+                    if (!_Validate.GreaterOrEqual<P>(higher, (P)args[i]))
+                    { Throw("The given value for '{0}' is not bigger than {1}!", name, higher); }
+                });
         }
 
-        public static IParamValidators LessOrEqual<P>(this IParamValidators self, object higher, params string[] @params)
+        public static IParamValidators LessOrEqual<P>(this IParamValidators self, P less, params string[] @params)
             where P: struct
         {
-            throw new NotImplementedException();
+            return AddValidator(
+                self,
+                @params,
+                (i, p) =>
+                args =>
+                {
+                    var name = p[i].Name;
+
+                    if (!_Validate.LessOrEqual<P>(less, (P)args[i]))
+                    { Throw("The given value for '{0}' is not bigger than {1}!", name, less); }
+                });
         }
     }
 }

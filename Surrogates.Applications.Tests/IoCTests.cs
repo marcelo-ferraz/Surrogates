@@ -10,7 +10,13 @@ namespace Surrogates.Applications.Tests
 {
     public abstract class AppTests
     {
-        protected SurrogatesContainer Container = new SurrogatesContainer();
+        protected SurrogatesContainer Container;
+
+        [SetUp]
+        public void SetUp()
+        {
+            Container = new SurrogatesContainer();
+        }
     }
 
     public class IoCTests : AppTests

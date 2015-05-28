@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionR.cs" />
+    <Compile Include="Mixins\ObjectMixins.cs" />
     <Compile Include="PropertyAssertionMixins.cs" />
     <Compile Include="ExecuteElsewhereMixins.cs" />
     <Compile Include="ExecutingElsewhere\ElsewhereExpression.cs" />
@@ -67,7 +68,7 @@
     <Compile Include="Contracts\BaseValidators.cs" />
     <Compile Include="Contracts\IPropValidators.cs" />
     <Compile Include="Contracts\IParamValidators.cs" />
-    <Compile Include="Contracts\Params.cs" />
+    <Compile Include="Contracts\Presume.cs" />
     <Compile Include="Contracts\PropertiesOf.cs" />
   </ItemGroup>
   <ItemGroup>

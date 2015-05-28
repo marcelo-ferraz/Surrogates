@@ -9,7 +9,8 @@ using System.Text.RegularExpressions;
 
 namespace Surrogates.Applications
 {
-    public static class PropertyAssertionMixins
+    [Obsolete("This is still not done")]
+    internal static class PropertyAssertionMixins
     {
         private static Func<T, P>[] ToProps<T, P>(params string[] names)
         {
@@ -57,19 +58,20 @@ namespace Surrogates.Applications
 
         public static IPropValidators Required<T>(this IPropValidators self, params Func<T, object>[] props)
         {
-            return Validate<T, object>(self, props, getProp =>
-            {
-                if (getProp.Method.ReturnType == typeof(string))
+            return Validate<T, object>(self, props, 
+                getProp =>
                 {
-                    return item =>
-                        _Validate.NotNullString(getProp(item));
-                }
-                else
-                {
-                    return item =>
-                        _Validate.Required(getProp(item), getProp(item).GetType());
-                }
-            });
+                    if (getProp.Method.ReturnType == typeof(string))
+                    {
+                        return item => { };
+                            //{ return !string.IsNullOrEmpty((string)getProp(item)); };
+                    }
+                    else
+                    {
+                        return item =>
+                            _Validate.IsNotNullOrDefault(getProp(item), getProp(item).GetType());
+                    }
+                });
         }
 
         public static IPropValidators Email<T>(this IPropValidators self, params string[] names)
@@ -131,7 +133,7 @@ namespace Surrogates.Applications
                 self,
                 props,
                 getProp =>
-                    item => _Validate.GreatterThan(higher, getProp(item)));
+                    item => _Validate.Greater(higher, getProp(item)));
         }
 
         public static IPropValidators LowerThan<T, P>(this IPropValidators self, P higher, params string[] names)
@@ -147,7 +149,7 @@ namespace Surrogates.Applications
                 self,
                 props,
                 getProp =>
-                    item => _Validate.LessThan(higher, getProp(item)));
+                    item => _Validate.Less(higher, getProp(item)));
         }
 
         public static IPropValidators Regex<T>(this IPropValidators self, string expr, params string[] names)
