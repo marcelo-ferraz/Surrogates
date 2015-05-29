@@ -96,9 +96,9 @@ namespace Surrogates.Applications.Tests
             Container.Map(m =>
                   m.From<Simple>()
                   .Apply
-                  .Contracts(s => (Action<string>)s.Set, Presume.Contains("t", "text"))
+                  .Contracts(s => (Action<string>)s.Set, Presume.Contains("t", parameters: "text"))
             );
-
+            
             var proxy = Container.Invoke<Simple>();
 
             proxy.Set(null);            
