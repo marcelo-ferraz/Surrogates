@@ -44,7 +44,7 @@ namespace Surrogates.Applications.Contracts
 
             public static IPropValidators Email(params Func<T, string>[] props)
             {
-                return Regex(BaseValidators.EmailRegexpr, props);
+                return Regex(_Validate.EmailRegexpr, props);
             }
 
             public static IPropValidators Url(params string[] names)
@@ -54,7 +54,7 @@ namespace Surrogates.Applications.Contracts
 
             public static IPropValidators Url(params Func<T, string>[] props)
             {
-                return Regex(BaseValidators.UrlRegexpr, props);
+                return Regex(_Validate.UrlRegexpr, props);
             }
 
             public static IPropValidators Number(params string[] names)
@@ -64,7 +64,7 @@ namespace Surrogates.Applications.Contracts
 
             public static IPropValidators Number(params Func<T, string>[] props)
             {
-                return Regex(BaseValidators.IsNumberRegexpr, props);
+                return Regex(_Validate.IsNumberRegexpr, props);
             }
 
             public static IPropValidators InBetween<P>(P min, P max, params string[] names)

@@ -9,7 +9,8 @@ using System.Text.RegularExpressions;
 
 namespace Surrogates.Applications
 {
-    public static class PropertyAssertionMixins
+    [Obsolete("This is still not done")]
+    internal static class PropertyAssertionMixins
     {
         private static Func<T, P>[] ToProps<T, P>(params string[] names)
         {
@@ -38,9 +39,9 @@ namespace Surrogates.Applications
                 if (validate == null)
                 { continue; }
 
-                ((Assert.List4.Properties)(assertions ?? (assertions = new Assert.List4.Properties())))
+                ((Assert_.List4.Properties)(assertions ?? (assertions = new Assert_.List4.Properties())))
                     .Validators
-                    .Add(new Assert.Entry4.Properties
+                    .Add(new Assert_.Entry4.Properties
                     {
                         Property = props[i],
                         Validation = validator(props[i])
@@ -57,19 +58,20 @@ namespace Surrogates.Applications
 
         public static IPropValidators Required<T>(this IPropValidators self, params Func<T, object>[] props)
         {
-            return Validate<T, object>(self, props, getProp =>
-            {
-                if (getProp.Method.ReturnType == typeof(string))
+            return Validate<T, object>(self, props, 
+                getProp =>
                 {
-                    return item =>
-                        BaseValidators.ValidateRequiredString(getProp(item));
-                }
-                else
-                {
-                    return item =>
-                        BaseValidators.ValidateRequired(getProp(item), getProp(item).GetType());
-                }
-            });
+                    if (getProp.Method.ReturnType == typeof(string))
+                    {
+                        return item => { };
+                            //{ return !string.IsNullOrEmpty((string)getProp(item)); };
+                    }
+                    else
+                    {
+                        return item =>
+                            _Validate.IsNotNullOrDefault(getProp(item), getProp(item).GetType());
+                    }
+                });
         }
 
         public static IPropValidators Email<T>(this IPropValidators self, params string[] names)
@@ -79,7 +81,7 @@ namespace Surrogates.Applications
 
         public static IPropValidators Email<T>(this IPropValidators self, params Func<T, string>[] props)
         {
-            return Regex<T>(self, BaseValidators.EmailRegexpr, props);
+            return Regex<T>(self, _Validate.EmailRegexpr, props);
         }
 
         public static IPropValidators Url<T>(this IPropValidators self, params string[] names)
@@ -89,7 +91,7 @@ namespace Surrogates.Applications
 
         public static IPropValidators Url<T>(this IPropValidators self, params Func<T, string>[] props)
         {
-            return Regex<T>(self, BaseValidators.UrlRegexpr, props);
+            return Regex<T>(self, _Validate.UrlRegexpr, props);
         }
 
         public static IPropValidators IsNumber<T>(this IPropValidators self, params string[] names)
@@ -99,7 +101,7 @@ namespace Surrogates.Applications
 
         public static IPropValidators IsNumber<T>(this IPropValidators self, params Func<T, string>[] props)
         {
-            return Regex<T>(self, BaseValidators.IsNumberRegexpr, props);
+            return Regex<T>(self, _Validate.IsNumberRegexpr, props);
         }
 
         public static IPropValidators InBetween<T, P>(this IPropValidators self, P min, P max, params string[] names)
@@ -115,7 +117,7 @@ namespace Surrogates.Applications
                 self,
                 props,
                 getProp =>
-                    item => BaseValidators.ValidateInBetween<P>(min, max, getProp(item)));
+                    item => _Validate.InBetween<P>(min, max, getProp(item)));
         }
 
         public static IPropValidators BiggerThan<T, P>(this IPropValidators self, P higher, params string[] names)
@@ -131,7 +133,7 @@ namespace Surrogates.Applications
                 self,
                 props,
                 getProp =>
-                    item => BaseValidators.ValidateBiggerThan(higher, getProp(item)));
+                    item => _Validate.Greater(higher, getProp(item)));
         }
 
         public static IPropValidators LowerThan<T, P>(this IPropValidators self, P higher, params string[] names)
@@ -147,7 +149,7 @@ namespace Surrogates.Applications
                 self,
                 props,
                 getProp =>
-                    item => BaseValidators.ValidateLowerThan(higher, getProp(item)));
+                    item => _Validate.Less(higher, getProp(item)));
         }
 
         public static IPropValidators Regex<T>(this IPropValidators self, string expr, params string[] names)
@@ -171,7 +173,7 @@ namespace Surrogates.Applications
                 self,
                 props,
                 getProp =>
-                    item => BaseValidators.ValidateRegex(expr, getProp(item)));
+                    item => _Validate.Regex(expr, getProp(item)));
         }
     }
 }
