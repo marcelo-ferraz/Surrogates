@@ -13,7 +13,7 @@ namespace Surrogates.Utilities
 {
     internal static class Try2Add
     {
-        internal static void AnythingAsParameter(ILGenerator gen, Strategy strategy, Strategy.Interceptor interceptor, MethodInfo originalMethod, ParameterInfo param)
+        internal static bool AnythingAsParameter(ILGenerator gen, Strategy strategy, Strategy.Interceptor interceptor, MethodInfo originalMethod, ParameterInfo param)
         {
             var isSpecialParam =
                 param.Name[0] == 's' && param.Name[1] == '_';
@@ -21,20 +21,20 @@ namespace Surrogates.Utilities
             if (param.Is4Name())
             {
                 gen.Emit(OpCodes.Ldstr, originalMethod.Name);
-                return;
+                return true;
             }
 
             // get the instance if the parameter of the interceptor is named instance
             if (strategy.Accesses.HasFlag(Access.Instance) && param.IsInstance(strategy.BaseType))
             {
                 gen.Emit(OpCodes.Ldarg_0);
-                return;
+                return true;
             }
 
             if (param.IsSelfArguments())
             {
                 gen.Emit(OpCodes.Ldloc, interceptor.Locals["Args"]);
-                return;
+                return true;
             }
 
             // tries to add any method as parameter - disabled, temporarily 
@@ -45,31 +45,31 @@ namespace Surrogates.Utilities
 
                 gen.Emit(OpCodes.Ldloc, local);
 
-                return;
+                return true;
             }
 
             // tries to add any field as parameter 
             if (isSpecialParam &&
                 strategy.Accesses.HasFlag(Access.AnyField) &&
                 Try2Add.AnyFieldAsParameter(gen, strategy.BaseType, strategy.Fields, param, param.ParameterType))
-            { return; }
+            { return true; }
 
             // tries to add any property as parameter 
             if (isSpecialParam &&
                 strategy.Accesses.HasFlag(Access.AnyBaseProperty) &&
                 Try2Add.AnyBasePropertyAsParameter(gen, strategy.BaseType, strategy.Fields, param, param.ParameterType))
-            { return; }
+            { return true; }
             
             // tries to add any of the new properties as parameter 
             if (isSpecialParam &&
                 strategy.Accesses.HasFlag(Access.AnyNewProperty) &&
                 Try2Add.AnyNewPropertyAsParameter(gen, strategy.BaseType, strategy.NewProperties, param, param.ParameterType))
-            { return; }
+            { return true; }
 
             if (param.IsSelfMethod())
             {
                 gen.Emit(OpCodes.Ldloc, interceptor.Locals["S_Method"]);
-                return;
+                return true;
             }
 
             if (param.IsDynamic_())
@@ -79,10 +79,12 @@ namespace Surrogates.Utilities
                 gen.Emit(OpCodes.Ldloc, interceptor.Locals["ThisDynamic_"]);
                 gen.EmitCall(OpCodes.Call, typeof(Activator).GetMethod("CreateInstance", new[] { typeof(Type), typeof(object[]) }), new[] { typeof(Type), typeof(object[]) });
         
-                return;
+                return true;
             }
 
-            gen.EmitDefaultParameterValue(param.ParameterType);
+            gen.EmitDefaultParameterValue(param.ParameterType); 
+
+            return false;
         }
 
         internal static bool AnyBasePropertyAsParameter(ILGenerator gen, Type baseType, FieldList fields, ParameterInfo param, Type pType)

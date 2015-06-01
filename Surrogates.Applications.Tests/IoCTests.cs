@@ -13,9 +13,9 @@ namespace Surrogates.Applications.Tests
         protected SurrogatesContainer Container;
 
         [SetUp]
-        public void Setup()
+        public void SetUp()
         {
-            this.Container = new SurrogatesContainer();
+            Container = new SurrogatesContainer();
         }
     }
 

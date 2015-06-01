@@ -17,7 +17,7 @@ namespace Surrogates.Applications.Tests
             Container.Map(m =>
                 m.From<Simple>()
                 .Apply
-                .Contracts(s => (Action<string>)s.Set, These.Are.Required("text")));
+                .Contracts(s => (Action<string>)s.Set, Presume.IsNotNullOrDefault("text")));
 
             var proxy = Container.Invoke<Simple>();
 
@@ -30,7 +30,7 @@ namespace Surrogates.Applications.Tests
             Container.Map(m =>
                 m.From<Simple>()
                 .Apply
-                .Contracts(s => (Action<string>)s.Set, These.Are.Null("text")));
+                .Contracts(s => (Action<string>)s.Set, Presume.IsNullOrDefault("text")));
 
             var proxy = Container.Invoke<Simple>();
 
@@ -43,7 +43,7 @@ namespace Surrogates.Applications.Tests
             Container.Map(m =>
                 m.From<Simple>()
                 .Apply
-                .Contracts(s => (Action<string>)s.Set, These.Are.Email("text")));
+                .Contracts(s => (Action<string>)s.Set, Presume.IsAnEmail("text")));
 
             var proxy = Container.Invoke<Simple>();
 
@@ -56,7 +56,7 @@ namespace Surrogates.Applications.Tests
             Container.Map(m =>
                 m.From<Simple>()
                 .Apply
-                .Contracts(s => (Action<string>)s.Set, These.Are.Url("text")));
+                .Contracts("Set", Presume.IsAnUrl("text")));
 
             var proxy = Container.Invoke<Simple>();
 
@@ -64,22 +64,45 @@ namespace Surrogates.Applications.Tests
         }
 
         [Test]
-        public void CompositeTest()
+        public void CompositeTestRight()
         {
-            Func<string, bool> validator = text =>
-            {
-                return !string.IsNullOrEmpty(text) || text.ToLower().Contains("meat");
-            };
-
             Container.Map(m =>
                   m.From<Simple>()
                   .Apply
-                  .Contracts(s => (Action<string>)s.Set, These.Are.Composite(validator)));
+                  .Contracts(s => (Action<string>)s.Set, Presume.That(new Func<string, bool>((string text) => string.IsNullOrEmpty(text))))
+            );
             
             var proxy = Container.Invoke<Simple>();
-            // Check this style (nunit)
-            //NUnit.Framework.Assert.
-            proxy.Set("FishBallMeat");            
+
+            proxy.Set(null);            
+        }
+        
+        [Test, ExpectedException(typeof(ArgumentException))]
+        public void CompositeTestWrong()
+        {
+            Container.Map(m =>
+                  m.From<Simple>()
+                  .Apply
+                  .Contracts(s => (Action<string>)s.Set, Presume.That(new Func<string, bool>((string text) => !string.IsNullOrEmpty(text))))
+            );
+
+            var proxy = Container.Invoke<Simple>();
+
+            proxy.Set(null);
+        }
+
+        [Test, ExpectedException(typeof(ArgumentException))]
+        public void ContainsTest()
+        {
+            Container.Map(m =>
+                  m.From<Simple>()
+                  .Apply
+                  .Contracts(s => (Action<string>)s.Set, Presume.Contains("t", "text"))
+            );
+            
+            var proxy = Container.Invoke<Simple>();
+
+            proxy.Set("SuperMeatBallBoy");            
         }
     }
 }

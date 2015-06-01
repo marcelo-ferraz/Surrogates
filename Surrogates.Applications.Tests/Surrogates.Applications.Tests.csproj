@@ -46,7 +46,6 @@
   <ItemGroup>
     <Compile Include="ContractPreValidatorTests.cs" />
     <Compile Include="Model\Simple.cs" />
-    <Compile Include="ContractsTests.cs" />
     <Compile Include="InterlockingTests.cs" />
     <Compile Include="IoCTests.cs" />
     <Compile Include="ExecuteElsewhereTests.cs" />

@@ -24,7 +24,7 @@ namespace Surrogates.Applications
             }
         }
 
-        private static AndExpression<T> AddAllValidators<T>(this ApplyExpression<T> that, IPreValidator[] validations, IEnumerable<MethodInfo> ms)
+        private static AndExpression<T> AddAllPreValidators<T>(this ApplyExpression<T> that, IParamValidators[] validations, IEnumerable<MethodInfo> ms)
         {
             var ext =
                 new ShallowExtension<T>();
@@ -38,9 +38,7 @@ namespace Surrogates.Applications
             var preValidators =
                 new Dictionary<string, Action<object[]>>();
 
-            AndExpression<T> expr =  ext
-                .Factory
-                .AddProperty<Dictionary<string, Action<object[]>>>("PreValidators", preValidators);
+            AndExpression<T> expr = null;
 
             foreach (var method in ms)
             {
@@ -57,14 +55,14 @@ namespace Surrogates.Applications
                 else 
                 { preValidators.Add(method.Name, preValidator); }
 
-                expr = expr
-                    .And
+                expr = (expr != null ? expr.And : ext.Factory)
                     .Replace
                     .Method(method.Name)
                     .Using<ValidatorInterceptor<T>>("ValidateBeforeExecute");
             }
 
-            return expr;
+            return expr.And
+                .AddProperty<Dictionary<string, Action<object[]>>>("PreValidators", preValidators);
         }
 
         private static Action<object[]> GetPreValidator4ThisMethod(MethodInfo method, IEnumerable<Assert_.Entry4.Parameters> validators)
@@ -95,40 +93,40 @@ namespace Surrogates.Applications
         }
 
         public static AndExpression<T> Contracts<T>(
-            this ApplyExpression<T> that, Func<T, Delegate>[] methods, params IPreValidator[] pre)
+            this ApplyExpression<T> that, Func<T, Delegate>[] methods, params IParamValidators[] validations)
         {
             var obj = (T)FormatterServices
                 .GetUninitializedObject(typeof(T));
 
-            return that.AddAllValidators<T>(                
-                pre,
+            return that.AddAllPreValidators<T>(                
+                validations,
                 methods.Select(m => m(obj).Method));
         }
 
         public static AndExpression<T> Contracts<T>(
-            this ApplyExpression<T> that, Func<T, Delegate> method, params IPreValidator[] pre)
+            this ApplyExpression<T> that, Func<T, Delegate> method, params IParamValidators[] validations)
         {
             var obj = (T)FormatterServices
                 .GetUninitializedObject(typeof(T));
 
-            return that.AddAllValidators<T>(                
-                pre,
+            return that.AddAllPreValidators<T>(                
+                validations,
                 new[] { method(obj).Method });
         }
 
         public static AndExpression<T> Contracts<T>(
-            this ApplyExpression<T> that, string[] methods, params IPreValidator[] pre)
+            this ApplyExpression<T> that, string[] methods, params IParamValidators[] preValidations)
         {
-            return that.AddAllValidators<T>(
-                pre,
+            return that.AddAllPreValidators<T>(
+                preValidations,
                 methods.Select(m => typeof(T).GetMethod4Surrogacy(m)));
         }
 
         public static AndExpression<T> Contracts<T>(
-            this ApplyExpression<T> that, string method, params IPreValidator[] pre)
+            this ApplyExpression<T> that, string method, params IParamValidators[] preValidations)
         {
-            return that.AddAllValidators<T>(
-                pre,
+            return that.AddAllPreValidators<T>(
+                preValidations,
                 new[] { typeof(T).GetMethod4Surrogacy(method) });
         }
     }

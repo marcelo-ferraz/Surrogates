@@ -107,18 +107,6 @@ namespace Surrogates
             var entry =
                 expression.Strategies.Apply();
 
-            var met = 
-                entry.Type.GetMethod("Call_SetPropText_simple_Return_1");
-            if (met != null)
-            {
-                string instrs = "";
-                foreach (var instruction in new MethodBodyReader(met).Instructions)
-                {
-                    instrs += "IL " + instruction.Offset.ToString() + ":" + instruction.Code + " " + instruction.Operand;
-                    instrs += "\n";
-                }
-            }
-
             Cache.Add(entry.Type.Name, entry);
         }
 

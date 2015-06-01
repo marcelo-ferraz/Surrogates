@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Surrogates.Applications.Contracts
 {
-    public class Assert
+    public class Assert_
     {
         public class Entry4
         {
@@ -25,7 +25,7 @@ namespace Surrogates.Applications.Contracts
 
         public class List4
         {
-            public class Parameters : IPreValidator
+            public class Parameters : IParamValidators
             {
                 internal IList<Entry4.Parameters> Validators { get; set; }
 
