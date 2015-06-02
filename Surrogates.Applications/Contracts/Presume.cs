@@ -18,7 +18,7 @@ namespace Surrogates.Applications.Contracts
         /// <param name="expected">The expected value</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators AreEqual(object expected, params string[] parameters)
+        public static IParamValidator AreEqual(object expected, params string[] parameters)
         {
             return ParameterAssertionMixins.AreEqual(null, expected, parameters);
         }
@@ -29,7 +29,7 @@ namespace Surrogates.Applications.Contracts
         /// <param name="expected">The expected value</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators ReferenceEquals(object expected, params string[] parameters)
+        public static IParamValidator ReferenceEquals(object expected, params string[] parameters)
         {
             return ParameterAssertionMixins.AreReferenceEqual(null, expected, parameters);
         }
@@ -43,7 +43,7 @@ namespace Surrogates.Applications.Contracts
         /// <param name="expected">The expected value</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators Contains(object expected, params string[] parameters)
+        public static IParamValidator Contains(object expected, params string[] parameters)
         {
             return ParameterAssertionMixins.Contains(null, expected, parameters);
         }
@@ -55,7 +55,7 @@ namespace Surrogates.Applications.Contracts
         /// <param name="expected">The expected value</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators DoesNotContains(object expected, params string[] parameters)
+        public static IParamValidator DoesNotContains(object expected, params string[] parameters)
         {
             return ParameterAssertionMixins.DoesNotContains(null, expected, parameters);
         }
@@ -66,7 +66,7 @@ namespace Surrogates.Applications.Contracts
         /// <typeparam name="T"></typeparam>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsAssignableFrom<T>(params string[] parameters)
+        public static IParamValidator IsAssignableFrom<T>(params string[] parameters)
         {
             return ParameterAssertionMixins.IsAssignableFrom<T>(null, parameters);
         }
@@ -77,7 +77,7 @@ namespace Surrogates.Applications.Contracts
         /// <param name="expected">The expected value</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsAssignableFrom(Type expected, params string[] parameters)
+        public static IParamValidator IsAssignableFrom(Type expected, params string[] parameters)
         {
             return ParameterAssertionMixins.IsAssignableFrom(null, expected, parameters);
         }
@@ -88,7 +88,7 @@ namespace Surrogates.Applications.Contracts
         /// <typeparam name="T"></typeparam>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsNotAssignableFrom<T>(params string[] parameters)
+        public static IParamValidator IsNotAssignableFrom<T>(params string[] parameters)
         {
             return ParameterAssertionMixins.IsNotAssignableFrom<T>(null, parameters);
         }
@@ -99,7 +99,7 @@ namespace Surrogates.Applications.Contracts
         /// <param name="expected">The expected value</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsNotAssignableFrom(Type expected, params string[] parameters)
+        public static IParamValidator IsNotAssignableFrom(Type expected, params string[] parameters)
         {
             return ParameterAssertionMixins.IsNotAssignableFrom(null, expected, parameters);
         }
@@ -110,7 +110,7 @@ namespace Surrogates.Applications.Contracts
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsEmpty(params string[] parameters)//list or string
+        public static IParamValidator IsEmpty(params string[] parameters)//list or string
         {
             return ParameterAssertionMixins.IsEmpty(null, parameters);
         }
@@ -121,7 +121,7 @@ namespace Surrogates.Applications.Contracts
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsNotEmpty(params string[] parameters)//list or string
+        public static IParamValidator IsNotEmpty(params string[] parameters)//list or string
         {
             return ParameterAssertionMixins.IsNotEmpty(null, parameters);
         }
@@ -131,7 +131,7 @@ namespace Surrogates.Applications.Contracts
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsFalse(params string[] parameters)
+        public static IParamValidator IsFalse(params string[] parameters)
         {
             return ParameterAssertionMixins.IsFalse(null, parameters);
         }
@@ -141,7 +141,7 @@ namespace Surrogates.Applications.Contracts
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsTrue(params string[] parameters)
+        public static IParamValidator IsTrue(params string[] parameters)
         {
             return ParameterAssertionMixins.IsTrue(null, parameters);
         }
@@ -151,7 +151,7 @@ namespace Surrogates.Applications.Contracts
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsNullOrDefault(params string[] parameters)
+        public static IParamValidator IsNullOrDefault(params string[] parameters)
         {
             return ParameterAssertionMixins.IsNullOrDefault(null, parameters);
         }
@@ -161,7 +161,7 @@ namespace Surrogates.Applications.Contracts
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsNotNullOrDefault(params string[] parameters)
+        public static IParamValidator IsNotNullOrDefault(params string[] parameters)
         {
             return ParameterAssertionMixins.IsNotNullOrDefault(null, parameters);
         }
@@ -171,7 +171,7 @@ namespace Surrogates.Applications.Contracts
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsAnEmail(params string[] parameters)
+        public static IParamValidator IsAnEmail(params string[] parameters)
         {
             return ParameterAssertionMixins.IsAnEmail(null, parameters);
         }
@@ -181,7 +181,7 @@ namespace Surrogates.Applications.Contracts
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsAnUrl(params string[] parameters)
+        public static IParamValidator IsAnUrl(params string[] parameters)
         {
             return ParameterAssertionMixins.IsAnUrl(null, parameters);
         }
@@ -191,7 +191,7 @@ namespace Surrogates.Applications.Contracts
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsNumber(params string[] parameters)
+        public static IParamValidator IsNumber(params string[] parameters)
         {
             return ParameterAssertionMixins.IsNumber(null, parameters);
         }
@@ -201,7 +201,7 @@ namespace Surrogates.Applications.Contracts
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsNaN(params string[] parameters)
+        public static IParamValidator IsNaN(params string[] parameters)
         {
             return ParameterAssertionMixins.IsNaN(null, parameters);
         }
@@ -214,7 +214,7 @@ namespace Surrogates.Applications.Contracts
         /// <param name="max">The higher bound</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsInBetween<P>(P min, P max, params string[] parameters)
+        public static IParamValidator IsInBetween<P>(P min, P max, params string[] parameters)
             where P : struct
         {
             return ParameterAssertionMixins.IsInBetween(null, min, max, parameters);
@@ -227,7 +227,7 @@ namespace Surrogates.Applications.Contracts
         /// <param name="expected"></param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators Greater<P>(P expected, params string[] parameters)
+        public static IParamValidator Greater<P>(P expected, params string[] parameters)
             where P : struct
         {
             return ParameterAssertionMixins.Greater(null, expected, parameters);
@@ -240,7 +240,7 @@ namespace Surrogates.Applications.Contracts
         /// <param name="expected"></param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators GreaterOrEqual<P>(P expected, params string[] parameters)
+        public static IParamValidator GreaterOrEqual<P>(P expected, params string[] parameters)
             where P : struct
         {
             return ParameterAssertionMixins.GreaterOrEqual<P>(null, expected, parameters);            
@@ -253,7 +253,7 @@ namespace Surrogates.Applications.Contracts
         /// <param name="expected"></param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators Less<P>(P expected, params string[] parameters)
+        public static IParamValidator Less<P>(P expected, params string[] parameters)
             where P : struct
         {
             return ParameterAssertionMixins.Less<P>(null, expected, parameters);
@@ -266,7 +266,7 @@ namespace Surrogates.Applications.Contracts
         /// <param name="expected"></param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators LessOrEqual<P>(P expected, params string[] parameters)
+        public static IParamValidator LessOrEqual<P>(P expected, params string[] parameters)
             where P : struct
         {
             return ParameterAssertionMixins.LessOrEqual<P>(null, expected, parameters);
@@ -278,7 +278,7 @@ namespace Surrogates.Applications.Contracts
         /// <param name="expr">A regular expression</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators ThisRegex(string expr, params string[] parameters)
+        public static IParamValidator ThisRegex(string expr, params string[] parameters)
         {
             return ParameterAssertionMixins.ThisRegex(null, expr, parameters);
         }
@@ -289,7 +289,7 @@ namespace Surrogates.Applications.Contracts
         /// <param name="expr">A regular expression</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators ThisRegex(Regex expr, params string[] parameters)
+        public static IParamValidator ThisRegex(Regex expr, params string[] parameters)
         {
             return ParameterAssertionMixins.ThisRegex(null, expr, parameters);
         }
@@ -299,7 +299,7 @@ namespace Surrogates.Applications.Contracts
         /// </summary>
         /// <param name="preValidators"></param>
         /// <returns></returns>
-        public static IParamValidators That(params Delegate[] preValidators)
+        public static IParamValidator That(params Delegate[] preValidators)
         {
             return ParameterAssertionMixins.That(null, preValidators);
         }
@@ -313,7 +313,7 @@ namespace Surrogates.Applications.Contracts
         /// <param name="param">The name of the parameter</param>
         /// <param name="validators">Validators</param>
         /// <returns></returns>
-        private static IParamValidators That<T>(string param, params IPropValidators[] validators)
+        private static IParamValidator That<T>(string param, params IPropValidator[] validators)
         {
             return ParameterAssertionMixins.That<T>(null, param, validators);
         }
@@ -325,7 +325,7 @@ namespace Surrogates.Applications.Contracts
         /// <param name="parameters">The actual name of the parameters</param>
         /// <param name="validators"></param>
         /// <returns></returns>
-        private static IParamValidators That<T>(string[] parameters, params IPropValidators[] validators)
+        private static IParamValidator That<T>(string[] parameters, params IPropValidator[] validators)
         {
             return ParameterAssertionMixins.That<T>(null, parameters, validators);
         }

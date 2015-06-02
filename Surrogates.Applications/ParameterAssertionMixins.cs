@@ -7,24 +7,27 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Surrogates.Applications.Mixins;
 using System.Collections;
+using Surrogates.Applications.Contracts.Collections;
+using Surrogates.Applications.Contracts.Model;
+using Surrogates.Applications.Contracts.Utilities;
 
 namespace Surrogates.Applications
 {
     public static class ParameterAssertionMixins
     {
-        private static IParamValidators AddValidator(IParamValidators assertions, string[] parameters, Func<int, ParameterInfo[], Action<object[]>> validator)
+        private static IParamValidator AddValidator(IParamValidator assertions, string[] parameters, Func<int, ParameterInfo[], Action<object[]>> validator)
         {
             if (parameters.Length < 1)
             { throw new ArgumentException("You have to provide at least one parameter to be validated!"); }
 
-            var ass = (Assert_.List4.Parameters)
-                (assertions ?? (assertions = new Assert_.List4.Parameters()));
+            var ass = (AssertionList4Parameters)
+                (assertions ?? (assertions = new AssertionList4Parameters()));
 
 
             for (int i = 0; i < parameters.Length; i++)
             {
                 ass.Validators
-                    .Add(new Assert_.Entry4.Parameters
+                    .Add(new AssertionEntry4Parameters
                     {
                         ParameterName = parameters[i],
                         Action = validator
@@ -46,7 +49,7 @@ namespace Surrogates.Applications
         /// <param name="expected">The expected value</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators AreEqual(this IParamValidators self, object expected, string[] on)
+        public static IParamValidator AreEqual(this IParamValidator self, object expected, string[] on)
         {
             return AddValidator(
                 self,
@@ -69,7 +72,7 @@ namespace Surrogates.Applications
         /// <param name="expected">The expected value</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators AreReferenceEqual(this IParamValidators self, object expected, string[] on)
+        public static IParamValidator AreReferenceEqual(this IParamValidator self, object expected, string[] on)
         {
             return AddValidator(
                 self,
@@ -95,7 +98,7 @@ namespace Surrogates.Applications
         /// <param name="expected">The expected value</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators Contains(this IParamValidators self, object expected, string[] on)
+        public static IParamValidator Contains(this IParamValidator self, object expected, string[] on)
         {
             return AddValidator(
                self,
@@ -122,7 +125,7 @@ namespace Surrogates.Applications
         /// <param name="expected">The expected value</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators DoesNotContains(this IParamValidators self, object expected, string[] on)
+        public static IParamValidator DoesNotContains(this IParamValidator self, object expected, string[] on)
         {
             return AddValidator(
                self,
@@ -148,7 +151,7 @@ namespace Surrogates.Applications
         /// <typeparam name="T"></typeparam>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsAssignableFrom<T>(this IParamValidators self, string[] on)
+        public static IParamValidator IsAssignableFrom<T>(this IParamValidator self, string[] on)
         {
             return self.IsAssignableFrom(typeof(T), on);
         }
@@ -159,7 +162,7 @@ namespace Surrogates.Applications
         /// <param name="expected">The expected value</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsAssignableFrom(this IParamValidators self, Type expectedType, string[] on)
+        public static IParamValidator IsAssignableFrom(this IParamValidator self, Type expectedType, string[] on)
         {
             return AddValidator(
                 self,
@@ -182,7 +185,7 @@ namespace Surrogates.Applications
         /// <typeparam name="T"></typeparam>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsNotAssignableFrom<T>(this IParamValidators self, string[] on)
+        public static IParamValidator IsNotAssignableFrom<T>(this IParamValidator self, string[] on)
         {
             return self.IsNotAssignableFrom(typeof(T), on);
         }
@@ -193,7 +196,7 @@ namespace Surrogates.Applications
         /// <param name="expected">The expected value</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsNotAssignableFrom(this IParamValidators self, Type expectedType, string[] on)
+        public static IParamValidator IsNotAssignableFrom(this IParamValidator self, Type expectedType, string[] on)
         {
             return AddValidator(
                 self,
@@ -216,7 +219,7 @@ namespace Surrogates.Applications
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsEmpty(this IParamValidators self, string[] on)
+        public static IParamValidator IsEmpty(this IParamValidator self, string[] on)
         {
             return AddValidator(
                 self,
@@ -243,7 +246,7 @@ namespace Surrogates.Applications
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsNotEmpty(this IParamValidators self, string[] on)
+        public static IParamValidator IsNotEmpty(this IParamValidator self, string[] on)
         {
             return AddValidator(
                 self,
@@ -269,7 +272,7 @@ namespace Surrogates.Applications
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsFalse(this IParamValidators self, string[] on)
+        public static IParamValidator IsFalse(this IParamValidator self, string[] on)
         {
             return AddValidator(
                 self,
@@ -291,7 +294,7 @@ namespace Surrogates.Applications
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsTrue(this IParamValidators self, string[] on)
+        public static IParamValidator IsTrue(this IParamValidator self, string[] on)
         {
             return AddValidator(
                 self,
@@ -313,7 +316,7 @@ namespace Surrogates.Applications
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsNullOrDefault(this IParamValidators self, params string[] on)
+        public static IParamValidator IsNullOrDefault(this IParamValidator self, params string[] on)
         {
             return AddValidator(
                 self,
@@ -345,7 +348,7 @@ namespace Surrogates.Applications
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsNotNullOrDefault(this IParamValidators self, params string[] on)
+        public static IParamValidator IsNotNullOrDefault(this IParamValidator self, params string[] on)
         {
             return AddValidator(
                 self,
@@ -377,7 +380,7 @@ namespace Surrogates.Applications
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsAnEmail(this IParamValidators self, params string[] on)
+        public static IParamValidator IsAnEmail(this IParamValidator self, params string[] on)
         {
             return ThisRegex(self, Check.EmailRegexpr, on);
         }
@@ -387,7 +390,7 @@ namespace Surrogates.Applications
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsAnUrl(this IParamValidators self, params string[] on)
+        public static IParamValidator IsAnUrl(this IParamValidator self, params string[] on)
         {
             return ThisRegex(self, Check.UrlRegexpr, on);
         }
@@ -397,7 +400,7 @@ namespace Surrogates.Applications
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsNumber(this IParamValidators self, params string[] on)
+        public static IParamValidator IsNumber(this IParamValidator self, params string[] on)
         {
             return AddValidator(
                 self,
@@ -419,7 +422,7 @@ namespace Surrogates.Applications
         /// </summary>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        internal static IParamValidators IsNaN(this IParamValidators self, string[] on)
+        internal static IParamValidator IsNaN(this IParamValidator self, string[] on)
         {
             return AddValidator(
                 self,
@@ -444,7 +447,7 @@ namespace Surrogates.Applications
         /// <param name="max">The higher bound</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators IsInBetween<P>(this IParamValidators self, P min, P max, params string[] on)
+        public static IParamValidator IsInBetween<P>(this IParamValidator self, P min, P max, params string[] on)
             where P : struct
         {
             return AddValidator(
@@ -471,7 +474,7 @@ namespace Surrogates.Applications
         /// <param name="expected"></param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators Greater<P>(this IParamValidators self, P higher, params string[] on)
+        public static IParamValidator Greater<P>(this IParamValidator self, P higher, params string[] on)
             where P : struct
         {
             return AddValidator(
@@ -494,7 +497,7 @@ namespace Surrogates.Applications
         /// <param name="expected"></param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators GreaterOrEqual<P>(this IParamValidators self, P higher, params string[] on)
+        public static IParamValidator GreaterOrEqual<P>(this IParamValidator self, P higher, params string[] on)
             where P : struct
         {
             return AddValidator(
@@ -518,7 +521,7 @@ namespace Surrogates.Applications
         /// <param name="expected"></param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators Less<P>(this IParamValidators self, P lower, params string[] on)
+        public static IParamValidator Less<P>(this IParamValidator self, P lower, params string[] on)
             where P : struct
         {
             return AddValidator(
@@ -543,7 +546,7 @@ namespace Surrogates.Applications
         /// <param name="expected"></param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators LessOrEqual<P>(this IParamValidators self, P less, params string[] on)
+        public static IParamValidator LessOrEqual<P>(this IParamValidator self, P less, params string[] on)
             where P : struct
         {
             return AddValidator(
@@ -565,7 +568,7 @@ namespace Surrogates.Applications
         /// <param name="expr">A regular expression</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators ThisRegex(this IParamValidators self, string expr, params string[] on)
+        public static IParamValidator ThisRegex(this IParamValidator self, string expr, params string[] on)
         {
             return ThisRegex(self, new Regex(expr), on);
         }
@@ -576,7 +579,7 @@ namespace Surrogates.Applications
         /// <param name="expr">A regular expression</param>
         /// <param name="parameters">The actual name of the parameters</param>
         /// <returns></returns>
-        public static IParamValidators ThisRegex(this IParamValidators self, Regex expr, params string[] on)
+        public static IParamValidator ThisRegex(this IParamValidator self, Regex expr, params string[] on)
         {
             return AddValidator(
                 self,
@@ -598,10 +601,10 @@ namespace Surrogates.Applications
         /// </summary>
         /// <param name="preValidators"></param>
         /// <returns></returns>
-        public static IParamValidators That(this IParamValidators self, params Delegate[] preValidators)
+        public static IParamValidator That(this IParamValidator self, params Delegate[] preValidators)
         {
-            var ass = (Assert_.List4.Parameters)
-                (self ?? (self = new Assert_.List4.Parameters()));
+            var ass = (AssertionList4Parameters)
+                (self ?? (self = new AssertionList4Parameters()));
 
             foreach (var preValidator in preValidators)
             {
@@ -664,16 +667,16 @@ namespace Surrogates.Applications
 
         #region To be implemented, ... or not ?
 
-        internal static IParamValidators That<T>(this IParamValidators self, string param, params IPropValidators[] validators)
+        internal static IParamValidator That<T>(this IParamValidator self, string param, params IPropValidator[] validators)
         {
             return That<T>(self, new string[] { param }, validators);
         }
 
-        internal static IParamValidators That<T>(this IParamValidators self, string[] on, params IPropValidators[] validators)
+        internal static IParamValidator That<T>(this IParamValidator self, string[] on, params IPropValidator[] validators)
         {
             Func<T, bool> assertion = null;
 
-            foreach (var validator in validators.SelectMany(v => ((Assert_.List4.Properties)v).Validators))
+            foreach (var validator in validators.SelectMany(v => ((AssertionList4Properties)v).Validators))
             {
                 assertion = assertion != null ?
                     (arg => assertion(arg) && (bool)validator.Validation.DynamicInvoke(arg)) :

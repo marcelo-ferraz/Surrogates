@@ -1,6 +1,7 @@
 ﻿using Surrogates.Model.Entities;
 using Surrogates.Tactics;
 using System;
+using System.Linq;
 
 namespace Surrogates.Expressions
 {
@@ -54,13 +55,25 @@ namespace Surrogates.Expressions
                     string.Format("The value inside the defaul value is not compatible with the type: '{0}'", type.Name));
             }
 
-            Strategies.NewProperties.Add(
-                new NewProperty(this.Strategies.Builder)
-                {
-                    Type = type,
-                    Name = name,
-                    DefaultValue = defaultValue,
-                });
+            var prop = Strategies
+                .NewProperties
+                .FirstOrDefault(p => p.Name == name) ;
+
+            if (prop != null)
+            {
+                prop.Type = type;
+                prop.DefaultValue = defaultValue;
+            }
+            else
+            {
+                Strategies.NewProperties.Add(
+                    new NewProperty(this.Strategies.Builder)
+                    {
+                        Type = type,
+                        Name = name,
+                        DefaultValue = defaultValue,
+                    });
+            }
 
             return new AndExpression<TBase>(
                 this.Container, this.CurrentStrategy, this.Strategies);
@@ -76,7 +89,7 @@ namespace Surrogates.Expressions
             if (type.GetType().IsAssignableFrom(typeof(Attribute)))
             {
                 throw new ArgumentException(
-                    string.Format("The type '{0}' does not inherit from System.Attribute", type.Name));
+                    string.Format("The provided type '{0}' does not inherit from System.Attribute", type.Name));
             }
 
             Strategies.NewAttributes.Add(

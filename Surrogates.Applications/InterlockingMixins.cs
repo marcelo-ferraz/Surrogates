@@ -5,6 +5,7 @@ using Surrogates.Utilities.Mixins;
 using System;
 using System.Runtime.Serialization;
 using Surrogates.Tactics;
+using Surrogates.Applications.Mixins;
 
 namespace Surrogates.Applications
 {
@@ -27,16 +28,11 @@ namespace Surrogates.Applications
         }
 
         public static AndExpression<T> ReadAndWrite<T>(this ApplyExpression<T> self, params Func<T, object>[] properties)
-        {
-            var ext = 
-                new ShallowExtension<T>();
-
-            Pass.On<T>(self, ext);
-
+        {            
             AndExpression<T> exp = null;
 
             Func<ExpressionFactory<T>> getExp = () =>
-                (exp == null) ? ext.Factory : exp.And;
+                (exp == null) ? self.PassOn().Factory : exp.And;
 
             foreach (var prop in properties)
             {
@@ -55,18 +51,14 @@ namespace Surrogates.Applications
 
         public static AndExpression<T>  ReadAndWrite<T>(this ApplyExpression<T> self, params InterlockedPair<T>[] pairs)
         {
-            var ext =
-                new ShallowExtension<T>();
-
-            Pass.On<T>(self, ext);            
-
             T val = (T) FormatterServices
                 .GetSafeUninitializedObject(typeof(T));
 
             AndExpression<T> exp = null;
 
-            Func<ExpressionFactory<T>> getExp = () =>
-                (exp == null) ? ext.Factory : exp.And;
+            Func<ExpressionFactory<T>> getExp = 
+                () =>
+                    (exp == null) ? self.PassOn().Factory : exp.And;
 
             foreach (var pair in pairs)
             {

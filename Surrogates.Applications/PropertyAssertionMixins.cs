@@ -1,4 +1,7 @@
 ﻿using Surrogates.Applications.Contracts;
+using Surrogates.Applications.Contracts.Collections;
+using Surrogates.Applications.Contracts.Model;
+using Surrogates.Applications.Contracts.Utilities;
 using Surrogates.Utilities.Mixins;
 using System;
 using System.Collections.Generic;
@@ -26,10 +29,12 @@ namespace Surrogates.Applications
             return props;
         }
 
-        private static IPropValidators Validate<T, P>(IPropValidators assertions, Func<T, P>[] props, Func<Func<T, P>, Action<T>> validator)
+        private static IPropValidator Validate<T, P>(IPropValidator assertions, Func<T, P>[] props, Func<Func<T, P>, Action<T>> validator)
         {
             var obj = (T)
                 FormatterServices.GetUninitializedObject(typeof(T));
+
+            var ass = (AssertionList4Properties)(assertions ?? (assertions = new AssertionList4Properties()));
 
             for (int i = 0; i < props.Length; i++)
             {
@@ -39,9 +44,8 @@ namespace Surrogates.Applications
                 if (validate == null)
                 { continue; }
 
-                ((Assert_.List4.Properties)(assertions ?? (assertions = new Assert_.List4.Properties())))
-                    .Validators
-                    .Add(new Assert_.Entry4.Properties
+                ass.Validators
+                    .Add(new AssertionEntry4Properties
                     {
                         Property = props[i],
                         Validation = validator(props[i])
@@ -51,12 +55,12 @@ namespace Surrogates.Applications
             return assertions;
         }
 
-        public static IPropValidators Required<T>(this IPropValidators self, params string[] names)
+        public static IPropValidator Required<T>(this IPropValidator self, params string[] names)
         {
             return Required(self, ToProps<T, object>(names));
         }
 
-        public static IPropValidators Required<T>(this IPropValidators self, params Func<T, object>[] props)
+        public static IPropValidator Required<T>(this IPropValidator self, params Func<T, object>[] props)
         {
             return Validate<T, object>(self, props, 
                 getProp =>
@@ -74,43 +78,43 @@ namespace Surrogates.Applications
                 });
         }
 
-        public static IPropValidators Email<T>(this IPropValidators self, params string[] names)
+        public static IPropValidator Email<T>(this IPropValidator self, params string[] names)
         {
             return Email<T>(self, ToProps<T, string>(names));
         }
 
-        public static IPropValidators Email<T>(this IPropValidators self, params Func<T, string>[] props)
+        public static IPropValidator Email<T>(this IPropValidator self, params Func<T, string>[] props)
         {
             return Regex<T>(self, Check.EmailRegexpr, props);
         }
 
-        public static IPropValidators Url<T>(this IPropValidators self, params string[] names)
+        public static IPropValidator Url<T>(this IPropValidator self, params string[] names)
         {
             return Url<T>(self, ToProps<T, string>(names));
         }
 
-        public static IPropValidators Url<T>(this IPropValidators self, params Func<T, string>[] props)
+        public static IPropValidator Url<T>(this IPropValidator self, params Func<T, string>[] props)
         {
             return Regex<T>(self, Check.UrlRegexpr, props);
         }
 
-        public static IPropValidators IsNumber<T>(this IPropValidators self, params string[] names)
+        public static IPropValidator IsNumber<T>(this IPropValidator self, params string[] names)
         {
             return IsNumber<T>(self, ToProps<T, string>(names));
         }
 
-        public static IPropValidators IsNumber<T>(this IPropValidators self, params Func<T, string>[] props)
+        public static IPropValidator IsNumber<T>(this IPropValidator self, params Func<T, string>[] props)
         {
             return Regex<T>(self, Check.IsNumberRegexpr, props);
         }
 
-        public static IPropValidators InBetween<T, P>(this IPropValidators self, P min, P max, params string[] names)
+        public static IPropValidator InBetween<T, P>(this IPropValidator self, P min, P max, params string[] names)
             where P : struct
         {
             return InBetween<T, P>(self, min, max, ToProps<T, P>(names));
         }
 
-        public static IPropValidators InBetween<T, P>(this IPropValidators self, P min, P max, params Func<T, P>[] props)
+        public static IPropValidator InBetween<T, P>(this IPropValidator self, P min, P max, params Func<T, P>[] props)
             where P : struct
         {
             return Validate(
@@ -120,13 +124,13 @@ namespace Surrogates.Applications
                     item => Check.InBetween<P>(min, max, getProp(item)));
         }
 
-        public static IPropValidators BiggerThan<T, P>(this IPropValidators self, P higher, params string[] names)
+        public static IPropValidator BiggerThan<T, P>(this IPropValidator self, P higher, params string[] names)
             where P : struct
         {
             return LowerThan(self, higher, ToProps<T, P>(names));
         }
 
-        public static IPropValidators BiggerThan<T, P>(this IPropValidators self, P higher, params Func<T, P>[] props)
+        public static IPropValidator BiggerThan<T, P>(this IPropValidator self, P higher, params Func<T, P>[] props)
             where P : struct
         {
             return Validate<T, P>(
@@ -136,13 +140,13 @@ namespace Surrogates.Applications
                     item => Check.Greater(higher, getProp(item)));
         }
 
-        public static IPropValidators LowerThan<T, P>(this IPropValidators self, P higher, params string[] names)
+        public static IPropValidator LowerThan<T, P>(this IPropValidator self, P higher, params string[] names)
             where P : struct
         {
             return LowerThan<T, P>(self, higher, ToProps<T, P>(names));
         }
 
-        public static IPropValidators LowerThan<T, P>(this IPropValidators self, P higher, params Func<T, P>[] props)
+        public static IPropValidator LowerThan<T, P>(this IPropValidator self, P higher, params Func<T, P>[] props)
             where P : struct
         {
             return Validate<T, P>(
@@ -152,22 +156,22 @@ namespace Surrogates.Applications
                     item => Check.Less(higher, getProp(item)));
         }
 
-        public static IPropValidators Regex<T>(this IPropValidators self, string expr, params string[] names)
+        public static IPropValidator Regex<T>(this IPropValidator self, string expr, params string[] names)
         {
             return Regex(self, new Regex(expr), ToProps<T, string>(names));
         }
 
-        public static IPropValidators Regex<T>(this IPropValidators self, Regex expr, params string[] names)
+        public static IPropValidator Regex<T>(this IPropValidator self, Regex expr, params string[] names)
         {
             return Regex(self, expr, ToProps<T, string>(names));
         }
 
-        public static IPropValidators Regex<T>(this IPropValidators self, string expr, params Func<T, string>[] props)
+        public static IPropValidator Regex<T>(this IPropValidator self, string expr, params Func<T, string>[] props)
         {
             return Regex(self, new Regex(expr), props);
         }
 
-        public static IPropValidators Regex<T>(this IPropValidators self, Regex expr, params Func<T, string>[] props)
+        public static IPropValidator Regex<T>(this IPropValidator self, Regex expr, params Func<T, string>[] props)
         {
             return Validate(
                 self,

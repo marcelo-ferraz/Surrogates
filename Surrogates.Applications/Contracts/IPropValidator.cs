@@ -5,5 +5,5 @@ using System.Text;
 
 namespace Surrogates.Applications.Contracts
 {
-    public interface IPropValidators { }
+    public interface IPropValidator { }
 }

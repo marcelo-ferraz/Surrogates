@@ -30,8 +30,8 @@ namespace Surrogates.Tactics
 
         public class ForProperties : Strategy
         {
-            public ForProperties(Strategies owner)
-                :base(owner)
+            public ForProperties(Strategies parent)
+                :base(parent)
             { Properties = new PropertyList(this); }
 
             public ForProperties(Strategy @base)
@@ -47,8 +47,8 @@ namespace Surrogates.Tactics
 
         public class ForMethods : Strategy
         {
-            public ForMethods(Strategies owner)
-                : base(owner) 
+            public ForMethods(Strategies parent)
+                : base(parent) 
             { Methods = new List<MethodInfo>(); }
 
             public ForMethods(Strategy @base)
