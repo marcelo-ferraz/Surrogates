@@ -42,13 +42,19 @@
   <ItemGroup>
     <Compile Include="Cache\CachedList.cs" />
     <Compile Include="Cache\CacheInterceptor.cs" />
-    <Compile Include="Mixins\ApplyExpressionMixins.cs" />
-    <Compile Include="Mixins\CollectionMixins.cs" />
+    <Compile Include="Cache\Model\CacheParams.cs" />
+    <Compile Include="Contracts\ContractsInterceptor.cs" />
+    <Compile Include="Infrastructure\ApplyExpressionMixins.cs" />
+    <Compile Include="Infrastructure\CollectionMixins.cs" />
+    <Compile Include="Infrastructure\Locked4RW.cs" />
+    <Compile Include="NotifyChanges\ChangesListListenerInterceptor.cs" />
+    <Compile Include="NotifyChanges\ChangesNotifierInterceptor.cs" />
+    <Compile Include="NotifyChanges\InitiableInterceptor.cs" />
     <Compile Include="SimpleCacheResultMixins.cs" />
     <Compile Include="Contracts\Collections\AssertionList4Parameters.cs" />
     <Compile Include="Contracts\Collections\AssertionList4Properties.cs" />
     <Compile Include="Contracts\Model\AssertionEntry4Parameters.cs" />
-    <Compile Include="Mixins\ObjectMixins.cs" />
+    <Compile Include="Infrastructure\ObjectMixins.cs" />
     <Compile Include="PropertyAssertionMixins.cs" />
     <Compile Include="ExecuteElsewhereMixins.cs" />
     <Compile Include="ExecutingElsewhere\ElsewhereExpression.cs" />

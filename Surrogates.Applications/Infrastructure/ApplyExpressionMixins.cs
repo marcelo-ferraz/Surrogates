@@ -1,13 +1,8 @@
 ﻿using Surrogates.Expressions;
-using Surrogates.Tactics;
 using Surrogates.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime;
-using System.Text;
 
-namespace Surrogates.Applications.Mixins
+namespace Surrogates.Applications.Infrastructure
 {
     public static class ApplyExpressionMixins
     {

@@ -4,10 +4,7 @@ using Surrogates.Applications.Contracts.Model;
 using Surrogates.Applications.Contracts.Utilities;
 using Surrogates.Utilities.Mixins;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Surrogates.Applications

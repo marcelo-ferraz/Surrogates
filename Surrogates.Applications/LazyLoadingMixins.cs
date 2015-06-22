@@ -1,9 +1,6 @@
 ﻿using Surrogates.Expressions;
 using Surrogates.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Surrogates.Applications
 {
@@ -12,7 +9,7 @@ namespace Surrogates.Applications
         public class IdLazyLoaderInterceptor<T>
         {
             private T _value;
-            private bool _isDirty = false;
+            public bool IsDirty = false;
 
             public T Load(string s_name, Func<string, T> s_Getter)
             {
@@ -23,7 +20,7 @@ namespace Surrogates.Applications
 
             public void MarkAsDirty(T s_value)
             {
-                _isDirty = true;
+                IsDirty = true;
                 _value = s_value;
             }
         }

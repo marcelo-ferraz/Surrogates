@@ -1,9 +1,7 @@
 ﻿using Surrogates.Applications.Pooling;
 using Surrogates.Expressions;
-using Surrogates.Tactics;
 using Surrogates.Utilities;
 using System;
-using System.Threading;
 
 namespace Surrogates.Applications
 {

@@ -1,13 +1,6 @@
 ﻿using NUnit.Framework;
-using Surrogates.Applications.Interlocking;
-using Surrogates.Utilities;
-using Surrogates.Utilities.Mixins;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Surrogates.Applications.Tests

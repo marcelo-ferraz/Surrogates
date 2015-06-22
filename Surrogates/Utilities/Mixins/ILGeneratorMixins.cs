@@ -1,7 +1,4 @@
-﻿using Surrogates.Model.Collections;
-using Surrogates.Model.Entities;
-using Surrogates.Tactics;
-using Surrogates.Utilities;
+﻿using Surrogates.Tactics;
 using System;
 using System.Collections.Generic;
 using System.Reflection;

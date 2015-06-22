@@ -1,33 +1,43 @@
-﻿using System;
+﻿using Surrogates.Applications.Cache.Model;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Surrogates.Applications.Cache
 {
     public class SimpleCacheInterceptor
     {
-        private CachedList _cache;
+        private static CachedList _cache;
 
-        public SimpleCacheInterceptor()
+        static SimpleCacheInterceptor()
         {
             _cache = new CachedList();
         }
 
-        public object CacheMethod(Delegate s_method, object[] args, Delegate p_GetKey, TimeSpan p_Timespan)
+        public object CacheMethod(Delegate s_method, object[] args, Dictionary<IntPtr, CacheParams> s_Params)
         {
             object result = null;
 
-            var key =
-                p_GetKey.DynamicInvoke(args);
+            var thisPtr = s_method
+                .Method
+                .MethodHandle
+                .Value;
 
-            if (_cache.TryGet(key, ref result))
-            { return result; }
+            var @params = 
+                s_Params[thisPtr];
 
-            return _cache.Add(
-                key,
-                s_method.DynamicInvoke(args),
-                p_Timespan);
+            var key = @params
+                .GetKey
+                .DynamicInvoke(new object[] { args });
+
+            if(!_cache.TryGet(key, ref result))
+            {
+                result = s_method
+                    .DynamicInvoke(args);
+
+                _cache.Add(key, result, @params.Timeout);
+            }
+
+            return result;
         }
     }
 }

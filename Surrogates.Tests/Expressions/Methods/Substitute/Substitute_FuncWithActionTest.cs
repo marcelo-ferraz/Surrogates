@@ -1,9 +1,8 @@
 ﻿using NUnit.Framework;
 using Surrogates.Tests.Expressions.Entities;
-using System;
-using Surrogates.Utilities.SDILReader;
-using System.Collections.Generic;
 using Surrogates.Utilities;
+using System;
+using System.Collections.Generic;
 
 namespace Surrogates.Tests.Expressions.Methods.Substitute
 {

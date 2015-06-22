@@ -9,23 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Surrogates.Applications
 {
     public static class ContractsMixins
     {
-        public class ValidatorInterceptor<T>
-        {
-            public object ValidateBeforeExecute(string s_name, Delegate s_method, object[] s_args, Dictionary<string, Action<object[]>> s_PreValidators)
-            {
-                s_PreValidators[s_name](s_args);
-
-                return s_method.DynamicInvoke(s_args);
-            }
-        }
-
         private static AndExpression<T> AddAllPreValidators<T>(this ApplyExpression<T> that, IParamValidator[] validations, IEnumerable<MethodInfo> ms)
         {
             var ext =
@@ -60,11 +48,9 @@ namespace Surrogates.Applications
                 expr = (expr != null ? expr.And : ext.Factory)
                     .Replace
                     .Method(method.Name)
-                    .Using<ValidatorInterceptor<T>>("ValidateBeforeExecute");
+                    .Using<ContractsInterceptor<T>>("ValidateBeforeExecute");
             }
-
-
-
+            
             return expr.And
                 .AddProperty<Dictionary<string, Action<object[]>>>("PreValidators", preValidators);
         }

@@ -1,4 +1,4 @@
-﻿using Surrogates.Model.Collections;
+﻿using Surrogates.Model.Entities;
 using Surrogates.Tactics;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-using Surrogates.Model.Entities;
 
 namespace Surrogates.Utilities.Mixins
 {

@@ -51,7 +51,7 @@
     <Compile Include="ExecuteElsewhereTests.cs" />
     <Compile Include="LazyLoadingTests.cs" />
     <Compile Include="NotifiyPropertyTests.cs" />
-    <Compile Include="PoolPropertiesTests.cs" />
+    <Compile Include="CacheTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

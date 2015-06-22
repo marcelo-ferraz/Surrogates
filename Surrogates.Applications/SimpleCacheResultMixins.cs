@@ -1,26 +1,21 @@
-﻿using System;
+﻿using Surrogates.Applications.Cache;
+using Surrogates.Applications.Cache.Model;
+using Surrogates.Applications.Infrastructure;
+using Surrogates.Expressions;
+using Surrogates.Expressions.Accessors;
+using Surrogates.Tactics;
+using Surrogates.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Surrogates.Expressions;
-using Surrogates.Utilities;
-using System.Threading;
-using Surrogates.Applications.Cache;
 using System.Reflection;
-using Surrogates.Tactics;
-using Surrogates.Applications.Mixins;
+using System.Runtime;
 
 namespace Surrogates.Applications
 {
-    public class CacheParams
-    {
-        public Func<object[], object> GetKey { get; set; }
-
-        public TimeSpan Timeout { get; set; }
-    }
-
     public static class SimpleCacheResultMixins
-    {        
+    {
+        [TargetedPatchingOptOut("")]
         private static Func<object[], object> GenerateKey(MethodInfo method)
         {
             var argTypes =
@@ -44,48 +39,68 @@ namespace Surrogates.Applications
                 args => true;
         }
 
-        private static AndExpression<T> Cache<T>(this UsingInterferenceExpression<T> expr, Func<object[], object> getKey, TimeSpan? timeout)
-        {            
+        [TargetedPatchingOptOut("")]
+        private static AndExpression<T> Cache<T>(this AndExpression<T> expr, Func<object[], object> getKey, TimeSpan? timeout)
+        {
             var strat =
-                Pass.Current<Strategy.ForMethods>(expr);
+                Pass.Current<Strategy>(expr);
 
             Func<MethodInfo, CacheParams> valueGetter = null;
-            
-            if(getKey != null)
+
+            if (getKey != null)
             {
-                valueGetter = m => 
-                    new CacheParams 
-                    { 
-                        GetKey = getKey, 
-                        Timeout = timeout.HasValue ? timeout.Value : new TimeSpan(0, 5, 0)
-                    };
+                valueGetter =
+                    m =>
+                        new CacheParams
+                        {
+                            GetKey = getKey,
+                            Timeout = timeout.HasValue ? timeout.Value : new TimeSpan(0, 5, 0)
+                        };
             }
             else
             {
-                valueGetter = m => 
-                    new CacheParams 
-                    { 
-                        GetKey = GenerateKey(m), 
-                        Timeout = timeout.HasValue ? timeout.Value : new TimeSpan(0, 5, 0)
-                    };
+                valueGetter =
+                    m =>
+                        new CacheParams
+                        {
+                            GetKey = GenerateKey(m),
+                            Timeout = timeout.HasValue ? timeout.Value : new TimeSpan(0, 5, 0)
+                        };
             }
-            
-            var newKeys = 
+
+            var newKeys =
                 strat.BaseMethods.ToDictionary(m => m.MethodHandle.Value, valueGetter);
 
-            var @params = strat
-                .NewProperties
-                .FirstOrDefault(p => p.Name == "Params").DefaultValue as Dictionary<IntPtr, CacheParams>;
+            var paramsProp = strat.NewProperties
+                .FirstOrDefault(p => p.Name == "Params");
 
-            if (@params == null)
-            { @params = new Dictionary<IntPtr,CacheParams>(); }
+            var @params =
+                paramsProp != null ?
+                ((Dictionary<IntPtr, CacheParams>)paramsProp.DefaultValue).MergeLeft(newKeys) :
+                newKeys;
 
             return expr
-                 .Using<SimpleCacheInterceptor>("CacheMethod")
-                 .And
-                 .AddProperty<Dictionary<IntPtr, CacheParams>>("Params", @params != null ? @params.MergeLeft(newKeys) : newKeys);
-        }   
+                .And
+                .AddProperty<Dictionary<IntPtr, CacheParams>>("Params", @params);
+        }
 
+        [TargetedPatchingOptOut("")]
+        private static AndExpression<T> Cache<T>(this InterferenceExpression<T> expr, Func<object[], object> getKey, TimeSpan? timeout)
+        {
+            return expr
+                .Accessors(a => a.Getter.Using<SimpleCacheInterceptor>("CacheMethod"))
+                .Cache(getKey, timeout);        
+        }
+
+        [TargetedPatchingOptOut("")]
+        private static AndExpression<T> Cache<T>(this UsingInterferenceExpression<T> expr, Func<object[], object> getKey, TimeSpan? timeout)
+        {
+            return expr
+                .Using<SimpleCacheInterceptor>("CacheMethod")
+                .Cache(getKey, timeout);            
+        }
+
+        [TargetedPatchingOptOut("")]
         public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, Delegate> method, Func<object[], object> getKey = null, TimeSpan? timeout = null)
         {
             return that
@@ -95,7 +110,8 @@ namespace Surrogates.Applications
                 .This(method)
                 .Cache( getKey, timeout);
         }
-
+        
+        [TargetedPatchingOptOut("")]
         public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, Delegate>[] methods, Func<object[], object> getKey = null, TimeSpan? timeout = null)
         {            
             return that
@@ -106,7 +122,8 @@ namespace Surrogates.Applications
                 .Cache(getKey, timeout);
         }
 
-        public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, string method, Func<object[], object> getKey = null, TimeSpan? timeout = null)
+        [TargetedPatchingOptOut("")]
+        public static AndExpression<T> CacheMethod<T>(this ApplyExpression<T> that, string method, Func<object[], object> getKey = null, TimeSpan? timeout = null)
         {
             return that
                 .PassOn()
@@ -116,13 +133,58 @@ namespace Surrogates.Applications
                 .Cache(getKey, timeout);
         }
 
-        public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, string[] methods, Func<object[], object> getKey = null, TimeSpan? timeout = null)
+        [TargetedPatchingOptOut("")]
+        public static AndExpression<T> CacheMethods<T>(this ApplyExpression<T> that, string[] methods, Func<object[], object> getKey = null, TimeSpan? timeout = null)
         {
             return that
                 .PassOn()
                 .Factory
                 .Replace
                 .Methods(methods)
+                .Cache(getKey, timeout);
+        }
+
+        [TargetedPatchingOptOut("")]
+        public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, object> method, Func<object[], object> getKey = null, TimeSpan? timeout = null)
+        {
+            return that
+                .PassOn()
+                .Factory
+                .Replace
+                .This(method)
+                .Cache(getKey, timeout);
+        }
+
+        [TargetedPatchingOptOut("")]
+        public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, object>[] methods, Func<object[], object> getKey = null, TimeSpan? timeout = null)
+        {
+            return that
+                .PassOn()
+                .Factory
+                .Replace
+                .These(methods)
+                .Cache(getKey, timeout);
+        }
+
+        [TargetedPatchingOptOut("")]
+        public static AndExpression<T> CacheProperty<T>(this ApplyExpression<T> that, string method, Func<object[], object> getKey = null, TimeSpan? timeout = null)
+        {
+            return that
+                .PassOn()
+                .Factory
+                .Replace
+                .Property(method)
+                .Cache(getKey, timeout);
+        }
+
+        [TargetedPatchingOptOut("")]
+        public static AndExpression<T> CacheProperties<T>(this ApplyExpression<T> that, string[] methods, Func<object[], object> getKey = null, TimeSpan? timeout = null)
+        {
+            return that
+                .PassOn()
+                .Factory
+                .Replace
+                .Properties(methods)
                 .Cache(getKey, timeout);
         }
     }

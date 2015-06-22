@@ -15,9 +15,14 @@ namespace Surrogates.Utilities
         }
 
         public static T Current<T>(Expression<T> exp)
-            where T: Strategy
+            where T : Strategy
         {
             return exp.CurrentStrategy;
+        }
+        public static T Current<T>(AndExpression<T> exp)
+            where T : Strategy
+        {
+            return (T) exp.CurrentStrategy;
         }
     }
 }

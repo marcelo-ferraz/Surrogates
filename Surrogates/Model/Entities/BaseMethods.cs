@@ -3,9 +3,7 @@ using Surrogates.Tactics;
 using Surrogates.Utilities.Mixins;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Surrogates.Model.Entities
 {
@@ -44,19 +42,13 @@ namespace Surrogates.Model.Entities
                     .BaseType
                     .GetMethod4Surrogacy(arg.Name.Length < 2 ? arg.Name : arg.Name.Substring(2), null, false);
 
-                if (paramMethod == null) { continue; }
-
-                _methods.Add(paramMethod);                
+                if (paramMethod != null)
+                { _methods.Add(paramMethod); }
             }
         }
 
         public IEnumerator<MethodInfo> GetEnumerator()
         {
-            if (this.Field == null)
-            { 
-                throw new NotSupportedException("In order to iterate throug the methods, a field for them, at the new type ought to be created"); 
-            }
-
             return _methods.GetEnumerator();
         }
 

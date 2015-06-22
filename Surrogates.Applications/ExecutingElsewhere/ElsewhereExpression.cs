@@ -1,6 +1,5 @@
 ﻿
 using Surrogates.Expressions;
-using Surrogates.Model.Entities;
 using Surrogates.Tactics;
 using Surrogates.Utilities;
 using System;

@@ -1,57 +1,28 @@
-﻿using System.Threading;
+﻿using Surrogates.Applications.Infrastructure;
 
 namespace Surrogates.Applications.Interlocking
 {
-    public abstract class InterlockedPropertyInterceptor
-    {
-        private ReaderWriterLockSlim _lock;
+    public abstract class InterlockedPropertyInterceptor : Locked4RW
+    {        
         protected object _field;
-        public InterlockedPropertyInterceptor() 
-        {
-            _lock = new ReaderWriterLockSlim();
-        }
-
-        ~InterlockedPropertyInterceptor()
-        {
-            _lock.Dispose();
-        }
-
+        
         protected abstract object GetField(object field);
 
         public object Get()
-        {            
+        {
             object ret = null;
-            bool lockWasHeld = false;
-            try
-            {
-                try { } finally
-                {
-                    lockWasHeld = _lock.TryEnterReadLock(500);
-                }
 
-                if (lockWasHeld) { ret = GetField(_field); }
-            }
-            finally
-            {
-                if (lockWasHeld) { _lock.ExitReadLock(); }                               
-            }
+            base.Read(
+                () => 
+                    ret = GetField(_field));
+
             return ret;
         }
 
         public void Set(object s_value)
-        {            
-            bool lockWasHeld = false;
-            try
-            {
-                try { } finally
-                { lockWasHeld = _lock.TryEnterWriteLock(500); }
-
-                if (lockWasHeld) { _field = s_value; }
-            }
-            finally
-            { 
-                if (lockWasHeld) { _lock.ExitWriteLock(); } 
-            }
+        {   
+            base.Write(() => 
+                _field = s_value);
         }
     }
 }

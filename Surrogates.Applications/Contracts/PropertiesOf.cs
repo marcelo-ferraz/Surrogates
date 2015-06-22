@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using Surrogates.Applications.Contracts.Utilities;
 using Surrogates.Utilities.Mixins;
-using System.Reflection;
-using System.Runtime.Serialization;
-using Surrogates.Applications.Contracts.Utilities;
+using System;
+using System.Text.RegularExpressions;
 
 namespace Surrogates.Applications.Contracts
 {       

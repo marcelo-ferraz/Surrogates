@@ -1,12 +1,5 @@
 ﻿using NUnit.Framework;
-using Surrogates.Applications.ExecutingElsewhere;
-using Surrogates.Model.Entities;
-using Surrogates.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Surrogates.Applications.Tests
 {

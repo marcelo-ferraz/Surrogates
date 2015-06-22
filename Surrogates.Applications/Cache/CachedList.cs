@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Surrogates.Applications.Infrastructure;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace Surrogates.Applications.Cache
 {
-    public class CachedList
+    public class CachedList : Locked4RW
     {
         public class Entry
         {
@@ -38,34 +37,50 @@ namespace Surrogates.Applications.Cache
             }
         }
 
-        private Dictionary<object, CachedList.Entry> _innerCollection;
+        private static Dictionary<object, CachedList.Entry> _innerCollection;
 
-        public CachedList()
-        { _innerCollection = new Dictionary<object, Entry>(); }
+        static CachedList()
+        {
+            _innerCollection = 
+                new Dictionary<object, Entry>(); 
+        }
 
         public object Add(object key, object value, TimeSpan timeout)
         {
-            if (_innerCollection.ContainsKey(key))
+            bool containsKey = false;
+
+            this.Read(() =>
+                containsKey = _innerCollection.ContainsKey(key));
+
+            if (containsKey) 
             { return value; }
 
             var entry =
                 new Entry(key, value, timeout);
 
-            entry.Erase += this._innerCollection.Remove;
+            entry.Erase += 
+                _innerCollection.Remove;
 
-            _innerCollection.Add(key, entry);
+            this.Write(() =>
+                _innerCollection.Add(key, entry));
 
             return value;
         }
 
-        internal bool TryGet(object key, ref object result)
+        internal bool TryGet(object key, ref object value)
         {
-            if (_innerCollection.ContainsKey(key))
-            {
-                result = _innerCollection[key];
-                return true;
-            }
-            return false;
+            object result = null;
+
+            this.Read(
+                () =>
+                {
+
+                    if (_innerCollection.ContainsKey(key))
+                    { result = _innerCollection[key].Value; }
+            
+                });
+
+            return (value = result) != null;
         }
     }
 }

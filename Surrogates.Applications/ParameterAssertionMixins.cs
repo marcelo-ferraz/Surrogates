@@ -1,29 +1,52 @@
 ﻿using Surrogates.Applications.Contracts;
+using Surrogates.Applications.Contracts.Collections;
+using Surrogates.Applications.Contracts.Model;
+using Surrogates.Applications.Contracts.Utilities;
+using Surrogates.Applications.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using Surrogates.Applications.Mixins;
-using System.Collections;
-using Surrogates.Applications.Contracts.Collections;
-using Surrogates.Applications.Contracts.Model;
-using Surrogates.Applications.Contracts.Utilities;
 
 namespace Surrogates.Applications
 {
     public static class ParameterAssertionMixins
     {
-        private static IParamValidator AddValidator(IParamValidator assertions, string[] parameters, Func<int, ParameterInfo[], Action<object[]>> validator)
+        private static void ThrowNotValid(ParameterInfo[] p)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append("The values for the parameters [ ");
+
+            for (int i = 0; i < p.Length; i++)
+            {
+                sb.AppendFormat(" '{0}'{1} ", p[i].Name, (i == p.Length - 1) ? "" : ",");
+            }
+
+            sb.Append("] did not match the composite pre validator!");
+
+            Throw(sb.ToString());
+        }
+
+        private static IParamValidator AddPreValidators(IParamValidator self, string[] parameters, Func<int, ParameterInfo[], string, Action<object[]>> validator)
+        {
+            return AddPreValidators(
+                self,
+                parameters,
+                (i, p) =>
+                    validator(i, p, p[i].Name));                
+        }
+
+        private static IParamValidator AddPreValidators(IParamValidator assertions, string[] parameters, Func<int, ParameterInfo[], Action<object[]>> validator)
         {
             if (parameters.Length < 1)
             { throw new ArgumentException("You have to provide at least one parameter to be validated!"); }
 
             var ass = (AssertionList4Parameters)
                 (assertions ?? (assertions = new AssertionList4Parameters()));
-
-
+            
             for (int i = 0; i < parameters.Length; i++)
             {
                 ass.Validators
@@ -51,19 +74,15 @@ namespace Surrogates.Applications
         /// <returns></returns>
         public static IParamValidator AreEqual(this IParamValidator self, object expected, string[] on)
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
-                {
-                    var name = p[i].Name;
-
-                    return args =>
+                (i, p, name) =>
+                    args =>
                     {
                         if (!object.Equals(expected, args[i]))
                         { Throw("The given value for '{0}', {1} is not equals to {2}!", name, args[i], expected); }
-                    };
-                });
+                    });
         }
 
         /// <summary>
@@ -74,19 +93,15 @@ namespace Surrogates.Applications
         /// <returns></returns>
         public static IParamValidator AreReferenceEqual(this IParamValidator self, object expected, string[] on)
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
-                {
-                    var name = p[i].Name;
-
-                    return args =>
+                (i, p, name) => 
+                    args =>
                     {
                         if (!object.ReferenceEquals(expected, args[i]))
                         { Throw("The given value for '{0}', {1} is not equals to {2}!", name, args[i], expected); }
-                    };
-                });
+                    });
         }
 
         /// <summary>
@@ -100,15 +115,13 @@ namespace Surrogates.Applications
         /// <returns></returns>
         public static IParamValidator Contains(this IParamValidator self, object expected, string[] on)
         {
-            return AddValidator(
+            return AddPreValidators(
                self,
                on,
-               (i, p) =>
+               (i, p, name) =>
                {
                    var contains =
-                       Check.Contains(i, p, expected);
-
-                   var name = p[i].Name;
+                       Check.Contains(i, p, expected);               
 
                    return args =>
                    {
@@ -127,16 +140,14 @@ namespace Surrogates.Applications
         /// <returns></returns>
         public static IParamValidator DoesNotContains(this IParamValidator self, object expected, string[] on)
         {
-            return AddValidator(
+            return AddPreValidators(
                self,
                on,
-               (i, p) =>
+               (i, p, name) =>
                {
                    var contains =
                        Check.Contains(i, p, expected);
-
-                   var name = p[i].Name;
-
+                   
                    return args =>
                    {
                        if (!contains(args))
@@ -164,19 +175,14 @@ namespace Surrogates.Applications
         /// <returns></returns>
         public static IParamValidator IsAssignableFrom(this IParamValidator self, Type expectedType, string[] on)
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
-                {
-                    var name = p[i].Name;
-
-                    return args =>
+                (i, p, name) => args =>
                     {
                         if (args[i].GetType().IsAssignableFrom(expectedType))
                         { Throw("The type, '{0}', of the parameter '{1}' is not assignable from {2} !", args[i].GetType(), name, expectedType); }
-                    };
-                });
+                    });
         }
 
         /// <summary>
@@ -198,19 +204,15 @@ namespace Surrogates.Applications
         /// <returns></returns>
         public static IParamValidator IsNotAssignableFrom(this IParamValidator self, Type expectedType, string[] on)
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
-                {
-                    var name = p[i].Name;
-
-                    return args =>
+                (i, p, name) =>
+                    args =>
                     {
                         if (!args[i].GetType().IsAssignableFrom(expectedType))
                         { Throw("The type, '{0}', of the parameter '{1}' is assignable from {2} !", args[i].GetType(), name, expectedType); }
-                    };
-                });
+                    });
         }
 
         /// <summary>
@@ -221,14 +223,11 @@ namespace Surrogates.Applications
         /// <returns></returns>
         public static IParamValidator IsEmpty(this IParamValidator self, string[] on)
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
+                (i, p, name) =>
                 {
-                    var name =
-                        p[i].Name;
-
                     var getCount =
                         p[i].GetCount();
 
@@ -248,14 +247,11 @@ namespace Surrogates.Applications
         /// <returns></returns>
         public static IParamValidator IsNotEmpty(this IParamValidator self, string[] on)
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
+                (i, p, name) =>
                 {
-                    var name =
-                        p[i].Name;
-
                     var getCount =
                         p[i].GetCount();
 
@@ -274,19 +270,15 @@ namespace Surrogates.Applications
         /// <returns></returns>
         public static IParamValidator IsFalse(this IParamValidator self, string[] on)
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
-                {
-                    var name = p[i].Name;
-
-                    return args =>
+                (i, p, name) =>
+                    args =>
                     {
                         if ((bool)args[i])
                         { Throw("The given value for '{0}' is not false!", name); }
-                    };
-                });
+                    });
         }
 
         /// <summary>        
@@ -296,19 +288,15 @@ namespace Surrogates.Applications
         /// <returns></returns>
         public static IParamValidator IsTrue(this IParamValidator self, string[] on)
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
-                {
-                    var name = p[i].Name;
-
-                    return args =>
+                (i, p, name) =>
+                    args =>
                     {
                         if (!(bool)args[i])
                         { Throw("The given value for '{0}' is not true!", name); }
-                    };
-                });
+                    });
         }
 
         /// <summary>        
@@ -318,12 +306,11 @@ namespace Surrogates.Applications
         /// <returns></returns>
         public static IParamValidator IsNullOrDefault(this IParamValidator self, params string[] on)
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
-                {
-                    var name = p[i].Name;
+                (i, p, name) =>
+                {                    
                     var type = p[i].ParameterType;
 
                     if (p[i].ParameterType == typeof(string))
@@ -350,12 +337,11 @@ namespace Surrogates.Applications
         /// <returns></returns>
         public static IParamValidator IsNotNullOrDefault(this IParamValidator self, params string[] on)
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
+                (i, p, name) =>
                 {
-                    var name = p[i].Name;
                     var type = p[i].ParameterType;
 
                     if (type == typeof(string))
@@ -402,12 +388,11 @@ namespace Surrogates.Applications
         /// <returns></returns>
         public static IParamValidator IsNumber(this IParamValidator self, params string[] on)
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
-                {
-                    var name = p[i].Name;
+                (i, p, name) =>
+                {                    
                     var expr = Check.IsNumberRegexpr;
                     return args =>
                     {
@@ -424,12 +409,11 @@ namespace Surrogates.Applications
         /// <returns></returns>
         internal static IParamValidator IsNaN(this IParamValidator self, string[] on)
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
-                {
-                    var name = p[i].Name;
+                (i, p, name) =>
+                {                    
                     var expr = Check.IsNumberRegexpr;
                     return args =>
                     {
@@ -450,21 +434,15 @@ namespace Surrogates.Applications
         public static IParamValidator IsInBetween<P>(this IParamValidator self, P min, P max, params string[] on)
             where P : struct
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
-                {
-
-                    var name = p[i].Name;
-
-                    return
+                (i, p, name) =>
                         args =>
                         {
                             if (!Check.InBetween<P>(min, max, (P)args[i]))
                             { Throw("The given value for '{0}' is not in between of {1} and {2}!", name, min, max); }
-                        };
-                });
+                        });
         }
 
         /// <summary>
@@ -477,14 +455,12 @@ namespace Surrogates.Applications
         public static IParamValidator Greater<P>(this IParamValidator self, P higher, params string[] on)
             where P : struct
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
+                (i, p, name) =>
                     args =>
                     {
-                        var name = p[i].Name;
-
                         if (!Check.Greater<P>(higher, (P)args[i]))
                         { Throw("The given value for '{0}' is not bigger than {1}!", name, higher); }
                     });
@@ -500,17 +476,15 @@ namespace Surrogates.Applications
         public static IParamValidator GreaterOrEqual<P>(this IParamValidator self, P higher, params string[] on)
             where P : struct
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
-                args =>
-                {
-                    var name = p[i].Name;
-
-                    if (!Check.GreaterOrEqual<P>(higher, (P)args[i]))
-                    { Throw("The given value for '{0}' is not bigger than {1}!", name, higher); }
-                });
+                (i, p, name) =>
+                    args =>
+                    {
+                        if (!Check.GreaterOrEqual<P>(higher, (P)args[i]))
+                        { Throw("The given value for '{0}' is not bigger than {1}!", name, higher); }
+                    });
         }
 
 
@@ -524,19 +498,15 @@ namespace Surrogates.Applications
         public static IParamValidator Less<P>(this IParamValidator self, P lower, params string[] on)
             where P : struct
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
-                {
-                    var name = p[i].Name;
-
-                    return args =>
+                (i, p, name) =>
+                    args =>
                     {
                         if (!Check.Less<P>(lower, (P)args[i]))
                         { Throw("The given value for '{0}' is not lower than {1}!", name, lower); }
-                    };
-                });
+                    });
         }
 
         /// <summary>
@@ -549,17 +519,15 @@ namespace Surrogates.Applications
         public static IParamValidator LessOrEqual<P>(this IParamValidator self, P less, params string[] on)
             where P : struct
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
-                args =>
-                {
-                    var name = p[i].Name;
-
-                    if (!Check.LessOrEqual<P>(less, (P)args[i]))
-                    { Throw("The given value for '{0}' is not bigger than {1}!", name, less); }
-                });
+                (i, p, name) =>
+                    args =>
+                    {
+                        if (!Check.LessOrEqual<P>(less, (P)args[i]))
+                        { Throw("The given value for '{0}' is not bigger than {1}!", name, less); }
+                    });
         }
 
         /// <summary>
@@ -581,19 +549,15 @@ namespace Surrogates.Applications
         /// <returns></returns>
         public static IParamValidator ThisRegex(this IParamValidator self, Regex expr, params string[] on)
         {
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
-                (i, p) =>
-                {
-                    var name = p[i].Name;
-
-                    return args =>
+                (i, p, name) =>
+                    args =>
                     {
                         if (!Check.Regex(expr, (string)args[i]))
                         { Throw("The given value for '{0}' does not match the expression '{1}'!", name, expr.ToString()); }
-                    };
-                });
+                    });
         }
 
         /// <summary>
@@ -613,7 +577,7 @@ namespace Surrogates.Applications
 
                 if (on.Length < 1) { continue; }
 
-                AddValidator(
+                AddPreValidators(
                     self,
                     new[] { on[0].Name },
                     (j, p) =>
@@ -645,18 +609,7 @@ namespace Surrogates.Applications
 
                             if (result == null || (result is bool && !(bool)result))
                             {
-                                var sb = new StringBuilder();
-
-                                sb.Append("The values for the parameters [ ");
-
-                                for (int i = 0; i < p.Length; i++)
-                                {
-                                    sb.AppendFormat(" '{0}'{1} ", p[i].Name, (i == p.Length - 1) ? "" : ",");
-                                }
-
-                                sb.Append("] did not match the composite pre validator!");
-
-                                Throw(sb.ToString());
+                                ThrowNotValid(p);
                             }
                         };
                     });
@@ -664,6 +617,7 @@ namespace Surrogates.Applications
 
             return self;
         }
+
 
         #region To be implemented, ... or not ?
 
@@ -683,7 +637,7 @@ namespace Surrogates.Applications
                     (Func<T, bool>)validator.Validation;
             }
 
-            return AddValidator(
+            return AddPreValidators(
                 self,
                 on,
                 (i, p) =>

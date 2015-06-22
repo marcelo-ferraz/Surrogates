@@ -1,7 +1,7 @@
 ﻿using Surrogates.Model;
+using Surrogates.Utilities.Mixins;
 using System;
 using System.Reflection;
-using Surrogates.Utilities.Mixins;
 
 namespace Surrogates.Utilities
 {

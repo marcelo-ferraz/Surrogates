@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 
-namespace Surrogates.Applications.Mixins
+namespace Surrogates.Applications.Infrastructure
 {
     public static class ObjectMixins
     {
@@ -25,7 +23,7 @@ namespace Surrogates.Applications.Mixins
                 if (compared.IsGenericType && type.IsGenericTypeDefinition)
                 { return type.IsAssignableFrom(compared.GetGenericTypeDefinition()); }
 
-                if (type.IsAssignableFrom(compared)) { return true; }                
+                if (type.IsAssignableFrom(compared)) { return true; }
             }
 
             return false;
@@ -40,7 +38,6 @@ namespace Surrogates.Applications.Mixins
 
         public static Func<object, object[], object> GetCount(this ParameterInfo self)
         {
-            Func<object, object[], object> get = null;
             if (self.IsCollection())
             {
                 return new Func<object, object[], object>(self.ParameterType.GetProperty("Count").GetValue);
@@ -50,11 +47,9 @@ namespace Surrogates.Applications.Mixins
             {
                 return new Func<object, object[], object>(self.ParameterType.GetProperty("Length").GetValue);
             }
-         
+
             throw new NotSupportedException(
                 string.Format("The parameter given, '{0}' is not a supported collection or array.", self.Name));
         }
-
-       
     }
 }

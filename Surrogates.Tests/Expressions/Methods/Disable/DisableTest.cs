@@ -1,8 +1,6 @@
 ﻿using NUnit.Framework;
 using Surrogates.Tests.Expressions.Entities;
 using System;
-using Surrogates.Utilities;
-using System.Collections.Generic;
 
 namespace Surrogates.Tests.Expressions.Methods.Disable
 {

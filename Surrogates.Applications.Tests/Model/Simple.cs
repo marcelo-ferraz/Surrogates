@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Surrogates.Applications.Tests
 {
@@ -38,5 +35,16 @@ namespace Surrogates.Applications.Tests
         }
 
         public string Text { get; set; }
+
+        Random _rnd = new Random();
+        public virtual int GetRandom()
+        {
+            return _rnd.Next();
+        }
+
+        public virtual object GetNewObject()
+        {
+            return new object();
+        }
     }
 }

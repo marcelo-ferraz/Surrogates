@@ -1,11 +1,9 @@
-﻿using Surrogates.Applications.Interlocking;
+﻿using Surrogates.Applications.Infrastructure;
+using Surrogates.Applications.Interlocking;
 using Surrogates.Expressions;
-using Surrogates.Utilities;
 using Surrogates.Utilities.Mixins;
 using System;
 using System.Runtime.Serialization;
-using Surrogates.Tactics;
-using Surrogates.Applications.Mixins;
 
 namespace Surrogates.Applications
 {
