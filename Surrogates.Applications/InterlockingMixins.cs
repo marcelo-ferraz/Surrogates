@@ -24,8 +24,34 @@ namespace Surrogates.Applications
                             .And
                             .Setter.Using<I>(i => (Action<object>)i.Set));
         }
+        
+        /// <summary>
+        /// Applies Read and write locks on the call of this property. On get will be applied a read lock and on set the write lock.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="self"></param>
+        /// <param name="properties"></param>
+        /// <returns></returns>
+        public static AndExpression<T> ReadAndWrite<T>(this ApplyExpression<T> self, Func<T, object> property)
+        {
+            AndExpression<T> exp = null;
 
-        public static AndExpression<T> ReadAndWrite<T>(this ApplyExpression<T> self, params Func<T, object>[] properties)
+            Func<ExpressionFactory<T>> getExp = () =>
+                (exp == null) ? self.PassOn().Factory : exp.And;
+
+            return property.GetPropType().IsValueType ?
+                    getExp().RW<T, InterlockedValuePropertyInterceptor>(property) :
+                    getExp().RW<T, InterlockedRefPropertyInterceptor>(property);
+        }
+
+        /// <summary>
+        /// Applies Read and write locks on the call of those properties. On get will be applied a read lock and on set the write lock.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="self"></param>
+        /// <param name="properties"></param>
+        /// <returns></returns>
+        public static AndExpression<T> ReadAndWrite<T>(this ApplyExpression<T> self, Func<T, object>[] properties)
         {            
             AndExpression<T> exp = null;
 
@@ -42,11 +68,26 @@ namespace Surrogates.Applications
             return exp;
         }
 
+        /// <summary>
+        /// Applies Read and write locks on the call of those methods
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="self"></param>
+        /// <param name="reader"></param>
+        /// <param name="writer"></param>
+        /// <returns></returns>
         public static AndExpression<T> ReadAndWrite<T>(this ApplyExpression<T> self, Func<T, Delegate> reader, Func<T, Delegate> writer)
         {
             return self.ReadAndWrite(new InterlockedPair<T>() { Reader = reader, Writer = writer });
         }
 
+        /// <summary>
+        /// Applies Read and write locks on the call of those methods
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="self"></param>
+        /// <param name="pairs"></param>
+        /// <returns></returns>
         public static AndExpression<T>  ReadAndWrite<T>(this ApplyExpression<T> self, params InterlockedPair<T>[] pairs)
         {
             T val = (T) FormatterServices

@@ -18,8 +18,14 @@ namespace Surrogates.Applications
         [TargetedPatchingOptOut("")]
         private static Func<object[], object> GenerateKey(MethodInfo method)
         {
-            var argTypes =
-                method.GetParameters().Select(p => p.ParameterType).ToArray();
+            var argTypes = method
+                .GetParameters()
+                .Select(p => p.ParameterType)
+                .ToArray()
+                .Prepend(typeof(IntPtr));
+
+            var handle =
+                method.MethodHandle.Value;
 
             //when it has more than one parameters, it creates a tuple for up to 8 
             if (argTypes.Length > 1)
@@ -29,14 +35,10 @@ namespace Surrogates.Applications
                     .MakeGenericType(argTypes);
 
                 return args =>
-                    Activator.CreateInstance(tupleType, args);
+                    Activator.CreateInstance(tupleType, args.Prepend(handle));
             }
 
-            return argTypes.Length == 1 ?
-                // if has one argument, brings it as key
-                (Func<object[], object>)(args => args[0]) :
-                // if not, a the simplest key
-                args => true;
+            return  args => handle;
         }
 
         [TargetedPatchingOptOut("")]

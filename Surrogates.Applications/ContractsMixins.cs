@@ -82,6 +82,14 @@ namespace Surrogates.Applications
             return preValidator;
         }
 
+        /// <summary>
+        /// Applies verifications to a method's call
+        /// </summary>
+        /// <typeparam name="T">The base type</typeparam>
+        /// <param name="that">The Expression</param>
+        /// <param name="that">The Expression</param>
+        /// <param name="methods">The methods where those verification shall be applied</param>
+        /// <returns></returns>
         public static AndExpression<T> Contracts<T>(
             this ApplyExpression<T> that, Func<T, Delegate>[] methods, params IParamValidator[] validations)
         {
@@ -93,6 +101,14 @@ namespace Surrogates.Applications
                 methods.Select(m => m(obj).Method));
         }
 
+        /// <summary>
+        /// Applies verifications to a method's call
+        /// </summary>
+        /// <typeparam name="T">The base type</typeparam>
+        /// <param name="that">The Expression</param>
+        /// <param name="method">The method where those verification shall be applied</param>
+        /// <param name="validations">The verifications. Make use of <seealso cref="Surrogates.Applications.Contracts.Presume"/></param>
+        /// <returns>Returns the expression</returns>
         public static AndExpression<T> Contracts<T>(
             this ApplyExpression<T> that, Func<T, Delegate> method, params IParamValidator[] validations)
         {
@@ -104,6 +120,14 @@ namespace Surrogates.Applications
                 new[] { method(obj).Method });
         }
 
+        /// <summary>
+        /// Applies verifications to a method's call
+        /// </summary>
+        /// <typeparam name="T">The base type</typeparam>
+        /// <param name="that">The Expression</param>
+        /// <param name="methods">The methods where those verification shall be applied</param>
+        /// <param name="validations">The verifications. Make use of <seealso cref="Surrogates.Applications.Contracts.Presume"/></param>
+        /// <returns></returns>
         public static AndExpression<T> Contracts<T>(
             this ApplyExpression<T> that, string[] methods, params IParamValidator[] preValidations)
         {
@@ -112,6 +136,14 @@ namespace Surrogates.Applications
                 methods.Select(m => typeof(T).GetMethod4Surrogacy(m)));
         }
 
+        /// <summary>
+        /// Applies verifications to a method's call
+        /// </summary>
+        /// <typeparam name="T">The base type</typeparam>
+        /// <param name="that">The Expression</param>
+        /// <param name="method">The method where those verification shall be applied</param>
+        /// <param name="validations">The verifications. Make use of <seealso cref="Surrogates.Applications.Contracts.Presume"/></param>
+        /// <returns></returns>
         public static AndExpression<T> Contracts<T>(
             this ApplyExpression<T> that, string method, params IParamValidator[] preValidations)
         {

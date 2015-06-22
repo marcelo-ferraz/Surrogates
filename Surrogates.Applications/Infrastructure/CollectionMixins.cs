@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Surrogates.Applications.Infrastructure
@@ -19,6 +20,16 @@ namespace Surrogates.Applications.Infrastructure
                 }
             }
             return newMap;
+        }
+
+        public static T[] Prepend<T>(this T[] self, T value)
+        {
+            var newValues = (T[]) Array.CreateInstance(
+                typeof(Type), self.Length + 1);
+            newValues[0] = value;
+            Array.Copy(self, 0, newValues, 1, self.Length);
+
+            return newValues;
         }
     }
 }
