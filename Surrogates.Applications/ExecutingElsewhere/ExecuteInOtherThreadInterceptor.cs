@@ -5,7 +5,7 @@ namespace Surrogates.Applications.ExecutingElsewhere
 {
     public class ExecuteInOtherThreadInterceptor
     {
-        internal object Execute(Delegate s_method, object[] s_args, bool s_Forget)
+        public object Execute(Delegate s_method, object[] s_args, bool s_Forget)
         {
             object result = null;
 

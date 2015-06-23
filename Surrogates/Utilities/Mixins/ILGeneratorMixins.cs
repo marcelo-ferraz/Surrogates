@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Surrogates.Utilities.Mixins;
 using System.Reflection.Emit;
 
 namespace Surrogates.Utilities.Mixins
@@ -38,7 +39,13 @@ namespace Surrogates.Utilities.Mixins
             return false;
         }
 
-        internal static void EmitDefaultParameterValue(this ILGenerator gen, Type type, LocalBuilder local = null)
+        internal static void EmitDefaultValue(this ILGenerator gen, Type type)
+        {
+            LocalBuilder local4Date = null;
+            EmitDefaultValue(gen, type, ref local4Date);
+        }
+
+        internal static void EmitDefaultValue(this ILGenerator gen, Type type, ref LocalBuilder local4Date)
         {
             if (type == typeof(string))
             {
@@ -59,16 +66,16 @@ namespace Surrogates.Utilities.Mixins
           
             if (type == typeof(DateTime) || type == typeof(TimeSpan))
             {
-                if (local == null)
-                { local = gen.DeclareLocal(type); }
+                if (local4Date == null)
+                { local4Date = gen.DeclareLocal(type); }
 
-                gen.Emit(OpCodes.Ldloca_S, local);
+                gen.Emit(OpCodes.Ldloca_S, local4Date);
                 gen.Emit(OpCodes.Initobj, type);
-                gen.Emit(OpCodes.Ldloc, local);
+                gen.Emit(OpCodes.Ldloc, local4Date);
                 return;
             }
 
-            if (isInteger || type == typeof(decimal) || type == typeof(char))
+            if (isInteger || type == typeof(decimal) || type == typeof(char) || type == typeof(bool))
             {
                 gen.Emit(OpCodes.Ldc_I4_0);
             }
@@ -78,18 +85,24 @@ namespace Surrogates.Utilities.Mixins
             }
             else { throw new NotSupportedException(string.Format("The type {0} is not supporte, yet.", type)); }
         }
-       
+
+        internal static void EmitDefaultLocalValue(this ILGenerator gen, Type type)
+        {
+            LocalBuilder local = null;
+            EmitDefaultValue(gen, type, ref local);
+        }
+
         /// <summary>
         /// Emits the default value for various types
         /// </summary>
         /// <param name="gen"></param>
         /// <param name="type"></param>
-        internal static void EmitDefaultValue(this ILGenerator gen, Type type, LocalBuilder local = null)
+        internal static void EmitDefaultLocalValue(this ILGenerator gen, Type type, ref LocalBuilder local)
         {
             if (local == null)
             { local = gen.DeclareLocal(type); }
 
-            gen.EmitDefaultParameterValue(type, local);
+            gen.EmitDefaultValue(type, ref local);
 
             gen.Emit(OpCodes.Stloc, local);
             gen.Emit(OpCodes.Br_S, local);
@@ -112,8 +125,7 @@ namespace Surrogates.Utilities.Mixins
                 if (interfere != null && interfere(@params[i], i))
                 { continue; }
 
-                if (Try2Add.AnythingAsParameter(gen, strategy, interceptor, baseMethod, @params[i]))
-                { continue; }
+                JustAdd.AnythingElseAsParameter(gen, strategy, interceptor, baseMethod, @params[i]);
             }
             return newParams.ToArray();
         }
@@ -158,10 +170,16 @@ namespace Surrogates.Utilities.Mixins
             for (int j = 0; j < strategies.NewProperties.Count; j++)
             {
                 var b = strategies.NewProperties[j].GetBuilder();
-
                 gen.Emit(OpCodes.Ldarg_0);
-                gen.Emit(OpCodes.Newobj, b.PropertyType.GetConstructor(Type.EmptyTypes));
+
+                if (b.PropertyType.IsClass)
+                {
+                    gen.Emit(OpCodes.Newobj, b.PropertyType.GetConstructor(Type.EmptyTypes));
+                }
+                else 
+                { gen.EmitDefaultValue(b.PropertyType); }
                 gen.EmitCall(b.GetSetMethod());
+
             }
 
             int i = 0;

@@ -19,7 +19,7 @@ namespace Surrogates.Executioners
                 baseAction, out baseMethodReturn);
 
             if (baseMethodReturn != null)
-            { gen.EmitDefaultValue(baseAction.ReturnType, baseMethodReturn); }
+            { gen.EmitDefaultLocalValue(baseAction.ReturnType, ref baseMethodReturn); }
 
             gen.Emit(OpCodes.Ret);
         }
@@ -39,7 +39,7 @@ namespace Surrogates.Executioners
             }
             else if (!strategy.Interceptor.Method.ReturnType.IsAssignableFrom(baseFunction.ReturnType))
             {
-                gen.EmitDefaultValue(strategy.Interceptor.Method.ReturnType, baseMethodReturn);
+                gen.EmitDefaultLocalValue(strategy.Interceptor.Method.ReturnType, ref baseMethodReturn);
             }
             else // in case the new method's return needs to be cast 
                 if (strategy.Interceptor.Method.ReturnType != baseFunction.ReturnType)
@@ -89,7 +89,7 @@ namespace Surrogates.Executioners
                 if (strategy.Getter.Method.ReturnType != typeof(void))
                 { gen.Emit(OpCodes.Pop); }
 
-                gen.EmitDefaultValue(pType, returnField);
+                gen.EmitDefaultLocalValue(pType, ref returnField);
             }
             else // in case the new method's return needs to be cast 
                 if (strategy.Getter.Method.ReturnType != property.Original.PropertyType)

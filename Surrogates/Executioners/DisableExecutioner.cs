@@ -20,7 +20,7 @@ namespace Surrogates.Executioners
 
             if (method.ReturnType != typeof(void))
             {
-                gen.EmitDefaultValue(method.ReturnType);
+                gen.EmitDefaultLocalValue(method.ReturnType);
             }
             gen.Emit(OpCodes.Ret);
         }
@@ -43,7 +43,7 @@ namespace Surrogates.Executioners
 
             var gen = getter.GetILGenerator();
 
-            gen.EmitDefaultValue(property.Original.PropertyType);
+            gen.EmitDefaultLocalValue(property.Original.PropertyType);
             gen.Emit(OpCodes.Ret);
 
             property.Builder.SetGetMethod(getter);

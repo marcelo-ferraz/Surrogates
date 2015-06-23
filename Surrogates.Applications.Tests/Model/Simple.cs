@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Surrogates.Applications.Tests
 {
@@ -32,6 +33,10 @@ namespace Surrogates.Applications.Tests
         public virtual string GetDomainName()
         {
             return AppDomain.CurrentDomain.FriendlyName;
+        }
+        public virtual string GetThreadName()
+        {
+            return Thread.CurrentThread.Name;
         }
 
         public string Text { get; set; }

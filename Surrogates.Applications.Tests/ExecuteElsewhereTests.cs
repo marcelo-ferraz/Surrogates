@@ -1,5 +1,9 @@
 ﻿using NUnit.Framework;
+using Surrogates.Applications.ExecutingElsewhere;
+using Surrogates.Applications.Tests;
+using Surrogates.Utilities;
 using System;
+using System.Collections.Generic;
 
 namespace Surrogates.Applications.Tests
 {
@@ -7,7 +11,7 @@ namespace Surrogates.Applications.Tests
     public class ExecuteElsewhereTests : AppTests
     {
         [Test]
-        public void SimpleAnotherDomainTest()
+        public void SimpleTestInAnotherDomain()
         {
             Container.Map(m =>
                 m.From<Simple>()
@@ -20,6 +24,20 @@ namespace Surrogates.Applications.Tests
             var proxy = Container.Invoke<Simple>();
 
             Assert.AreNotEqual(simple.GetDomainName(), proxy.GetDomainName());
+        }
+
+        [Test]
+        public void SimpleTestInAnotherThread()
+        {
+            Container.Map(m =>
+                m.From<Simple>()
+                .Apply
+                .Calls(s => (Func<string>)s.GetThreadName).InOtherThread()).Save();
+
+            var simple = new Simple();
+            var proxy = Container.Invoke<Simple>();
+
+            Assert.AreNotEqual(simple.GetThreadName(), proxy.GetThreadName());
         }
     }
 }

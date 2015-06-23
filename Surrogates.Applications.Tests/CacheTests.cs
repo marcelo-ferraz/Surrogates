@@ -14,7 +14,7 @@ namespace Surrogates.Applications.Tests
             Container.Map(m => m
                 .From<Simple>("SimpleCachedTest")
                 .Apply
-                .Cache(s => (Func<int>)s.GetRandom, timeout: TimeSpan.FromMilliseconds(5000)));
+                .Cache(s => (Func<int>)s.GetRandom, timeout: TimeSpan.FromMilliseconds(500)));
 
             var proxy =
                 Container.Invoke<Simple>("SimpleCachedTest");
