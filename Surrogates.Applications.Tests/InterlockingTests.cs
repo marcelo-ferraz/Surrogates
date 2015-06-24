@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 namespace Surrogates.Applications.Tests
 {
     [TestFixture]
-    public class InterlockingTests : AppTests
+    public class InterlockingTests : AppTestsBase
     {
         [Test]
         public void SimpleLock4Methods()
         {
             Container.Map(m =>
-                m.From<Simple>()
+                m.From<Simpleton>()
                 .Apply
                 .ReadAndWrite(s => (Func<int, int>)s.GetFromList, s => (Action<int>)s.Add2List));
 
             var max = 15000000;
 
             var proxy = Container
-                .Invoke<Simple>(args: new List<int>(capacity: max));
+                .Invoke<Simpleton>(args: new List<int>(capacity: max));
 
-            var simple = new Simple(new List<int>(capacity: max));
+            var simple = new Simpleton(new List<int>(capacity: max));
 
 
             Action simpleTask =

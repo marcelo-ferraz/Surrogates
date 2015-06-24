@@ -197,7 +197,7 @@ namespace Surrogates.Utilities
         /// <param name="originalMethod"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        internal static LocalBuilder ThisDynamic_(ILGenerator gen, Strategy strategy, Strategy.Interceptor interceptor, MethodInfo originalMethod, ParameterInfo param)
+        internal static LocalBuilder ThisDynamic_(ILGenerator gen, Strategy strategy, Strategy.InterceptorInfo interceptor, MethodInfo originalMethod, ParameterInfo param)
         {
 
             if (!interceptor.Locals.ContainsKey("S_Method"))

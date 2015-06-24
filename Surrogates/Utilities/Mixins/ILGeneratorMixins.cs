@@ -109,7 +109,7 @@ namespace Surrogates.Utilities.Mixins
             gen.Emit(OpCodes.Ldloc, local);
         }
                 
-        internal static Type[] EmitParameters(this ILGenerator gen, Strategy strategy, Strategy.Interceptor interceptor, MethodInfo baseMethod, Func<ParameterInfo, int, bool> interfere = null)
+        internal static Type[] EmitParameters(this ILGenerator gen, Strategy strategy, Strategy.InterceptorInfo interceptor, MethodInfo baseMethod, Func<ParameterInfo, int, bool> interfere = null)
         {
             var newParams = new List<Type>();
 

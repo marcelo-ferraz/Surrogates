@@ -9,7 +9,7 @@ namespace Surrogates.Utilities
 {
     public static class JustAdd
     {
-        internal static void AnythingElseAsParameter(ILGenerator gen, Strategy strategy, Strategy.Interceptor interceptor, MethodInfo originalMethod, ParameterInfo param)
+        internal static void AnythingElseAsParameter(ILGenerator gen, Strategy strategy, Strategy.InterceptorInfo interceptor, MethodInfo originalMethod, ParameterInfo param)
         {
             var isSpecialParam =
                 param.Name[0] == 's' && param.Name[1] == '_';

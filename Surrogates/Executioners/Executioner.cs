@@ -11,7 +11,7 @@ namespace Surrogates.Executioners
         public abstract void Execute4Properties(Strategy.ForProperties st);
         public abstract void Execute4Methods(Strategy.ForMethods st);
 
-        protected static FieldInfo GetField(Strategy.Interceptor @int, FieldList fields)
+        protected static FieldInfo GetField(Strategy.InterceptorInfo @int, FieldList fields)
         {            
             return fields.Get(@int.DeclaredType, @int.Name);
         }

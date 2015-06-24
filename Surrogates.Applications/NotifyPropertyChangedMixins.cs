@@ -22,6 +22,10 @@ namespace Surrogates.Applications
                 .Using<ChangesListListenerInterceptor<L, I>>("Set")
                 .And
                 .AddProperty<Action<L, I, object>>("Notifier", listener);
+
+            //ICollection<T>.Add(T item)
+            //IList<I>.Insert(int index, T item)
+            //IList<I>.set_Item(T item)
         }
     }
 }

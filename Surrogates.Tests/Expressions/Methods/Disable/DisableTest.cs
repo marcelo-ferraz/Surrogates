@@ -37,7 +37,7 @@ namespace Surrogates.Tests.Expressions.Methods.Disable
             container.Map(m => m
                 .From<Dummy>()
                 .Disable
-                .This(d => (Func<int>)d.Call_SetPropText_simple_Return_1));
+                .This(d => (Func<int>)d.Call_SetPropText_simple_Return_1)).Save();
 
             var dummy =
                 new Dummy();

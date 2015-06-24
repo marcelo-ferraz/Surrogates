@@ -15,7 +15,7 @@ namespace Surrogates.Expressions
             Strategies.BaseMethods.Add(method, CurrentStrategy);
 
             CurrentStrategy.Interceptor =
-               new Strategy.Interceptor(name, typeof(T), method);
+               new Strategy.InterceptorInfo(name, typeof(T), method);
 
             Strategies.Add(CurrentStrategy);
 

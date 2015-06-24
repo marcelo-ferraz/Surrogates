@@ -45,7 +45,7 @@ namespace Surrogates.Expressions.Accessors
         private AndExpression Using<T>(string name, MethodInfo method)
         {
             var @int =
-              new Strategy.Interceptor(name, typeof(T), method);
+              new Strategy.InterceptorInfo(name, typeof(T), method);
 
             if (_caller == PropertyAccessor.Set)
             {

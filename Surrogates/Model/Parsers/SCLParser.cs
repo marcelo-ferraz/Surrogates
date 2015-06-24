@@ -32,7 +32,7 @@ namespace Surrogates.Model.Parsers
 
             var intType = dic[metName[0]];
 
-            var interceptor = new Strategy.Interceptor(
+            var interceptor = new Strategy.InterceptorInfo(
                 metName[0], intType, intType.GetMethod4Surrogacy(metName[1]));
 
             if (grp[string.Concat("accessor", index)].Value[0] == 'g' ||
@@ -127,7 +127,7 @@ namespace Surrogates.Model.Parsers
                     var method =
                         owner.GetMethod4Surrogacy(methName.Split('.')[1]);
 
-                    strategy.Methods.Add(method);
+                    strategy.Add(method);
                 }
             }
 
@@ -142,7 +142,7 @@ namespace Surrogates.Model.Parsers
                 var intMethod =
                     intType.GetMethod4Surrogacy(interceptorName[1]);
 
-                strategy.Interceptor = new Strategy.Interceptor(
+                strategy.Interceptor = new Strategy.InterceptorInfo(
                     interceptorName[0], intType, intMethod);
             }
 

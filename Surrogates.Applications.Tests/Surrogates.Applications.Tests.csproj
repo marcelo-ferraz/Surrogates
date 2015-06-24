@@ -44,12 +44,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppTestsBase.cs" />
     <Compile Include="ContractPreValidatorTests.cs" />
     <Compile Include="Model\Simple.cs" />
     <Compile Include="InterlockingTests.cs" />
     <Compile Include="IoCTests.cs" />
     <Compile Include="ExecuteElsewhereTests.cs" />
     <Compile Include="LazyLoadingTests.cs" />
+    <Compile Include="Model\simpletonList.cs" />
     <Compile Include="NotifiyPropertyTests.cs" />
     <Compile Include="CacheTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

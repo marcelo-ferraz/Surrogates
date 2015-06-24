@@ -10,9 +10,9 @@ namespace Surrogates.Tactics
 {
     public class Strategy
     {
-        public class Interceptor
+        public class InterceptorInfo
         {
-            public Interceptor(string name, Type declaredType, MethodInfo method)
+            public InterceptorInfo(string name, Type declaredType, MethodInfo method)
             {
                 this.Name = string.IsNullOrEmpty(name) ? "interceptor" : name;
                 this.DeclaredType = declaredType;
@@ -40,9 +40,9 @@ namespace Surrogates.Tactics
 
             public PropertyList Properties { get; set; }
 
-            public Interceptor Getter { set; get; }
+            public InterceptorInfo Getter { set; get; }
 
-            public Interceptor Setter { set; get; }
+            public InterceptorInfo Setter { set; get; }
         }
 
         public class ForMethods : Strategy
@@ -55,9 +55,26 @@ namespace Surrogates.Tactics
                 : base(@base) 
             { Methods = new List<MethodInfo>(); }
 
-            public Interceptor Interceptor { get; set; }
+            public InterceptorInfo Interceptor { get; set; }
 
             public IList<MethodInfo> Methods { get; set; }
+
+            public void Add(MethodInfo method, bool faultIsException = true)
+            {
+                if (faultIsException && (method.IsFinal || (!method.IsVirtual && !method.IsAbstract)))
+                {
+                    string explanation =
+                        method.IsFinal ? "was marked as sealed" : 
+                        "either not marked as virtual nor as abstract";
+
+                    throw new NotSupportedException(string.Format(
+                        "The supplied method, '{0}', was {1}, therefore it cannot be overriden",
+                        method.Name,
+                        explanation));
+                }
+
+                Methods.Add(method);
+            }
         }
 
         static Strategy()

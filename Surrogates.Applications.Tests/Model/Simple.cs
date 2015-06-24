@@ -5,10 +5,10 @@ using System.Threading;
 namespace Surrogates.Applications.Tests
 {
     [Serializable]
-    public class Simple
+    public class Simpleton
     {
-        public Simple() { }
-        public Simple(List<int> list)
+        public Simpleton() { }
+        public Simpleton(List<int> list)
         {
             this.List = list;
         }

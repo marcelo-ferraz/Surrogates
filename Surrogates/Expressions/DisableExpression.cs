@@ -8,9 +8,31 @@ namespace Surrogates.Expressions
     {
         public DisableExpression(BaseContainer4Surrogacy container, Strategy currentStrategy, Strategies strategies)
             : base(container, currentStrategy, strategies) { }
+
+        public override AndExpression<TBase> Methods(string[] methodNames, bool onlyViable = true)
+        {
+            var result = base.Methods(methodNames, onlyViable);
+            Strategies.Add(CurrentStrategy);
+            return result;
+        }
+
+        public override AndExpression<TBase> Methods(Func<System.Reflection.MethodInfo, bool> predicate, bool onlyViable = true)
+        {
+            var result = base.Methods(predicate, onlyViable);
+            Strategies.Add(CurrentStrategy);
+            return result;
+        }
+        
         public override AndExpression<TBase> Methods(params string[] methodNames)
         {
             var result = base.Methods(methodNames);
+            Strategies.Add(CurrentStrategy);
+            return result;
+        }
+
+        public override AndExpression<TBase> These(Func<TBase, Delegate>[] methods, bool onlyViable = true)
+        {
+            var result = base.These(methods, onlyViable);
             Strategies.Add(CurrentStrategy);
             return result;
         }

@@ -6,20 +6,20 @@ using System.Threading;
 namespace Surrogates.Applications.Tests
 {
     [TestFixture]
-    public class CacheTests : AppTests
+    public class CacheTests : AppTestsBase
     {
         [Test]
         public void SimpleCacheValueTest()
         {
             Container.Map(m => m
-                .From<Simple>("SimpleCachedTest")
+                .From<Simpleton>("SimpleCachedTest")
                 .Apply
                 .Cache(s => (Func<int>)s.GetRandom, timeout: TimeSpan.FromMilliseconds(500)));
 
             var proxy =
-                Container.Invoke<Simple>("SimpleCachedTest");
+                Container.Invoke<Simpleton>("SimpleCachedTest");
 
-            var simple = new Simple();
+            var simple = new Simpleton();
 
             var w = new Stopwatch();
             
@@ -39,14 +39,14 @@ namespace Surrogates.Applications.Tests
         public void SimpleCacheReferenceTest()
         {
             Container.Map(m => m
-                .From<Simple>("SimpleCachedTest")
+                .From<Simpleton>("SimpleCachedTest")
                 .Apply
                 .Cache(s => (Func<object>)s.GetNewObject, timeout: TimeSpan.FromMilliseconds(500)));
 
             var proxy =
-                Container.Invoke<Simple>("SimpleCachedTest");
+                Container.Invoke<Simpleton>("SimpleCachedTest");
 
-            var simple = new Simple();
+            var simple = new Simpleton();
 
             var obj1 = proxy.GetNewObject();
             var obj2 = proxy.GetNewObject();

@@ -18,12 +18,12 @@ namespace Surrogates.Expressions
         public InterferenceExpression(BaseContainer4Surrogacy container, Strategy current, Strategies strategies)
             : base(container, current, strategies) { }
 
-        public T4Method Method(string methodName)
+        public T4Method Method(string methodName, bool onlyViable = true)
         {
-            return Methods(methodName);
+            return Methods(new [] { methodName }, onlyViable);
         }
 
-        public virtual T4Method Methods(Func<MethodInfo, bool> predicate)
+        public virtual T4Method Methods(Func<MethodInfo, bool> predicate, bool onlyViable = true) 
         {
             var strat = new
                 Strategy.ForMethods(CurrentStrategy);
@@ -37,13 +37,18 @@ namespace Surrogates.Expressions
             foreach (var method in methods)
             {
                 if(predicate(method))
-                { strat.Methods.Add(method); }
+                { strat.Add(method, onlyViable); }
             }
 
             return (T4Method) Activator.CreateInstance(typeof(T4Prop), Container, strat, Strategies);
         }
 
         public virtual T4Method Methods(params string[] methodNames)
+        {
+            return Methods(methodNames, false);
+        }
+
+        public virtual T4Method Methods(string[] methodNames, bool onlyViable = true)
         {
             var strat = new
                 Strategy.ForMethods(CurrentStrategy);
@@ -57,18 +62,23 @@ namespace Surrogates.Expressions
                 if ((method = strat.BaseType.GetMethod4Surrogacy(methodName)) == null)
                 { throw new MethodNotFoundException(methodName); }
 
-                strat.Methods.Add(method);
+                strat.Add(method, onlyViable);
             }
 
             return (T4Method)Activator.CreateInstance(typeof(T4Method), Container, strat, Strategies);
         }
 
-        public T4Method This(Func<TBase, Delegate> method)
+        public T4Method This(Func<TBase, Delegate> method, bool onlyViable = true)
         {
-            return this.These(method);
+            return this.These(new [] { method }, onlyViable);
         }
 
         public virtual T4Method These(params Func<TBase, Delegate>[] methods)
+        {
+            return These(methods);
+        }
+
+        public virtual T4Method These(Func<TBase, Delegate>[] methods, bool onlyViable = true)
         {
             var strat = new
                 Strategy.ForMethods(CurrentStrategy);
@@ -77,8 +87,8 @@ namespace Surrogates.Expressions
 
             foreach (var methodGetter in methods)
             {
-                strat.Methods.Add(
-                    methodGetter(base.GetNotInit<TBase>()).Method);
+                strat.Add(
+                    methodGetter(base.GetNotInit<TBase>()).Method, onlyViable);
             }
 
             return (T4Method)Activator.CreateInstance(typeof(T4Method), Container, strat, Strategies);
