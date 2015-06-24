@@ -61,6 +61,7 @@
     <Compile Include="Model\Entities\Entry.cs" />
     <Compile Include="Model\Entities\NewAttribute.cs" />
     <Compile Include="Model\Entities\NewProperty.cs" />
+    <Compile Include="Model\Entities\OverridenMethod.cs" />
     <Compile Include="PropertyNotFoundException.cs" />
     <Compile Include="Expressions\Accessors\PropertyAccessor.cs" />
     <Compile Include="Expressions\Accessors\AndExpression.cs" />
@@ -81,7 +82,7 @@
     <Compile Include="ProxyAlreadyMadeException.cs" />
     <Compile Include="Utilities\Clone.cs" />
     <Compile Include="Utilities\JustAdd.cs" />
-    <Compile Include="Utilities\Set4Locals.cs" />
+    <Compile Include="Utilities\SetLocals4.cs" />
     <Compile Include="Utilities\Mixins\ParameterInfoMixins.cs" />
     <Compile Include="Utilities\Mixins\PropertyMixins.cs" />
     <Compile Include="Utilities\Mixins\StrategyMixins.cs" />

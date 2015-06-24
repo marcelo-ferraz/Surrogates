@@ -18,12 +18,20 @@ namespace Surrogates.Expressions
             this._container = container;
         }
 
-        public ExpressionFactory<T> From<T>(string name = "", Access? permissions = null, Access? excludeAccess = null)
+        /// <summary>
+        /// The starting point of any expression, where you specify the baseType, its name and its behaviour globally 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name">The name of the new type. If nothing is provided, it will be the base type's name + 'Proxy'</param>
+        /// <param name="access">What every interceptor will be able to see as a parameter</param>
+        /// <param name="excludeAccess">What every interceptor will not be able to see as a parameter</param>
+        /// <returns></returns>
+        public ExpressionFactory<T> From<T>(string name = "", Access? access = null, Access? excludeAccess = null)
         {
             Name = name;
 
-            var p = permissions.HasValue ? 
-                permissions.Value : 
+            var p = access.HasValue ? 
+                access.Value : 
                 _container.DefaultPermissions;
 
             if (excludeAccess.HasValue)

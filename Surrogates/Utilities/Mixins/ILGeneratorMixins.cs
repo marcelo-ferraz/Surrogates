@@ -63,7 +63,7 @@ namespace Surrogates.Utilities.Mixins
                 type == typeof(ushort) || type == typeof(short) ||
                 type == typeof(uint) || type == typeof(int) ||
                 type == typeof(ulong) || type == typeof(long);
-          
+
             if (type == typeof(DateTime) || type == typeof(TimeSpan))
             {
                 if (local4Date == null)
@@ -108,7 +108,7 @@ namespace Surrogates.Utilities.Mixins
             gen.Emit(OpCodes.Br_S, local);
             gen.Emit(OpCodes.Ldloc, local);
         }
-                
+
         internal static Type[] EmitParameters(this ILGenerator gen, Strategy strategy, Strategy.InterceptorInfo interceptor, MethodInfo baseMethod, Func<ParameterInfo, int, bool> interfere = null)
         {
             var newParams = new List<Type>();
@@ -121,7 +121,7 @@ namespace Surrogates.Utilities.Mixins
                     @params[i].ParameterType;
 
                 newParams.Add(pType);
-                              
+
                 if (interfere != null && interfere(@params[i], i))
                 { continue; }
 
@@ -133,7 +133,7 @@ namespace Surrogates.Utilities.Mixins
         internal static Type[] EmitParametersForSelf(this ILGenerator gen, Strategy strategy, MethodInfo baseMethod)
         {
             var @params = baseMethod.GetParameters();
-            
+
             var newParams = new Type[@params.Length];
 
             for (int i = 0; i < @params.Length; i++)
@@ -156,7 +156,7 @@ namespace Surrogates.Utilities.Mixins
         {
             var baseParams =
                 strategies.BaseType.GetConstructor(types).GetParameters();
-            
+
             for (int j = 0; j < strategies.Fields.Count; j++)
             {
                 var type =
@@ -176,7 +176,7 @@ namespace Surrogates.Utilities.Mixins
                 {
                     gen.Emit(OpCodes.Newobj, b.PropertyType.GetConstructor(Type.EmptyTypes));
                 }
-                else 
+                else
                 { gen.EmitDefaultValue(b.PropertyType); }
                 gen.EmitCall(b.GetSetMethod());
 
@@ -192,11 +192,11 @@ namespace Surrogates.Utilities.Mixins
             }
 
             gen.Emit(OpCodes.Call, strategies.BaseType.GetConstructor(types.Length < 1 ? Type.EmptyTypes : types));
-            
+
             gen.Emit(OpCodes.Ret);
         }
 
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -218,14 +218,14 @@ namespace Surrogates.Utilities.Mixins
             }
             catch (InvalidOperationException ex)
             {
-                if(ex.Message == "Calling convention must be VarArgs.")
+                if (ex.Message == "Calling convention must be VarArgs.")
                 {
                     gen.Emit(OpCodes.Call, method);
                 }
             }
         }
 
-        internal static void EmitArg(this ILGenerator gen, int index) 
+        internal static void EmitArg(this ILGenerator gen, int index)
         {
             if (index <= 3)
             {
@@ -235,34 +235,8 @@ namespace Surrogates.Utilities.Mixins
                     index == 2 ? OpCodes.Ldarg_2 :
                     OpCodes.Ldarg_3);
             }
-            else 
+            else
             { gen.Emit(OpCodes.Ldarg, index); }
-        }
-
-        internal static void EmitStloc(this ILGenerator gen, int index)
-        {
-            if (index <= 3)
-            {
-                gen.Emit(
-                    index == 0 ? OpCodes.Stloc_0 :
-                    index == 1 ? OpCodes.Stloc_1 :
-                    index == 2 ? OpCodes.Stloc_2 :
-                    OpCodes.Stloc_3);
-            }
-            //else { //TODO: discover what to do }
-        }
-
-        internal static void EmitLdloc(this ILGenerator gen, int index)
-        {
-            if (index <= 3)
-            {
-                gen.Emit(
-                    index == 0 ? OpCodes.Ldloc_0 :
-                    index == 1 ? OpCodes.Ldloc_1 :
-                    index == 2 ? OpCodes.Ldloc_2 :
-                    OpCodes.Ldloc_3);
-            }
-            //else { //TODO: discover what to do }
         }
     }
 }

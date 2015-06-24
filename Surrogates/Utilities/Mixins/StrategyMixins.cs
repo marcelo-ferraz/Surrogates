@@ -1,4 +1,5 @@
-﻿using Surrogates.Tactics;
+﻿using Surrogates.Model.Entities;
+using Surrogates.Tactics;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -8,17 +9,15 @@ namespace Surrogates.Utilities.Mixins
 {
     public static class StrategyMixins
     {
-        internal static ILGenerator Override(this Strategy.ForProperties strat, MethodInfo baseMethod, out LocalBuilder returnField)
+        internal static OverridenMethod Override(this Strategy strat, Strategy.InterceptorInfo interceptor, MethodInfo baseMethod, Func<OverridenMethod, ParameterInfo, int, bool> emitParameters)
         {
-            throw new Exception();
-        }         
+            var overriden = 
+                new OverridenMethod();
 
-        internal static ILGenerator Override(this Strategy.ForMethods strat, MethodInfo baseMethod, out LocalBuilder returnField)
-        {
             var attrs = MethodAttributes.Virtual;
 
             var field = strat.Fields
-                .Get(strat.Interceptor.DeclaredType, strat.Interceptor.Name);
+                .Get(interceptor.DeclaredType, interceptor.Name);
 
             if (baseMethod.Attributes.HasFlag(MethodAttributes.Public))
             { attrs |= MethodAttributes.Public; }
@@ -26,37 +25,37 @@ namespace Surrogates.Utilities.Mixins
             if (baseMethod.Attributes.HasFlag(MethodAttributes.FamANDAssem))
             { attrs |= MethodAttributes.FamANDAssem; }
 
-            var builder = strat.TypeBuilder.DefineMethod(
+            overriden.Builder = strat.TypeBuilder.DefineMethod(
                 baseMethod.Name,
                 attrs,
                 baseMethod.ReturnType,
                 baseMethod.GetParameters().Select(p => p.ParameterType).ToArray());
 
-            var gen = builder.GetILGenerator();
+            overriden.Generator =
+                overriden.Builder.GetILGenerator();
 
-            int pIndex = 0;           
+            int pIndex = 0;
             foreach (var param in baseMethod.GetParameters())
             {
-                builder.DefineParameter(++pIndex, ParameterAttributes.None, param.Name);
+                overriden.Builder.DefineParameter(++pIndex, ParameterAttributes.None, param.Name);
             }
 
-            returnField = Set4Locals
-                .AllComplexParameters(strat, baseMethod, gen);
-            
-            //gen.Emit(OpCodes.Nop);
-            gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldfld, field); 
+            overriden.Return = SetLocals4
+                .AllComplexParameters(strat, interceptor, baseMethod, overriden.Generator);
 
-            var @params = gen.EmitParameters(
+            overriden.Generator.Emit(OpCodes.Ldarg_0);
+            overriden.Generator.Emit(OpCodes.Ldfld, field);
+
+            var @params = overriden.Generator.EmitParameters(
                 strat,
-                strat.Interceptor,
+                interceptor,
                 baseMethod,
-                (p, i) => 
-                    gen.EmitArgumentsBasedOnOriginal(baseMethod, p, i, strat.BaseMethods.Field));
-                   
-            gen.EmitCall(strat.Interceptor.Method, @params);
+                (p, i) => emitParameters(overriden, p, i));
 
-            return gen;
+            overriden.Generator.EmitCall(
+                interceptor.Method, @params);
+
+            return overriden;
         }
     }
 }

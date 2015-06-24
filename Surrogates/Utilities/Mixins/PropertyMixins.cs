@@ -7,7 +7,7 @@ namespace Surrogates.Utilities.Mixins
 {
     public static class PropertyMixins
     {
-        public static bool EmitPropertyNameAndField(this SurrogatedProperty property, ILGenerator gen, ParameterInfo p)
+        public static bool EmitPropertyNameAndFieldAndValue(this SurrogatedProperty property, ILGenerator gen, ParameterInfo p, int pIndex)
         {
             if (p.Name == "s_name" && p.ParameterType == typeof(string))
             {
@@ -22,17 +22,6 @@ namespace Surrogates.Utilities.Mixins
 
                 return true;
             }
-
-            return false;
-        }
-
-        public static bool EmitPropertyNameAndFieldAndValue(this SurrogatedProperty property, ILGenerator gen, ParameterInfo p, int pIndex)
-        {
-            if (EmitPropertyNameAndField(property, gen, p))
-            {
-                return true;
-            }
-
             if (p.Name == "s_value" && p.ParameterType.IsAssignableFrom(property.Original.PropertyType))
             {
                 gen.EmitArg(1);

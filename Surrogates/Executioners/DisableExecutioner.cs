@@ -6,7 +6,7 @@ using System.Reflection.Emit;
 
 namespace Surrogates.Executioners
 {
-    public class DisableExecutioner : Executioner
+    public class DisableExecutioner 
     {
         protected static void DisableMethod(TypeBuilder typeBuilder, MethodInfo method)
         {
@@ -27,8 +27,8 @@ namespace Surrogates.Executioners
                 
         protected static void DisableSetter(Strategy.ForProperties strategy, Model.SurrogatedProperty property)
         {
-            var setter =
-                CreateSetter(strategy, property.Original);
+            var setter = Executioner
+                .CreateSetter(strategy, property.Original);
 
             var gen = setter.GetILGenerator();
             gen.Emit(OpCodes.Ret);
@@ -38,8 +38,8 @@ namespace Surrogates.Executioners
         
         protected static void DisableGetter(Strategy.ForProperties strategy, Model.SurrogatedProperty property)
         {
-            var getter =
-                CreateGetter(strategy, property.Original);
+            var getter = Executioner
+                .CreateGetter(strategy, property.Original);
 
             var gen = getter.GetILGenerator();
 
@@ -49,21 +49,29 @@ namespace Surrogates.Executioners
             property.Builder.SetGetMethod(getter);
         }
 
-        public override void Execute4Properties(Strategy.ForProperties strategy)
+        public void Execute(Strategy strategy)
         {
-            foreach (var property in strategy.Properties)
+            if (strategy is Strategy.ForProperties)
             {
-                DisableSetter(strategy, property);
+                var st = strategy as 
+                    Strategy.ForProperties;
 
-                DisableGetter(strategy, property);
+                foreach (var property in st.Properties)
+                {
+                    DisableSetter(st, property);
+
+                    DisableGetter(st, property);
+                }
             }
-        }
-
-        public override void Execute4Methods(Strategy.ForMethods strategy)
-        {
-            foreach (var method in strategy.Methods)
+            else
             {
-                DisableMethod(strategy.TypeBuilder, method);
+                var st = strategy as
+                    Strategy.ForMethods;
+
+                foreach (var method in st.Methods)
+                {
+                    DisableMethod(strategy.TypeBuilder, method);
+                }
             }
         }
     }

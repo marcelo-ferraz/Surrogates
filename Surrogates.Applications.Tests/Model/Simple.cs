@@ -12,6 +12,7 @@ namespace Surrogates.Applications.Tests
         {
             this.List = list;
         }
+        public virtual string Text { get; set; }
 
         public virtual List<int> List { get; set; }
 
@@ -38,8 +39,6 @@ namespace Surrogates.Applications.Tests
         {
             return Thread.CurrentThread.Name;
         }
-
-        public string Text { get; set; }
 
         Random _rnd = new Random();
         public virtual int GetRandom()

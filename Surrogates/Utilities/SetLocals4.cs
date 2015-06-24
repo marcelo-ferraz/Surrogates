@@ -9,43 +9,49 @@ using System.Reflection.Emit;
 
 namespace Surrogates.Utilities
 {
-    public static class Set4Locals
+    public static class SetLocals4
     {
-        public static LocalBuilder AllComplexParameters(Strategy.ForMethods strat, MethodInfo baseMethod, ILGenerator gen)
+        public static LocalBuilder AllComplexParameters(Strategy strat, Strategy.InterceptorInfo interceptor, MethodInfo baseMethod, ILGenerator gen)
         {
             LocalBuilder returnField = baseMethod.ReturnType != typeof(void) ?
                 gen.DeclareLocal(baseMethod.ReturnType) :
                 null;
 
-            foreach (var param in strat.Interceptor.Method.GetParameters())
-            {                
+            foreach (var param in interceptor.Method.GetParameters())
+            {
                 if (param.IsSelfArguments())
                 {
-                    strat.Interceptor.Locals.Add("Args", 
-                        Set4Locals.ArgsParam(gen, param, baseMethod.GetParameters()));
+                    interceptor.Locals.Add("Args",
+                        SetLocals4.ArgsParam(gen, param, baseMethod.GetParameters()));
                 }
 
                 if (param.IsSelfMethod())
                 {
-                    strat.Interceptor.Locals.Add("S_Method", 
-                        Set4Locals.OriginalMethodAsParameter(gen, baseMethod, param, strat.BaseMethods.Field));
+                    interceptor.Locals.Add("S_Method",
+                        SetLocals4.OriginalMethodAsParameter(gen, baseMethod, param, strat.BaseMethods.Field));
                 }
 
                 if (param.IsDynamic_())
                 {
-                    strat.Interceptor.Locals.Add("ThisDynamic_", 
-                        Set4Locals.ThisDynamic_(gen, strat, strat.Interceptor, baseMethod, param));
+                    interceptor.Locals.Add("ThisDynamic_",
+                        SetLocals4.ThisDynamic_(gen, strat, interceptor, baseMethod, param));
                 }
 
                 if (param.Is4SomeMethod())
                 {
                     var key = string.Concat(param.Name, "+", param.ParameterType.Name);
 
-                    strat.Interceptor.Locals.Add(key, 
-                        Set4Locals.ThisDynamic_(gen, strat, strat.Interceptor, baseMethod, param));
+                    interceptor.Locals.Add(key,
+                        SetLocals4.ThisDynamic_(gen, strat, interceptor, baseMethod, param));
                 }
             }
             return returnField;
+        }
+
+        public static LocalBuilder AllComplexParameters(Strategy.ForMethods strat, MethodInfo baseMethod, ILGenerator gen)
+        {
+            return SetLocals4.AllComplexParameters(
+                strat, strat.Interceptor, baseMethod, gen);
         }
 
         /// <summary>
@@ -100,7 +106,7 @@ namespace Surrogates.Utilities
         /// <returns></returns>
         internal static LocalBuilder OriginalMethodAsParameter(ILGenerator gen, MethodInfo baseMethod, ParameterInfo param, FieldInfo baseMethodsField, bool is4Dynamic_ = false)
         {
-            return Set4Locals.MethodAsParameter(gen, baseMethod, param, baseMethodsField, is4Dynamic_);
+            return SetLocals4.MethodAsParameter(gen, baseMethod, param, baseMethodsField, is4Dynamic_);
         }
 
         /// <summary>
@@ -184,7 +190,7 @@ namespace Surrogates.Utilities
             }
 
             return method != null ?
-                Set4Locals.MethodAsParameter(gen, method, param, baseMethodsField) :
+                SetLocals4.MethodAsParameter(gen, method, param, baseMethodsField) :
                 null;
         }
 
@@ -203,13 +209,13 @@ namespace Surrogates.Utilities
             if (!interceptor.Locals.ContainsKey("S_Method"))
             { 
                 interceptor.Locals.Add("S_Method", 
-                    Set4Locals.OriginalMethodAsParameter(gen, originalMethod, param, strategy.BaseMethods.Field, is4Dynamic_: true)); 
+                    SetLocals4.OriginalMethodAsParameter(gen, originalMethod, param, strategy.BaseMethods.Field, is4Dynamic_: true)); 
             }
 
             if (!interceptor.Locals.ContainsKey("Args"))
             {
                 interceptor.Locals.Add("Args", 
-                    Set4Locals.ArgsParam(gen, param, originalMethod.GetParameters()));
+                    SetLocals4.ArgsParam(gen, param, originalMethod.GetParameters()));
             }
 
             var local =
