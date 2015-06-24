@@ -43,6 +43,41 @@ namespace Surrogates.Tactics
             public InterceptorInfo Getter { set; get; }
 
             public InterceptorInfo Setter { set; get; }
+
+            public void Add(PropertyInfo prop, bool faultIsException = true)
+            {
+                var getter = 
+                    prop.GetGetMethod(true);
+                
+                if (faultIsException && (getter.IsFinal || (!getter.IsVirtual && !getter.IsAbstract)))
+                {
+                    string explanation =
+                        getter.IsFinal ? "was marked as sealed" :
+                        "either not marked as virtual nor as abstract";
+
+                    throw new NotSupportedException(string.Format(
+                        "The getter of the supplied property, '{0}', was {1}. Therefore it cannot be overriden",
+                        prop.Name,
+                        explanation));
+                }
+
+                var setter =
+                    prop.GetSetMethod(true);
+
+                if (faultIsException && (setter.IsFinal || (!setter.IsVirtual && !setter.IsAbstract)))
+                {
+                    string explanation =
+                        setter.IsFinal ? "was marked as sealed" :
+                        "either not marked as virtual nor as abstract";
+
+                    throw new NotSupportedException(string.Format(
+                        "The setter of the supplied property, '{0}', was {1}. Therefore it cannot be overriden",
+                        prop.Name,
+                        explanation));
+                }
+
+                Properties.Add(prop);
+            }
         }
 
         public class ForMethods : Strategy

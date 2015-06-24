@@ -11,6 +11,9 @@ namespace Surrogates.Expressions.Accessors
             this.Strategy = strategy;
         }
 
+        /// <summary>
+        /// Relevates the getter accessor to be changed
+        /// </summary>
         public Accessors.UsingExpression Getter
         {
             get
@@ -19,6 +22,9 @@ namespace Surrogates.Expressions.Accessors
             }
         }
 
+        /// <summary>
+        /// Relevates the setter accessor to be changed
+        /// </summary>
         public Accessors.UsingExpression Setter
         {
             get

@@ -9,9 +9,15 @@ namespace Surrogates.Expressions.Accessors
             : base(container, current, strategies)
         { }
 
+        /// <summary>
+        /// Opens a series of expressions to be used to modify the accessors of the provided properties
+        /// </summary>
+        /// <param name="modExpr">The expression that facilitates the modification of the acessors</param>
+        /// <returns></returns>
         public AndExpression<TBase> Accessors(Action<ModifierExpression> modExpr)
         {
-            var expression = new ModifierExpression(CurrentStrategy);
+            var expression = 
+                new ModifierExpression(CurrentStrategy);
 
             modExpr(expression);
 
