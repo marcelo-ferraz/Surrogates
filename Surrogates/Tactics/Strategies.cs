@@ -14,8 +14,6 @@ namespace Surrogates.Tactics
         private TypeBuilder _builder;
         private IList<Strategy> _strategies;
 
-        private List<NewProperty> _newProperties;
-
         internal Strategies(Type baseType, string name, ModuleBuilder moduleBuilder, Access permissions)
         {            
             if (string.IsNullOrEmpty(name))
@@ -43,21 +41,25 @@ namespace Surrogates.Tactics
 
             this.BaseMethods =
                 new BaseMethods();
-            
+
+            this.NewProperties =
+                new List<NewProperty>();
+
             this.Accesses = permissions;           
         }
-        private Func<Strategies, List<NewProperty>> _getNewProperties =
-            self =>
-            {
-                self._newProperties = new List<NewProperty>();
 
-                self.CreateDefaultNewProperties();
+        //private Func<Strategies, List<NewProperty>> _getNewProperties =
+        //    self =>
+        //    {
+        //        self._newProperties = new List<NewProperty>();
 
-                self._getNewProperties =
-                    st => st._newProperties;
+        //        self.CreateDefaultNewProperties();
 
-                return self._newProperties;
-            };
+        //        self._getNewProperties =
+        //            st => st._newProperties;
+
+        //        return self._newProperties;
+        //    };
 
         public Access Accesses { get; set; }
 
@@ -71,11 +73,7 @@ namespace Surrogates.Tactics
 
         public BaseMethods BaseMethods { get; set; }
 
-        public List<NewProperty> NewProperties 
-        {
-            get { return _getNewProperties(this); }
-            set { _newProperties = value; }
-        }
+        public List<NewProperty> NewProperties { get; set; }
 
         public Type ThisDynamic_Type { get; set; }
 
@@ -85,15 +83,10 @@ namespace Surrogates.Tactics
 
         private void CreateDefaultNewProperties()
         {
-            if(_newProperties != null) { return; } 
-
-            this._newProperties = 
-                new List<NewProperty>(); 
-
-            if (this.Accesses.HasFlag(Access.StateBag))
+            if (this.Accesses.HasFlag(Access.StateBag) && !this.NewProperties.Any(p => p.Name == "StateBag"))
             { this.StateBagProperty = this.AddProperty<dynamic>("StateBag"); }
 
-            if (this.Accesses.HasFlag(Access.Container))
+            if (this.Accesses.HasFlag(Access.Container) && !this.NewProperties.Any(p => p.Name == "Container"))
             { this.ContainerProperty = this.AddProperty<SurrogatesContainer>("Container"); }
         }
 
@@ -147,7 +140,7 @@ namespace Surrogates.Tactics
                     Name = name,
                     Type = typeof(T)
                 };
-            this._newProperties.Add(prop);
+            this.NewProperties.Add(prop);
             return prop;
         }
 

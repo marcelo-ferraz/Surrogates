@@ -7,7 +7,7 @@ namespace Surrogates.Utilities.SDILReader
 {
     public class MethodBodyReader
     {
-        static MethodBodyReader() 
+        static MethodBodyReader()
         {
             Globals.LoadOpCodes();
         }
@@ -17,7 +17,7 @@ namespace Surrogates.Utilities.SDILReader
         private MethodInfo _mi = null;
 
         #region Il read methods
-        
+
         private int ReadInt16(byte[] _il, ref int position)
         {
             return ((Il[position++] | (Il[position++] << 8)));
@@ -27,37 +27,37 @@ namespace Surrogates.Utilities.SDILReader
         {
             return (ushort)((Il[position++] | (Il[position++] << 8)));
         }
-        
+
         private int ReadInt32(byte[] _il, ref int position)
         {
             return (((Il[position++] | (Il[position++] << 8)) | (Il[position++] << 0x10)) | (Il[position++] << 0x18));
         }
-        
+
         private ulong ReadInt64(byte[] _il, ref int position)
         {
             return (ulong)(((Il[position++] | (Il[position++] << 8)) | (Il[position++] << 0x10)) | (Il[position++] << 0x18) | (Il[position++] << 0x20) | (Il[position++] << 0x28) | (Il[position++] << 0x30) | (Il[position++] << 0x38));
         }
-        
+
         private double ReadDouble(byte[] _il, ref int position)
         {
             return (((Il[position++] | (Il[position++] << 8)) | (Il[position++] << 0x10)) | (Il[position++] << 0x18) | (Il[position++] << 0x20) | (Il[position++] << 0x28) | (Il[position++] << 0x30) | (Il[position++] << 0x38));
         }
-        
+
         private sbyte ReadSByte(byte[] _il, ref int position)
         {
             return (sbyte)Il[position++];
         }
-        
+
         private byte ReadByte(byte[] _il, ref int position)
         {
             return (byte)Il[position++];
         }
-        
+
         private Single ReadSingle(byte[] _il, ref int position)
         {
             return (Single)(((Il[position++] | (Il[position++] << 8)) | (Il[position++] << 0x10)) | (Il[position++] << 0x18));
         }
-        
+
         #endregion
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Surrogates.Utilities.SDILReader
                         {
                             instruction.Operand = module.ResolveType(metadataToken);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             System.Diagnostics.Debugger.Break();
                         }
@@ -269,6 +269,18 @@ namespace Surrogates.Utilities.SDILReader
                 Il = mi.GetMethodBody().GetILAsByteArray();
                 ConstructInstructions(mi.Module);
             }
+        }
+
+        public MethodBodyReader(DynamicMethod mi, Delegate del)
+        {
+            var gen = mi.GetILGenerator();
+
+            var field = typeof(ILGenerator)
+                .GetField("m_ILStream", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            Il = (byte[])field.GetValue(gen);
+
+            ConstructInstructions(del.Method.Module);
         }
     }
 }

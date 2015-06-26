@@ -80,7 +80,6 @@
     <Compile Include="Tactics\Strategies.cs" />
     <Compile Include="Tactics\Strategy.cs" />
     <Compile Include="ProxyAlreadyMadeException.cs" />
-    <Compile Include="Utilities\Clone.cs" />
     <Compile Include="Utilities\JustAdd.cs" />
     <Compile Include="Utilities\SetLocals4.cs" />
     <Compile Include="Utilities\Mixins\ParameterInfoMixins.cs" />
@@ -100,7 +99,9 @@
     <Compile Include="Utilities\Infer.cs" />
     <Compile Include="Utilities\Mixins\StringMixins.cs" />
     <Compile Include="Utilities\Try2Add.cs" />
-    <Compile Include="Utilities\WhizzoDev\Cloning.cs" />
+    <Compile Include="Utilities\WhizzoDev\CloneType.cs" />
+    <Compile Include="Utilities\WhizzoDev\CloneAttribute.cs" />
+    <Compile Include="Utilities\WhizzoDev\CloneHelper.cs" />
     <Compile Include="Utilities\Set4Property.cs" />
   </ItemGroup>
   <ItemGroup />

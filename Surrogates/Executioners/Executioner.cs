@@ -28,7 +28,8 @@ namespace Surrogates.Executioners
                 (ov, p, i) =>
                     prop.EmitPropertyNameAndFieldAndValue(ov.Generator, p, i)
                     ||
-                    ov.Generator.EmitArgumentsBasedOnOriginal(baseMethod, p, i, strategy.BaseMethods.Field));
+                    ov.Generator.EmitArgumentsBasedOnOriginal(baseMethod, p, i, strategy.BaseMethods.Field)
+                    );
 
 
             if (interceptor.Method.ReturnType == typeof(void))
@@ -48,13 +49,13 @@ namespace Surrogates.Executioners
             {
                 if (strategy.Getter != null)
                 { Execute4Property(strategy, strategy.Getter, property, true); }
-                else
-                { Set4Property.OneSimpleGetter(strategy, property); }
+                //else
+                //{ Set4Property.OneSimpleGetter(strategy, property); }
 
                 if (strategy.Setter != null)
                 { Execute4Property(strategy, strategy.Setter, property, false); }
-                else
-                { Set4Property.OneSimpleSetter(strategy, property); }
+                //else
+                //{ Set4Property.OneSimpleSetter(strategy, property); }
             }
         }
 

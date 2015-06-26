@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Surrogates.Utilities.Mixins;
 using System.Reflection.Emit;
+using Surrogates.Model.Entities;
 
 namespace Surrogates.Utilities.Mixins
 {
@@ -109,7 +110,7 @@ namespace Surrogates.Utilities.Mixins
             gen.Emit(OpCodes.Ldloc, local);
         }
 
-        internal static Type[] EmitParameters(this ILGenerator gen, Strategy strategy, Strategy.InterceptorInfo interceptor, MethodInfo baseMethod, Func<ParameterInfo, int, bool> interfere = null)
+        internal static Type[] EmitParameters(this ILGenerator gen, Strategy strategy, Strategy.InterceptorInfo interceptor, OverridenMethod overriden, MethodInfo baseMethod, Func<ParameterInfo, int, bool> interfere = null)
         {
             var newParams = new List<Type>();
 
@@ -125,7 +126,7 @@ namespace Surrogates.Utilities.Mixins
                 if (interfere != null && interfere(@params[i], i))
                 { continue; }
 
-                JustAdd.AnythingElseAsParameter(gen, strategy, interceptor, baseMethod, @params[i]);
+                JustAdd.AnythingElseAsParameter(gen, strategy, overriden, baseMethod, @params[i]);
             }
             return newParams.ToArray();
         }
@@ -172,7 +173,7 @@ namespace Surrogates.Utilities.Mixins
                 var b = strategies.NewProperties[j].GetBuilder();
                 gen.Emit(OpCodes.Ldarg_0);
 
-                if (b.PropertyType.IsClass)
+                if (b.PropertyType.IsClass && !typeof(MulticastDelegate).IsAssignableFrom(b.PropertyType))
                 {
                     gen.Emit(OpCodes.Newobj, b.PropertyType.GetConstructor(Type.EmptyTypes));
                 }

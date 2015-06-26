@@ -101,19 +101,6 @@ namespace Surrogates.Tests.Expressions._Properties
             IgnoreException(
                 () => proxy.AccessItWillThrowException = 2,
                 () => { int res = proxy.AccessItWillThrowException; });
-            
-            var reader = 
-                new MethodBodyReader(proxy.GetType().GetProperty("AccessItWillThrowException").GetGetMethod());
-
-            var b = "";
-
-            foreach (var inst in reader.Instructions)
-            {
-                b += string.Concat(inst.Code, '.', inst.Offset, '-', inst.Operand, ':', inst.OperandData, " \n");
-            }
-
-
-            Assert.IsTrue(proxy.Text.Contains("Dummy"));
         }
 
         [Test]

@@ -11,47 +11,55 @@ namespace Surrogates.Utilities
 {
     public static class SetLocals4
     {
-        public static LocalBuilder AllComplexParameters(Strategy strat, Strategy.InterceptorInfo interceptor, MethodInfo baseMethod, ILGenerator gen)
+        public static LocalBuilder AllComplexParameters(Strategy strat, Strategy.InterceptorInfo interceptor, MethodInfo baseMethod, OverridenMethod overriden)
         {
             LocalBuilder returnField = baseMethod.ReturnType != typeof(void) ?
-                gen.DeclareLocal(baseMethod.ReturnType) :
+                overriden.Generator.DeclareLocal(baseMethod.ReturnType) :
                 null;
+
+            Func<string, bool> has =
+                overriden.Locals.ContainsKey;
 
             foreach (var param in interceptor.Method.GetParameters())
             {
-                if (param.IsSelfArguments())
+                if (param.IsSelfArguments() && !has("Args"))
                 {
-                    interceptor.Locals.Add("Args",
-                        SetLocals4.ArgsParam(gen, param, baseMethod.GetParameters()));
+                    overriden.Locals.Add("Args", 
+                        SetLocals4.ArgsParam(overriden.Generator, param, baseMethod.GetParameters()));
                 }
 
-                if (param.IsSelfMethod())
+                else if (param.IsSelfMethod(baseMethod) && !has("S_Method"))
                 {
-                    interceptor.Locals.Add("S_Method",
-                        SetLocals4.OriginalMethodAsParameter(gen, baseMethod, param, strat.BaseMethods.Field));
+                    overriden.Locals.Add("S_Method",
+                        SetLocals4.OriginalMethodAsParameter(overriden.Generator, baseMethod, param, strat.BaseMethods.Field));
                 }
 
-                if (param.IsDynamic_())
+                else if (param.IsDynamic_() && !has("ThisDynamic_"))
                 {
-                    interceptor.Locals.Add("ThisDynamic_",
-                        SetLocals4.ThisDynamic_(gen, strat, interceptor, baseMethod, param));
+                    overriden.Locals.Add("ThisDynamic_",
+                        SetLocals4.ThisDynamic_(overriden, strat, baseMethod, param));
                 }
 
-                if (param.Is4SomeMethod())
+                else 
                 {
-                    var key = string.Concat(param.Name, "+", param.ParameterType.Name);
+                    var key = string.Concat(
+                        param.Name, "+", param.ParameterType.Name);
 
-                    interceptor.Locals.Add(key,
-                        SetLocals4.ThisDynamic_(gen, strat, interceptor, baseMethod, param));
+                    if (param.Is4SomeMethod() && !has(key))
+                    {
+                        overriden.Locals.Add(key,
+                            SetLocals4.ThisDynamic_(overriden, strat, baseMethod, param));
+                    }
                 }
             }
+            
             return returnField;
         }
 
-        public static LocalBuilder AllComplexParameters(Strategy.ForMethods strat, MethodInfo baseMethod, ILGenerator gen)
+        public static LocalBuilder AllComplexParameters(Strategy.ForMethods strat, MethodInfo baseMethod, OverridenMethod overriden)
         {
             return SetLocals4.AllComplexParameters(
-                strat, strat.Interceptor, baseMethod, gen);
+                strat, strat.Interceptor, baseMethod, overriden);
         }
 
         /// <summary>
@@ -199,22 +207,23 @@ namespace Surrogates.Utilities
         /// </summary>
         /// <param name="gen"></param>
         /// <param name="strategy"></param>
-        /// <param name="interceptor"></param>
+        /// <param name="overriden"></param>
         /// <param name="originalMethod"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        internal static LocalBuilder ThisDynamic_(ILGenerator gen, Strategy strategy, Strategy.InterceptorInfo interceptor, MethodInfo originalMethod, ParameterInfo param)
+        internal static LocalBuilder ThisDynamic_(OverridenMethod overriden, Strategy strategy, MethodInfo originalMethod, ParameterInfo param)
         {
+            var gen = overriden.Generator;
 
-            if (!interceptor.Locals.ContainsKey("S_Method"))
+            if (!overriden.Locals.ContainsKey("S_Method"))
             { 
-                interceptor.Locals.Add("S_Method", 
+                overriden.Locals.Add("S_Method", 
                     SetLocals4.OriginalMethodAsParameter(gen, originalMethod, param, strategy.BaseMethods.Field, is4Dynamic_: true)); 
             }
 
-            if (!interceptor.Locals.ContainsKey("Args"))
+            if (!overriden.Locals.ContainsKey("Args"))
             {
-                interceptor.Locals.Add("Args", 
+                overriden.Locals.Add("Args", 
                     SetLocals4.ArgsParam(gen, param, originalMethod.GetParameters()));
             }
 
@@ -287,12 +296,12 @@ namespace Surrogates.Utilities
             //Delegate baseMethod, 
             emitAdd(
                 offset++,
-                () => gen.Emit(OpCodes.Ldloc, interceptor.Locals["S_Method"]));
+                () => gen.Emit(OpCodes.Ldloc, overriden.Locals["S_Method"]));
 
             //object[] args
             emitAdd(
                 offset++,
-                () => gen.Emit(OpCodes.Ldloc, interceptor.Locals["Args"]));
+                () => gen.Emit(OpCodes.Ldloc, overriden.Locals["Args"]));
 
             return local;
         }

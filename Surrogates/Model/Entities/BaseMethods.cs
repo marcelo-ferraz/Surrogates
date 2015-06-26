@@ -2,6 +2,7 @@
 using Surrogates.Tactics;
 using Surrogates.Utilities.Mixins;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -20,19 +21,19 @@ namespace Surrogates.Model.Entities
         private HashSet<MethodInfo> _methods;
 
         public FieldInfo Field { get; set; }
-   
-        public void Add(MethodInfo method, Strategy.ForMethods current)
+
+        private void Add(MethodInfo method, Strategy current, IEnumerable<MethodInfo> methods)
         {
             foreach (var arg in method.GetParameters())
             {
-                if (!arg.ParameterType.IsAssignableFrom(typeof(Delegate)))
+                if (!typeof(MulticastDelegate).IsAssignableFrom(arg.ParameterType))
                 { continue; }
 
                 MethodInfo paramMethod;
 
                 if (arg.Name.ToLower() == "s_method" || arg.Name == "_")
                 {
-                    foreach (var m in current.Methods)
+                    foreach (var m in methods)
                     { _methods.Add(m); }
 
                     continue;
@@ -45,6 +46,25 @@ namespace Surrogates.Model.Entities
                 if (paramMethod != null)
                 { _methods.Add(paramMethod); }
             }
+        }
+
+        private IEnumerable<MethodInfo> GetGettersNSetters(Strategy.ForProperties current)
+        {
+            for (int i = 0; i < current.Properties.Count; i++)
+            {
+                yield return current.Properties[i].Original.GetGetMethod(true);
+                yield return current.Properties[i].Original.GetSetMethod(true);
+            }
+        }
+
+        public void Add(MethodInfo method, Strategy.ForProperties current)
+        {
+            this.Add(method, current, GetGettersNSetters(current));
+        }
+
+        public void Add(MethodInfo method, Strategy.ForMethods current)
+        {
+            this.Add(method, current, current.Methods);
         }
 
         public IEnumerator<MethodInfo> GetEnumerator()

@@ -16,7 +16,7 @@ namespace Surrogates.Tests.Expressions.Methods.Visit
                 .From<Dummy>()
                 .Visit
                 .This(d => (Func<int>) d.Call_SetPropText_simple_Return_1)
-                .Using<InterferenceObject>("AccomplishNothing_Return2"));
+                .Using<InterferenceObject>("AccomplishNothing_Return2")).Save();
 
             var dummy =
                 new Dummy();

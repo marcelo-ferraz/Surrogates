@@ -10,8 +10,13 @@ namespace Surrogates.Expressions
         public UsingInterferenceExpression(BaseContainer4Surrogacy container, Strategy.ForMethods current, Strategies strategies)
             : base(container, current, strategies) { }
 
-        private AndExpression<TBase> Using(Type type, string name, MethodInfo method)
+        public AndExpression<TBase> Using(Type type, string name, MethodInfo method)
         {
+            if (method.IsGenericMethodDefinition)
+            { 
+                throw new NotSupportedException("To use a generic method, you must provide its type parameters"); 
+            }
+
             Strategies.BaseMethods.Add(method, CurrentStrategy);
 
             CurrentStrategy.Interceptor =
@@ -22,29 +27,49 @@ namespace Surrogates.Expressions
             return new AndExpression<TBase>(Container, new Strategy(Strategies), Strategies);
         }
 
-        /// <summary>
-        /// Adds a method that will intercept the original behavior to the going expression
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="method">The method which will intercept the original behavior</param>
-        /// <param name="parameterTypes"></param>
-        /// <returns></returns>
-        public AndExpression<TBase> Using<T>(string method, params Type[] parameterTypes)
+        public AndExpression<TBase> Using(Type type, string name, string methodName, Type[] typeParameters, params Type[] parameterTypes)
         {
-            return this.Using<T>(null, method, parameterTypes);
+            var mt = type.GetMethod4Surrogacy(methodName, parameterTypes);
+
+            if (mt.IsGenericMethodDefinition)
+            { mt = mt.MakeGenericMethod(typeParameters); }
+
+            return Using(type, name, mt);
+        }
+
+        public AndExpression<TBase> Using<T>(string name, string methodName, Type[] typeParameters, params Type[] parameterTypes)
+        {
+            return this.Using(typeof(T), name, methodName, typeParameters, parameterTypes);
+        }
+
+        public AndExpression<TBase> Using<T>(string methodName, Type[] typeParameters, params Type[] parameterTypes)
+        {
+            return this.Using<T>(null, methodName, typeParameters, parameterTypes);
         }
 
         /// <summary>
         /// Adds a method that will intercept the original behavior to the going expression
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="name"></param>
-        /// <param name="method">The method which will intercept the original behavior</param>
+        /// <param name="methodName">The method which will intercept the original behavior</param>
         /// <param name="parameterTypes"></param>
         /// <returns></returns>
-        public AndExpression<TBase> Using<T>(string name, string method, params Type[] parameterTypes)
+        public AndExpression<TBase> Using<T>(string methodName, params Type[] parameterTypes)
         {
-            return Using(typeof(T), name, typeof(T).GetMethod4Surrogacy(method, parameterTypes));
+            return this.Using<T>(null, methodName, null, parameterTypes);
+        }
+
+        /// <summary>
+        /// Adds a method that will intercept the original behavior to the going expression
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name">Interceptor's property's name</param>
+        /// <param name="methodName">The method which will intercept the original behavior</param>
+        /// <param name="parameterTypes"></param>
+        /// <returns></returns>
+        public AndExpression<TBase> Using<T>(string name, string methodName, params Type[] parameterTypes)
+        {
+            return Using(typeof(T), name, typeof(T).GetMethod4Surrogacy(methodName, parameterTypes));
         }
 
         /// <summary>
@@ -62,7 +87,7 @@ namespace Surrogates.Expressions
         /// Adds a method that will intercept the original behavior to the going expression
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="name">The name of the method</param>
+        /// <param name="name">Interceptor's property's name</param>
         /// <param name="method">The method which will intercept the original behavior</param>
         /// <returns></returns>
         public AndExpression<TBase> Using<T>(string name, Func<T, Delegate> method)

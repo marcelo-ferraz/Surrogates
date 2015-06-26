@@ -50,5 +50,26 @@ namespace Surrogates.Applications.Tests
         {
             return new object();
         }
+
+
+        public int _fieldValue;
+        public object _fieldRef;
+
+        public virtual int PropValue { get; set; }
+        public virtual object PropRef { get; set; }
+        public virtual IList<int> PropListVal { get; set; }
+        public virtual IList<Dummy> PropListRef { get; set; }
+    }
+
+    public class Dummy
+    {
+        public int _fieldValue;
+
+        public object _fieldRef;
+
+        public int PropValue { get; set; }
+        public object PropRef { get; set; }
+        public IList<int> PropListVal { get; set; }
+        public IList<Dummy> PropListRef { get; set; }
     }
 }

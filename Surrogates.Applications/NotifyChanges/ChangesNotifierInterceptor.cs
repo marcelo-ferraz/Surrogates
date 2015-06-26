@@ -8,8 +8,8 @@ namespace Surrogates.Applications.NotifyChanges
 
         public void Set(dynamic s_StateBag, T s_instance, Delegate s_method, object s_value)
         {
-            Try2Initate(() =>
-                this.Changed += s_StateBag.Notifier);
+            //Try2Initate(() =>
+            //    this.Changed += s_StateBag.Notifier);
 
             s_method.DynamicInvoke(s_value);
 

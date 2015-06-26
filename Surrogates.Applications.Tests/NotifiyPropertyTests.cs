@@ -21,14 +21,26 @@ namespace Surrogates.Applications.Tests
             Container.Map(m => m
                 .From<SimpletonList>()
                 .Apply
-                .NotifyChanges<SimpletonList, Simpleton>(this.Listen));
+                .NotifyChanges<SimpletonList, Simpleton>(this.Listen))
+            .Save();
 
             var proxyList = Container
                 .Invoke<SimpletonList>();
 
-            proxyList.Add(new Simpleton() { Text = "0" });
+            proxyList.Add(new Simpleton() { Text = "0", _fieldValue = 258 });
             proxyList[1] = new Simpleton() { Text = "1" };
             proxyList.Insert(2, new Simpleton() { Text = "2" });
+        }
+
+
+
+
+
+        public void Merge1(Simpleton source, Simpleton destination)
+        {           
+            destination._fieldRef = source._fieldRef;
+
+            destination.PropListRef = source.PropListRef;
         }
     }
 }

@@ -41,7 +41,7 @@ namespace Surrogates.Utilities.Mixins
             }
 
             overriden.Return = SetLocals4
-                .AllComplexParameters(strat, interceptor, baseMethod, overriden.Generator);
+                .AllComplexParameters(strat, interceptor, baseMethod, overriden);
 
             overriden.Generator.Emit(OpCodes.Ldarg_0);
             overriden.Generator.Emit(OpCodes.Ldfld, field);
@@ -49,13 +49,14 @@ namespace Surrogates.Utilities.Mixins
             var @params = overriden.Generator.EmitParameters(
                 strat,
                 interceptor,
+                overriden,
                 baseMethod,
                 (p, i) => emitParameters(overriden, p, i));
 
             overriden.Generator.EmitCall(
                 interceptor.Method, @params);
 
-            return overriden;
+                return overriden;
         }
     }
 }

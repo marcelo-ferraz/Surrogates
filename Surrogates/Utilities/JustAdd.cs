@@ -9,7 +9,7 @@ namespace Surrogates.Utilities
 {
     public static class JustAdd
     {
-        internal static void AnythingElseAsParameter(ILGenerator gen, Strategy strategy, Strategy.InterceptorInfo interceptor, MethodInfo originalMethod, ParameterInfo param)
+        internal static void AnythingElseAsParameter(ILGenerator gen, Strategy strategy, OverridenMethod interceptor, MethodInfo originalMethod, ParameterInfo param)
         {
             var isSpecialParam =
                 param.Name[0] == 's' && param.Name[1] == '_';
@@ -62,7 +62,7 @@ namespace Surrogates.Utilities
                 Try2Add.AnyNewPropertyAsParameter(gen, strategy.BaseType, strategy.NewProperties, param, param.ParameterType))
             { return; }
 
-            if (param.IsSelfMethod())
+            if (param.IsSelfMethod(originalMethod))
             {
                 gen.Emit(OpCodes.Ldloc, interceptor.Locals["S_Method"]);
                 return;

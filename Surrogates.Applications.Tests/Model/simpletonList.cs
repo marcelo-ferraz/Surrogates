@@ -6,22 +6,74 @@ using System.Threading.Tasks;
 
 namespace Surrogates.Applications.Tests.Model
 {
-    public class SimpletonList : List<Simpleton>
+    public class SimpletonList : IList<Simpleton>
     {
-        public new virtual Simpleton this[int i]
+        private List<Simpleton> _simpleton = new List<Simpleton>();
+
+        public int IndexOf(Simpleton item)
         {
-            get { return base[i]; }
-            set { base[i] = value; }
+            return _simpleton.IndexOf(item);
         }
 
-        public new virtual void Add(Simpleton item)
+        public virtual void Insert(int index, Simpleton item)
         {
-            base.Add(item);
+            _simpleton.Insert(index, item);
         }
 
-        public new virtual void Insert(int i, Simpleton item)
+        public void RemoveAt(int index)
         {
-            base.Insert(i, item);
+            _simpleton.RemoveAt(index);
+        }
+
+        public virtual Simpleton this[int index]
+        {
+            get { return _simpleton[index]; }
+            set { _simpleton[index] = value; }
+        }
+
+        public virtual void Add(Simpleton item)
+        {
+            _simpleton.Add(item);
+        }
+
+        public void Clear()
+        {
+            _simpleton.Clear();
+        }
+
+        public bool Contains(Simpleton item)
+        {
+            return _simpleton.Contains(item);
+        }
+
+        public void CopyTo(Simpleton[] array, int arrayIndex)
+        {
+            _simpleton.CopyTo(array, arrayIndex);
+        }
+
+        public int Count
+        {
+            get { return _simpleton.Count; }
+        }
+
+        public bool IsReadOnly
+        {
+            get { return false; }
+        }
+
+        public bool Remove(Simpleton item)
+        {
+            return _simpleton.Remove(item);
+        }
+
+        public IEnumerator<Simpleton> GetEnumerator()
+        {
+            return _simpleton.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return _simpleton.GetEnumerator();
         }
     }
 }

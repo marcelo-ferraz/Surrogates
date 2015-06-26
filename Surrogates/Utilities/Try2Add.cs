@@ -56,7 +56,7 @@ namespace Surrogates.Utilities
         {
             for (int i = 0; i < newProperties.Count; i++)
             {
-                if (!newProperties[i].Type.IsAssignableFrom(param.ParameterType))
+                if (!param.ParameterType.IsAssignableFrom(newProperties[i].Type))
                 { continue; }
 
                 if (newProperties[i].Name != param.Name.Substring(2))

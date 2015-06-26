@@ -10,9 +10,11 @@ namespace Surrogates.Utilities.Mixins
             return self.ParameterType == typeof(string) && self.Name == "s_name";
         }
 
-        public static bool IsSelfMethod(this ParameterInfo self)
+        public static bool IsSelfMethod(this ParameterInfo self, MethodInfo method)
         {
-            return self.Name == "s_method" && self.ParameterType.IsAssignableFrom(typeof(Delegate));
+            return //(self.Name == "s_method" || self.Name.ToLower().Substring(2) == method.Name) 
+                self.Name == "s_method"
+                && typeof(MulticastDelegate).IsAssignableFrom(self.ParameterType);
         }
 
         public static bool IsSelfArguments(this ParameterInfo self)
@@ -27,12 +29,12 @@ namespace Surrogates.Utilities.Mixins
 
         public static bool Is4SomeMethod(this ParameterInfo self)
         {
-            return self.Name.ToLower().StartsWith("m_") && self.ParameterType.IsAssignableFrom(typeof(Delegate));
+            return self.Name.ToLower().StartsWith("m_") && typeof(MulticastDelegate).IsAssignableFrom(self.ParameterType);
         }
 
         public static bool IsInstance(this ParameterInfo param, Type baseType)
         {
-            return param.ParameterType.IsAssignableFrom(baseType) && (param.Name == "s_instance" || param.Name == "s_holder");
+            return baseType.IsAssignableFrom(param.ParameterType) && (param.Name == "s_instance" || param.Name == "s_holder");
         }
     }
 }

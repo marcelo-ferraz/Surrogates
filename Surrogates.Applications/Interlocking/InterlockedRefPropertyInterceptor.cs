@@ -7,7 +7,7 @@ namespace Surrogates.Applications.Interlocking
     {
         protected override object GetField(object field)
         {
-            return Clone.This(field);
+            return field;//Utilities.WhizzoDev.CloneHelper.Clone(field);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Surrogates.Tests.Github.Examples.RegularJoe
                 .Replace
                 .This(d => d.Age)
                 .Accessors(a =>
-                    a.Getter.Using<TwoKids>(d => (Func<int, int>) d.AddTo))                
+                    a.Getter.Using<TwoKids>(d => (Func<Func<int>, int>) d.MakeTheMath))
                 .And
                 .Replace
                 .Method("Calculate")

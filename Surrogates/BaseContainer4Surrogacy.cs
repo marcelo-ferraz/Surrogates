@@ -87,7 +87,7 @@ namespace Surrogates
             finally { Monitor.Exit(AppDomain.CurrentDomain); }
 
             ModuleBuilder = AssemblyBuilder.DefineDynamicModule(
-                string.Concat("Dynamic.Module.Proxies_", _assemblyNumber),
+                string.Concat("Dynamic.Proxies_", _assemblyNumber, ".dll"),
                 string.Concat(AssemblyBuilder.GetName().Name, ".dll"));
         }
         

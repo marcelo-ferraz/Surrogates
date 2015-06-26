@@ -23,6 +23,7 @@ namespace Surrogates.Expressions.Accessors
                 { throw new AccessorAlreadyOverridenException("Setter"); }
 
                 _strategy.Setter = @int;
+                _strategy.BaseMethods.Add(method, _strategy);
             }
             else if (_caller == PropertyAccessor.Get)
             {
@@ -30,6 +31,7 @@ namespace Surrogates.Expressions.Accessors
                 { throw new AccessorAlreadyOverridenException("Getter"); }
 
                 _strategy.Getter = @int;
+                _strategy.BaseMethods.Add(method, _strategy);
             }
 
             return new Accessors.AndExpression(_strategy);

@@ -17,11 +17,7 @@ namespace Surrogates.Tactics
                 this.Name = string.IsNullOrEmpty(name) ? "interceptor" : name;
                 this.DeclaredType = declaredType;
                 this.Method = method;
-
-                Locals = new Dictionary<string, LocalBuilder>();
             }
-
-            public IDictionary<string, LocalBuilder> Locals { get; set; }
 
             public string Name { get; set; }
             public Type DeclaredType { get; set; }
