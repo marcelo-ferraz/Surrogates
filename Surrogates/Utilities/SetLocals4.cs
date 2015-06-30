@@ -48,7 +48,7 @@ namespace Surrogates.Utilities
                     if (param.Is4SomeMethod() && !has(key))
                     {
                         overriden.Locals.Add(key,
-                            SetLocals4.ThisDynamic_(overriden, strat, baseMethod, param));
+                            SetLocals4.MethodAsParameter(overriden.Generator, baseMethod, param, strat.BaseMethods.Field));
                     }
                 }
             }

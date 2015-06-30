@@ -9,7 +9,7 @@ namespace Surrogates.Utilities
 {
     public static class JustAdd
     {
-        internal static void AnythingElseAsParameter(ILGenerator gen, Strategy strategy, OverridenMethod interceptor, MethodInfo originalMethod, ParameterInfo param)
+        internal static void AnythingElseAsParameter(ILGenerator gen, Strategy strategy, OverridenMethod overriden, MethodInfo originalMethod, ParameterInfo param)
         {
             var isSpecialParam =
                 param.Name[0] == 's' && param.Name[1] == '_';
@@ -29,7 +29,7 @@ namespace Surrogates.Utilities
 
             if (param.IsSelfArguments())
             {
-                gen.Emit(OpCodes.Ldloc, interceptor.Locals["Args"]);
+                gen.Emit(OpCodes.Ldloc, overriden.Locals["Args"]);
                 return;
             }
 
@@ -37,7 +37,7 @@ namespace Surrogates.Utilities
             if (strategy.Accesses.HasFlag(Access.AnyMethod) && param.Is4SomeMethod())
             {
                 var local =
-                    interceptor.Locals[string.Concat(param.Name, "+", param.ParameterType.Name)];
+                    overriden.Locals[string.Concat(param.Name, "+", param.ParameterType.Name)];
 
                 gen.Emit(OpCodes.Ldloc, local);
 
@@ -64,7 +64,7 @@ namespace Surrogates.Utilities
 
             if (param.IsSelfMethod(originalMethod))
             {
-                gen.Emit(OpCodes.Ldloc, interceptor.Locals["S_Method"]);
+                gen.Emit(OpCodes.Ldloc, overriden.Locals["S_Method"]);
                 return;
             }
 
@@ -72,7 +72,7 @@ namespace Surrogates.Utilities
             {
                 gen.Emit(OpCodes.Ldstr, strategy.ThisDynamic_Type.FullName);
                 gen.EmitCall(OpCodes.Call, typeof(Type).GetMethod("GetType", new[] { typeof(string) }), new[] { typeof(string) });
-                gen.Emit(OpCodes.Ldloc, interceptor.Locals["ThisDynamic_"]);
+                gen.Emit(OpCodes.Ldloc, overriden.Locals["ThisDynamic_"]);
                 gen.EmitCall(OpCodes.Call, typeof(Activator).GetMethod("CreateInstance", new[] { typeof(Type), typeof(object[]) }), new[] { typeof(Type), typeof(object[]) });
 
                 return;
