@@ -82,11 +82,10 @@ namespace Surrogates.Utilities
             gen.Emit(OpCodes.Stloc, local);
 
             if (baseParams.Length < 1) { return local; }
-
-            gen.Emit(OpCodes.Ldloc, local);
-
+            
             for (int i = 0; i < baseParams.Length; i++)
             {
+                gen.Emit(OpCodes.Ldloc, local);
                 gen.Emit(OpCodes.Ldc_I4, i);
                 gen.Emit(OpCodes.Ldarg, i + 1);
 

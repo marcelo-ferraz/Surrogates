@@ -244,6 +244,8 @@ namespace Surrogates.Utilities.WhizzoDev
 
         private static object MergeWithILDeep(object source, object destination)
         {
+            if (source == null) { return destination; }
+
             Delegate myExec = null;
             if (!_cachedILDeep.TryGetValue(destination.GetType(), out myExec))
             {

@@ -114,5 +114,25 @@ namespace Surrogates.Expressions.Accessors
         {
             return Using(type, null, type.GetMethod4Surrogacy(interceptor));
         }
+
+        public AndExpression Using(Type type, string name, string methodName, Type[] typeParameters, params Type[] parameterTypes)
+        {
+            var mt = type.GetMethod4Surrogacy(methodName, parameterTypes);
+
+            if (mt.IsGenericMethodDefinition)
+            { mt = mt.MakeGenericMethod(typeParameters); }
+
+            return Using(type, name, mt);
+        }
+
+        public AndExpression Using<T>(string name, string methodName, Type[] typeParameters, params Type[] parameterTypes)
+        {
+            return this.Using(typeof(T), name, methodName, typeParameters, parameterTypes);
+        }
+
+        public AndExpression Using<T>(string methodName, Type[] typeParameters, params Type[] parameterTypes)
+        {
+            return this.Using(typeof(T), null, methodName, typeParameters, parameterTypes);
+        }
     }
 }

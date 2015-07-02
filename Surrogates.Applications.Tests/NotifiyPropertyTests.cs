@@ -4,43 +4,56 @@ using System;
 using Surrogates.Applications;
 using System.Collections.Generic;
 using Surrogates.Applications.Tests.Model;
+using Surrogates.Applications.NotifyChanges;
+using Surrogates.Utilities;
 
 namespace Surrogates.Applications.Tests
 {
     [TestFixture]
     public class NotifiyPropertyTests : AppTestsBase
     {
-        private void Listen(SimpletonList arg1, Simpleton arg2, object arg3)
+        private string[] _values = new string[3];
+
+        private void Listen(SimpletonList list, Simpleton item, object value)
         {
-            System.Diagnostics.Debugger.Break();
+            var index = 
+                int.Parse(item.Text);
+
+            _values[index] = (string) value;
         }
 
         [Test]
-        public void SimpleNotifyTest()
+        public void SimpleNotifyBeforeTest()
         {
             Container.Map(m => m
                 .From<SimpletonList>()
                 .Apply
-                .NotifyChanges<SimpletonList, Simpleton>(this.Listen))
+                .NotifyChanges<SimpletonList, Simpleton>(before: this.Listen))
             .Save();
 
             var proxyList = Container
                 .Invoke<SimpletonList>();
 
-            proxyList.Add(new Simpleton() { Text = "0", _fieldValue = 258 });
+            var simpleton =
+                new Simpleton() { Text = "0", _fieldValue = 258 };
+
+            proxyList.Add(simpleton);
+            proxyList.Add(null);
+            proxyList.Add(null);
+
             proxyList[1] = new Simpleton() { Text = "1" };
             proxyList.Insert(2, new Simpleton() { Text = "2" });
-        }
 
+            proxyList[0].Text = "Index zero, changed!";
+            proxyList[1].Text = "Index one, changed!";
+            proxyList[2].Text = "Index two, changed!";
 
-
-
-
-        public void Merge1(Simpleton source, Simpleton destination)
-        {           
-            destination._fieldRef = source._fieldRef;
-
-            destination.PropListRef = source.PropListRef;
-        }
+            Assert.IsNotNull(_values[0]);
+            Assert.AreEqual(_values[0], "Index zero, changed!");
+            Assert.IsNotNull(_values[1]);
+            Assert.AreEqual(_values[1], "Index one, changed!");
+            Assert.IsNotNull(_values[2]);
+            Assert.AreEqual(_values[2], "Index two, changed!");
+        }        
     }
 }

@@ -10,43 +10,58 @@ using System.Reflection;
 namespace Surrogates.Applications
 {
     public static class NotifyChangesMixins
-    {  
-        public static AndExpression<L> NotifyChanges<L, I>(this ApplyExpression<L> that, Action<L, I, object> listener)
+    {
+        public static AndExpression<L> NotifyChanges<L, I>(this ApplyExpression<L> that, Action<L, I, object> before = null, Action<L, I, object> after = null)
             where L : class, ICollection<I>
             where I : class
         {
+            if (before == null && after == null)
+            {
+                throw new ArgumentNullException(
+                    "You have to provide at least one of the notifiers, either before or after!");
+            }
+
             var ext = new ShallowExtension<L>();
             Pass.On(that, ext);
 
+            var isIList = 
+                typeof(IList<I>).IsAssignableFrom(typeof(L));
+
             var methodsNames = 
-                typeof(IList<I>).IsAssignableFrom(typeof(L)) ?
-                new[] { "Add", "Insert", "set_Item" } :
+                isIList ?
+                new[] { "Add", "Insert" } :
                 new[] { "Add" };
 
             var expr = ext
                 .Factory
                 .Replace
-                .This(l => (Action<I>) l.Add)
-                .Using<ChangesListListenerInterceptor<I>>("Set", typeParameters : new [] { typeof(L) })
-                .And
-                .AddProperty<Action<L, I, object>>("Notifier", listener);
+                .Methods(methodsNames)
+                .Using<ChangesListListenerInterceptor<I>>("Set", typeParameters : new [] { typeof(L) });
 
-            var meth = ext.Strategies.Builder.DefineMethod("DoMerge", MethodAttributes.Public, CallingConventions.Standard, typeof(I), new [] { typeof(I), typeof(I) });
+            if(before != null)
+            {
+                expr = expr
+                    .And
+                    .AddProperty<Action<L, I, object>>("Before", before);
+            }
 
-            var sourceParam =
-                meth.DefineParameter(1, ParameterAttributes.In, "source");
+            if(after != null)
+            {
+                expr = expr
+                    .And
+                    .AddProperty<Action<L, I, object>>("After", after); 
+            }
+            
 
-            var destinationParam =
-                meth.DefineParameter(2, ParameterAttributes.In, "destination");
-
-            var source = Activator.CreateInstance<I>();
-            var dest = Activator.CreateInstance<I>();
-
-            CloneHelper.CreateMerger(source, dest, meth.GetILGenerator());
-
-
-
-
+            if (isIList)
+            { 
+                expr = expr
+                    .And
+                    .Replace
+                    .Property("Item")
+                    .Accessors(a =>
+                        a.Setter.Using<ChangesListListenerInterceptor<I>>("Set", typeParameters: new[] { typeof(L) }));
+            }
 
             ext.Container.Map(m =>
                 m.From<I>()

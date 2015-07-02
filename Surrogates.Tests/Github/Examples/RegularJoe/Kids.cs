@@ -11,10 +11,5 @@ namespace Surrogates.Tests.Github.Examples.RegularJoe
         {
             return m_get_Age() + 10 * Quantity;
         }
-
-        //public int MakeTheMath(Func<int> s_method)
-        //{
-        //    return s_method() + 10 * Quantity;
-        //}
     }
 }

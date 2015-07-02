@@ -55,8 +55,8 @@ namespace Surrogates.Utilities.Mixins
 
             overriden.Generator.EmitCall(
                 interceptor.Method, @params);
-
-                return overriden;
+            
+            return overriden;
         }
     }
 }

@@ -24,20 +24,28 @@ namespace Surrogates.Model.Entities
 
         private void Add(MethodInfo method, Strategy current, IEnumerable<MethodInfo> methods)
         {
+            MethodInfo paramMethod;
+
             foreach (var arg in method.GetParameters())
             {
-                if (!typeof(MulticastDelegate).IsAssignableFrom(arg.ParameterType))
-                { continue; }
+                var isDelegate = 
+                    typeof(Delegate).IsAssignableFrom(arg.ParameterType);
 
-                MethodInfo paramMethod;
+                var refers2Self = 
+                    arg.Name.ToLower() == "s_method" && isDelegate;
+                    
+                var refers2Dynamic_ = 
+                    arg.Name == "_" && arg.ParameterType == typeof(object);
 
-                if (arg.Name.ToLower() == "s_method" || arg.Name == "_")
+                if (refers2Self || refers2Dynamic_)
                 {
                     foreach (var m in methods)
                     { _methods.Add(m); }
 
                     continue;
                 }
+
+                if (!isDelegate) { continue; }
 
                 paramMethod = current
                     .BaseType
