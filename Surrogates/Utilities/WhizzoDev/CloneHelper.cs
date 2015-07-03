@@ -126,6 +126,9 @@ namespace Surrogates.Utilities.WhizzoDev
         private static object CloneObjectWithILShallow(object myObject)
         {
             Delegate myExec = null;
+
+            if (myObject == null) { return null; }
+
             if (!_cachedILShallow.TryGetValue(myObject.GetType(), out myExec))
             {
                 DynamicMethod dymMethod = new DynamicMethod("DoShallowClone", myObject.GetType(), new Type[] { myObject.GetType() }, Assembly.GetExecutingAssembly().ManifestModule, true);
@@ -184,6 +187,9 @@ namespace Surrogates.Utilities.WhizzoDev
         /// <returns>Cloned object (deeply cloned)</returns>
         private static object CloneObjectWithILDeep(object myObject)
         {
+            if (myObject == null)
+            { return null; }
+
             Delegate myExec = null;
             if (!_cachedILDeep.TryGetValue(myObject.GetType(), out myExec))
             {
@@ -245,6 +251,7 @@ namespace Surrogates.Utilities.WhizzoDev
         private static object MergeWithILDeep(object source, object destination)
         {
             if (source == null) { return destination; }
+            if (destination == null) { return source; }
 
             Delegate myExec = null;
             if (!_cachedILDeep.TryGetValue(destination.GetType(), out myExec))
@@ -265,9 +272,9 @@ namespace Surrogates.Utilities.WhizzoDev
             return myExec.DynamicInvoke(source, destination);
         }
 
-        public static void CreateMerger(object source, object destination, ILGenerator generator)
+        private static void CreateMerger(object source, object destination, ILGenerator generator)
         {
-            LocalBuilder cloneVariable = generator.DeclareLocal(destination.GetType());
+            LocalBuilder cloneVariable = generator.DeclareLocal((source ?? destination).GetType());
 
             generator.Emit(OpCodes.Ldarg_1);
             generator.Emit(OpCodes.Stloc, cloneVariable);

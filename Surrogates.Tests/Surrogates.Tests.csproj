@@ -79,6 +79,7 @@
     <Compile Include="Strategies\Methods\Visit\Visit_FuncWithFuncTest.cs" />
     <Compile Include="Strategies\SCLTests.cs" />
     <Compile Include="Strategies\UnitTests.cs" />
+    <Compile Include="Utilities\WhizzoDev\ClonningTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Surrogates\Surrogates.csproj">

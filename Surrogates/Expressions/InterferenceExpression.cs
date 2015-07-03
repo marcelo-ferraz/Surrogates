@@ -160,7 +160,7 @@ namespace Surrogates.Expressions
         /// <returns></returns>
         public virtual T4Method These(params Func<TBase, Delegate>[] methods)
         {
-            return These(methods, true);
+            return this.These(methods, true);
         }
 
         /// <summary>
