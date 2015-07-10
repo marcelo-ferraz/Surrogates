@@ -70,7 +70,7 @@ namespace Surrogates.Applications
                         };
             }
 
-            var newKeys =
+            var newValues =
                 strat.BaseMethods.ToDictionary(m => m.MethodHandle.Value, valueGetter);
 
             var paramsProp = strat.NewProperties
@@ -78,8 +78,8 @@ namespace Surrogates.Applications
 
             var @params =
                 paramsProp != null ?
-                ((Dictionary<IntPtr, CacheParams>)paramsProp.DefaultValue).MergeLeft(newKeys) :
-                newKeys;
+                ((Dictionary<IntPtr, CacheParams>)paramsProp.DefaultValue).MergeLeft(newValues) :
+                newValues;
 
             return expr
                 .And

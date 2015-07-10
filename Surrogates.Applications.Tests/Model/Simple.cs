@@ -13,6 +13,7 @@ namespace Surrogates.Applications.Tests
             this.List = list;
         }
         public virtual string Text { get; set; }
+        public virtual string Text2 { get; set; }
 
         public virtual List<int> List { get; set; }
 

@@ -47,6 +47,9 @@
     <Compile Include="Infrastructure\ApplyExpressionMixins.cs" />
     <Compile Include="Infrastructure\CollectionMixins.cs" />
     <Compile Include="Infrastructure\Locked4RW.cs" />
+    <Compile Include="LazyLoading\IContainsLazyLoadings.cs" />
+    <Compile Include="LazyLoading\Class1.cs" />
+    <Compile Include="LazyLoading\PropertyLazyLoaderInterceptor.cs" />
     <Compile Include="NotifyChanges\ChangesListListenerInterceptor.cs" />
     <Compile Include="NotifyChanges\ChangesNotifierInterceptor.cs" />
     <Compile Include="NotifyChanges\InitiableInterceptor.cs" />

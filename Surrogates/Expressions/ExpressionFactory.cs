@@ -152,5 +152,20 @@ namespace Surrogates.Expressions
         {
             return AddAttribute(typeof(T), memberName, targets, args);
         }
+
+        public AndExpression<TBase> AddInterface(Type type)
+        {
+            if (!type.IsInterface)
+            { throw new ArgumentException("The provided type is not an Interface!"); }
+            
+            Strategies.NewInterfaces.Add(type);
+
+            return new AndExpression<TBase>(
+                this.Container, this.CurrentStrategy, this.Strategies);
+        }
+        public AndExpression<TBase> AddInterface<T>()
+        {
+            return AddAttribute(typeof(T));
+        }
     }
 }

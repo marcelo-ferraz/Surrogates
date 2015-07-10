@@ -39,6 +39,9 @@ namespace Surrogates.Tactics
             this.NewAttributes = 
                 new List<NewAttribute>();
 
+            this.NewInterfaces =
+                new List<Type>();
+
             this.BaseMethods =
                 new BaseMethods();
 
@@ -47,19 +50,6 @@ namespace Surrogates.Tactics
 
             this.Accesses = permissions;           
         }
-
-        //private Func<Strategies, List<NewProperty>> _getNewProperties =
-        //    self =>
-        //    {
-        //        self._newProperties = new List<NewProperty>();
-
-        //        self.CreateDefaultNewProperties();
-
-        //        self._getNewProperties =
-        //            st => st._newProperties;
-
-        //        return self._newProperties;
-        //    };
 
         public Access Accesses { get; set; }
 
@@ -70,6 +60,8 @@ namespace Surrogates.Tactics
         public FieldList Fields { get; set; }
         
         public List<NewAttribute> NewAttributes { get; set; }
+
+        public List<Type> NewInterfaces { get; set; }
 
         public BaseMethods BaseMethods { get; set; }
 
@@ -156,6 +148,9 @@ namespace Surrogates.Tactics
         
         public Entry Apply()
         {
+            foreach(var @interface in NewInterfaces)
+            { this.Builder.AddInterfaceImplementation(@interface); }
+
             ThisDynamic_Type = 
                 this.Builder.DefineThisDynamic_NestedType(this);
 
