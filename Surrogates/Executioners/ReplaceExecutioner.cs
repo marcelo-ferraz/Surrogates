@@ -28,25 +28,30 @@ namespace Surrogates.Executioners
             {
                 overriden.Generator.Emit(OpCodes.Pop);
             }
-            else if (!interceptor.Method.ReturnType.IsAssignableFrom(baseFunction.ReturnType))
+            else
             {
-                overriden.Generator.EmitDefaultLocalValue(interceptor.Method.ReturnType);
-            }
-            else // in case the new method's return needs to be cast 
-                if (interceptor.Method.ReturnType != baseFunction.ReturnType)
+                bool isAssignable = baseFunction.ReturnType.IsAssignableFrom(interceptor.Method.ReturnType) ||
+                    interceptor.Method.ReturnType.IsAssignableFrom(baseFunction.ReturnType);
+                
+                if (!isAssignable)
                 {
-                    if (baseFunction.ReturnType.IsValueType)
-                    {
-                        overriden.Generator.Emit(OpCodes.Unbox_Any, baseFunction.ReturnType);
-                        overriden.Generator.Emit(OpCodes.Stloc, overriden.Return);
-                        overriden.Generator.Emit(OpCodes.Ldloc, overriden.Return);
-                    }
-                    else
-                    {
-                        overriden.Generator.Emit(OpCodes.Castclass, baseFunction.ReturnType);
-                    }
+                    overriden.Generator.EmitDefaultLocalValue(interceptor.Method.ReturnType);
                 }
-
+                else // in case the new method's return needs to be cast 
+                    if (interceptor.Method.ReturnType != baseFunction.ReturnType)
+                    {
+                        if (baseFunction.ReturnType.IsValueType)
+                        {
+                            overriden.Generator.Emit(OpCodes.Unbox_Any, baseFunction.ReturnType);
+                            overriden.Generator.Emit(OpCodes.Stloc, overriden.Return);
+                            overriden.Generator.Emit(OpCodes.Ldloc, overriden.Return);
+                        }
+                        else
+                        {
+                            overriden.Generator.Emit(OpCodes.Castclass, baseFunction.ReturnType);
+                        }
+                    }
+            }
             overriden.Generator.Emit(OpCodes.Ret);
         }
     }

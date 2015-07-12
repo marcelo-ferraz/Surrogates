@@ -6,8 +6,8 @@ namespace Surrogates.Tests.Github.Examples.RegularJoe
     {
         public int Quantity { get; set; }
 
-        //verify this
-        public int MakeTheMath(Func<int> m_get_Age)
+        
+        public int MakeTheMath(Func<int> m_get_Age) // <-- this was got throught the all methods search m_ + the exactly name 
         {
             return m_get_Age() + 10 * Quantity;
         }

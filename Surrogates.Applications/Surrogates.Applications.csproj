@@ -47,6 +47,8 @@
     <Compile Include="Infrastructure\ApplyExpressionMixins.cs" />
     <Compile Include="Infrastructure\CollectionMixins.cs" />
     <Compile Include="Infrastructure\Locked4RW.cs" />
+    <Compile Include="IoC\IoCInterceptor4.cs" />
+    <Compile Include="IoC\IoCExpression.cs" />
     <Compile Include="LazyLoading\IContainsLazyLoadings.cs" />
     <Compile Include="LazyLoading\PropertyLazyLoaderInterceptor.cs" />
     <Compile Include="NotifyChanges\ChangesListListenerInterceptor.cs" />
