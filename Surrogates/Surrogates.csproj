@@ -81,6 +81,7 @@
     <Compile Include="Tactics\Strategy.cs" />
     <Compile Include="ProxyAlreadyMadeException.cs" />
     <Compile Include="Utilities\JustAdd.cs" />
+    <Compile Include="Utilities\Mixins\StrategiesMixins.cs" />
     <Compile Include="Utilities\SetLocals4.cs" />
     <Compile Include="Utilities\Mixins\ParameterInfoMixins.cs" />
     <Compile Include="Utilities\Mixins\PropertyMixins.cs" />

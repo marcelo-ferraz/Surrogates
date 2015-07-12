@@ -1,9 +1,13 @@
 ﻿
+using System;
+using System.Linq;
+using System.Collections.Generic;
 using NUnit.Framework;
+using Surrogates.Applications.LazyLoading;
 namespace Surrogates.Applications.Tests
 {
     [TestFixture]
-    public class LazyLoadingTests: AppTestsBase
+    public class LazyLoadingTests : AppTestsBase
     {
         private const string TEXT = "This text was loaded by this test's loader.";
 
@@ -15,20 +19,46 @@ namespace Surrogates.Applications.Tests
         }
 
         [Test]
-        public void SimpleLazyLoadingTest() 
+        public void SimpleLazyLoadingTest()
         {
             Container.Map(m =>
                 m.From<Simpleton>()
                 .Apply
-                .LazyLoading(s => s.Text, loader: Load));
+                .LazyLoading(s => s.Text, loader: Load))
+                .Save();
 
-            var proxy = 
+            var proxy =
                 Container.Invoke<Simpleton>();
+
+            // Validate the lazyloading feature
 
             Assert.AreEqual(TEXT, proxy.Text);
             Assert.IsTrue(_wasLoaded);
 
             Assert.IsNullOrEmpty(proxy.Text2);
+
+            // validate the interceptor
+
+            var holder = proxy as IContainsLazyLoadings<Simpleton>;
+            
+            Assert.IsNotNull(holder);
+            
+            var interceptors = holder
+                .LazyLoadingInterceptor
+                .Properties;
+
+            var textInterceptor = interceptors
+                .Where(i => i.Key == "Text")
+                .Select(i => i.Value)
+                .First();
+
+            Assert.IsFalse(textInterceptor.IsDirty);
+            Assert.AreEqual(TEXT, textInterceptor.Value);
+
+            proxy.Text = "New value";
+
+            Assert.IsTrue(textInterceptor.IsDirty);
+            Assert.AreNotEqual(TEXT, textInterceptor.Value);
         }
     }
 }

@@ -85,13 +85,7 @@ namespace Surrogates.Expressions
             }
             else
             {
-                Strategies.NewProperties.Add(
-                    new NewProperty(this.Strategies.Builder)
-                    {
-                        Type = type,
-                        Name = name,
-                        DefaultValue = defaultValue,
-                    });
+                Strategies.AddProperty(type, name, defaultValue);
             }
 
             return new AndExpression<TBase>(
@@ -157,15 +151,19 @@ namespace Surrogates.Expressions
         {
             if (!type.IsInterface)
             { throw new ArgumentException("The provided type is not an Interface!"); }
-            
-            Strategies.NewInterfaces.Add(type);
+
+            if (!Strategies.NewInterfaces.Contains(type))
+            {
+                Strategies.NewInterfaces.Add(type);
+            }
 
             return new AndExpression<TBase>(
                 this.Container, this.CurrentStrategy, this.Strategies);
         }
         public AndExpression<TBase> AddInterface<T>()
         {
-            return AddAttribute(typeof(T));
+            return AddInterface
+                (typeof(T));
         }
     }
 }

@@ -124,14 +124,21 @@ namespace Surrogates.Tactics
             }
         }
 
-        private NewProperty AddProperty<T>(string name)
+        internal NewProperty AddProperty<T>(string name, object defaultValue = null)
+        {
+            return AddProperty(typeof(T), name, defaultValue);
+        }
+
+        internal NewProperty AddProperty(Type type, string name, object defaultValue = null)
         {
             var prop = 
-                new NewProperty(Builder)
+                new NewProperty(this)
                 {
                     Name = name,
-                    Type = typeof(T)
+                    Type = type,
+                    DefaultValue = defaultValue
                 };
+
             this.NewProperties.Add(prop);
             return prop;
         }
@@ -148,9 +155,6 @@ namespace Surrogates.Tactics
         
         public Entry Apply()
         {
-            foreach(var @interface in NewInterfaces)
-            { this.Builder.AddInterfaceImplementation(@interface); }
-
             ThisDynamic_Type = 
                 this.Builder.DefineThisDynamic_NestedType(this);
 
@@ -167,7 +171,12 @@ namespace Surrogates.Tactics
             }            
 
             this.CreateConstructor();
-            
+
+
+            foreach (var @interface in NewInterfaces)
+            { this.Builder.AddInterfaceImplementation(@interface); }
+
+
             var newType = 
                 this.Builder.CreateType();
 

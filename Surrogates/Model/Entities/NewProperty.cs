@@ -1,6 +1,7 @@
 ﻿using Surrogates.Utilities.Mixins;
 using System;
 using System.Reflection.Emit;
+using Surrogates.Tactics;
 
 namespace Surrogates.Model.Entities
 {
@@ -8,11 +9,11 @@ namespace Surrogates.Model.Entities
     {
         private object _defaultValue;
         private PropertyBuilder _builder;
-        private TypeBuilder _typeBuilder;
-
-        internal NewProperty(TypeBuilder typeBuilder)
+        private Strategies _strategies;
+        
+        internal NewProperty(Strategies strategies)
         {
-            _typeBuilder = typeBuilder;
+            _strategies = strategies;
         }
 
         public Type Type { get; set; }
@@ -21,7 +22,7 @@ namespace Surrogates.Model.Entities
 
         public PropertyBuilder GetBuilder()
         {
-            return _builder ?? (_builder = _typeBuilder.DefineNewProperty(Type, Name)); 
+            return _builder ?? (_builder = _strategies.DefineNewProperty(Type, Name)); 
         }
 
         public object DefaultValue

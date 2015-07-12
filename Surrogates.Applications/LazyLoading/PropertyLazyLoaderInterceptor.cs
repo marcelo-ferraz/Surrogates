@@ -5,33 +5,45 @@ using System.Text;
 
 namespace Surrogates.Applications.LazyLoading
 {
-    public class LazyLoadingInterceptor<T, TProp>
+    public class LazyLoadingInterceptor<T>
     {
         public class PropInfo
         {
-            public string Name { get; set; }
+            /// <summary>
+            /// The name of the property
+            /// </summary>
+            public string Name { get; internal set; }
 
-            public TProp Value;
+            /// <summary>
+            /// The value, of that property
+            /// </summary>
+            public object Value { get; set; }
 
-            public bool IsDirty = false;
+            /// <summary>
+            /// If it was modified, by other than the lazy loading feature
+            /// </summary>
+            public bool IsDirty { get; internal set; }
         }
 
-        private static IDictionary<string, PropInfo> _interceptors;
+        private static IDictionary<string, PropInfo> _properties;
 
-        public IDictionary<string, PropInfo> Interceptors
+        /// <summary>
+        /// A list of the watched properties by this interceptor
+        /// </summary>
+        public IDictionary<string, PropInfo> Properties
         {
-            get { return _interceptors; }
+            get { return _properties; }
         }
 
         static LazyLoadingInterceptor()
         {
-            _interceptors = 
+            _properties = 
                 new Dictionary<string, PropInfo>();
         }
 
         private static PropInfo GetPropInfo(string s_name)
         {
-            if(!_interceptors.ContainsKey(s_name))
+            if(!_properties.ContainsKey(s_name))
             {
                 var prop =                     
                     new PropInfo {  
@@ -39,25 +51,37 @@ namespace Surrogates.Applications.LazyLoading
                         Name = s_name
                     };
 
-                _interceptors.Add(s_name, prop);
+                _properties.Add(s_name, prop);
                 return prop;
             }
 
-            return _interceptors[s_name];
+            return _properties[s_name];
         }
 
-
-        public TProp Load(string s_name, T s_instance, Dictionary<string, Func<string, T, TProp>> s_Loaders)
+        /// <summary>
+        /// Invokes the supplied loader for the property if needed. 
+        /// </summary>
+        /// <param name="s_name">the name of the property</param>
+        /// <param name="s_instance">the instance that holds that property</param>
+        /// <param name="s_Loaders">the loader collection that will contain the loader for such property</param>
+        /// <returns>the value of that property</returns>
+        public object Load(string s_name, T s_instance, Dictionary<string, Func<string, T, object>> s_Loaders)
         {
             var prop =
                 GetPropInfo(s_name);
 
-            return object.Equals(prop.Value, default(TProp)) ?
+            return prop.Value == null ?
                 (prop.Value = s_Loaders[s_name](s_name, s_instance)) :
                 prop.Value;
         }
 
-        public void MarkAsDirty(string s_name, T s_instance, TProp s_value)
+        /// <summary>
+        /// It marks that property as 'dirty', meaning that it was modified by other than the lazyloading feature
+        /// </summary>
+        /// <param name="s_name">the name of the property</param>
+        /// <param name="s_instance">the instance that holds that property</param>
+        /// <param name="s_value">the value that is going to e assigned to that property</param>
+        public void MarkAsDirty(string s_name, T s_instance, object s_value)
         {
             var prop =
                 GetPropInfo(s_name);

@@ -76,10 +76,10 @@ namespace Surrogates.Executioners
             }
         }       
 
-        internal static FieldInfo GetField(Strategy.InterceptorInfo @int, FieldList fields)
-        {            
-            return fields.Get(@int.DeclaredType, @int.Name);
-        }
+        //internal static FieldInfo GetField(Strategy.InterceptorInfo @int, FieldList fields)
+        //{            
+        //    return fields.Get(@int.DeclaredType, @int.Name);
+        //}
 
         internal static MethodBuilder CreateGetter(Strategy.ForProperties strategy, PropertyInfo prop)
         {

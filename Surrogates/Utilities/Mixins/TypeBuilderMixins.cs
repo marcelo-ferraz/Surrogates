@@ -114,19 +114,19 @@ namespace Surrogates.Utilities.Mixins
             return builder.DefineField(fieldName, prop.PropertyType, FieldAttributes.Private);
         }
 
-        internal static PropertyBuilder DefineNewProperty<T>(this TypeBuilder builder, string name)
+        internal static PropertyBuilder DefineNewProperty<T>(this TypeBuilder builder, string name, FieldInfo field = null)
         {
-            return builder.DefineNewProperty(typeof(T), name); 
+            return builder.DefineNewProperty(typeof(T), name, field); 
         }
 
-        internal static PropertyBuilder DefineNewProperty(this TypeBuilder builder, Type type, string name)
+        internal static PropertyBuilder DefineNewProperty(this TypeBuilder builder, Type type, string name, FieldInfo field = null)
         {
             var getSetAttr =
-                MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
+                MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig | MethodAttributes.Virtual;
 
             #region getter
 
-            Func<FieldBuilder, MethodBuilder> get_Prop =
+            Func<FieldInfo, MethodBuilder> get_Prop =
                 f =>
                 {
                     // Define the "get" accessor method for CustomerName.
@@ -147,7 +147,7 @@ namespace Surrogates.Utilities.Mixins
 
             #region setter
 
-            Func<FieldBuilder, MethodBuilder> set_Prop =
+            Func<FieldInfo, MethodBuilder> set_Prop =
                 f =>
                 {
                     // Define the "set" accessor method for CustomerName.
@@ -167,8 +167,11 @@ namespace Surrogates.Utilities.Mixins
 
             #endregion
 
-            FieldBuilder field = builder.DefineField(
-                string.Format("_{0}{1}", name.Substring(0, 1).ToLower(), name.Substring(1)), type, FieldAttributes.Private);
+            if (field == null)
+            {
+                field = builder.DefineField(
+                    string.Format("_{0}{1}", name.Substring(0, 1).ToLower(), name.Substring(1)), type, FieldAttributes.Private);
+            }
 
             var propBldr = builder.DefineProperty(
                 name, PropertyAttributes.HasDefault, type, null);
@@ -178,8 +181,8 @@ namespace Surrogates.Utilities.Mixins
                 var dynamicAttrCtor = typeof(DynamicAttribute)
                     .GetConstructor(Type.EmptyTypes);
 
-                field.SetCustomAttribute(
-                        new CustomAttributeBuilder(dynamicAttrCtor, new object[] { }));
+                //field.SetCustomAttribute(
+                //        new CustomAttributeBuilder(dynamicAttrCtor, new object[] { }));
 
                 propBldr.SetCustomAttribute(
                     new CustomAttributeBuilder(dynamicAttrCtor, new object[] { }));
