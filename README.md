@@ -294,10 +294,13 @@ Surrogates comes with an open door for developers to create and use their own as
 By making use of it, anyone can extend and improve the capabilities of the Surrogates project. There are a couple of useful helpers when developing their own extensions.
 ###The Pass class
 The pass class is used to expose some very needed core features of the framework.
+
+
 |Method | description|
 |-----------|------------|
 | ```On<T>(ApplyExpression<T>, IExtension<T>)```, ```On<T, TExt>(ApplyExpression<T>)``` | Accepting the apply expression, you can expose the original container, their strategies and the ```FactoryExpression<T>```, which is used to continue the original expression |
 |```Current<T>```| Accepting an expression, you can expose the current strategy of that portion, being able to manipulate, or iterate by, their base methods, base properties, new properties, change the type builder and so on.
+
 
 ##Adding a Cache Aspect
 _to_be_documented_
