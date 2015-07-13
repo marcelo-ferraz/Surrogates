@@ -25,7 +25,7 @@ namespace Surrogates.Applications.Tests
                 m.From<Simpleton>()
                 .Apply
                 .IoCFor(s => s.List)
-                .Implying<InjectedList<int>>()).Save();
+                .Implying<InjectedList<int>>());
 
             var proxy = Container.Invoke<Simpleton>();
 

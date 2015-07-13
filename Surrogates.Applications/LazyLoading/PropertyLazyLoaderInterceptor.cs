@@ -5,48 +5,31 @@ using System.Text;
 
 namespace Surrogates.Applications.LazyLoading
 {
-    public class LazyLoadingInterceptor<T>
+    public class LazyLoadingInterceptor<T> : ILazyLoadingInterceptor
     {
-        public class PropInfo
-        {
-            /// <summary>
-            /// The name of the property
-            /// </summary>
-            public string Name { get; internal set; }
-
-            /// <summary>
-            /// The value, of that property
-            /// </summary>
-            public object Value { get; set; }
-
-            /// <summary>
-            /// If it was modified, by other than the lazy loading feature
-            /// </summary>
-            public bool IsDirty { get; internal set; }
-        }
-
-        private static IDictionary<string, PropInfo> _properties;
+        private static IDictionary<string, LazyProperty> _properties;
 
         /// <summary>
         /// A list of the watched properties by this interceptor
         /// </summary>
-        public IDictionary<string, PropInfo> Properties
+        public IDictionary<string, LazyProperty> Properties
         {
             get { return _properties; }
         }
 
         static LazyLoadingInterceptor()
         {
-            _properties = 
-                new Dictionary<string, PropInfo>();
+            _properties =
+                new Dictionary<string, LazyProperty>();
         }
 
-        private static PropInfo GetPropInfo(string s_name)
+        private static LazyProperty GetPropInfo(string s_name)
         {
             if(!_properties.ContainsKey(s_name))
             {
-                var prop =                     
-                    new PropInfo {  
+                var prop =
+                    new LazyProperty
+                    {  
                         IsDirty = false,
                         Name = s_name
                     };

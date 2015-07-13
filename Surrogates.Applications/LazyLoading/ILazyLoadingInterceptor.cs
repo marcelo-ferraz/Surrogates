@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Surrogates.Applications.LazyLoading
 {
-    public interface IContainsLazyLoadings
+    public interface ILazyLoadingInterceptor
     {
-        ILazyLoadingInterceptor LazyLoadingInterceptor { get; set; }
+        IDictionary<string, LazyProperty> Properties { get; }
     }
 }

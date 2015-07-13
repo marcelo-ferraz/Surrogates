@@ -68,7 +68,7 @@ namespace Surrogates.Expressions
         /// <returns></returns>
         public AndExpression<TBase> AddProperty(Type type, string name, object defaultValue = null)
         {
-            if (defaultValue != null && !defaultValue.GetType().IsAssignableFrom(type))
+            if (defaultValue != null && !type.IsAssignableFrom(defaultValue.GetType()))
             {
                 throw new ArgumentException(
                     string.Format("The value inside the defaul value is not compatible with the type: '{0}'", type.Name));

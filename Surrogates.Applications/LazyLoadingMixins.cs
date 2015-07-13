@@ -32,9 +32,9 @@ namespace Surrogates.Applications
                 .And
                 .AddProperty("Loaders", loaders)
                 .And
-                .AddInterface<IContainsLazyLoadings<T>>()
+                .AddInterface<IContainsLazyLoadings>()
                 .And
-                .AddProperty("LazyLoadingInterceptor", new LazyLoadingInterceptor<T>());
+                .AddProperty<ILazyLoadingInterceptor>("LazyLoadingInterceptor", new LazyLoadingInterceptor<T>());
         }
 
         public static AndExpression<T> LazyLoading<T>(this ApplyExpression<T> that, Func<T, object> prop, Func<string, T, object> loader)

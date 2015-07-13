@@ -24,8 +24,7 @@ namespace Surrogates.Applications.Tests
             Container.Map(m =>
                 m.From<Simpleton>()
                 .Apply
-                .LazyLoading(s => s.Text, loader: Load))
-                .Save();
+                .LazyLoading(s => s.Text, loader: Load));
 
             var proxy =
                 Container.Invoke<Simpleton>();
@@ -39,15 +38,15 @@ namespace Surrogates.Applications.Tests
 
             // validate the interceptor
 
-            var holder = proxy as IContainsLazyLoadings<Simpleton>;
+            var holder = proxy as IContainsLazyLoadings;
             
             Assert.IsNotNull(holder);
             
-            var interceptors = holder
+            var intProperties = holder
                 .LazyLoadingInterceptor
                 .Properties;
 
-            var textInterceptor = interceptors
+            var textInterceptor = intProperties
                 .Where(i => i.Key == "Text")
                 .Select(i => i.Value)
                 .First();
