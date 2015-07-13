@@ -288,85 +288,98 @@ Or you need to temporarily add some triggers to a project, so you can run a new 
 The list goes on and on. Access logic in memory, disable partially an website, create a fast and simple dependency injection logic, etc.     
 >:exclamation: As this is a non-linear line of thought, **it can turn, very easily, into a big mess**. So please, **use it wisely** and **document it as much as you might think you will need**.
 
-## Depency Injection
+# Surrogates.Applications
+Surrogates comes with an open door for developers to create and use their own aspects. To help their endeavors, this project comes with a couple of useful extensions to the original project.
+## The Apply property
+By making use of it, anyone can extend and improve the capabilities of the Surrogates project. There are a couple of useful helpers when developing their own extensions.
+###The Pass class
+The pass class is used to expose some very needed core features of the framework.
+|Method | description|
+|-----------|------------|
+| ```On<T>(ApplyExpression<T>, IExtension<T>)```, ```On<T, TExt>(ApplyExpression<T>)``` | Accepting the apply expression, you can expose the original container, their strategies and the ```FactoryExpression<T>```, which is used to continue the original expression |
+|```Current<T>```| Accepting an expression, you can expose the current strategy of that portion, being able to manipulate, or iterate by, their base methods, base properties, new properties, change the type builder and so on.
+
+##Adding a Cache Aspect
 _to_be_documented_
-## Disabling a method
+##Adding a Contract Pre Validator Aspect
 _to_be_documented_
-## Adding instrumentation
+##Adding an Execute Elsewhere Aspect
 _to_be_documented_
-## Adding Lazy loading Aspect 
-One of the most admirable features of [Nhibernate](http://nhforge.org/) has to be the lazy loading feature. To be able to create a domain model clean, without a single infrastructure feature, and it will have, even then, a high abstractioned feature, it is something to be inspired.     
-Following you will find one example on how to do it.       
+###Executing in another Thread
+_to_be_documented_
+###Executing in another Domain
+_to_be_documented_
+##Adding an Interlocking Aspect
+_to_be_documented_
+##Adding an Inversion of Control Aspect 
+The Inversion of Control (IoC) and Dependency Injection (DI) patterns are all about removing dependencies from your code, and injecting such dependencies at runtime. 
 The model:
 ```c#
-    public class SimpleModel
-    {
-        public virtual int Id { get; set; }
-        public virtual string Name { get; set; }
-        public virtual int OutterId { get; set; }
-    }
+public class Simpleton
+{
+	public virtual List<int> List { get; set; }
+}
+```
+The inject type
+```c#
+	public class InjectedList<T> : List<T>
+	{
+	    public int Value { get; set; }
+	}
+```
+The mapping syntax:
+```c#
+Container.Map(m => m
+	.From<Simpleton>()
+	.Apply
+	.IoCFor(s => s.List)
+	.Implying<InjectedList<int>>());
+```
+##Adding a Lazy Loading Aspect 
+One of the most admirable features of [Nhibernate](http://nhforge.org/) has to be the lazy loading feature. To be able to create a domain model clean, without a single infrastructure feature, and it will have, even then, a high level feature, it is something to be inspired.     
+Following you will find one example on how to do it.    
+The model:
+```c#
+public class Simpleton
+{
+    public virtual string Text { get; set; }
+}
+```
+The mapping syntax:
+```c#
+Container.Map(m =>
+    m.From<Simpleton>()
+    .Apply
+    .LazyLoading(s => s.Text, loader: Load))
+```
+To recover the "**dirty**" properties you can box it as ```IContainsLazyLoadings```, and through the ```LazyLoadingInterceptor``` property you can retrieve all properties:
+```c#
+var holder = Container.Invoke<Simpleton>() as IContainsLazyLoadings;
+            
+var intProperties = holder
+    .LazyLoadingInterceptor
+    .Properties;
 ```
 
-The loader class:
+##Adding a Notify Property Change Aspect 
+Sometimes, inside a collection, it is needed to know whether some object had its values changed or not. With this aspect, you can keep track of those changes, by mapping all the properties you might need.
+The model:
 ```c#
-    public class IdLazyLoader
-    {
-        private int _value;
-        private bool _isDirty = false;
-
-        private MockedRepository _repository = new MockedRepository();
-
-        public int Load(string propertyName)
-        {
-            return object.Equals(_value, default(int)) ?
-                (_value = _repository.Get<int>(propertyName)) :
-                _value;
-        }
-
-        public void MarkAsDirty(int value)
-        {
-            _isDirty = true;
-            _value = value;
-        }
-    }
+public class SimpletonList : IList<Simpleton>
+{
+	// For reading matters, the implementation of this interface was suppressed
+	//(...)
+}
 ```
-The class map: 
+The mapping syntax:
 ```c#
-    public void Map()
-    {
-        _container.Map(m => m
-            .From<SimpleModel>()
-            .Replace
-            .This(d => d.Id)
-            .Accessors(a => a
-                .Getter.Using<IdLazyLoader>("idLoader", l => (Func<string, int>)l.Load)
-                .And
-                .Setter.Using<IdLazyLoader>("idLoader", (Action<int>)l => l.MarkAsDirty));
-    }
+Container.Map(m => m
+    .From<SimpletonList>()
+    .Apply
+    .NotifyChanges<SimpletonList, Simpleton>(after: (l, i, v) => TextsAreEqual(i, v)));
 ```
-
-
-And the usage:
-```c#
-   public void Test()
-        {
-            var model = 
-                _container.Invoke<SimpleModel>();
-
-            try
-            {
-                var id = model.Id;
-                Assert.Fail();
-            }
-            catch (NotImplementedException)
-            {
-                Assert.Pass(); 
-            }
-        }
-``` 
+## Adding instrumentation
+_to_be_documented_
 ## Adding logs
 _to_be_documented_
-## Intercepting specific methods
-_to_be_documented_
-## Multi-dispatch delegate behaviour
-_to_be_documented_
+
