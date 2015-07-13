@@ -3,6 +3,7 @@ using Surrogates.Utilities;
 using System;
 using Surrogates.Expressions;
 using Surrogates.Applications.IoC;
+using Surrogates.Applications.Model;
 
 namespace Surrogates.Applications
 {

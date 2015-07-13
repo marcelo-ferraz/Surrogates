@@ -258,7 +258,7 @@ namespace Surrogates.Utilities.SDILReader
         /// <summary>
         /// MethodBodyReader constructor
         /// </summary>
-        /// <param name="_mi">
+        /// <param name="mi">
         /// The System.Reflection defined MethodInfo
         /// </param>
         public MethodBodyReader(MethodInfo mi)
@@ -271,16 +271,5 @@ namespace Surrogates.Utilities.SDILReader
             }
         }
 
-        public MethodBodyReader(DynamicMethod mi, Delegate del)
-        {
-            var gen = mi.GetILGenerator();
-
-            var field = typeof(ILGenerator)
-                .GetField("m_ILStream", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            Il = (byte[])field.GetValue(gen);
-
-            ConstructInstructions(del.Method.Module);
-        }
     }
 }

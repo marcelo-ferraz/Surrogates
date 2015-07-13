@@ -26,7 +26,7 @@ namespace Surrogates.Applications.Tests
             var pRdn1 = proxy.GetRandom();
             var pRdn2 = proxy.GetRandom();
 
-            Thread.Sleep(600);
+            Thread.Sleep(1000);
 
             var pRdn3 = proxy.GetRandom();
             
@@ -51,7 +51,7 @@ namespace Surrogates.Applications.Tests
             var obj1 = proxy.GetNewObject();
             var obj2 = proxy.GetNewObject();
 
-            Thread.Sleep(600);
+            Thread.Sleep(1000);
 
             var obj3 = proxy.GetNewObject();
 

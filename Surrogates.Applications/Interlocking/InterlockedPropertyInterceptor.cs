@@ -1,4 +1,4 @@
-﻿using Surrogates.Applications.Infrastructure;
+﻿using Surrogates.Applications.Utilities;
 
 namespace Surrogates.Applications.Interlocking
 {

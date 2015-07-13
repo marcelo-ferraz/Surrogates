@@ -5,33 +5,24 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
-using Surrogates.Applications.Infrastructure;
+using Surrogates.Applications.Utilities;
 using Surrogates.Expressions.Accessors;
 using Surrogates.Applications.LazyLoading;
+using Surrogates.Applications.Model;
 
 namespace Surrogates.Applications
 {
     public static class LazyLoadingMixins
     {
         private static AndExpression<T> LazyLoading<T>(this InterferenceExpression<T> expr, ShallowExtension<T> ext, Func<string, T, object> loader)
-        {
-            var loaderProp =
-                ext.Strategies.NewProperties.Find(np => np.Name == "Loaders");
-
+        {            
             var loadersProp = ext
                 .Strategies
                 .NewProperties.Find(p => p.Name == "Loaders");
             
-            var strat = Pass.Current<Strategy.ForProperties>(expr);
-
-            var newValues = strat
-                .Properties
-                .ToDictionary(p => p.Original.Name, p => (Func<string, T, object>)loader);
-
-            var loaders =
-                loadersProp != null ?
-                ((Dictionary<string, Func<string, T, object>>)loadersProp.DefaultValue).MergeLeft(newValues) :
-                newValues;
+            var loaders = Pass
+                .Current<Strategy.ForProperties>(expr)
+                .MergeProperty("Loaders", p => (Func<string, T, object>)loader);
 
             return expr
                 .Accessors(a => a
@@ -43,8 +34,7 @@ namespace Surrogates.Applications
                 .And
                 .AddInterface<IContainsLazyLoadings<T>>()
                 .And
-                .AddProperty("LazyLoadingInterceptor", new LazyLoadingInterceptor<T>())
-                ;
+                .AddProperty("LazyLoadingInterceptor", new LazyLoadingInterceptor<T>());
         }
 
         public static AndExpression<T> LazyLoading<T>(this ApplyExpression<T> that, Func<T, object> prop, Func<string, T, object> loader)

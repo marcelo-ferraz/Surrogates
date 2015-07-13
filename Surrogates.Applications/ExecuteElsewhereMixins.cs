@@ -1,4 +1,5 @@
 ﻿using Surrogates.Applications.ExecutingElsewhere;
+using Surrogates.Applications.Model;
 using Surrogates.Expressions;
 using Surrogates.Model.Entities;
 using Surrogates.Utilities;

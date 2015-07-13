@@ -44,9 +44,10 @@
     <Compile Include="Cache\CacheInterceptor.cs" />
     <Compile Include="Cache\Model\CacheParams.cs" />
     <Compile Include="Contracts\ContractsInterceptor.cs" />
-    <Compile Include="Infrastructure\ApplyExpressionMixins.cs" />
-    <Compile Include="Infrastructure\CollectionMixins.cs" />
-    <Compile Include="Infrastructure\Locked4RW.cs" />
+    <Compile Include="Pooling\IContainsPool.cs" />
+    <Compile Include="Utilities\CollectionMixins.cs" />
+    <Compile Include="Utilities\Locked4RW.cs" />
+    <Compile Include="Utilities\StrategyMixins.cs" />
     <Compile Include="IoC\IoCInterceptor4.cs" />
     <Compile Include="IoC\IoCExpression.cs" />
     <Compile Include="LazyLoading\IContainsLazyLoadings.cs" />
@@ -56,10 +57,8 @@
     <Compile Include="NotifyChanges\InitiableInterceptor.cs" />
     <Compile Include="SimpleCacheResultMixins.cs" />
     <Compile Include="Contracts\Collections\AssertionList4Parameters.cs" />
-    <Compile Include="Contracts\Collections\AssertionList4Properties.cs" />
     <Compile Include="Contracts\Model\AssertionEntry4Parameters.cs" />
-    <Compile Include="Infrastructure\ObjectMixins.cs" />
-    <Compile Include="PropertyAssertionMixins.cs" />
+    <Compile Include="Utilities\ObjectMixins.cs" />
     <Compile Include="ExecuteElsewhereMixins.cs" />
     <Compile Include="ExecutingElsewhere\ElsewhereExpression.cs" />
     <Compile Include="ExecutingElsewhere\ExecuteInOtherDomainInterceptor.cs" />
@@ -71,9 +70,8 @@
     <Compile Include="IoCMixins.cs" />
     <Compile Include="Pooling\AccessMode.cs" />
     <Compile Include="Pooling\Pool.cs" />
-    <Compile Include="PoolPropertiesMixins.cs" />
     <Compile Include="Pooling\PoolInterceptor.cs" />
-    <Compile Include="ShallowExtension.cs" />
+    <Compile Include="Model\ShallowExtension.cs" />
     <Compile Include="Interlocking\InterlockedMethodsInterceptor.cs" />
     <Compile Include="Interlocking\InterlockedPropertyInterceptor.cs" />
     <Compile Include="Interlocking\InterlockedRefPropertyInterceptor.cs" />
@@ -83,10 +81,8 @@
     <Compile Include="ContractsMixins.cs" />
     <Compile Include="Contracts\Model\AssertionEntry4Properties.cs" />
     <Compile Include="Contracts\Utilities\Check.cs" />
-    <Compile Include="Contracts\IPropValidator.cs" />
     <Compile Include="Contracts\IParamValidator.cs" />
     <Compile Include="Contracts\Presume.cs" />
-    <Compile Include="Contracts\PropertiesOf.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Surrogates\Surrogates.csproj">

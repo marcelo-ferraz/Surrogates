@@ -2,7 +2,7 @@
 using Surrogates.Applications.Contracts.Collections;
 using Surrogates.Applications.Contracts.Model;
 using Surrogates.Applications.Contracts.Utilities;
-using Surrogates.Applications.Infrastructure;
+using Surrogates.Applications.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -621,28 +621,28 @@ namespace Surrogates.Applications
 
         #region To be implemented, ... or not ?
 
-        internal static IParamValidator That<T>(this IParamValidator self, string param, params IPropValidator[] validators)
-        {
-            return That<T>(self, new string[] { param }, validators);
-        }
+        //internal static IParamValidator That<T>(this IParamValidator self, string param, params IPropValidator[] validators)
+        //{
+        //    return That<T>(self, new string[] { param }, validators);
+        //}
 
-        internal static IParamValidator That<T>(this IParamValidator self, string[] on, params IPropValidator[] validators)
-        {
-            Func<T, bool> assertion = null;
+        //internal static IParamValidator That<T>(this IParamValidator self, string[] on, params IPropValidator[] validators)
+        //{
+        //    Func<T, bool> assertion = null;
 
-            foreach (var validator in validators.SelectMany(v => ((AssertionList4Properties)v).Validators))
-            {
-                assertion = assertion != null ?
-                    (arg => assertion(arg) && (bool)validator.Validation.DynamicInvoke(arg)) :
-                    (Func<T, bool>)validator.Validation;
-            }
+        //    foreach (var validator in validators.SelectMany(v => ((AssertionList4Properties)v).Validators))
+        //    {
+        //        assertion = assertion != null ?
+        //            (arg => assertion(arg) && (bool)validator.Validation.DynamicInvoke(arg)) :
+        //            (Func<T, bool>)validator.Validation;
+        //    }
 
-            return AddPreValidators(
-                self,
-                on,
-                (i, p) =>
-                    args => assertion((T)args[i]));
-        }
+        //    return AddPreValidators(
+        //        self,
+        //        on,
+        //        (i, p) =>
+        //            args => assertion((T)args[i]));
+        //}
 
         #endregion
     }

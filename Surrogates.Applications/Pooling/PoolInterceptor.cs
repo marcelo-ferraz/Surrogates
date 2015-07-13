@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Surrogates.Applications.Pooling
@@ -29,7 +30,7 @@ namespace Surrogates.Applications.Pooling
                     finally
                     {
                         if (lockAcquired = (base.Pool == null && (Monitor.TryEnter(_sync, 500) && !this._initiated)))
-                        {
+                        {                            
                             base.Pool = new Pool<T>(
                                 (int)bag.Size,
                                 p => s_Container.Invoke<T>(stateBag: this),
@@ -49,10 +50,17 @@ namespace Surrogates.Applications.Pooling
                 return Pool;
             }
 
-            public T Get(State s_PoolState, SurrogatesContainer s_Container)
+            public T Get(SurrogatesContainer s_Container, string s_name, Dictionary<string, dynamic> s_PoolStates)
             {
-                return GetPool(s_PoolState, s_Container)
+                var bag = s_PoolStates[s_name];
+                
+                var result = 
+                    GetPool(s_PoolStates[s_name], s_Container)
                     .Acquire();
+
+                result.Pool = base.Pool;
+
+                return result;
             }
         }
 
@@ -61,9 +69,9 @@ namespace Surrogates.Applications.Pooling
         /// </summary>
         public class ToRelease: PoolInterceptor<T>
         {
-            public void Dispose(dynamic s_StateBag, T s_instance)
+            public void Dispose(T s_instance, Pool<T> s_Pool)
             {
-                s_StateBag.Pool.Release();
+                s_Pool.Release(s_instance);
             }
         }
 

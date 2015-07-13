@@ -39,5 +39,10 @@ namespace Surrogates.Utilities
         {
             return expr.CurrentStrategy;
         }
+
+        public static Strategy.ForMethods Current<T>(Expression<T, Strategy.ForMethods> expr)
+        {
+            return expr.CurrentStrategy;
+        }
     }
 }

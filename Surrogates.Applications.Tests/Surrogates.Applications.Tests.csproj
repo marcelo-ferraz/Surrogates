@@ -46,7 +46,6 @@
   <ItemGroup>
     <Compile Include="AppTestsBase.cs" />
     <Compile Include="ContractPreValidatorTests.cs" />
-    <Compile Include="_PoolingTests.cs" />
     <Compile Include="Model\Simple.cs" />
     <Compile Include="InterlockingTests.cs" />
     <Compile Include="IoCTests.cs" />

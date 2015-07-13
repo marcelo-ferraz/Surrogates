@@ -1,9 +1,11 @@
-﻿using Surrogates.Applications.Infrastructure;
+﻿using Surrogates.Applications.Utilities;
 using Surrogates.Applications.Interlocking;
 using Surrogates.Expressions;
 using Surrogates.Utilities.Mixins;
 using System;
 using System.Runtime.Serialization;
+using Surrogates.Utilities;
+using Surrogates.Applications.Model;
 
 namespace Surrogates.Applications
 {
@@ -37,7 +39,7 @@ namespace Surrogates.Applications
             AndExpression<T> exp = null;
 
             Func<ExpressionFactory<T>> getExp = () =>
-                (exp == null) ? self.PassOn().Factory : exp.And;
+                (exp == null) ? Pass.On<T, ShallowExtension<T>>(self).Factory : exp.And;
 
             return property.GetPropType().IsValueType ?
                     getExp().RW<T, InterlockedValuePropertyInterceptor>(property) :
@@ -56,7 +58,7 @@ namespace Surrogates.Applications
             AndExpression<T> exp = null;
 
             Func<ExpressionFactory<T>> getExp = () =>
-                (exp == null) ? self.PassOn().Factory : exp.And;
+                (exp == null) ? Pass.On<T, ShallowExtension<T>>(self).Factory : exp.And;
 
             foreach (var prop in properties)
             {
@@ -97,7 +99,7 @@ namespace Surrogates.Applications
 
             Func<ExpressionFactory<T>> getExp = 
                 () =>
-                    (exp == null) ? self.PassOn().Factory : exp.And;
+                    (exp == null) ? Pass.On<T, ShallowExtension<T>>(self).Factory : exp.And;
 
             foreach (var pair in pairs)
             {

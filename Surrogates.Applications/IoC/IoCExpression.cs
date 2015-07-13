@@ -6,7 +6,7 @@ using Surrogates.Expressions;
 using Surrogates.Expressions.Accessors;
 using Surrogates.Tactics;
 using Surrogates.Utilities;
-using Surrogates.Applications.Infrastructure;
+using Surrogates.Applications.Utilities;
 
 namespace Surrogates.Applications.IoC
 {

@@ -1,6 +1,7 @@
 ﻿using Surrogates.Applications.Contracts;
 using Surrogates.Applications.Contracts.Collections;
 using Surrogates.Applications.Contracts.Model;
+using Surrogates.Applications.Model;
 using Surrogates.Expressions;
 using Surrogates.Utilities;
 using Surrogates.Utilities.Mixins;

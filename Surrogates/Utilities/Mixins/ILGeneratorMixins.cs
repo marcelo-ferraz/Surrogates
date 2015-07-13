@@ -173,12 +173,16 @@ namespace Surrogates.Utilities.Mixins
                 var b = strategies.NewProperties[j].GetBuilder();
                 gen.Emit(OpCodes.Ldarg_0);
 
-                if (b.PropertyType.IsClass && !typeof(MulticastDelegate).IsAssignableFrom(b.PropertyType))
+                var ctr = b.PropertyType
+                    .GetConstructor(Type.EmptyTypes);
+
+                if (b.PropertyType.IsClass && ctr != null && !typeof(MulticastDelegate).IsAssignableFrom(b.PropertyType))
                 {
-                    gen.Emit(OpCodes.Newobj, b.PropertyType.GetConstructor(Type.EmptyTypes));
+                    gen.Emit(OpCodes.Newobj, ctr);
                 }
                 else
                 { gen.EmitDefaultValue(b.PropertyType); }
+
                 gen.EmitCall(b.GetSetMethod());
 
             }

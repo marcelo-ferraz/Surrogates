@@ -1,8 +1,9 @@
 ﻿using Surrogates.Applications.Cache;
 using Surrogates.Applications.Cache.Model;
-using Surrogates.Applications.Infrastructure;
+using Surrogates.Applications.Utilities;
 using Surrogates.Expressions;
 using Surrogates.Expressions.Accessors;
+using Surrogates.Applications.Utilities;
 using Surrogates.Tactics;
 using Surrogates.Utilities;
 using System;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime;
+using Surrogates.Applications.Model;
 
 namespace Surrogates.Applications
 {
@@ -44,9 +46,6 @@ namespace Surrogates.Applications
         [TargetedPatchingOptOut("")]
         private static AndExpression<T> Cache<T>(this AndExpression<T> expr, Func<object[], object> getKey, TimeSpan? timeout)
         {
-            var strat =
-                Pass.Current<Strategy>(expr);
-
             Func<MethodInfo, CacheParams> valueGetter = null;
 
             if (getKey != null)
@@ -70,16 +69,10 @@ namespace Surrogates.Applications
                         };
             }
 
-            var newValues =
-                strat.BaseMethods.ToDictionary(m => m.MethodHandle.Value, valueGetter);
 
-            var paramsProp = strat.NewProperties
-                .FirstOrDefault(p => p.Name == "Params");
-
-            var @params =
-                paramsProp != null ?
-                ((Dictionary<IntPtr, CacheParams>)paramsProp.DefaultValue).MergeLeft(newValues) :
-                newValues;
+            var @params = Pass
+                .Current<Strategy>(expr)
+                .MergeProperty("Params", valueGetter);
 
             return expr
                 .And
@@ -105,8 +98,8 @@ namespace Surrogates.Applications
         [TargetedPatchingOptOut("")]
         public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, Delegate> method, Func<object[], object> getKey = null, TimeSpan? timeout = null)
         {
-            return that
-                .PassOn()
+            return Pass
+                .On<T, ShallowExtension<T>>(that)
                 .Factory
                 .Replace
                 .This(method)
@@ -115,9 +108,9 @@ namespace Surrogates.Applications
         
         [TargetedPatchingOptOut("")]
         public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, Delegate>[] methods, Func<object[], object> getKey = null, TimeSpan? timeout = null)
-        {            
-            return that
-                .PassOn()
+        {
+            return Pass
+                .On<T, ShallowExtension<T>>(that)
                 .Factory
                 .Replace
                 .These(methods)
@@ -127,8 +120,8 @@ namespace Surrogates.Applications
         [TargetedPatchingOptOut("")]
         public static AndExpression<T> CacheMethod<T>(this ApplyExpression<T> that, string method, Func<object[], object> getKey = null, TimeSpan? timeout = null)
         {
-            return that
-                .PassOn()
+            return Pass
+                .On<T, ShallowExtension<T>>(that)
                 .Factory
                 .Replace
                 .Method(method)
@@ -138,8 +131,8 @@ namespace Surrogates.Applications
         [TargetedPatchingOptOut("")]
         public static AndExpression<T> CacheMethods<T>(this ApplyExpression<T> that, string[] methods, Func<object[], object> getKey = null, TimeSpan? timeout = null)
         {
-            return that
-                .PassOn()
+            return Pass
+                .On<T, ShallowExtension<T>>(that)
                 .Factory
                 .Replace
                 .Methods(methods)
@@ -149,8 +142,8 @@ namespace Surrogates.Applications
         [TargetedPatchingOptOut("")]
         public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, object> method, Func<object[], object> getKey = null, TimeSpan? timeout = null)
         {
-            return that
-                .PassOn()
+            return Pass
+                .On<T, ShallowExtension<T>>(that)
                 .Factory
                 .Replace
                 .This(method)
@@ -160,8 +153,8 @@ namespace Surrogates.Applications
         [TargetedPatchingOptOut("")]
         public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, object>[] methods, Func<object[], object> getKey = null, TimeSpan? timeout = null)
         {
-            return that
-                .PassOn()
+            return Pass
+                .On<T, ShallowExtension<T>>(that)
                 .Factory
                 .Replace
                 .These(methods)
@@ -171,8 +164,8 @@ namespace Surrogates.Applications
         [TargetedPatchingOptOut("")]
         public static AndExpression<T> CacheProperty<T>(this ApplyExpression<T> that, string method, Func<object[], object> getKey = null, TimeSpan? timeout = null)
         {
-            return that
-                .PassOn()
+            return Pass
+                .On<T, ShallowExtension<T>>(that)
                 .Factory
                 .Replace
                 .Property(method)
@@ -182,8 +175,8 @@ namespace Surrogates.Applications
         [TargetedPatchingOptOut("")]
         public static AndExpression<T> CacheProperties<T>(this ApplyExpression<T> that, string[] methods, Func<object[], object> getKey = null, TimeSpan? timeout = null)
         {
-            return that
-                .PassOn()
+            return Pass
+                .On<T, ShallowExtension<T>>(that)
                 .Factory
                 .Replace
                 .Properties(methods)

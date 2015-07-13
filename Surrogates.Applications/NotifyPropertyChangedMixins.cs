@@ -1,4 +1,5 @@
-﻿using Surrogates.Applications.NotifyChanges;
+﻿using Surrogates.Applications.Model;
+using Surrogates.Applications.NotifyChanges;
 using Surrogates.Expressions;
 using Surrogates.Tactics;
 using Surrogates.Utilities;
@@ -26,6 +27,10 @@ namespace Surrogates.Applications
 
             var isIList = 
                 typeof(IList<I>).IsAssignableFrom(typeof(L));
+            
+            //ICollection<T>.Add(T item)
+            //IList<I>.Insert(int index, T item)
+            //IList<I>.set_Item(T item)
 
             var methodsNames = 
                 isIList ?
@@ -71,9 +76,6 @@ namespace Surrogates.Applications
                     a.Setter.Using<ChangesNotifierInterceptor<I>>("Set")));
                         
             return expr;
-            //ICollection<T>.Add(T item)
-            //IList<I>.Insert(int index, T item)
-            //IList<I>.set_Item(T item)
         }
     }
 }
