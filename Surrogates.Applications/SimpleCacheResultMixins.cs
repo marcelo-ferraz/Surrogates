@@ -95,92 +95,164 @@ namespace Surrogates.Applications
                 .Cache(getKey, timeout);            
         }
 
+        /// <summary>
+        /// Applies a Cache for a method's result, exempting that method's processing, for a given time
+        /// </summary>
+        /// <typeparam name="T">The base type</typeparam>
+        /// <param name="that">The prior expression</param>
+        /// <param name="prop"></param>
+        /// <param name="key">How to get a key for that cache</param>
+        /// <param name="timeout">How long it will live</param>
+        /// <returns></returns>
         [TargetedPatchingOptOut("")]
-        public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, Delegate> method, Func<object[], object> getKey = null, TimeSpan? timeout = null)
+        public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, Delegate> method, Func<object[], object> key= null, TimeSpan? timeout = null)
         {
             return Pass
                 .On<T, ShallowExtension<T>>(that)
                 .Factory
                 .Replace
                 .This(method)
-                .Cache( getKey, timeout);
+                .Cache( key, timeout);
         }
         
+        /// <summary>
+        /// Applies a Cache for a methods's result, exempting those methods's processing, for a given time 
+        /// </summary>
+        /// <typeparam name="T">The base type</typeparam>
+        /// <param name="that">The prior expression</param>
+        /// <param name="properties"></param>
+        /// <param name="key">How to get a key for that cache</param>
+        /// <param name="timeout">How long it will live</param>
+        /// <returns></returns>
         [TargetedPatchingOptOut("")]
-        public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, Delegate>[] methods, Func<object[], object> getKey = null, TimeSpan? timeout = null)
+        public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, Delegate>[] methods, Func<object[], object> key= null, TimeSpan? timeout = null)
         {
             return Pass
                 .On<T, ShallowExtension<T>>(that)
                 .Factory
                 .Replace
                 .These(methods)
-                .Cache(getKey, timeout);
+                .Cache(key, timeout);
         }
 
+        /// <summary>
+        /// Applies a Cache for a method's result, exempting that method's processing, for a given time
+        /// </summary>
+        /// <typeparam name="T">The base type</typeparam>
+        /// <param name="that">The prior expression</param>
+        /// <param name="prop"></param>
+        /// <param name="key">How to get a key for that cache</param>
+        /// <param name="timeout">How long it will live</param>
+        /// <returns></returns>
         [TargetedPatchingOptOut("")]
-        public static AndExpression<T> CacheMethod<T>(this ApplyExpression<T> that, string method, Func<object[], object> getKey = null, TimeSpan? timeout = null)
+        public static AndExpression<T> CacheMethod<T>(this ApplyExpression<T> that, string method, Func<object[], object> key= null, TimeSpan? timeout = null)
         {
             return Pass
                 .On<T, ShallowExtension<T>>(that)
                 .Factory
                 .Replace
                 .Method(method)
-                .Cache(getKey, timeout);
+                .Cache(key, timeout);
         }
 
+        /// <summary>
+        /// Applies a Cache for a method's result, exempting those methods's processing, for a given time 
+        /// </summary>
+        /// <typeparam name="T">The base type</typeparam>
+        /// <param name="that">The prior expression</param>
+        /// <param name="properties"></param>
+        /// <param name="key">How to get a key for that cache</param>
+        /// <param name="timeout">How long it will live</param>
+        /// <returns></returns>
         [TargetedPatchingOptOut("")]
-        public static AndExpression<T> CacheMethods<T>(this ApplyExpression<T> that, string[] methods, Func<object[], object> getKey = null, TimeSpan? timeout = null)
+        public static AndExpression<T> CacheMethods<T>(this ApplyExpression<T> that, string[] methods, Func<object[], object> key= null, TimeSpan? timeout = null)
         {
             return Pass
                 .On<T, ShallowExtension<T>>(that)
                 .Factory
                 .Replace
                 .Methods(methods)
-                .Cache(getKey, timeout);
+                .Cache(key, timeout);
         }
 
+        /// <summary>
+        /// Applies a Cache for a prop's result, exempting this property's processing, for a given time 
+        /// </summary>
+        /// <typeparam name="T">The base type</typeparam>
+        /// <param name="that">The prior expression</param>
+        /// <param name="prop"></param>
+        /// <param name="key">How to get a key for that cache</param>
+        /// <param name="timeout">How long it will live</param>
+        /// <returns></returns>
         [TargetedPatchingOptOut("")]
-        public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, object> method, Func<object[], object> getKey = null, TimeSpan? timeout = null)
+        public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, object> prop, Func<object[], object> key= null, TimeSpan? timeout = null)
         {
             return Pass
                 .On<T, ShallowExtension<T>>(that)
                 .Factory
                 .Replace
-                .This(method)
-                .Cache(getKey, timeout);
+                .This(prop)
+                .Cache(key, timeout);
         }
 
+        /// <summary>
+        /// Applies a Cache for a prop's result, exempting those properties's processing, for a given time 
+        /// </summary>
+        /// <typeparam name="T">The base type</typeparam>
+        /// <param name="that">The prior expression</param>
+        /// <param name="properties"></param>
+        /// <param name="key">How to get a key for that cache</param>
+        /// <param name="timeout">How long it will live</param>
+        /// <returns></returns>
         [TargetedPatchingOptOut("")]
-        public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, object>[] methods, Func<object[], object> getKey = null, TimeSpan? timeout = null)
+        public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, object>[] properties, Func<object[], object> key= null, TimeSpan? timeout = null)
         {
             return Pass
                 .On<T, ShallowExtension<T>>(that)
                 .Factory
                 .Replace
-                .These(methods)
-                .Cache(getKey, timeout);
+                .These(properties)
+                .Cache(key, timeout);
         }
 
+        /// <summary>
+        /// Applies a Cache for a prop's result, exempting this property's processing, for a given time 
+        /// </summary>
+        /// <typeparam name="T">The base type</typeparam>
+        /// <param name="that">The prior expression</param>
+        /// <param name="propertyName"></param>
+        /// <param name="key">How to get a key for that cache</param>
+        /// <param name="timeout">How long it will live</param>
+        /// <returns></returns>
         [TargetedPatchingOptOut("")]
-        public static AndExpression<T> CacheProperty<T>(this ApplyExpression<T> that, string method, Func<object[], object> getKey = null, TimeSpan? timeout = null)
+        public static AndExpression<T> CacheProperty<T>(this ApplyExpression<T> that, string propertyName, Func<object[], object> key= null, TimeSpan? timeout = null)
         {
             return Pass
                 .On<T, ShallowExtension<T>>(that)
                 .Factory
                 .Replace
-                .Property(method)
-                .Cache(getKey, timeout);
+                .Property(propertyName)
+                .Cache(key, timeout);
         }
 
+        /// <summary>
+        /// Applies a Cache for a prop's result, exempting those properties's processing, for a given time 
+        /// </summary>
+        /// <typeparam name="T">The base type</typeparam>
+        /// <param name="that">The prior expression</param>
+        /// <param name="propertiesNames"></param>
+        /// <param name="key">How to get a key for that cache</param>
+        /// <param name="timeout">How long it will live</param>
+        /// <returns></returns>
         [TargetedPatchingOptOut("")]
-        public static AndExpression<T> CacheProperties<T>(this ApplyExpression<T> that, string[] methods, Func<object[], object> getKey = null, TimeSpan? timeout = null)
+        public static AndExpression<T> CacheProperties<T>(this ApplyExpression<T> that, string[] propertiesNames, Func<object[], object> key= null, TimeSpan? timeout = null)
         {
             return Pass
                 .On<T, ShallowExtension<T>>(that)
                 .Factory
                 .Replace
-                .Properties(methods)
-                .Cache(getKey, timeout);
+                .Properties(propertiesNames)
+                .Cache(key, timeout);
         }
     }
 }

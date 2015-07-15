@@ -21,9 +21,6 @@ namespace Surrogates.Applications.IoC
 
         private AndExpression<T> AddArgs(AndExpression<T> expr, object[] args)
         {
-            if (args == null || args.Length < 1)
-            { return expr; }
-
             var strat =
                 Pass.Current(_expression);
 
@@ -43,7 +40,13 @@ namespace Surrogates.Applications.IoC
                 .AddProperty<Dictionary<string, object[]>>("Params", @params);
         }
 
-        public AndExpression<T> Implying(Type injType, params object[] args)
+        /// <summary>
+        /// Injects a instance of that type into the provided propert(y|ies)
+        /// </summary>
+        /// <param name="injType"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public AndExpression<T> Injecting(Type injType, params object[] args)
         {
             var interceptorType =
                 typeof(IoCInterceptor4<>)
@@ -58,7 +61,13 @@ namespace Surrogates.Applications.IoC
             return AddArgs(expr, args);
         }
 
-        public AndExpression<T> Implying<TInj>(params object[] args)
+        /// <summary>
+        /// Injects a instance of that type into the provided propert(y|ies) 
+        /// </summary>
+        /// <typeparam name="TInj"></typeparam>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public AndExpression<T> Injecting<TInj>(params object[] args)
         {
             var expr = _expression.Accessors(
                 m => m

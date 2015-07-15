@@ -42,12 +42,12 @@ namespace Surrogates.Applications.LazyLoading
         }
 
         /// <summary>
-        /// Invokes the supplied loader for the property if needed. 
+        /// Invokes the supplied loader for the properties if needed. 
         /// </summary>
-        /// <param name="s_name">the name of the property</param>
-        /// <param name="s_instance">the instance that holds that property</param>
-        /// <param name="s_Loaders">the loader collection that will contain the loader for such property</param>
-        /// <returns>the value of that property</returns>
+        /// <param name="s_name">the name of the properties</param>
+        /// <param name="s_instance">the instance that holds that properties</param>
+        /// <param name="s_Loaders">the loader collection that will contain the loader for such properties</param>
+        /// <returns>the value of that properties</returns>
         public object Load(string s_name, T s_instance, Dictionary<string, Func<string, T, object>> s_Loaders)
         {
             var prop =
@@ -59,11 +59,11 @@ namespace Surrogates.Applications.LazyLoading
         }
 
         /// <summary>
-        /// It marks that property as 'dirty', meaning that it was modified by other than the lazyloading feature
+        /// It marks that properties as 'dirty', meaning that it was modified by other than the lazyloading feature
         /// </summary>
-        /// <param name="s_name">the name of the property</param>
-        /// <param name="s_instance">the instance that holds that property</param>
-        /// <param name="s_value">the value that is going to e assigned to that property</param>
+        /// <param name="s_name">the name of the properties</param>
+        /// <param name="s_instance">the instance that holds that properties</param>
+        /// <param name="s_value">the value that is going to e assigned to that properties</param>
         public void MarkAsDirty(string s_name, T s_instance, object s_value)
         {
             var prop =

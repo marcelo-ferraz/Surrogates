@@ -158,16 +158,6 @@ namespace Surrogates.Utilities.Mixins
             var baseParams =
                 strategies.BaseType.GetConstructor(types).GetParameters();
 
-            for (int j = 0; j < strategies.Fields.Count; j++)
-            {
-                var type =
-                    strategies.Fields[j].FieldType;
-
-                gen.Emit(OpCodes.Ldarg_0);
-                gen.Emit(OpCodes.Newobj, type.GetConstructor(new Type[] { }));
-                gen.Emit(OpCodes.Stfld, strategies.Fields[j]);
-            }
-
             for (int j = 0; j < strategies.NewProperties.Count; j++)
             {
                 var b = strategies.NewProperties[j].GetBuilder();
@@ -186,6 +176,17 @@ namespace Surrogates.Utilities.Mixins
                 gen.EmitCall(b.GetSetMethod());
 
             }
+            
+            for (int j = 0; j < strategies.Fields.Count; j++)
+            {
+                var type =
+                    strategies.Fields[j].FieldType;
+
+                gen.Emit(OpCodes.Ldarg_0);
+                gen.Emit(OpCodes.Newobj, type.GetConstructor(new Type[] { }));
+                gen.Emit(OpCodes.Stfld, strategies.Fields[j]);
+            }
+
 
             int i = 0;
 

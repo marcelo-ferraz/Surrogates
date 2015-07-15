@@ -19,34 +19,38 @@ namespace Surrogates.Utilities.Mixins
         {
             FieldInfo field = null;
 
-            for (int i = 0; i < self.Fields.Count; i++)
+            foreach (var f in self.BaseType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
-                if (TryMatchField(type, name, self.Fields[i], out field))
+                if (TryMatchField(type, name, f, ref field))
                 { break; }
             }
 
-            foreach (var f in self.BaseType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+            if (field == null)
             {
-                if (TryMatchField(type, name, f, out field))
-                { break; }
+                for (int i = 0; i < self.Fields.Count; i++)
+                {
+                    if (TryMatchField(type, name, self.Fields[i], ref field))
+                    { break; }
+                }
             }
 
             return self.Builder.DefineNewProperty(type, name, field);
         }
 
-        private static bool TryMatchField(Type type, string name, FieldInfo field, out FieldInfo foundField)
+        private static bool TryMatchField(Type type, string name, FieldInfo field, ref FieldInfo foundField)
         {
             var hasCompatibleName =
                 (field.Name[0] == '_' && field.Name.Substring(2) == name.Substring(1)) ||
                 (field.Name == name);
 
-            if (hasCompatibleName && field.FieldType.IsAssignableFrom(type))
+            if (hasCompatibleName && 
+                // can still occur an invalid cast exception, though
+                (field.FieldType.IsAssignableFrom(type) || type.IsAssignableFrom(field.FieldType)))
             {
                 foundField = field;
                 return true;
             }
 
-            foundField = null;
             return false;
         }
     }

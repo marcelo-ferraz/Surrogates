@@ -8,7 +8,7 @@ namespace Surrogates.Applications.Pooling
         where T : IDisposable
     {
         /// <summary>
-        /// To be used alongside with the holder of the property
+        /// To be used alongside with the holder of the properties
         /// </summary>
         public class ToGet : PoolInterceptor<T>
         {

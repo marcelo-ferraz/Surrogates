@@ -8,12 +8,12 @@ namespace Surrogates.Applications.LazyLoading
     public class LazyProperty
     {
         /// <summary>
-        /// The name of the property
+        /// The name of the properties
         /// </summary>
         public string Name { get; internal set; }
 
         /// <summary>
-        /// The value, of that property
+        /// The value, of that properties
         /// </summary>
         public object Value { get; set; }
 

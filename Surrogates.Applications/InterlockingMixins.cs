@@ -28,7 +28,7 @@ namespace Surrogates.Applications
         }
         
         /// <summary>
-        /// Applies Read and write locks on the call of this property. On get will be applied a read lock and on set the write lock.
+        /// Applies Read and write locks on the call of this properties. On get will be applied a read lock and on set the write lock.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="self"></param>
@@ -71,7 +71,7 @@ namespace Surrogates.Applications
         }
 
         /// <summary>
-        /// Applies Read and write locks on the call of those methods
+        /// Applies Read and write locks on the call of those properties
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="self"></param>
@@ -84,7 +84,7 @@ namespace Surrogates.Applications
         }
 
         /// <summary>
-        /// Applies Read and write locks on the call of those methods
+        /// Applies Read and write locks on the call of those properties
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="self"></param>

@@ -84,12 +84,12 @@ namespace Surrogates.Applications
         }
 
         /// <summary>
-        /// Applies verifications to a method's call
+        /// Applies verifications to a prop's call
         /// </summary>
         /// <typeparam name="T">The base type</typeparam>
         /// <param name="that">The Expression</param>
         /// <param name="that">The Expression</param>
-        /// <param name="methods">The methods where those verification shall be applied</param>
+        /// <param name="properties">The properties where those verification shall be applied</param>
         /// <returns></returns>
         public static AndExpression<T> Contracts<T>(
             this ApplyExpression<T> that, Func<T, Delegate>[] methods, params IParamValidator[] validations)
@@ -103,11 +103,11 @@ namespace Surrogates.Applications
         }
 
         /// <summary>
-        /// Applies verifications to a method's call
+        /// Applies verifications to a prop's call
         /// </summary>
         /// <typeparam name="T">The base type</typeparam>
         /// <param name="that">The Expression</param>
-        /// <param name="method">The method where those verification shall be applied</param>
+        /// <param name="prop">The prop where those verification shall be applied</param>
         /// <param name="validations">The verifications. Make use of <seealso cref="Surrogates.Applications.Contracts.Presume"/></param>
         /// <returns>Returns the expression</returns>
         public static AndExpression<T> Contracts<T>(
@@ -122,11 +122,11 @@ namespace Surrogates.Applications
         }
 
         /// <summary>
-        /// Applies verifications to a method's call
+        /// Applies verifications to a prop's call
         /// </summary>
         /// <typeparam name="T">The base type</typeparam>
         /// <param name="that">The Expression</param>
-        /// <param name="methods">The methods where those verification shall be applied</param>
+        /// <param name="properties">The properties where those verification shall be applied</param>
         /// <param name="validations">The verifications. Make use of <seealso cref="Surrogates.Applications.Contracts.Presume"/></param>
         /// <returns></returns>
         public static AndExpression<T> Contracts<T>(
@@ -138,11 +138,11 @@ namespace Surrogates.Applications
         }
 
         /// <summary>
-        /// Applies verifications to a method's call
+        /// Applies verifications to a prop's call
         /// </summary>
         /// <typeparam name="T">The base type</typeparam>
         /// <param name="that">The Expression</param>
-        /// <param name="method">The method where those verification shall be applied</param>
+        /// <param name="prop">The prop where those verification shall be applied</param>
         /// <param name="validations">The verifications. Make use of <seealso cref="Surrogates.Applications.Contracts.Presume"/></param>
         /// <returns></returns>
         public static AndExpression<T> Contracts<T>(

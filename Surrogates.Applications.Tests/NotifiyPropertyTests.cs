@@ -26,9 +26,13 @@ namespace Surrogates.Applications.Tests
         {
             Assert.AreEqual(item.Text, value);
         }
+        private void TextsAreNotEqual(Simpleton item, object value)
+        {
+            Assert.AreNotEqual(item.Text, value);
+        }
 
         [Test]
-        public void SimpleNotifyBeforeTest()
+        public void SimpleNotifyBeforeTest4Collections()
         {
             Container.Map(m => m
                 .From<SimpletonList>()
@@ -62,13 +66,12 @@ namespace Surrogates.Applications.Tests
         }
 
         [Test]
-        public void SimpleNotifyAfterTest()
+        public void SimpleNotifyAfterTest4Collections()
         {
             Container.Map(m => m
                 .From<SimpletonList>()
                 .Apply
-                .NotifyChanges<SimpletonList, Simpleton>(after: (l, i, v) => TextsAreEqual(i, v)))
-            .Save();
+                .NotifyChanges<SimpletonList, Simpleton>(after: (l, i, v) => TextsAreEqual(i, v)));
 
             var proxyList = Container
                 .Invoke<SimpletonList>();
@@ -86,6 +89,92 @@ namespace Surrogates.Applications.Tests
             proxyList[0].Text = "Index zero, changed!";
             proxyList[1].Text = "Index one, changed!";
             proxyList[2].Text = "Index two, changed!";
+        }
+
+
+        [Test]
+        public void NotifyBeforeEventsTest4Collections()
+        {
+            Container.Map(m => m
+                .From<SimpletonList>()
+                .Apply
+                .NotifyChanges<SimpletonList, Simpleton>())
+            .Save();
+
+            var proxyList = Container
+                .Invoke<SimpletonList>();
+
+            var simpleton =
+                new Simpleton() { Text = "0", _fieldValue = 258 };
+
+            var list = 
+                proxyList as IContainsNotifier4<SimpletonList, Simpleton>;
+
+            list.ListNotifierInterceptor.Before += this.Listen1;
+
+            proxyList.Add(simpleton);
+            proxyList.Add(null);
+            proxyList.Add(null);
+
+            proxyList[1] = new Simpleton() { Text = "1" };
+            proxyList.Insert(2, new Simpleton() { Text = "2" });
+
+            proxyList[0].Text = "Index zero, changed!";
+            proxyList[1].Text = "Index one, changed!";
+            proxyList[2].Text = "Index two, changed!";
+        }
+
+        [Test]
+        public void NotifyAfterEventsTest4Collections()
+        {
+            Container.Map(m => m
+                .From<SimpletonList>()
+                .Apply
+                .NotifyChanges<SimpletonList, Simpleton>());
+
+            var proxyList = Container
+                .Invoke<SimpletonList>();
+
+            var simpleton =
+                new Simpleton() { Text = "0", _fieldValue = 258 };
+
+            var list = 
+                proxyList as IContainsNotifier4<SimpletonList, Simpleton>;
+
+            list.ListNotifierInterceptor.After += (l, i, v) => TextsAreEqual(i, v);
+
+            proxyList.Add(simpleton);
+            proxyList.Add(null);
+            proxyList.Add(null);
+
+            proxyList[1] = new Simpleton() { Text = "1" };
+            proxyList.Insert(2, new Simpleton() { Text = "2" });
+
+            proxyList[0].Text = "Index zero, changed!";
+            proxyList[1].Text = "Index one, changed!";
+            proxyList[2].Text = "Index two, changed!";
+        }
+
+        [Test]
+        public void NotifyAfterEventsTest()
+        {
+            Container.Map(m => m
+                .From<Simpleton>()
+                .Apply
+                .NotifyChanges());
+
+            var proxy = Container
+                .Invoke<Simpleton>();
+
+            var simpleton =
+                new Simpleton() { Text = "0", _fieldValue = 258 };
+
+            var simple =
+                proxy as IContainsNotifier4<Simpleton>;
+
+            simple.NotifierInterceptor.Before += TextsAreNotEqual;
+
+            proxy.Text = "Index zero, changed!";
         }
     }
 }

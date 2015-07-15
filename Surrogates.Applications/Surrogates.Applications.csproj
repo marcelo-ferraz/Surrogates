@@ -46,6 +46,8 @@
     <Compile Include="Contracts\ContractsInterceptor.cs" />
     <Compile Include="LazyLoading\ILazyLoadingInterceptor.cs" />
     <Compile Include="LazyLoading\LazyProperty.cs" />
+    <Compile Include="NotifyChanges\NotifierBeforeAndAfter.cs" />
+    <Compile Include="NotifyChanges\IContainsNotifier4.cs" />
     <Compile Include="Pooling\IContainsPool.cs" />
     <Compile Include="Utilities\CollectionMixins.cs" />
     <Compile Include="Utilities\Locked4RW.cs" />

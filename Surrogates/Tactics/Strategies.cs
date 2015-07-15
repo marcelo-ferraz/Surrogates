@@ -3,6 +3,7 @@ using Surrogates.Model.Entities;
 using Surrogates.Utilities.Mixins;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -76,7 +77,7 @@ namespace Surrogates.Tactics
         private void CreateDefaultNewProperties()
         {
             if (this.Accesses.HasFlag(Access.StateBag) && !this.NewProperties.Any(p => p.Name == "StateBag"))
-            { this.StateBagProperty = this.AddProperty<dynamic>("StateBag"); }
+            { this.StateBagProperty = this.AddProperty<ExpandoObject>("StateBag"); }
 
             if (this.Accesses.HasFlag(Access.Container) && !this.NewProperties.Any(p => p.Name == "Container"))
             { this.ContainerProperty = this.AddProperty<SurrogatesContainer>("Container"); }
@@ -171,8 +172,7 @@ namespace Surrogates.Tactics
             }            
 
             this.CreateConstructor();
-
-
+            
             foreach (var @interface in NewInterfaces)
             { this.Builder.AddInterfaceImplementation(@interface); }
 

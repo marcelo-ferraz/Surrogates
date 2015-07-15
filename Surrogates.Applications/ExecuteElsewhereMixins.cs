@@ -21,11 +21,11 @@ namespace Surrogates.Applications
         }
 
         /// <summary>
-        /// Change the nature of the call of this method
+        /// Change the nature of the call of this prop
         /// </summary>
         /// <typeparam name="T">The base type</typeparam>
         /// <param name="self">The expression</param>
-        /// <param name="method"></param>
+        /// <param name="prop"></param>
         /// <returns></returns>
         public static ElsewhereExpression<T> Calls<T>(this ApplyExpression<T> self, Func<T, Delegate> method)
         {
@@ -33,11 +33,11 @@ namespace Surrogates.Applications
         }
 
         /// <summary>
-        /// Change the nature of the call of this method
+        /// Change the nature of the call of this prop
         /// </summary>
         /// <typeparam name="T">The base type</typeparam>
         /// <param name="self">The expression</param>
-        /// <param name="methods"></param>
+        /// <param name="properties"></param>
         /// <returns></returns>
         public static ElsewhereExpression<T> Calls<T>(this ApplyExpression<T> self, Func<T, Delegate>[] methods)
         {
@@ -45,11 +45,11 @@ namespace Surrogates.Applications
         }
 
         /// <summary>
-        /// Change the nature of the call of this method
+        /// Change the nature of the call of this prop
         /// </summary>
         /// <typeparam name="T">The base type</typeparam>
         /// <param name="self">The expression</param>
-        /// <param name="method"></param>
+        /// <param name="prop"></param>
         /// <returns></returns>
         public static ElsewhereExpression<T> Calls<T>(this ApplyExpression<T> self, string method)
         {
@@ -57,11 +57,11 @@ namespace Surrogates.Applications
         }
 
         /// <summary>
-        /// Change the nature of the call of this method
+        /// Change the nature of the call of this prop
         /// </summary>
         /// <typeparam name="T">The base type</typeparam>
         /// <param name="self">The expression</param>
-        /// <param name="methods"></param>
+        /// <param name="properties"></param>
         /// <returns></returns>
         public static ElsewhereExpression<T> Calls<T>(this ApplyExpression<T> self, string[] methods)
         {

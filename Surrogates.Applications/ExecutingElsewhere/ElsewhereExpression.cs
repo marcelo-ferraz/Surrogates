@@ -21,7 +21,7 @@ namespace Surrogates.Applications.ExecutingElsewhere
         /// <summary>
         /// Every call will be send to another thread, and executed there. 
         /// </summary>
-        /// <param name="andForget">About the send and forget methodology. if true, it starts the new thread and dont bother waiting for it to finish. The return of the method will be the default of the type</param>
+        /// <param name="andForget">About the send and forget methodology. if true, it starts the new thread and dont bother waiting for it to finish. The return of the prop will be the default of the type</param>
         /// <returns></returns>
         public AndExpression<T> InOtherThread(bool andForget = false)
         {

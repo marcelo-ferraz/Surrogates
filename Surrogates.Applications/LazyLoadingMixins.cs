@@ -37,6 +37,14 @@ namespace Surrogates.Applications
                 .AddProperty<ILazyLoadingInterceptor>("LazyLoadingInterceptor", new LazyLoadingInterceptor<T>());
         }
 
+        /// <summary>
+        /// Applies a lazy loading behavior to a given properties
+        /// </summary>
+        /// <typeparam name="T">The type which contains that properties</typeparam>
+        /// <param name="that">The previous expression</param>
+        /// <param name="prop">The properties</param>
+        /// <param name="loader">The loader of that properties</param>
+        /// <returns></returns>
         public static AndExpression<T> LazyLoading<T>(this ApplyExpression<T> that, Func<T, object> prop, Func<string, T, object> loader)
         {
             var ext = new ShallowExtension<T>();
@@ -49,6 +57,14 @@ namespace Surrogates.Applications
                 .LazyLoading(ext, loader);
         }
 
+        /// <summary>
+        /// Applies a lazy loading behavior to a given set of properties
+        /// </summary>
+        /// <typeparam name="T">The type which contains that properties</typeparam>
+        /// <param name="that">The previous expression</param>
+        /// <param name="props">Those properties</param>
+        /// <param name="loader">The loader of those properties</param>
+        /// <returns></returns>
         public static AndExpression<T> LazyLoading<T>(this ApplyExpression<T> that, Func<T, object>[] props, Func<string, T, object> loader)
         {
             var ext = new ShallowExtension<T>();
@@ -60,6 +76,15 @@ namespace Surrogates.Applications
                 .These(props)
                 .LazyLoading(ext, loader);
         }
+        
+        /// <summary>
+        /// Applies a lazy loading behavior to a given properties
+        /// </summary>
+        /// <typeparam name="T">The type which contains that properties</typeparam>
+        /// <param name="that">The previous expression</param>
+        /// <param name="prop">The properties's name</param>
+        /// <param name="loader">The loader of that properties</param>
+        /// <returns></returns>
         public static AndExpression<T> LazyLoading<T>(this ApplyExpression<T> that, string prop, Func<string, T, object> loader)
         {
             var ext = new ShallowExtension<T>();
@@ -72,6 +97,14 @@ namespace Surrogates.Applications
                 .LazyLoading(ext, loader);
         }
 
+        /// <summary>
+        /// Applies a lazy loading behavior to a given set of properties
+        /// </summary>
+        /// <typeparam name="T">The type which contains that properties</typeparam>
+        /// <param name="that">The previous expression</param>
+        /// <param name="props">Those properties</param>
+        /// <param name="loader">The loader of those properties</param>
+        /// <returns></returns>
         public static AndExpression<T> LazyLoading<T>(this ApplyExpression<T> that, string[] props, Func<string, T, object> loader)
         {
             var ext = new ShallowExtension<T>();
