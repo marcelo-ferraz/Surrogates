@@ -20,8 +20,7 @@ namespace Surrogates.Tests.Github.Examples.RegularJoe
                 .And
                 .Replace
                 .Method("Calculate")
-                .Using<TwoKids>("NewMethod"))
-                .Save();
+                .Using<TwoKids>("NewMethod"));
         }
 
         [Test]

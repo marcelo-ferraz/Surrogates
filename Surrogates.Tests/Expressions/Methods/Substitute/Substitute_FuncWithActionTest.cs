@@ -109,7 +109,7 @@ namespace Surrogates.Tests.Expressions.Methods.Substitute
                 .From<Dummy>()
                 .Replace
                 .This(d => (Func<int>)d.Call_SetPropText_simple_Return_1)
-                .Using<InterferenceObject>(r => (Action<dynamic>) r.SetPropText_InstanceAndMethodName)).Save();
+                .Using<InterferenceObject>(r => (Action<dynamic>) r.SetPropText_InstanceAndMethodName));
 
             var dummy =
                 new Dummy();

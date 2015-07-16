@@ -15,7 +15,7 @@ namespace Surrogates.Tests.Expressions.Methods.Disable
             container.Map(m => m
                 .From<Dummy>()
                 .Disable
-                .Method("SetPropText_simple")).Save();
+                .Method("SetPropText_simple"));
 
             var dummy =
                 new Dummy();
@@ -37,7 +37,7 @@ namespace Surrogates.Tests.Expressions.Methods.Disable
             container.Map(m => m
                 .From<Dummy>()
                 .Disable
-                .This(d => (Func<int>)d.Call_SetPropText_simple_Return_1)).Save();
+                .This(d => (Func<int>)d.Call_SetPropText_simple_Return_1));
 
             var dummy =
                 new Dummy();

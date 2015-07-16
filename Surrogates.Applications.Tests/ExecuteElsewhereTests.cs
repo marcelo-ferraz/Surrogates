@@ -32,7 +32,7 @@ namespace Surrogates.Applications.Tests
             Container.Map(m =>
                 m.From<Simpleton>()
                 .Apply
-                .Calls(s => (Func<string>)s.GetThreadName).InOtherThread()).Save();
+                .Calls(s => (Func<string>)s.GetThreadName).InOtherThread());
 
             var simple = new Simpleton();
             var proxy = Container.Invoke<Simpleton>();

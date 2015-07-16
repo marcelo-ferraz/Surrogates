@@ -93,7 +93,7 @@ namespace Surrogates.Tests.Expressions._Properties
                 .Visit
                 .This(d => d.AccessItWillThrowException)
                 .Accessors(a =>
-                    a.Getter.Using<InterferenceObject>(d => (Action<Dummy, int>) d.SetPropText_TypeName))).Save();                              
+                    a.Getter.Using<InterferenceObject>(d => (Action<Dummy, int>) d.SetPropText_TypeName)));                              
 
             var proxy =
                 container.Invoke<Dummy>();
