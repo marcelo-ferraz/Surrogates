@@ -1,23 +1,14 @@
 #Welcome to Surrogates
-Leave your code simple and direct, by doing exactly what it says. Then, to a client, provide a very sophisticated facade that will have separated concerns and responsibilities. 
+Leave your code simple and direct, by doing exactly what it says. Then, to a client, provide a very sophisticated façade that will have separated concerns and responsibilities. 
 Those features can be reused for many other porpoises.      
 
 ><i class="icon-quote-left"></i>*"Keep your business code **simple**"*<i class="icon-quote-right"></i>
 
-Surrogates is a direct and versatile object masher, which injects aspects and features into any code.
-It hooks on your regular OOP and enables you to add highly abstracted features that otherwise would imply in many replicated lines of code, inheritance, helpers and maintenance.     
+Surrogates is a direct and versatile object masher, which injects aspects and functionalities into any code.
+It hooks on your regular OOP and ables you to add highly abstracted features that otherwise would imply in many replicated lines of code, inheritance, helpers and maintenance.     
 ><i class="icon-quote-left"></i>*"Apply any immediate, or temporary, changes to a problematic legacy code"*<i class="icon-quote-right"></i>
 
-Sometimes a legacy class or system, has to have an instrumentation logic, because some method is too expensive, or a page is bloated, or just not working. You can add those behaviors to any class that is not static.    
-Or you need to temporarily add some triggers to a project, so you can run a new one in parallel.      
-The list goes on and on. Access logic in memory, disable partially an website, create a fast and simple dependency injection logic, etc.     
->:exclamation: As this is a non-linear line of thought, **it can turn, very easily, into a big mess**. So please, **use it wisely** and **document it as much as you might think you will need**.
-
 You can find the latest version of this project at [Nuget](#www.nuget.org/packages/Surrogates/)'s site. Or the nuget in Visual Studio. It is your call.
-
->*The new [**.Applications**](#surrogatesapplications) project is now available! Please go the [its section](#surrogatesapplications) and check their premade aspects.*
-
-
 ____
 ## Table of Contents
 
@@ -277,31 +268,27 @@ Any class that has a method (public or protected) that returns an IService, can 
 ```c#
 container.Map(m => 
 	m.Throughout<SrvFactory>()
-	.Replace
-	.Method("GetService")
-	.Using<PoolInterceptor>("Intercept"));
+	 .Replace
+	 .Method("GetService")
+	 .Using<PoolInterceptor>("Intercept"));
 ```
 Or for a property, 
 ```c#
 container.Map(m => 
 	m.Throughout<Legacy>()
-	.Replace
-	.This(l => l.Service)
-	.Accessors(p => 
-		p.Getter.Using<PoolInterceptor>("Intercept"));
+	 .Replace
+	 .This(l => l.Service)
+	 .Accessors(p => 
+		 p.Getter.Using<PoolInterceptor>("Intercept"));
 ```
 When this behaviour is not desired, just delete the map.
 
-## Adding instrumentation
+Sometimes a legacy class or system, has to have an instrumentation logic, because some method is too expensive, or a page is bloated, or just not working. You can add those behaviors to any class that is not static.    
+Or you need to temporarily add some triggers to a project, so you can run a new one in parallel.      
+The list goes on and on. Access logic in memory, disable partially an website, create a fast and simple dependency injection logic, etc.     
+>:exclamation: As this is a non-linear line of thought, **it can turn, very easily, into a big mess**. So please, **use it wisely** and **document it as much as you might think you will need**.
 
-_to_be_documented_
-
-## Adding logs
-
-_to_be_documented_
-
-
-#Surrogates.Applications
+# Surrogates.Applications
 Surrogates comes with an open door for developers to create and use their own aspects. To help their endeavors, this project comes with a couple of useful extensions to the original project.
 ## The Apply property
 By making use of it, anyone can extend and improve the capabilities of the Surrogates project. There are a couple of useful helpers when developing their own extensions.
@@ -316,119 +303,38 @@ The pass class is used to expose some very needed core features of the framework
 
 
 ##Adding a Cache Aspect
-
-The model:
-```c#
-public class Simpleton
-{
-	Random _rnd = new Random();
-	
-	public virtual int GetRandom()
-	{
-		return _rnd.Next();
-	}
-	public virtual object GetNewObject()
-	{
-		return new object();
-	}
-}
-```
-The mapping syntax:
+th Cache Syntax
 ```c#
 Container.Map(m => m
-	.From<Simpleton>("SimpleCachedTest")
-	.Apply
-	.Cache(s => (Func<int>)s.GetRandom, timeout: TimeSpan.FromMilliseconds(500)));
+		.From<Simpleton>("SimpleCachedTest")
+		.Apply
+		.Cache(s => (Func<int>)s.GetRandom, timeout: TimeSpan.FromMilliseconds(500)));
 ```
-
 ##Adding a Contract Pre Validator Aspect
 _to_be_documented_
 ##Adding an Execute Elsewhere Aspect
 _to_be_documented_
 ###Executing in another Thread
-
-```c#
-public class Simpleton
-{
-	public virtual string GetThreadName()
-	{
-	        return Thread.CurrentThread.Name;
-	}
-}
-```
-
-The mapping syntax
-```c#
- Container.Map(m =>
-	 m.From<Simpleton>()
-	.Apply
-	.Calls(s => (Func<string>)s.GetThreadName).InOtherThread());
-```
-
+_to_be_documented_
 ###Executing in another Domain
-The model:
-```c#
-public class Simpleton
-{
-	public virtual string GetDomainName()
-	{
-	        return AppDomain.CurrentDomain.FriendlyName;
-	}
-}
-```
-
-The mapping syntax:
-```c#
- Container.Map(m =>
-	 m.From<Simpleton>()
-	.Apply
-	.Calls(s => (Func<string>)s.GetDomainName).InOtherDomain());
- 
- Container.Save();
-```
-
+_to_be_documented_
 ##Adding an Interlocking Aspect
-
-The model:
-```c#
-public class Simpleton
-{
-	public virtual int GetFromList(int index)
-	{
-		return List[index];
-	}
-    
-	public virtual void Add2List(int val)
-	{
-		List.Add(val);
-	}
-}
-```
-
-The mapping syntax
-```C#
-Container.Map(m =>
-	m.From<Simpleton>()
-	.Apply
-	.ReadAndWrite(s => (Func<int, int>)s.GetFromList, s => (Action<int>)s.Add2List)); 
-```
-
+_to_be_documented_
 ##Adding an Inversion of Control Aspect 
-
 The Inversion of Control (IoC) and Dependency Injection (DI) patterns are all about removing dependencies from your code, and injecting such dependencies at runtime. 
 The model:
 ```c#
 public class Simpleton
 {
-     public virtual List<int> List { get; set; }
+	public virtual List<int> List { get; set; }
 }
 ```
 The inject type
 ```c#
-public class InjectedList<T> : List<T>
-{
-	public int Value { get; set; }
-}
+	public class InjectedList<T> : List<T>
+	{
+	    public int Value { get; set; }
+	}
 ```
 The mapping syntax:
 ```c#
@@ -436,33 +342,32 @@ Container.Map(m => m
 	.From<Simpleton>()
 	.Apply
 	.IoCFor(s => s.List)
-	.Implying<InjectedList<int>>());
+	.Injecting<InjectedList<int>>());
 ```
 ##Adding a Lazy Loading Aspect 
-
-One of the most admirable features of [Nhibernate](http://nhforge.org/) has to be the lazy loading feature. To be able to create a domain model clean, without a single infrastructure feature, and it will have, even then, a high level feature, it is something to be inspired.    
+One of the most admirable features of [Nhibernate](http://nhforge.org/) has to be the lazy loading feature. To be able to create a domain model clean, without a single infrastructure feature, and it will have, even then, a high level feature, it is something to be inspired.     
 Following you will find one example on how to do it.    
 The model:
 ```c#
 public class Simpleton
 {
-	public virtual string Text { get; set; }
+    public virtual string Text { get; set; }
 }
 ```
 The mapping syntax:
 ```c#
 Container.Map(m =>
-	m.From<Simpleton>()
-	.Apply
-	.LazyLoading(s => s.Text, loader: Load))
+    m.From<Simpleton>()
+    .Apply
+    .LazyLoading(s => s.Text, loader: Load))
 ```
 To recover the "**dirty**" properties you can box it as ```IContainsLazyLoadings```, and through the ```LazyLoadingInterceptor``` property you can retrieve all properties:
 ```c#
 var holder = Container.Invoke<Simpleton>() as IContainsLazyLoadings;
             
 var intProperties = holder
-	.LazyLoadingInterceptor
-	.Properties;
+    .LazyLoadingInterceptor
+    .Properties;
 ```
 
 ##Adding a Notify Property Change Aspect 
@@ -482,5 +387,8 @@ Container.Map(m => m
     .Apply
     .NotifyChanges<SimpletonList, Simpleton>(after: (l, i, v) => TextsAreEqual(i, v)));
 ```
-
+## Adding instrumentation
+_to_be_documented_
+## Adding logs
+_to_be_documented_
 
