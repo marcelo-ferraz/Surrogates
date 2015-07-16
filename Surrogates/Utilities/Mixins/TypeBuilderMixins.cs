@@ -138,6 +138,10 @@ namespace Surrogates.Utilities.Mixins
 
                     getIL.Emit(OpCodes.Ldarg_0);
                     getIL.Emit(OpCodes.Ldfld, f);
+
+                    if (f.FieldType != type)
+                    { getIL.Emit(OpCodes.Castclass, type); }
+                    
                     getIL.Emit(OpCodes.Ret);
 
                     return getterBuilder;
@@ -159,7 +163,11 @@ namespace Surrogates.Utilities.Mixins
 
                     setIL.Emit(OpCodes.Ldarg_0);
                     setIL.Emit(OpCodes.Ldarg_1);
-                    setIL.Emit(OpCodes.Stfld, f);
+                    
+                    if (f.FieldType != type)
+                    { setIL.Emit(OpCodes.Castclass, type); }
+
+                    setIL.Emit(OpCodes.Stfld, f);                    
                     setIL.Emit(OpCodes.Ret);
 
                     return setterBuilder;

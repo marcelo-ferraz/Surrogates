@@ -40,7 +40,7 @@ namespace Surrogates.Model.Entities
 
         public void Add(string key, object value)
         {
-            _dictionary.Add(key, value);
+            _dictionary.Add(key, value);    
         }
 
         public bool ContainsKey(string key)

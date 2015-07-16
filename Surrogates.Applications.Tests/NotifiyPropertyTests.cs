@@ -37,8 +37,7 @@ namespace Surrogates.Applications.Tests
             Container.Map(m => m
                 .From<SimpletonList>()
                 .Apply
-                .NotifyChanges<SimpletonList, Simpleton>(before: this.Listen1))
-            .Save();
+                .NotifyChanges<SimpletonList, Simpleton>(before: this.Listen1));
 
             var proxyList = Container
                 .Invoke<SimpletonList>();
@@ -71,7 +70,7 @@ namespace Surrogates.Applications.Tests
             Container.Map(m => m
                 .From<SimpletonList>()
                 .Apply
-                .NotifyChanges<SimpletonList, Simpleton>(after: (l, i, v) => TextsAreEqual(i, v)));
+                .NotifyChanges<SimpletonList, Simpleton>(after: (l, i, v) => TextsAreEqual(i, v))).Save();
 
             var proxyList = Container
                 .Invoke<SimpletonList>();
