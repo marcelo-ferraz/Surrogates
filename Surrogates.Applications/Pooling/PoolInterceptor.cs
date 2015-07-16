@@ -32,8 +32,8 @@ namespace Surrogates.Applications.Pooling
                         if (lockAcquired = (base.Pool == null && (Monitor.TryEnter(_sync, 500) && !this._initiated)))
                         {                            
                             base.Pool = new Pool<T>(
-                                (int)bag.Size,
-                                p => s_Container.Invoke<T>(stateBag: this),
+                                (int) bag.Size,
+                                p => s_Container.Invoke<T>(stateBag: b => b.Getter = this),
                                 (LoadingMode)bag.LoadingMode,
                                 (AccessMode)bag.AccessMode);
 

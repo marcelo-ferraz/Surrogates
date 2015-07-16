@@ -58,7 +58,9 @@
     <Compile Include="MethodNotFoundException.cs" />
     <Compile Include="Model\Entities\BaseMethods.cs" />
     <Compile Include="Model\Entities\Defaults.cs" />
+    <Compile Include="Model\Entities\DynamicObj.cs" />
     <Compile Include="Model\Entities\Entry.cs" />
+    <Compile Include="Model\Entities\IContainsStateBag.cs" />
     <Compile Include="Model\Entities\NewAttribute.cs" />
     <Compile Include="Model\Entities\NewProperty.cs" />
     <Compile Include="Model\Entities\OverridenMethod.cs" />

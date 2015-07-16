@@ -118,12 +118,12 @@ namespace Surrogates.Applications.Pooling
         private int _count;
         private Semaphore _sync;
 
-        private Func<Pool<T>, T> _factory;        
+        private Func<Pool<T>, dynamic> _factory;
 
-        public Pool(int size, Func<Pool<T>, T> factory)
+        public Pool(int size, Func<Pool<T>, dynamic> factory)
             : this(size, factory, LoadingMode.Lazy, AccessMode.FIFO) { }
 
-        public Pool(int size, Func<Pool<T>, T> factory, LoadingMode loadingMode, AccessMode accessMode)
+        public Pool(int size, Func<Pool<T>, dynamic> factory, LoadingMode loadingMode, AccessMode accessMode)
         {
             if (size <= 0)
             { 

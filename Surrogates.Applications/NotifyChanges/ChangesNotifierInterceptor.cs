@@ -12,11 +12,9 @@ namespace Surrogates.Applications.NotifyChanges
         public override event Action<T, object> After;
 
         public void Set(dynamic s_StateBag, Delegate s_Before, Delegate s_After, T s_instance, Delegate s_method, object s_value)
-        {
-            var bag = s_StateBag as IDictionary<String, object>;
-            
+        {            
             // global list call
-            if (s_StateBag != null && bag.ContainsKey("Before")) 
+            if (s_StateBag != null) 
             { Call(s_StateBag.Before, s_instance, s_value); }
             
             // global call
@@ -28,7 +26,7 @@ namespace Surrogates.Applications.NotifyChanges
             s_method.DynamicInvoke(s_value);
             
             // global list call
-            if (s_StateBag != null && bag.ContainsKey("After"))
+            if (s_StateBag != null)
             { Call(s_StateBag.After, s_instance, s_value); }
             
             // global call

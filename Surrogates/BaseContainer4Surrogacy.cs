@@ -41,7 +41,7 @@ namespace Surrogates
         /// <typeparam name="T">The base type</typeparam>
         /// <param name="name">The choosen name</param>
         /// <returns></returns>
-        public abstract T Invoke<T>(string name = null, dynamic stateBag = null, params object[] args);
+        public abstract T Invoke<T>(string name = null, Action<dynamic> stateBag = null, params object[] args);
 
         /// <summary>
         /// Invokes the asked surrogated type, either by name, or by the base type
@@ -49,14 +49,14 @@ namespace Surrogates
         /// <param name="type">The base type</typeparam>
         /// <param name="name">The choosen name</param>
         /// <returns></returns>
-        public abstract object Invoke(Type type, string name = null, dynamic stateBag = null, params object[] args);
+        public abstract object Invoke(Type type, string name = null, Action<dynamic> stateBag = null, params object[] args);
         
         /// <summary>
         /// Invokes the asked surrogated type, by name
         /// </summary>
         /// <param name="name">The choosen name</param>
         /// <returns></returns>
-        public abstract object Invoke(string name = null, dynamic stateBag = null, params object[] args);
+        public abstract object Invoke(string name = null, Action<dynamic> stateBag = null, params object[] args);
 
         /// <summary>
         /// Adds a map of what needs to be changed in the instance into the container
@@ -77,12 +77,15 @@ namespace Surrogates
 
             try
             {
-                if (!Monitor.TryEnter(AppDomain.CurrentDomain))
-                { throw new ExecutionEngineException("It was not possible qo aquire the lock for the domain."); }
+                try { } finally
+                {
+                    if (!Monitor.TryEnter(AppDomain.CurrentDomain))
+                    { throw new ExecutionEngineException("It was not possible qo aquire the lock for the domain."); }
 
-                AssemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
-                    new AssemblyName(string.Concat("Dynamic.Proxies_", _assemblyNumber)),
-                    AssemblyBuilderAccess.RunAndSave);
+                    AssemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
+                        new AssemblyName(string.Concat("Dynamic.Proxies_", _assemblyNumber)),
+                        AssemblyBuilderAccess.RunAndSave);
+                }
             }
             finally { Monitor.Exit(AppDomain.CurrentDomain); }
 
@@ -170,7 +173,7 @@ namespace Surrogates
         public virtual void Save()
         {
             AssemblyBuilder.Save(string.Concat(AssemblyBuilder.GetName().Name, ".dll"));
-            //TODO: save the dictionary, with all the types, surrogates and names serialized in a file
+            //TODO: save the _dictionary, with all the types, surrogates and names serialized in a file
         }
     }
 }

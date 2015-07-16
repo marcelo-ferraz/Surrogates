@@ -77,7 +77,10 @@ namespace Surrogates.Tactics
         private void CreateDefaultNewProperties()
         {
             if (this.Accesses.HasFlag(Access.StateBag) && !this.NewProperties.Any(p => p.Name == "StateBag"))
-            { this.StateBagProperty = this.AddProperty<ExpandoObject>("StateBag"); }
+            {
+                this.NewInterfaces.Add(typeof(IContainsStateBag));
+                this.StateBagProperty = this.AddProperty<DynamicObj>("StateBag"); 
+            }
 
             if (this.Accesses.HasFlag(Access.Container) && !this.NewProperties.Any(p => p.Name == "Container"))
             { this.ContainerProperty = this.AddProperty<SurrogatesContainer>("Container"); }

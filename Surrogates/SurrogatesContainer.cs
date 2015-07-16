@@ -1,4 +1,5 @@
 ﻿using Surrogates.Expressions;
+using Surrogates.Model.Entities;
 using System;
 
 namespace Surrogates
@@ -15,7 +16,7 @@ namespace Surrogates
         /// <typeparam name="T">The base type</typeparam>
         /// <param name="name">The choosen name</param>
         /// <returns></returns>
-        public override T Invoke<T>(string name = null, dynamic stateBag = null, params object[] args)
+        public override T Invoke<T>(string name = null, Action<dynamic> stateBag = null, params object[] args)
         {
             return (T)Invoke(typeof(T), name, stateBag, args);
         }
@@ -26,7 +27,7 @@ namespace Surrogates
         /// <param name="type">The base type</typeparam>
         /// <param name="name">The choosen name</param>
         /// <returns></returns>
-        public override object Invoke(Type type, string name = null, dynamic stateBag = null, params object[] args)
+        public override object Invoke(Type type, string name = null, Action<dynamic> stateBag = null, params object[] args)
         {
             if (string.IsNullOrEmpty(name))
             { name = string.Concat(type.Name, "Proxy"); }
@@ -39,7 +40,7 @@ namespace Surrogates
         /// </summary>
         /// <param name="name">The choosen name</param>
         /// <returns></returns>
-        public override object Invoke(string name, dynamic stateBag = null, params object[] args)
+        public override object Invoke(string name, Action<dynamic> stateBag = null, params object[] args)
         {
             var entry = Cache[name];
 
@@ -47,7 +48,9 @@ namespace Surrogates
                 .CreateInstance(entry.Type, args);
 
             if (entry.StateProperty != null && stateBag != null)
-            { entry.StateProperty.SetValue(obj, stateBag, null); }
+            {
+                stateBag(((IContainsStateBag)obj).StateBag);                
+            }
 
             if (entry.ContainerProperty != null)
             { entry.ContainerProperty.SetValue(obj, this, null); }

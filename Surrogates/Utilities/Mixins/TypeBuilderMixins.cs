@@ -26,7 +26,7 @@ namespace Surrogates.Utilities.Mixins
                 typeof(string),
                 typeof(Func<,>).MakeGenericType(typeof(object), typeof(Delegate)));
 
-            // gets the Add method from dictionary
+            // gets the Add method from _dictionary
             var dicAddMethod = dicType.GetMethod("Add");
 
             // creates the _baseMethods field

@@ -22,7 +22,7 @@ namespace Surrogates.Tests.Expressions.Methods.Visit
                 new Dummy();
 
             var proxy =
-                container.Invoke<Dummy>(args: "nhonho", stateBag: "n?eder");
+                container.Invoke<Dummy>(args: "nhonho", stateBag: bag => bag.Text = "n?eder");
 
             var dummyRes = 
                 dummy.Call_SetPropText_simple_Return_1();

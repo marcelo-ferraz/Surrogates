@@ -2,6 +2,7 @@
 using Surrogates.Utilities.WhizzoDev;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 
 namespace Surrogates.Applications.NotifyChanges
 {
@@ -31,10 +32,10 @@ namespace Surrogates.Applications.NotifyChanges
                     _emptyAction;
                                 
                 var newItem = s_Container.Invoke<I>(
-                    stateBag: new 
-                    { 
-                        Before = before,
-                        After =  after
+                    stateBag: bag =>
+                    {
+                        bag.Before = before;
+                        bag.After = after;
                     });
 
                 #region Observations
