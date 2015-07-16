@@ -250,7 +250,7 @@ asyncResult.AsyncWaitHandle.WaitOne();
 ```
 ___
 
-# <i class="icon-align-left"></i> Usages
+#<i class="icon-align-left"></i> Usages
 ## Creating a pool aspect
 Take a simple factory:
 ```c#
