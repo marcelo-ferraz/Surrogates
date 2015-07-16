@@ -21,13 +21,13 @@ namespace Surrogates.Utilities
             }
 
             // get the instance if the parameter of the interceptor is named instance
-            if (strategy.Accesses.HasFlag(Access.Instance) && param.IsInstance(strategy.BaseType))
+            if (strategy.Accesses.HasFlag(Access.Instance) && param.Is4Instance(strategy.BaseType))
             {
                 gen.Emit(OpCodes.Ldarg_0);
                 return;
             }
 
-            if (param.IsSelfArguments())
+            if (param.Is4SelfArguments())
             {
                 gen.Emit(OpCodes.Ldloc, overriden.Locals["Args"]);
                 return;
@@ -45,13 +45,13 @@ namespace Surrogates.Utilities
             }
 
             // tries to add any field as parameter 
-            if (isSpecialParam &&
+            if (param.Is4AnyField() &&
                 strategy.Accesses.HasFlag(Access.AnyField) &&
                 Try2Add.AnyFieldAsParameter(gen, strategy.BaseType, strategy.Fields, param, param.ParameterType))
             { return; }
 
             // tries to add any property as parameter 
-            if (isSpecialParam &&
+            if (param.Is4anyProperty() &&
                 strategy.Accesses.HasFlag(Access.AnyBaseProperty) &&
                 Try2Add.AnyBasePropertyAsParameter(gen, strategy.BaseType, strategy.Fields, param, param.ParameterType))
             { return; }
@@ -62,7 +62,7 @@ namespace Surrogates.Utilities
                 Try2Add.AnyNewPropertyAsParameter(gen, strategy.BaseType, strategy.NewProperties, param, param.ParameterType))
             { return; }
 
-            if (param.IsSelfMethod(originalMethod))
+            if (param.Is4SelfMethod(originalMethod))
             {
                 gen.Emit(OpCodes.Ldloc, overriden.Locals["S_Method"]);
                 return;

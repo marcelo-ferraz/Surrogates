@@ -22,13 +22,13 @@ namespace Surrogates.Utilities
 
             foreach (var param in interceptor.Method.GetParameters())
             {
-                if (param.IsSelfArguments() && !has("Args"))
+                if (param.Is4SelfArguments() && !has("Args"))
                 {
                     overriden.Locals.Add("Args", 
                         SetLocals4.ArgsParam(overriden.Generator, param, baseMethod.GetParameters()));
                 }
 
-                else if (param.IsSelfMethod(baseMethod) && !has("S_Method"))
+                else if (param.Is4SelfMethod(baseMethod) && !has("S_Method"))
                 {
                     overriden.Locals.Add("S_Method",
                         SetLocals4.OriginalMethodAsParameter(overriden.Generator, baseMethod, param, strat.BaseMethods.Field));

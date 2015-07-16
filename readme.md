@@ -154,44 +154,78 @@ _(The order does not matter.)_
    
 # Special Parameters
 For all that it matters, just being able to execute an action in a method, inside another just seem too limited, so this framework  made some special parameters to be used, hopefully, a lot. 
-Those special parameters are different for Methods and for Properties.      
+Those special parameters can be different for methods and for properties.      
 
-## Special Parameters for Properties
-Type       | Parameter     | Contents
---------   |---------------| -------------
-`System.String`   | __s_name__    | it contains the original property's name
-Same or one that can be inferred from the original parameter | __s_value__     | it contains the value of the value set to the property. This only works for the setter, otherwise, it will be passed as `default(type)` 
-Same or can be inferred from the original class | __s_instance__      | It contains a pointer to the instance of the original class     
-
-## Special Parameters for methods
 Type       | Parameter     | Contents
 --------   |---------------| -------------
 `System.Object[]` | __s_arguments__     | It contains the value of all arguments of that original method 
+Same, can be inferred from the original class or ``object`` | __s_instance__      | It contains a pointer to the instance of the original class  
+`System.Delegate` or the equivalent in either `System.Action<T, ...>` or `System.Func<T...>` | **s_method** or the __s___ + **same name** of the original, __in any case__ | It contains a pointer to the original method. For more information on how to use this argument, [click here](#methodParameter)   
+Same, can be inferred from the original class or ``object`` | __f___ + original field name | It contains a either the value or the reference of a given field
+Same, can be inferred from the original class or ``object`` | __p___ + original field name | It contains a either the value or the reference of a given property
+
+## Special Parameters only for properties
+These are the parameters only available to property's interception.
+Type       | Parameter     | Contents
+--------   |---------------| -------------
+`System.String`   | __s_name__    | it contains the original property's name
+Same, one that can be inferred from the original parameter or ``object`` | __s_value__     | it contains the value of the value set to the property. This only works for the setter, otherwise, it will be passed as `default(type)` 
+ 
+## Special Parameters only for methods
+These are the parameters only available to method's interception.
+Type       | Parameter     | Contents
+--------   |---------------| -------------
 `System.String`   | __s_name__    | It contains the original method's name
-Same or one that can be inferred from the original class | __s_instance__      | It contains a pointer to the instance of the original class 
-`System.Delegate` or the equivalent in either `System.Action<T, ...>` or `System.Func<T...>` | **s_method** or the __s___ + **same name** of the original, __in any case__ | It contains a pointer to the original method. For more information on how to use this argument, [click here](#methodParameter)
+
+
+##The Dynamic _ Parameter
+In order to maintain some level sanity, and to diminish the quantity of extra parameters you might want to add to your interceptor. 
+
+ - There is no reflection involved in the construction of this parameter, is just a generated subtype of your proxy,
+ - This parameter obeys the rules of access (```Surrogates.Model.Entities.Access```), declared in the mapping of the type, meaning:
+  - If it contains ``Access.Container``, it will have property named ``Container``,
+  - If it contains ``Access.StateBag``, it will have property named ``Bag``,
+  - If it contains ``Access.Instance``, it will have property named ``Holder``, 
+
+Those are the _ properties:
+
+Type       | Property     | Description
+--|--|--
+``BaseContainer4Surrogacy`` | Container | An instance of the container that created this type
+``dynamic`` | Bag	 | A state bag, which holds whatever the developer might want, set on instance
+``string``  | HolderName | The name of the type that holds this interceptor
+``object``  | Holder	 | The instance that holds this interceptor
+``string``  | CallerName | The name of the method that called this method
+``Delegate`` | Caller    | The method that called this method
+``object[]`` | Arguments | All arguments of the caller
+
+
 
 <a id="methodParameter" title="methodParameter" class="toc-item"></a>
-
-## :squirrel: The special s_method parameter
-When passing the method as parameter, there are some restrictions and a few rules, to ease its use. It can only be a protected or public instance method. 
-####How to name it:
-You can make use of the original method name, in any letter case, led by "__s___".    
+## :squirrel: The special s_method parameter and how to call any method
+When passing the method as parameter, there are some restrictions and a few rules. This passed method can only be used for a protected or public instance. 
+###How to reference the caller method:
+You can make use of the original caller method, by naming a parameter as the name of that method. Its case insensitive, led by "__s___".    
 Per example, if you have the original method named __GetCommand__, any of the following is acceptable:
 
  - __s_GetCommand__,
  - __s_getCommand__,
  - __s_getcommand__      
  
-_(You can just simply name it __s_method__, which serves for any method.)_
-###**How to type it**:
-The original method will be exposed through delegate or a derived type, like an ``System.Action`` or a ``System.Func<>``:   
+_(Or, you can just simply name it ``s_method``, and that will serve for any caller method.)_
 
-- A __`System.Delegate`__  : Making use of this type, to call the method, you can use the `DynamicInvoke` method. It accepts an array of objects and returns an object. As it calls a late-bound call as it demands boxing and unboxing, it may give a small overhead compared to regular call. 
-- The equivalent in __`System.Action<>`__ or __`System.Func<>`__, keep in mind that this is simplest and fastest, with no over heading, and no need for boxing and unboxing, in comparison to a native call, this call it will have the a very close performance.      
-The relation between a method and a Action or a function is this:
- - a method that returns __`void`__, is an [Action](#msdn.microsoft.com/en-us/library/system.action%28v=vs.90%29.aspx), if it returns something, it is a [Func<>](#msdn.microsoft.com/en-us/library/bb534960%28v=vs.90%29.aspx),
-  - the order of parameters dictate the type of such delegate: 
+###How to reference any method:
+You can make use of any method, by naming the parameter as ``m_`` + methods name. 
+Per example, the method  __GetCommand__ shall be named ``m_GetCommand``
+
+###**How to type it**:
+The method as parameter has to be exposed through a delegate or a derived type, such as ``System.Action`` or ``System.Func<>``.
+The type of this parameter has to be either:
+
+- A __`System.Delegate`__  : Making use of this type, to call the method, you can use the `DynamicInvoke` method. It accepts an array of objects and returns an object. 
+- The equivalent in __`System.Action<>`__ or __`System.Func<>`__. The relation between a method and a ``Action`` or a ``Func`` is tightly related to the signature of the method:
+ - A method that returns __`void`__, is an [Action](#msdn.microsoft.com/en-us/library/system.action%28v=vs.90%29.aspx), if it returns something, it is a [Func<>](#msdn.microsoft.com/en-us/library/bb534960%28v=vs.90%29.aspx),
+  - The order of parameters dictate the type of such delegate: 
 	  - `void Get(string s, int i)`, turns into __`System.Action<string, int>`__,  
 	   - `long Get(object obj, DateTime i)`, turns into __`System.Func<object, DateTime, log>`__, 
 
@@ -200,8 +234,8 @@ Each type will change slightly the way a method is called.
 
  Type 	                 | How to call                         
 -------------------------|--------------------------------------
- ```Delegate``` | ```s_method.DynamicInvoke(object)``` 
- ```Action<string, int>```    | ```s_method("something", 1)```, ```s_method.DynamicInvoke(new object[] { "str", 1 })```, ```s_method.Invoke("something", 1)```
+ ```Delegate```          | ```s_method.DynamicInvoke(object)``` 
+ ```Action<string, int>```    | ```s_method("something", 1)```, ```s_method.DynamicInvoke("str", 1)```, ```s_method.DynamicInvoke(new object[] { "str", 1 })```, ```s_method.Invoke("something", 1)```
  ```Func<string, int>```| ```s_method("something")```, ```s_method.DynamicInvoke("str")```, ```s_method.Invoke("something", 1)```
 
 When using ```Func<>``` or ```Action```, there is the possibility of asynchronously call the method. 

@@ -1,16 +1,17 @@
-﻿using System;
+﻿using Surrogates.Tactics;
+using System;
 using System.Reflection;
 
 namespace Surrogates.Utilities.Mixins
 {
     public static class ParameterInfoMixins
-    {
+    {        
         public static bool Is4Name(this ParameterInfo self)
         {
             return self.ParameterType == typeof(string) && self.Name == "s_name";
         }
 
-        public static bool IsSelfMethod(this ParameterInfo self, MethodInfo method)
+        public static bool Is4SelfMethod(this ParameterInfo self, MethodInfo method)
         {
             var nameMatches = 
                 !string.IsNullOrEmpty(self.Name) && 
@@ -22,7 +23,17 @@ namespace Surrogates.Utilities.Mixins
                 && typeof(Delegate).IsAssignableFrom(self.ParameterType);
         }
 
-        public static bool IsSelfArguments(this ParameterInfo self)
+        public static bool Is4AnyField(this ParameterInfo self)
+        {
+            return self.Name.StartsWith("f_");
+        }
+
+        public static bool Is4anyProperty(this ParameterInfo self)
+        {
+            return self.Name.StartsWith("p_");
+        }
+
+        public static bool Is4SelfArguments(this ParameterInfo self)
         {
             return self.ParameterType == typeof(object[]) && (self.Name == "s_arguments" || self.Name == "s_args");
         }
@@ -37,7 +48,7 @@ namespace Surrogates.Utilities.Mixins
             return self.Name.ToLower().StartsWith("m_") && typeof(Delegate).IsAssignableFrom(self.ParameterType);
         }
 
-        public static bool IsInstance(this ParameterInfo param, Type baseType)
+        public static bool Is4Instance(this ParameterInfo param, Type baseType)
         {
             return baseType.IsAssignableFrom(param.ParameterType) && (param.Name == "s_instance" || param.Name == "s_holder");
         }
