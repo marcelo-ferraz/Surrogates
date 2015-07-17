@@ -11,9 +11,6 @@ namespace Surrogates.Utilities
     {
         internal static void AnythingElseAsParameter(ILGenerator gen, Strategy strategy, OverridenMethod overriden, MethodInfo originalMethod, ParameterInfo param)
         {
-            var isSpecialParam =
-                param.Name[0] == 's' && param.Name[1] == '_';
-
             if (param.Is4Name())
             {
                 gen.Emit(OpCodes.Ldstr, originalMethod.Name);
@@ -57,7 +54,7 @@ namespace Surrogates.Utilities
             { return; }
 
             // tries to add any of the new properties as parameter 
-            if (isSpecialParam &&
+            if (param.Is4anyProperty() &&
                 strategy.Accesses.HasFlag(Access.AnyNewProperty) &&
                 Try2Add.AnyNewPropertyAsParameter(gen, strategy.BaseType, strategy.NewProperties, param, param.ParameterType))
             { return; }

@@ -13,25 +13,23 @@ namespace Surrogates.Applications.NotifyChanges
         public override event Action<L, I, object> Before;
 
         public override event Action<L, I, object> After;
-
-        private static Action<I, object> _emptyAction = new Action<I, object>((i, v) => {});
-
-        public void Set(BaseContainer4Surrogacy s_Container, Delegate s_method, object[] s_args, Action<L, I, object> s_Before, Action<L, I, object> s_After, L s_instance)            
+                
+        public void Set(BaseContainer4Surrogacy p_Container, Delegate s_method, object[] s_args, Action<L, I, object> p_Before, Action<L, I, object> p_After, L s_instance)            
         {
             var item = 
                 s_args[s_args.Length - 1];
 
             if (item != null)
             {
-                var before = s_Before != null ? 
-                    new Action<I, object>((i, v) => s_Before(s_instance, i, v)) : 
-                    _emptyAction;
+                var before = p_Before != null ? 
+                    new Action<I, object>((i, v) => p_Before(s_instance, i, v)) : 
+                    null;
 
-                var after = s_After != null ? 
-                    new Action<I, object>((i, v) => s_After(s_instance, i, v)) : 
-                    _emptyAction;
+                var after = p_After != null ? 
+                    new Action<I, object>((i, v) => p_After(s_instance, i, v)) : 
+                    null;
                                 
-                var newItem = s_Container.Invoke<I>(
+                var newItem = p_Container.Invoke<I>(
                     stateBag: bag =>
                     {
                         bag.Before = before;

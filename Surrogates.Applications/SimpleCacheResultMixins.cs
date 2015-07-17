@@ -3,7 +3,6 @@ using Surrogates.Applications.Cache.Model;
 using Surrogates.Applications.Utilities;
 using Surrogates.Expressions;
 using Surrogates.Expressions.Accessors;
-using Surrogates.Applications.Utilities;
 using Surrogates.Tactics;
 using Surrogates.Utilities;
 using System;
@@ -44,7 +43,7 @@ namespace Surrogates.Applications
         }
 
         [TargetedPatchingOptOut("")]
-        private static AndExpression<T> Cache<T>(this AndExpression<T> expr, Func<object[], object> getKey, TimeSpan? timeout)
+        private static AndExpression<T> Cache<T>(this AndExpression<T> expr, Func<object[], object> getKey, TimeSpan? timeout, IExtension<T> ext)
         {
             Func<MethodInfo, CacheParams> valueGetter = null;
 
@@ -68,10 +67,9 @@ namespace Surrogates.Applications
                             Timeout = timeout.HasValue ? timeout.Value : new TimeSpan(0, 5, 0)
                         };
             }
-
-
-            var @params = Pass
-                .Current<Strategy>(expr)
+            
+            var @params = ext
+                .Strategies
                 .MergeProperty("Params", valueGetter);
 
             return expr
@@ -80,19 +78,19 @@ namespace Surrogates.Applications
         }
 
         [TargetedPatchingOptOut("")]
-        private static AndExpression<T> Cache<T>(this InterferenceExpression<T> expr, Func<object[], object> getKey, TimeSpan? timeout)
+        private static AndExpression<T> Cache<T>(this InterferenceExpression<T> expr, Func<object[], object> getKey, TimeSpan? timeout, IExtension<T> ext)
         {
             return expr
                 .Accessors(a => a.Getter.Using<SimpleCacheInterceptor>("CacheMethod"))
-                .Cache(getKey, timeout);        
+                .Cache(getKey, timeout, ext);        
         }
 
         [TargetedPatchingOptOut("")]
-        private static AndExpression<T> Cache<T>(this UsingInterferenceExpression<T> expr, Func<object[], object> getKey, TimeSpan? timeout)
+        private static AndExpression<T> Cache<T>(this UsingInterferenceExpression<T> expr, Func<object[], object> getKey, TimeSpan? timeout, IExtension<T> ext)
         {
             return expr
                 .Using<SimpleCacheInterceptor>("CacheMethod")
-                .Cache(getKey, timeout);            
+                .Cache(getKey, timeout, ext);            
         }
 
         /// <summary>
@@ -107,12 +105,15 @@ namespace Surrogates.Applications
         [TargetedPatchingOptOut("")]
         public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, Delegate> method, Func<object[], object> key= null, TimeSpan? timeout = null)
         {
+            var ext = 
+                new ShallowExtension<T>();
+
             return Pass
-                .On<T, ShallowExtension<T>>(that)
+                .On(that, ext)
                 .Factory
                 .Replace
                 .This(method)
-                .Cache( key, timeout);
+                .Cache(key, timeout, ext);
         }
         
         /// <summary>
@@ -127,12 +128,15 @@ namespace Surrogates.Applications
         [TargetedPatchingOptOut("")]
         public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, Delegate>[] methods, Func<object[], object> key= null, TimeSpan? timeout = null)
         {
+            var ext =
+                new ShallowExtension<T>();
+
             return Pass
-                .On<T, ShallowExtension<T>>(that)
+                .On(that, ext)
                 .Factory
                 .Replace
                 .These(methods)
-                .Cache(key, timeout);
+                .Cache(key, timeout, ext);
         }
 
         /// <summary>
@@ -147,12 +151,15 @@ namespace Surrogates.Applications
         [TargetedPatchingOptOut("")]
         public static AndExpression<T> CacheMethod<T>(this ApplyExpression<T> that, string method, Func<object[], object> key= null, TimeSpan? timeout = null)
         {
+            var ext =
+                new ShallowExtension<T>();
+
             return Pass
-                .On<T, ShallowExtension<T>>(that)
+                .On(that, ext)
                 .Factory
                 .Replace
                 .Method(method)
-                .Cache(key, timeout);
+                .Cache(key, timeout, ext);
         }
 
         /// <summary>
@@ -167,12 +174,15 @@ namespace Surrogates.Applications
         [TargetedPatchingOptOut("")]
         public static AndExpression<T> CacheMethods<T>(this ApplyExpression<T> that, string[] methods, Func<object[], object> key= null, TimeSpan? timeout = null)
         {
+            var ext =
+                new ShallowExtension<T>();
+
             return Pass
-                .On<T, ShallowExtension<T>>(that)
+                .On(that, ext)
                 .Factory
                 .Replace
                 .Methods(methods)
-                .Cache(key, timeout);
+                .Cache(key, timeout, ext);
         }
 
         /// <summary>
@@ -187,12 +197,15 @@ namespace Surrogates.Applications
         [TargetedPatchingOptOut("")]
         public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, object> prop, Func<object[], object> key= null, TimeSpan? timeout = null)
         {
+            var ext =
+                new ShallowExtension<T>();
+
             return Pass
-                .On<T, ShallowExtension<T>>(that)
+                .On(that, ext)
                 .Factory
                 .Replace
                 .This(prop)
-                .Cache(key, timeout);
+                .Cache(key, timeout, ext);
         }
 
         /// <summary>
@@ -207,12 +220,15 @@ namespace Surrogates.Applications
         [TargetedPatchingOptOut("")]
         public static AndExpression<T> Cache<T>(this ApplyExpression<T> that, Func<T, object>[] properties, Func<object[], object> key= null, TimeSpan? timeout = null)
         {
+            var ext =
+                new ShallowExtension<T>();
+
             return Pass
-                .On<T, ShallowExtension<T>>(that)
+                .On(that, ext)
                 .Factory
                 .Replace
                 .These(properties)
-                .Cache(key, timeout);
+                .Cache(key, timeout, ext);
         }
 
         /// <summary>
@@ -227,12 +243,15 @@ namespace Surrogates.Applications
         [TargetedPatchingOptOut("")]
         public static AndExpression<T> CacheProperty<T>(this ApplyExpression<T> that, string propertyName, Func<object[], object> key= null, TimeSpan? timeout = null)
         {
+            var ext =
+                new ShallowExtension<T>();
+
             return Pass
-                .On<T, ShallowExtension<T>>(that)
+                .On(that, ext)
                 .Factory
                 .Replace
                 .Property(propertyName)
-                .Cache(key, timeout);
+                .Cache(key, timeout, ext);
         }
 
         /// <summary>
@@ -247,12 +266,15 @@ namespace Surrogates.Applications
         [TargetedPatchingOptOut("")]
         public static AndExpression<T> CacheProperties<T>(this ApplyExpression<T> that, string[] propertiesNames, Func<object[], object> key= null, TimeSpan? timeout = null)
         {
+            var ext =
+                new ShallowExtension<T>();
+
             return Pass
-                .On<T, ShallowExtension<T>>(that)
+                .On(that, ext)
                 .Factory
                 .Replace
                 .Properties(propertiesNames)
-                .Cache(key, timeout);
+                .Cache(key, timeout, ext);
         }
     }
 }

@@ -3,6 +3,7 @@ using Surrogates.Applications.Contracts.Collections;
 using Surrogates.Applications.Contracts.Model;
 using Surrogates.Applications.Model;
 using Surrogates.Expressions;
+using Surrogates.Tactics;
 using Surrogates.Utilities;
 using Surrogates.Utilities.Mixins;
 using System;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using Surrogates.Applications.Utilities;
 
 namespace Surrogates.Applications
 {
@@ -27,7 +29,7 @@ namespace Surrogates.Applications
                     ((AssertionList4Parameters)ass).Validators);
 
             var preValidators =
-                new Dictionary<string, Action<object[]>>();
+                new Dictionary<IntPtr, Action<object[]>>();
 
             AndExpression<T> expr = null;
 
@@ -38,22 +40,31 @@ namespace Surrogates.Applications
 
                 if (preValidator == null) { continue; }
 
-                if (preValidators.ContainsKey(method.Name))
+                var handle = 
+                    method.MethodHandle.Value;
+
+                if (preValidators.ContainsKey(method.MethodHandle.Value))
                 {
-                    preValidators[method.Name] = (Action<object[]>)
-                        Delegate.Combine(preValidators[method.Name], preValidator);
+                    preValidators[handle] = 
+                        (Action<object[]>)
+                        Delegate.Combine(preValidators[handle], preValidator);
                 }
-                else 
-                { preValidators.Add(method.Name, preValidator); }
+                else
+                { preValidators.Add(handle, preValidator); }
 
                 expr = (expr != null ? expr.And : ext.Factory)
                     .Replace
                     .Method(method.Name)
                     .Using<ContractsInterceptor<T>>("ValidateBeforeExecute");
             }
+
+            preValidators = ext
+                .Strategies
+                .MergeProperty("PreValidators", preValidators);
             
-            return expr.And
-                .AddProperty<Dictionary<string, Action<object[]>>>("PreValidators", preValidators);
+            return expr
+                .And
+                .AddProperty<Dictionary<IntPtr, Action<object[]>>>("PreValidators", preValidators);
         }
 
         private static Action<object[]> GetPreValidator4ThisMethod(MethodInfo method, IEnumerable<AssertionEntry4Parameters> validators)

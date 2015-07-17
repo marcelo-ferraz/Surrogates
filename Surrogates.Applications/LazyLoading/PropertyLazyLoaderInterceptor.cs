@@ -48,13 +48,13 @@ namespace Surrogates.Applications.LazyLoading
         /// <param name="s_instance">the instance that holds that properties</param>
         /// <param name="s_Loaders">the loader collection that will contain the loader for such properties</param>
         /// <returns>the value of that properties</returns>
-        public object Load(string s_name, T s_instance, Dictionary<string, Func<string, T, object>> s_Loaders)
+        public object Load(string s_name, T s_instance, Dictionary<string, Func<string, T, object>> p_Loaders)
         {
             var prop =
                 GetPropInfo(s_name);
 
             return prop.Value == null ?
-                (prop.Value = s_Loaders[s_name](s_name, s_instance)) :
+                (prop.Value = p_Loaders[s_name](s_name, s_instance)) :
                 prop.Value;
         }
 

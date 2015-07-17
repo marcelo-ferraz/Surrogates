@@ -11,14 +11,14 @@ namespace Surrogates.Applications.NotifyChanges
 
         public override event Action<T, object> After;
 
-        public void Set(dynamic s_StateBag, Delegate s_Before, Delegate s_After, T s_instance, Delegate s_method, object s_value)
+        public void Set(dynamic p_StateBag, Delegate p_Before, Delegate p_After, T s_instance, Delegate s_method, object s_value)
         {            
             // global list call
-            if (s_StateBag != null) 
-            { Call(s_StateBag.Before, s_instance, s_value); }
+            if (p_StateBag != null)
+            { Call(p_StateBag.Before, s_instance, s_value); }
             
             // global call
-            Call(s_Before, s_instance, s_value); 
+            Call(p_Before, s_instance, s_value); 
 
             // instance call
             Call(this.Before, s_instance, s_value); 
@@ -26,11 +26,11 @@ namespace Surrogates.Applications.NotifyChanges
             s_method.DynamicInvoke(s_value);
             
             // global list call
-            if (s_StateBag != null)
-            { Call(s_StateBag.After, s_instance, s_value); }
+            if (p_StateBag != null)
+            { Call(p_StateBag.After, s_instance, s_value); }
             
             // global call
-            Call(s_After, s_instance, s_value); 
+            Call(p_After, s_instance, s_value); 
 
             // instance call
             Call(this.After, s_instance, s_value); 

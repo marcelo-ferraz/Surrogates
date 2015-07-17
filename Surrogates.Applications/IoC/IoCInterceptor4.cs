@@ -9,17 +9,17 @@ namespace Surrogates.Applications.IoC
     {
         private T _value;
 
-        public T Get(string s_name, Dictionary<string, object[]> s_Params)
+        public T Get(string s_name, Dictionary<string, object[]> p_Params)
         {
             var isDefault =
                 object.ReferenceEquals(_value, default(T));
 
             if (!isDefault) { return _value; }
 
-            if (s_Params == null)
+            if (p_Params == null)
             { return _value = Activator.CreateInstance<T>(); }
 
-            var args = s_Params[s_name];
+            var args = p_Params[s_name];
 
             return args != null && args.Length > 0 ?
                 _value = (T)Activator.CreateInstance(typeof(T), args) :

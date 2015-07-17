@@ -67,15 +67,16 @@ namespace Surrogates.Applications.ExecutingElsewhere
                 //_thisDomain.Load()
             }
 
-            public object Execute(ExecuteInOtherDomain.State s_State, Delegate s_method)
+            public object Execute(ExecuteInOtherDomain.State p_State, Delegate s_method, object[] s_args)
             {
-                TryInitDomain(s_State);
+                TryInitDomain(p_State);
 
                 var worker = (Worker)this._thisDomain.CreateInstanceAndUnwrap(
                     this.GetType().Assembly.FullName,
                     typeof(Worker).FullName);
 
                 worker.Action = s_method;
+                    //new Action(() => s_method.DynamicInvoke(s_args));
 
                 worker.Execute();
 

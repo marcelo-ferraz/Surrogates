@@ -31,14 +31,19 @@ namespace Surrogates.Applications.Utilities
                 newValues;
         }
 
-        public static Dictionary<IntPtr, T> MergeProperty<T>(this Strategy self, string name, Func<MethodInfo, T> getValue)
+        public static Dictionary<IntPtr, T> MergeProperty<T>(this Strategies self, string name, Func<MethodInfo, T> getValue)
         {
             var newValues =
                 self.BaseMethods.ToDictionary(m => m.MethodHandle.Value, getValue);
 
+            return self.MergeProperty<T>(name, newValues);
+        }
+
+        public static Dictionary<IntPtr, T> MergeProperty<T>(this Strategies self, string name, Dictionary<IntPtr, T> newValues)
+        {
             var paramsProp = self
                 .NewProperties
-                .FirstOrDefault(p => p.Name == "Params");
+                .FirstOrDefault(p => p.Name == name);
 
             return paramsProp != null ?
                 ((Dictionary<IntPtr, T>)paramsProp.DefaultValue).MergeLeft(newValues) :

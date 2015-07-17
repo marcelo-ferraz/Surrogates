@@ -28,7 +28,7 @@ namespace Surrogates.Applications.ExecutingElsewhere
             return _previousExpression
                 .Using<ExecuteInOtherThreadInterceptor>(i => (Func<Delegate, object[], bool, object>) i.Execute)
                 .And
-                .AddProperty<bool>("s_Forget", andForget);
+                .AddProperty<bool>("Forget", andForget);
         }
                 
         public AndExpression<T> InOtherDomain(string domainName = null, SecurityZone securityZone = SecurityZone.MyComputer, params IPermission[] permissions)
@@ -54,7 +54,7 @@ namespace Surrogates.Applications.ExecutingElsewhere
                 };
 
             return _previousExpression
-                .Using<ExecuteInOtherDomain.Interceptor>(i => (Func<ExecuteInOtherDomain.State, Delegate, object>) i.Execute)
+                .Using<ExecuteInOtherDomain.Interceptor>(i => (Func<ExecuteInOtherDomain.State, Delegate, object[], object>) i.Execute)
                 .And
                 .AddAttribute<SerializableAttribute>()
                 .And

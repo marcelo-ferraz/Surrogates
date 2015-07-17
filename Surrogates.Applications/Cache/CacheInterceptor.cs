@@ -13,7 +13,7 @@ namespace Surrogates.Applications.Cache
             _cache = new CachedList();
         }
 
-        public object CacheMethod(Delegate s_method, object[] args, Dictionary<IntPtr, CacheParams> s_Params)
+        public object CacheMethod(Delegate s_method, object[] args, Dictionary<IntPtr, CacheParams> p_Params)
         {
             object result = null;
 
@@ -22,8 +22,8 @@ namespace Surrogates.Applications.Cache
                 .MethodHandle
                 .Value;
 
-            var @params = 
-                s_Params[thisPtr];
+            var @params =
+                p_Params[thisPtr];
 
             var key = @params
                 .GetKey
