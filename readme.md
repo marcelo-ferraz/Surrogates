@@ -339,7 +339,7 @@ _to_be_documented_
 _to_be_documented_
 
 
-#Surrogates.Applications
+#Surrogates.Aspects
 Surrogates comes with an open door for developers to create and use their own aspects. To help their endeavors, this project comes with a couple of useful extensions to the original project.
 ## The Apply property
 By making use of it, anyone can extend and improve the capabilities of the Surrogates project. There are a couple of useful helpers when developing their own extensions.
