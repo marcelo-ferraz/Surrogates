@@ -380,11 +380,22 @@ Container.Map(m => m
 ```
 
 ##Adding a Contract Pre Validator Aspect
+
 _to_be_documented_
+
 ##Adding an Execute Elsewhere Aspect
-_to_be_documented_
+
+It enables a given method to be executed in other context. Up to now, its implemented to send the call to another thread, and to send the call to another domain.
+
 ###Executing in another Thread
 
+Sends the calling of the method to another thread, and either waiting for it to finish, or send it and forget.
+
+Parameter | Type | Description
+-----|-----|-----
+andForget | bool | Turn the call asynchronous or not
+
+Usages:
 ```c#
 public class Simpleton
 {
@@ -400,10 +411,26 @@ The mapping syntax
  Container.Map(m =>
 	 m.From<Simpleton>()
 	.Apply
-	.Calls(s => (Func<string>)s.GetThreadName).InOtherThread());
+	.Calls(s => (Func<string>)s.GetThreadName).InOtherThread(andForget: true));
+```
+
+To obtain the task for that method:
+
+```c#
+var proxy = Container.Invoke<Simpleton>();
+
+var handle = 
+    ((Func<string>) proxy.GetThreadName).Method.MethodHandle.Value;
+proxy.GetThreadName();
+//.. do some work in here
+// and call either a wait
+((IHasTasks)proxy)[handle].Wait();
+//or straight away result (it will make it wait)
+var name = (string) (proxy as IHasTasks)[handle].Result;
 ```
 
 ###Executing in another Domain
+
 The model:
 ```c#
 public class Simpleton
