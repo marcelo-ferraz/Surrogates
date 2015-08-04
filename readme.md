@@ -166,6 +166,7 @@ Same, can be inferred from the original class or ``object`` | __p___ + original 
 
 ## Special Parameters only for properties
 These are the parameters only available to property's interception.
+
 Type       | Parameter     | Contents
 --------   |---------------| -------------
 `System.String`   | __s_name__    | it contains the original property's name
@@ -173,6 +174,7 @@ Same, one that can be inferred from the original parameter or ``object`` | __s_v
  
 ## Special Parameters only for methods
 These are the parameters only available to method's interception.
+
 Type       | Parameter     | Contents
 --------   |---------------| -------------
 `System.String`   | __s_name__    | It contains the original method's name
@@ -187,10 +189,11 @@ In order to maintain some level sanity, and to diminish the quantity of extra pa
   - If it contains ``Access.StateBag``, it will have property named ``Bag``,
   - If it contains ``Access.Instance``, it will have property named ``Holder``, 
 
-Those are the _ properties:
+Those are the _'s properties:
+
 
 Type       | Property     | Description
---|--|--
+-----------|--------------| -------------
 ``BaseContainer4Surrogacy`` | Container | An instance of the container that created this type
 ``dynamic`` | Bag	 | A state bag, which holds whatever the developer might want, set on instance
 ``string``  | HolderName | The name of the type that holds this interceptor
@@ -198,6 +201,7 @@ Type       | Property     | Description
 ``string``  | CallerName | The name of the method that called this method
 ``Delegate`` | Caller    | The method that called this method
 ``object[]`` | Arguments | All arguments of the caller
+
 
 
 
