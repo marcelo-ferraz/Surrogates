@@ -158,11 +158,11 @@ Those special parameters can be different for methods and for properties.
 
 Type       | Parameter     | Contents
 --------   |---------------| -------------
-`System.Object[]` | __s_arguments__     | It contains the value of all arguments of that original method 
+`System.Object[]` | __s_arguments__, __s_args__     | It contains the value of all arguments of that original method 
 Same, can be inferred from the original class or ``object`` | __s_instance__      | It contains a pointer to the instance of the original class  
 `System.Delegate` or the equivalent in either `System.Action<T, ...>` or `System.Func<T...>` | **s_method** or the __s___ + **same name** of the original, __in any case__ | It contains a pointer to the original method. For more information on how to use this argument, [click here](#methodParameter)   
-Same, can be inferred from the original class or ``object`` | __f___ + original field name | It contains a either the value or the reference of a given field
-Same, can be inferred from the original class or ``object`` | __p___ + original field name | It contains a either the value or the reference of a given property
+Same, can be inferred from the original class or ``object`` | __f___ + original field name, *it has to be the same case* | It contains a either the value or the reference of a given field
+Same, can be inferred from the original class or ``object`` | __p___ + original field name, *it has to be the same case* | It contains a either the value or the reference of a given property
 
 ## Special Parameters only for properties
 These are the parameters only available to property's interception.
@@ -205,7 +205,7 @@ Type       | Property     | Description
 
 
 
-<a id="methodParameter" title="methodParameter" class="toc-item"></a>
+<a id="methodParameter" title="methodParameter" class="toc-item"></a>Special Parameters
 ## :squirrel: The special s_method parameter and how to call any method
 When passing the method as parameter, there are some restrictions and a few rules. This passed method can only be used for a protected or public instance. 
 ###How to reference the caller method:
