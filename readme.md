@@ -426,7 +426,7 @@ proxy.GetThreadName();
 // and call either a wait
 ((IHasTasks)proxy)[handle].Wait();
 //or straight away result (it will make it wait)
-var name = (string) (proxy as IHasTasks)[handle].Result;
+var name = (string) (proxy as IHasTasks).Tasks[handle].Result;
 ```
 
 ###Executing in another Domain
