@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Surrogates.Applications.Contracts
+namespace Surrogates.Aspects.Contracts
 {
     public class ContractsInterceptor<T>
     {

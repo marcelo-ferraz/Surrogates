@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Surrogates.Applications.Tests
+namespace Surrogates.Aspects.Tests
 {
     [TestFixture]
     public class InterlockingTests : AppTestsBase

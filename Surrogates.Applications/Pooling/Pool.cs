@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
-namespace Surrogates.Applications.Pooling
+namespace Surrogates.Aspects.Pooling
 {
     public sealed class Pool<T> : IDisposable
     {

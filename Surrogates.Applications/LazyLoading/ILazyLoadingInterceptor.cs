@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Surrogates.Applications.LazyLoading
+namespace Surrogates.Aspects.LazyLoading
 {
     public interface ILazyLoadingInterceptor
     {

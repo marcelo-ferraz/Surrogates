@@ -1,7 +1,7 @@
-﻿using Surrogates.Applications.Contracts.Model;
+﻿using Surrogates.Aspects.Contracts.Model;
 using System.Collections.Generic;
 
-namespace Surrogates.Applications.Contracts.Collections
+namespace Surrogates.Aspects.Contracts.Collections
 {
     public class AssertionList4Parameters : IParamValidator
     {

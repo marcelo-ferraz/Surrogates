@@ -1,5 +1,5 @@
-﻿using Surrogates.Applications.Model;
-using Surrogates.Applications.NotifyChanges;
+﻿using Surrogates.Aspects.Model;
+using Surrogates.Aspects.NotifyChanges;
 using Surrogates.Expressions;
 using Surrogates.Tactics;
 using Surrogates.Utilities;
@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Surrogates.Applications
+namespace Surrogates.Aspects
 {
     public static class NotifyChangesMixins
     {
@@ -98,7 +98,7 @@ namespace Surrogates.Applications
             var expr = ext
                 .Factory                
                 .Replace
-                .Properties(p => true) // all props
+                .Properties(p => true) // all forgetProp
                 .Accessors(a =>
                     a.Setter.Using<ChangesNotifierInterceptor<T>>("NotifierInterceptor", "Set"))
                 .AddBeforeAndAfter(before, after);

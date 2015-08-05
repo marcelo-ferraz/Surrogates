@@ -1,7 +1,7 @@
-﻿using Surrogates.Applications.Contracts;
-using Surrogates.Applications.Contracts.Collections;
-using Surrogates.Applications.Contracts.Model;
-using Surrogates.Applications.Model;
+﻿using Surrogates.Aspects.Contracts;
+using Surrogates.Aspects.Contracts.Collections;
+using Surrogates.Aspects.Contracts.Model;
+using Surrogates.Aspects.Model;
 using Surrogates.Expressions;
 using Surrogates.Tactics;
 using Surrogates.Utilities;
@@ -11,9 +11,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
-using Surrogates.Applications.Utilities;
+using Surrogates.Aspects.Utilities;
 
-namespace Surrogates.Applications
+namespace Surrogates.Aspects
 {
     public static class ContractsMixins
     {
@@ -119,7 +119,7 @@ namespace Surrogates.Applications
         /// <typeparam name="T">The base type</typeparam>
         /// <param name="that">The Expression</param>
         /// <param name="prop">The prop where those verification shall be applied</param>
-        /// <param name="validations">The verifications. Make use of <seealso cref="Surrogates.Applications.Contracts.Presume"/></param>
+        /// <param name="validations">The verifications. Make use of <seealso cref="Surrogates.Aspects.Contracts.Presume"/></param>
         /// <returns>Returns the expression</returns>
         public static AndExpression<T> Contracts<T>(
             this ApplyExpression<T> that, Func<T, Delegate> method, params IParamValidator[] validations)
@@ -138,7 +138,7 @@ namespace Surrogates.Applications
         /// <typeparam name="T">The base type</typeparam>
         /// <param name="that">The Expression</param>
         /// <param name="properties">The properties where those verification shall be applied</param>
-        /// <param name="validations">The verifications. Make use of <seealso cref="Surrogates.Applications.Contracts.Presume"/></param>
+        /// <param name="validations">The verifications. Make use of <seealso cref="Surrogates.Aspects.Contracts.Presume"/></param>
         /// <returns></returns>
         public static AndExpression<T> Contracts<T>(
             this ApplyExpression<T> that, string[] methods, params IParamValidator[] preValidations)
@@ -154,7 +154,7 @@ namespace Surrogates.Applications
         /// <typeparam name="T">The base type</typeparam>
         /// <param name="that">The Expression</param>
         /// <param name="prop">The prop where those verification shall be applied</param>
-        /// <param name="validations">The verifications. Make use of <seealso cref="Surrogates.Applications.Contracts.Presume"/></param>
+        /// <param name="validations">The verifications. Make use of <seealso cref="Surrogates.Aspects.Contracts.Presume"/></param>
         /// <returns></returns>
         public static AndExpression<T> Contracts<T>(
             this ApplyExpression<T> that, string method, params IParamValidator[] preValidations)

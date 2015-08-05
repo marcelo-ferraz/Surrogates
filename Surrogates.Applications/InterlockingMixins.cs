@@ -1,13 +1,13 @@
-﻿using Surrogates.Applications.Utilities;
-using Surrogates.Applications.Interlocking;
+﻿using Surrogates.Aspects.Utilities;
+using Surrogates.Aspects.Interlocking;
 using Surrogates.Expressions;
 using Surrogates.Utilities.Mixins;
 using System;
 using System.Runtime.Serialization;
 using Surrogates.Utilities;
-using Surrogates.Applications.Model;
+using Surrogates.Aspects.Model;
 
-namespace Surrogates.Applications
+namespace Surrogates.Aspects
 {
     public static class InterlockingMixins
     {

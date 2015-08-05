@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Surrogates.Applications.Utilities
+namespace Surrogates.Aspects.Utilities
 {
     public abstract class Locked4RW
     {

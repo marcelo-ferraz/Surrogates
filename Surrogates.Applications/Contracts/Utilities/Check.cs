@@ -1,4 +1,4 @@
-﻿using Surrogates.Applications.Utilities;
+﻿using Surrogates.Aspects.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace Surrogates.Applications.Contracts.Utilities
+namespace Surrogates.Aspects.Contracts.Utilities
 {
     public static class Check
     {

@@ -1,6 +1,6 @@
-﻿using Surrogates.Applications.Cache;
-using Surrogates.Applications.Cache.Model;
-using Surrogates.Applications.Utilities;
+﻿using Surrogates.Aspects.Cache;
+using Surrogates.Aspects.Cache.Model;
+using Surrogates.Aspects.Utilities;
 using Surrogates.Expressions;
 using Surrogates.Expressions.Accessors;
 using Surrogates.Tactics;
@@ -10,9 +10,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime;
-using Surrogates.Applications.Model;
+using Surrogates.Aspects.Model;
 
-namespace Surrogates.Applications
+namespace Surrogates.Aspects
 {
     public static class SimpleCacheResultMixins
     {

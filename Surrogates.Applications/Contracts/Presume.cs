@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace Surrogates.Applications.Contracts
+namespace Surrogates.Aspects.Contracts
 {
     public static class Presume
     {        

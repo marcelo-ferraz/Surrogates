@@ -3,7 +3,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
 
-namespace Surrogates.Applications.ExecutingElsewhere
+namespace Surrogates.Aspects.ExecutingElsewhere
 {
     [Serializable]
     public class ExecuteInOtherDomain

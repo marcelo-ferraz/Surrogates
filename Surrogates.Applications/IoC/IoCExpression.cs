@@ -6,9 +6,9 @@ using Surrogates.Expressions;
 using Surrogates.Expressions.Accessors;
 using Surrogates.Tactics;
 using Surrogates.Utilities;
-using Surrogates.Applications.Utilities;
+using Surrogates.Aspects.Utilities;
 
-namespace Surrogates.Applications.IoC
+namespace Surrogates.Aspects.IoC
 {
     public class IoCExpression<T>
     {

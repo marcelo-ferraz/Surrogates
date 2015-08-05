@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Runtime;
 
-namespace Surrogates.Applications.NotifyChanges
+namespace Surrogates.Aspects.NotifyChanges
 {
     public class ChangesNotifierInterceptor<T> : NotifierBeforeAndAfter<T>
     {

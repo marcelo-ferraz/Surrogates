@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 
-namespace Surrogates.Applications.NotifyChanges
+namespace Surrogates.Aspects.NotifyChanges
 {
     public class ChangesListNotifierInterceptor<L, I> : NotifierBeforeAndAfter<L,I>
         where L : class, ICollection<I>

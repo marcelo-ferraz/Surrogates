@@ -1,8 +1,8 @@
-﻿using Surrogates.Applications.Contracts;
-using Surrogates.Applications.Contracts.Collections;
-using Surrogates.Applications.Contracts.Model;
-using Surrogates.Applications.Contracts.Utilities;
-using Surrogates.Applications.Utilities;
+﻿using Surrogates.Aspects.Contracts;
+using Surrogates.Aspects.Contracts.Collections;
+using Surrogates.Aspects.Contracts.Model;
+using Surrogates.Aspects.Contracts.Utilities;
+using Surrogates.Aspects.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Surrogates.Applications
+namespace Surrogates.Aspects
 {
     public static class ParameterAssertionMixins
     {

@@ -7,8 +7,8 @@
     <ProjectGuid>{588BB3CC-CA8E-4218-A49F-37C38D4EEE3C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Surrogates.Applications.Tests</RootNamespace>
-    <AssemblyName>Surrogates.Applications.Tests</AssemblyName>
+    <RootNamespace>Surrogates.Aspects.Tests</RootNamespace>
+    <AssemblyName>Surrogates.Aspects.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -57,9 +57,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Surrogates.Applications\Surrogates.Applications.csproj">
+    <ProjectReference Include="..\Surrogates.Applications\Surrogates.Aspects.csproj">
       <Project>{3e36c990-db6d-489d-aad3-477456b32655}</Project>
-      <Name>Surrogates.Applications</Name>
+      <Name>Surrogates.Aspects</Name>
     </ProjectReference>
     <ProjectReference Include="..\Surrogates\Surrogates.csproj">
       <Project>{88494f9c-37b8-40a6-88fd-ee03762ff284}</Project>

@@ -1,9 +1,9 @@
-﻿using Surrogates.Applications.Utilities;
+﻿using Surrogates.Aspects.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Surrogates.Applications.Cache
+namespace Surrogates.Aspects.Cache
 {
     public class CachedList : Locked4RW
     {

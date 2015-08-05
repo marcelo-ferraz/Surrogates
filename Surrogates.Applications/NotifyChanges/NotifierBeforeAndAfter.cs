@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime;
 using System.Text;
 
-namespace Surrogates.Applications.NotifyChanges
+namespace Surrogates.Aspects.NotifyChanges
 {
     public class NotifierBeforeAndAfter
     {        

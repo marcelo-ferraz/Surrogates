@@ -1,5 +1,5 @@
 ﻿
-namespace Surrogates.Applications.Contracts
+namespace Surrogates.Aspects.Contracts
 {
     public interface IParamValidator { }
 }

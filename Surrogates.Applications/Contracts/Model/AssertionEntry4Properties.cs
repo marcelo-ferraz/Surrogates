@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Surrogates.Applications.Contracts.Model
+namespace Surrogates.Aspects.Contracts.Model
 {
     public class AssertionEntry4Properties
     {

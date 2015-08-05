@@ -1,6 +1,6 @@
 ﻿using Surrogates.Utilities;
 
-namespace Surrogates.Applications.Interlocking
+namespace Surrogates.Aspects.Interlocking
 {
     public class InterlockedRefPropertyInterceptor 
         : InterlockedPropertyInterceptor

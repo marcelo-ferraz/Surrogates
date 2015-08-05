@@ -42,9 +42,29 @@ namespace Surrogates.Executioners
                     {
                         if (baseFunction.ReturnType.IsValueType)
                         {
-                            overriden.Generator.Emit(OpCodes.Unbox_Any, baseFunction.ReturnType);
-                            overriden.Generator.Emit(OpCodes.Stloc, overriden.Return);
-                            overriden.Generator.Emit(OpCodes.Ldloc, overriden.Return);
+                            var g = overriden.Generator;
+                            var endOfFunction = g.DefineLabel();
+                            var isNotNull = g.DefineLabel();
+
+                            var returnLocal = 
+                                g.DeclareLocal(baseFunction.ReturnType);
+                            
+                            g.Emit(OpCodes.Dup);
+                            g.Emit(OpCodes.Brtrue_S, isNotNull);
+                                                        
+                            g.Emit(OpCodes.Pop);
+                            g.EmitDefaultValue(baseFunction.ReturnType);
+                            g.Emit(OpCodes.Box, baseFunction.ReturnType);
+
+                            g.MarkLabel(isNotNull);
+                            g.Emit(OpCodes.Unbox_Any, baseFunction.ReturnType);
+                            g.Emit(OpCodes.Stloc, overriden.Return);
+                            g.Emit(OpCodes.Ldloc, overriden.Return);
+                            g.Emit(OpCodes.Stloc, returnLocal);
+                            g.Emit(OpCodes.Br_S, endOfFunction);
+
+                            g.MarkLabel(endOfFunction);
+                            g.Emit(OpCodes.Ldloc, returnLocal);
                         }
                         else
                         {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Surrogates.Applications.Tests
+namespace Surrogates.Aspects.Tests
 {
     [Serializable]
     public class Simpleton
@@ -39,6 +39,12 @@ namespace Surrogates.Applications.Tests
         public virtual string GetThreadName()
         {
             return Thread.CurrentThread.Name;
+        }
+
+        public virtual int GetThreadIdAndWaitALittle(int timeout)
+        {
+            Thread.Sleep(timeout);
+            return Thread.CurrentThread.ManagedThreadId;
         }
 
         Random _rnd = new Random();

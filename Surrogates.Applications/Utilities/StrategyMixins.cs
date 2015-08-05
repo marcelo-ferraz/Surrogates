@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Surrogates.Applications.Utilities
+namespace Surrogates.Aspects.Utilities
 {
     public static class MixinsHelpers
     {

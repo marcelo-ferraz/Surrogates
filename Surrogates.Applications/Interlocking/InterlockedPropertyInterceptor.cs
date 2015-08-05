@@ -1,6 +1,6 @@
-﻿using Surrogates.Applications.Utilities;
+﻿using Surrogates.Aspects.Utilities;
 
-namespace Surrogates.Applications.Interlocking
+namespace Surrogates.Aspects.Interlocking
 {
     public abstract class InterlockedPropertyInterceptor : Locked4RW
     {        

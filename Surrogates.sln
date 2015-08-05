@@ -14,9 +14,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{0C5999
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surrogates.Applications", "Surrogates.Applications\Surrogates.Applications.csproj", "{3E36C990-DB6D-489D-AAD3-477456B32655}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surrogates.Aspects", "Surrogates.Applications\Surrogates.Aspects.csproj", "{3E36C990-DB6D-489D-AAD3-477456B32655}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surrogates.Applications.Tests", "Surrogates.Applications.Tests\Surrogates.Applications.Tests.csproj", "{588BB3CC-CA8E-4218-A49F-37C38D4EEE3C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surrogates.Aspects.Tests", "Surrogates.Applications.Tests\Surrogates.Aspects.Tests.csproj", "{588BB3CC-CA8E-4218-A49F-37C38D4EEE3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

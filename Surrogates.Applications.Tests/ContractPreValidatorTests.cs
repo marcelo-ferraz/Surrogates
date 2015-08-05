@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
-using Surrogates.Applications.Contracts;
+using Surrogates.Aspects.Contracts;
 using System;
 
-namespace Surrogates.Applications.Tests
+namespace Surrogates.Aspects.Tests
 {
     [TestFixture]
     public class ContractPreValidatorTests: AppTestsBase

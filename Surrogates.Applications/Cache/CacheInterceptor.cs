@@ -1,8 +1,8 @@
-﻿using Surrogates.Applications.Cache.Model;
+﻿using Surrogates.Aspects.Cache.Model;
 using System;
 using System.Collections.Generic;
 
-namespace Surrogates.Applications.Cache
+namespace Surrogates.Aspects.Cache
 {
     public class SimpleCacheInterceptor
     {

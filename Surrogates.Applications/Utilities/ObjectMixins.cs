@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Surrogates.Applications.Utilities
+namespace Surrogates.Aspects.Utilities
 {
     public static class ObjectMixins
     {

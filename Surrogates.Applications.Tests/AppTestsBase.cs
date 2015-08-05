@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Surrogates.Applications.Tests
+namespace Surrogates.Aspects.Tests
 {
     public abstract class AppTestsBase
     {

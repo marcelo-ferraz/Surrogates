@@ -2,10 +2,10 @@
 using Surrogates.Utilities;
 using System;
 using Surrogates.Expressions;
-using Surrogates.Applications.IoC;
-using Surrogates.Applications.Model;
+using Surrogates.Aspects.IoC;
+using Surrogates.Aspects.Model;
 
-namespace Surrogates.Applications
+namespace Surrogates.Aspects
 {
     public static class IoCMixins
     {

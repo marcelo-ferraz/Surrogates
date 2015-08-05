@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Surrogates.Applications.Utilities
+namespace Surrogates.Aspects.Utilities
 {
     public static class CollectionMixins
     {

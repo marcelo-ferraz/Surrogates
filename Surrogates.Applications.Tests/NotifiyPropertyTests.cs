@@ -1,13 +1,13 @@
 ﻿
 using NUnit.Framework;
 using System;
-using Surrogates.Applications;
+using Surrogates.Aspects;
 using System.Collections.Generic;
-using Surrogates.Applications.Tests.Model;
-using Surrogates.Applications.NotifyChanges;
+using Surrogates.Aspects.Tests.Model;
+using Surrogates.Aspects.NotifyChanges;
 using Surrogates.Utilities;
 
-namespace Surrogates.Applications.Tests
+namespace Surrogates.Aspects.Tests
 {
     [TestFixture]
     public class NotifiyPropertyTests : AppTestsBase

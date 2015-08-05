@@ -1,7 +1,7 @@
 ﻿using Surrogates.Expressions;
 using Surrogates.Tactics;
 
-namespace Surrogates.Applications.Model
+namespace Surrogates.Aspects.Model
 {
     public class ShallowExtension<T> : IExtension<T>
     {

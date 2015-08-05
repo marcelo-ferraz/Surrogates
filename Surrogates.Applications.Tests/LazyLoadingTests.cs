@@ -3,8 +3,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Surrogates.Applications.LazyLoading;
-namespace Surrogates.Applications.Tests
+using Surrogates.Aspects.LazyLoading;
+namespace Surrogates.Aspects.Tests
 {
     [TestFixture]
     public class LazyLoadingTests : AppTestsBase

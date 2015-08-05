@@ -5,17 +5,25 @@ using Surrogates.Utilities;
 using System;
 using System.Security;
 using System.Threading;
+using Surrogates.Aspects.Utilities;
+using Surrogates.Aspects.Model;
+using System.Collections.Generic;
+using  System.Threading.Tasks;
 
-namespace Surrogates.Applications.ExecutingElsewhere
+namespace Surrogates.Aspects.ExecutingElsewhere
 {
+    using otherThreadSig = Func<Delegate, object[], Dictionary<IntPtr, bool>, Dictionary<IntPtr, Task<object>>, object>;
+
     public class ElsewhereExpression<T>
     {
         private static long _domainIndex = 0;
-        private UsingInterferenceExpression<T> _previousExpression;
+        private UsingInterferenceExpression<T> _previous;
+        private ShallowExtension<T> _ext;
 
-        public ElsewhereExpression(UsingInterferenceExpression<T> usingInterferenceExpression)
+        public ElsewhereExpression(ShallowExtension<T> ext, UsingInterferenceExpression<T> usingInterferenceExpression)
         {
-            this._previousExpression = usingInterferenceExpression;
+            this._previous = usingInterferenceExpression;
+            this._ext = ext;
         }
 
         /// <summary>
@@ -25,10 +33,19 @@ namespace Surrogates.Applications.ExecutingElsewhere
         /// <returns></returns>
         public AndExpression<T> InOtherThread(bool andForget = false)
         {
-            return _previousExpression
-                .Using<ExecuteInOtherThreadInterceptor>(i => (Func<Delegate, object[], bool, object>) i.Execute)
+            var expr = _previous
+                .Using<ExecuteInOtherThreadInterceptor>(i => (otherThreadSig)i.Execute);
+
+            var forgetProp =
+                _ext.Strategies.MergeProperty<bool>("Forget", m => andForget);
+
+            return expr
                 .And
-                .AddProperty<bool>("Forget", andForget);
+                .AddProperty<Dictionary<IntPtr, bool>>("Forget", forgetProp)
+                .And
+                .AddProperty<Dictionary<IntPtr, Task<object>>>("Tasks")
+                .And
+                .AddInterface<IHasTasks>();
         }
                 
         public AndExpression<T> InOtherDomain(string domainName = null, SecurityZone securityZone = SecurityZone.MyComputer, params IPermission[] permissions)
@@ -36,7 +53,7 @@ namespace Surrogates.Applications.ExecutingElsewhere
             if (!typeof(T).IsDefined(typeof(SerializableAttribute), true))
             { throw new ArgumentException("The surrogated type must be marked as Serializable"); }
 
-            foreach(var m in Pass.Current<Strategy.ForMethods>(_previousExpression).Methods)
+            foreach(var m in Pass.Current<Strategy.ForMethods>(_previous).Methods)
             {
                 if (!m.IsPublic) 
                 {                    
@@ -53,7 +70,7 @@ namespace Surrogates.Applications.ExecutingElsewhere
                     SecurityZone = securityZone
                 };
 
-            return _previousExpression
+            return _previous
                 .Using<ExecuteInOtherDomain.Interceptor>(i => (Func<ExecuteInOtherDomain.State, Delegate, object[], object>) i.Execute)
                 .And
                 .AddAttribute<SerializableAttribute>()

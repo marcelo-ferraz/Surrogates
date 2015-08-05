@@ -5,12 +5,12 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
-using Surrogates.Applications.Utilities;
+using Surrogates.Aspects.Utilities;
 using Surrogates.Expressions.Accessors;
-using Surrogates.Applications.LazyLoading;
-using Surrogates.Applications.Model;
+using Surrogates.Aspects.LazyLoading;
+using Surrogates.Aspects.Model;
 
-namespace Surrogates.Applications
+namespace Surrogates.Aspects
 {
     public static class LazyLoadingMixins
     {
@@ -62,7 +62,7 @@ namespace Surrogates.Applications
         /// </summary>
         /// <typeparam name="T">The type which contains that properties</typeparam>
         /// <param name="that">The previous expression</param>
-        /// <param name="props">Those properties</param>
+        /// <param name="forgetProp">Those properties</param>
         /// <param name="loader">The loader of those properties</param>
         /// <returns></returns>
         public static AndExpression<T> LazyLoading<T>(this ApplyExpression<T> that, Func<T, object>[] props, Func<string, T, object> loader)
@@ -102,7 +102,7 @@ namespace Surrogates.Applications
         /// </summary>
         /// <typeparam name="T">The type which contains that properties</typeparam>
         /// <param name="that">The previous expression</param>
-        /// <param name="props">Those properties</param>
+        /// <param name="forgetProp">Those properties</param>
         /// <param name="loader">The loader of those properties</param>
         /// <returns></returns>
         public static AndExpression<T> LazyLoading<T>(this ApplyExpression<T> that, string[] props, Func<string, T, object> loader)

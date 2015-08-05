@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Surrogates.Applications.IoC
+namespace Surrogates.Aspects.IoC
 {
     public class IoCInterceptor4<T>
     {

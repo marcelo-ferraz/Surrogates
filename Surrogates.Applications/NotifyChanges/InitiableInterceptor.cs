@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Surrogates.Applications.NotifyChanges
+namespace Surrogates.Aspects.NotifyChanges
 {
     public class InitiableInterceptor
     {

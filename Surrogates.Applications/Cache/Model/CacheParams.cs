@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Surrogates.Applications.Cache.Model
+namespace Surrogates.Aspects.Cache.Model
 {
     public class CacheParams
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Surrogates.Applications.Pooling
+namespace Surrogates.Aspects.Pooling
 {
     public abstract class PoolInterceptor<T>
         where T : IDisposable
