@@ -15,7 +15,7 @@ namespace Surrogates.Tactics
         private TypeBuilder _builder;
         private IList<Strategy> _strategies;
 
-        internal Strategies(Type baseType, string name, ModuleBuilder moduleBuilder, Access permissions)
+        public Strategies(Type baseType, string name, ModuleBuilder moduleBuilder, Access permissions)
         {            
             if (string.IsNullOrEmpty(name))
             { name = string.Concat(baseType, "Proxy"); }
@@ -74,7 +74,7 @@ namespace Surrogates.Tactics
 
         public NewProperty StateBagProperty { get; set; }
 
-        private void CreateDefaultNewProperties()
+        protected virtual void CreateDefaultNewProperties()
         {
             if (this.Accesses.HasFlag(Access.StateBag) && !this.NewProperties.Any(p => p.Name == "StateBag"))
             {
@@ -86,7 +86,7 @@ namespace Surrogates.Tactics
             { this.ContainerProperty = this.AddProperty<SurrogatesContainer>("Container"); }
         }
 
-        private void ApplyAttributes()
+        protected virtual void ApplyAttributes()
         {
             foreach (var attr in NewAttributes)
             {
@@ -147,17 +147,17 @@ namespace Surrogates.Tactics
             return prop;
         }
 
-        private PropertyInfo GetProperty(string name, Type holder)
+        protected virtual PropertyInfo GetProperty(string name, Type holder)
         {
             return holder.GetProperty(name, BindingFlags.Instance | BindingFlags.Public);
         }
 
-        public void Add(Strategy strategy)
+        public virtual void Add(Strategy strategy)
         {
             _strategies.Add(strategy);
         }
         
-        public Entry Apply()
+        public virtual Entry Apply()
         {
             ThisDynamic_Type = 
                 this.Builder.DefineThisDynamic_NestedType(this);

@@ -7,15 +7,23 @@ namespace Surrogates.Expressions
 {
     public class NewExpression
     {
-        private ModuleBuilder _moduleBuilder;
-        private BaseContainer4Surrogacy _container;
-        internal Strategies Strategies { get; set; }
-        internal string Name { get; set; }
+        protected ModuleBuilder ModuleBuilder;
+        protected BaseContainer4Surrogacy Container;
+
+        protected Strategies ThosePlans;
+
+        internal protected Strategies Strategies 
+        {
+            get { return ThosePlans; }
+            set { ThosePlans = value; } 
+        }
+
+        internal protected string Name { get; set; }
 
         public NewExpression(ModuleBuilder moduleBuilder, BaseContainer4Surrogacy container)
         {
-            this._moduleBuilder = moduleBuilder;
-            this._container = container;
+            this.ModuleBuilder = moduleBuilder;
+            this.Container = container;
         }
 
         /// <summary>
@@ -26,13 +34,13 @@ namespace Surrogates.Expressions
         /// <param name="access">What every interceptor will be able to see as a parameter</param>
         /// <param name="excludeAccess">What every interceptor will not be able to see as a parameter</param>
         /// <returns></returns>
-        public ExpressionFactory<T> From<T>(string name = "", Access? access = null, Access? excludeAccess = null)
+        public virtual ExpressionFactory<T> From<T>(string name = "", Access? access = null, Access? excludeAccess = null)
         {
             Name = name;
 
             var p = access.HasValue ? 
                 access.Value : 
-                _container.DefaultPermissions;
+                Container.DefaultPermissions;
 
             if (excludeAccess.HasValue)
             {
@@ -40,10 +48,10 @@ namespace Surrogates.Expressions
             }
 
             Strategies = new Strategies(
-                typeof(T), name, _moduleBuilder, p);
+                typeof(T), name, ModuleBuilder, p);
             
             return new ExpressionFactory<T>(
-                _container,
+                Container,
                 new Strategy(Strategies), 
                 Strategies);
         }

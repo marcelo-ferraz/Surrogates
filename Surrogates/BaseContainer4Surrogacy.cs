@@ -22,7 +22,7 @@ namespace Surrogates
 
         protected IDictionary<string, Entry> Cache;
 
-        internal Access DefaultPermissions { get; set; }
+        internal protected Access DefaultPermissions { get; set; }
 
         public BaseContainer4Surrogacy()
         {

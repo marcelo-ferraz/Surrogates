@@ -7,7 +7,7 @@ namespace Surrogates.Expressions
 {
     public class ExpressionFactory<TBase> : Expression<TBase, Strategy>
     {
-        internal ExpressionFactory(BaseContainer4Surrogacy container, Strategy current, Strategies strategies)
+        public ExpressionFactory(BaseContainer4Surrogacy container, Strategy current, Strategies strategies)
             : base(container, current, strategies)
         { }
 

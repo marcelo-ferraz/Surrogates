@@ -41,13 +41,8 @@ namespace Surrogates.Tests.Strategies
             var mod = (ModuleBuilder)modField
                 .GetValue(new SurrogatesContainer());
 
-            var ctr = typeof(Surrogates.Tactics.Strategies).GetConstructor(
-                BindingFlags.Instance | BindingFlags.NonPublic,
-                null,
-                new Type[] { typeof(Type), typeof(string), typeof(ModuleBuilder), typeof(Access) },
-                null);
-
-            return (Surrogates.Tactics.Strategies)ctr.Invoke(new object[] { typeof(T), name, mod, Access.Container | Access.StateBag | Access.AnyMethod | Access.AnyField | Access.AnyBaseProperty | Access.AnyNewProperty | Access.Instance });
+            return new Tactics.Strategies(
+                typeof(T), name, mod, Access.Container | Access.StateBag | Access.AnyMethod | Access.AnyField | Access.AnyBaseProperty | Access.AnyNewProperty | Access.Instance);
         }
 
         protected static T FirstStrategy<T>(Surrogates.Tactics.Strategies strats)
