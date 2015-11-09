@@ -73,14 +73,13 @@ namespace Surrogates
         /// <returns></returns>
         public override BaseContainer4Surrogacy Map(Action<NewExpression> mapping)
         {
-            base.InternalMap(mapping);
+            InternalMap(mapping);
             return this;
         }
 
         public override BaseContainer4Surrogacy Map<T>(string cmd)
         {
             InternalMap<T>(cmd);
-
             return this;
         }
 

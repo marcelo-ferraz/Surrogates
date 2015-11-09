@@ -41,7 +41,7 @@ namespace Surrogates.Utilities
                 return;
             }
 
-            // tries to add any field as parameter 
+            // tries to add any srcField as parameter 
             if (param.Is4AnyField() &&
                 strategy.Accesses.HasFlag(Access.AnyField) &&
                 Try2Add.AnyFieldAsParameter(gen, strategy.BaseType, strategy.Fields, param, param.ParameterType))

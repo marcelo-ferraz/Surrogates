@@ -56,7 +56,7 @@ namespace Surrogates.Tests.Expressions.Entities
 
         public int SetPropText_info_Return_FieldPlus1(int field, Dummy s_instance)
         {
-             s_instance.Text = "was added to the field +1";
+             s_instance.Text = "was added to the srcField +1";
             return field + 1;
         }
 

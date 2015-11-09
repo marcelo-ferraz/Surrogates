@@ -29,7 +29,7 @@ namespace Surrogates.Utilities.Mixins
             // gets the Add method from _dictionary
             var dicAddMethod = dicType.GetMethod("Add");
 
-            // creates the _baseMethods field
+            // creates the _baseMethods srcField
             var baseMethodsField =
                 strats.Builder.DefineField("_baseMethods", dicType, FieldAttributes.Private | FieldAttributes.Static);
 
@@ -189,7 +189,7 @@ namespace Surrogates.Utilities.Mixins
                 var dynamicAttrCtor = typeof(DynamicAttribute)
                     .GetConstructor(Type.EmptyTypes);
 
-                //field.SetCustomAttribute(
+                //srcField.SetCustomAttribute(
                 //        new CustomAttributeBuilder(dynamicAttrCtor, new object[] { }));
 
                 propBldr.SetCustomAttribute(

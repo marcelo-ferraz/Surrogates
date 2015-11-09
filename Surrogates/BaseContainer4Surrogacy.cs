@@ -163,7 +163,7 @@ namespace Surrogates
             if (string.IsNullOrEmpty(key))
             { key = string.Concat(type.Name, "Proxy"); }
 
-            return Cache.ContainsKey(key) && 
+                return Cache.ContainsKey(key) && 
                 Cache[key].Type.IsAssignableFrom(type);
         }
 

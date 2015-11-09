@@ -50,7 +50,7 @@ namespace Surrogates.Utilities.Mixins
 
         public static bool Is4Instance(this ParameterInfo param, Type baseType)
         {
-            return baseType.IsAssignableFrom(param.ParameterType) && (param.Name == "s_instance" || param.Name == "s_holder");
+            return (baseType.IsAssignableFrom(param.ParameterType) || param.ParameterType.IsAssignableFrom(baseType)) && (param.Name == "s_instance" || param.Name == "s_holder");
         }
     }
 }

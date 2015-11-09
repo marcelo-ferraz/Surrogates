@@ -8,12 +8,11 @@ using System.Reflection.Emit;
 namespace Surrogates.Utilities.WhizzoDev
 {
     /// <summary>
-    /// Enumeration that defines the type of cloning of a field.
+    /// Enumeration that defines the type of cloning of a srcField.
     /// Used in combination with the CloneAttribute
     /// </summary>
     public enum CloneType
-    {
-        None,
+    {     
         ShallowCloning,
         DeepCloning
     }

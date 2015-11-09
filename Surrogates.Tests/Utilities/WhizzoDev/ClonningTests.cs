@@ -13,13 +13,40 @@ namespace Surrogates.Tests.Utilities.WhizzoDev
     {
         public class BaseClass
         {
+            public class SubClass 
+            {
+                public int Value { get; set; }
+            }
+
             public int Int { get; set; }
             public string String { get; set; }
+            [Clone(CloneType.ShallowCloning)]
+            public List<int> Numbers { get; set; }
+
+            public List<SubClass> SubClasses { get; set; }
         }
 
         public class InheritedClass : BaseClass
         {
+            [Clone(Aliases= new [] { "Data" })]
             public DateTime Date { get; set; }
+
+        }
+
+        public class DifferentClass
+        {
+            public class DifferentSubClass
+            {
+                public int Value { get; set; }
+            }
+
+            public string String { get; set; }
+            public DateTime Data { get; set; }
+
+            public List<int> Numbers { get; set; }
+
+            [Clone(CloneType.DeepCloning)]
+            public List<DifferentSubClass> SubClasses { get; set; }
         }
 
         [Test]
@@ -56,7 +83,7 @@ namespace Surrogates.Tests.Utilities.WhizzoDev
                 new BaseClass { Int = 1, String = "something" };
 
             var newValue =
-                CloneHelper.Clone(@base);
+                CloneHelper.Clone<BaseClass>(@base);
 
             Assert.AreEqual(@base.String, newValue.String);
             Assert.AreEqual(@base.Int, newValue.Int);
@@ -66,8 +93,8 @@ namespace Surrogates.Tests.Utilities.WhizzoDev
         [Test]
         public void ClonningWithNullParameter()
         {
-            Assert.IsNull(CloneHelper.Clone(null));
-            Assert.IsNull(CloneHelper.Clone(null, CloneType.ShallowCloning));
+            Assert.IsNull(CloneHelper.Clone<BaseClass>(null));
+            Assert.IsNull(CloneHelper.Clone<BaseClass>(null, CloneType.ShallowCloning));
         }
 
         [Test]
@@ -90,6 +117,34 @@ namespace Surrogates.Tests.Utilities.WhizzoDev
             Assert.AreEqual(@base.String, mergedValue.String);
             Assert.AreEqual(@base.Int, mergedValue.Int);
             Assert.AreEqual(@base.GetHashCode(), mergedValue.GetHashCode());
+        }
+
+        [Test]
+        public void CloneDifferentObjects()
+        {
+            var date =
+                DateTime.Now;
+
+            var inherited = new InheritedClass 
+            {
+                Int = 1, 
+                String = "something", 
+                Date = date, 
+                Numbers = new List<int> { 1, 2, 3 }, 
+                SubClasses = new List<BaseClass.SubClass> { new BaseClass.SubClass() } 
+            };
+
+            var inheritedHashCode =
+                inherited.GetHashCode();
+
+            var newValue =
+                CloneHelper.Clone<DifferentClass>(inherited);
+
+            Assert.IsNotNullOrEmpty(newValue.String);
+            Assert.AreEqual(inherited.String, newValue.String);
+            Assert.AreEqual(date, newValue.Data);
+            
+            
         }
     }
 }
