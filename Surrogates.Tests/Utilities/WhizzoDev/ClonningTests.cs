@@ -20,10 +20,13 @@ namespace Surrogates.Tests.Utilities.WhizzoDev
 
             public int Int { get; set; }
             public string String { get; set; }
-            [Clone(CloneType.ShallowCloning)]
+            [Clone(CloneType.Shallow)]
             public List<int> Numbers { get; set; }
 
-            public List<SubClass> SubClasses { get; set; }
+            public List<SubClass> List { get; set; }
+            public List<SubClass> List2Array { get; set; }
+            public SubClass[] Array { get; set; }
+            public SubClass[] Array2List { get; set; }
         }
 
         public class InheritedClass : BaseClass
@@ -45,8 +48,10 @@ namespace Surrogates.Tests.Utilities.WhizzoDev
 
             public List<int> Numbers { get; set; }
 
-            [Clone(CloneType.DeepCloning)]
-            public List<DifferentSubClass> SubClasses { get; set; }
+            public List<DifferentSubClass> List { get; set; }
+            public DifferentSubClass[] List2Array { get; set; }
+            public DifferentSubClass[] Array { get; set; }
+            public List<DifferentSubClass> Array2List { get; set; }
         }
 
         [Test]
@@ -67,7 +72,7 @@ namespace Surrogates.Tests.Utilities.WhizzoDev
             Assert.IsNullOrEmpty(inherited.String);
 
             var newValue = 
-                CloneHelper.Merge(@base, inherited);
+                CloneOrMerge<BaseClass>.MergeTo(@base, inherited);
 
             Assert.IsNotNullOrEmpty(inherited.String);
             Assert.AreEqual(1, inherited.Int);
@@ -81,9 +86,9 @@ namespace Surrogates.Tests.Utilities.WhizzoDev
         {
             var @base =
                 new BaseClass { Int = 1, String = "something" };
-
+            //Engine.SaveMethod(typeof(BaseClass), @base);
             var newValue =
-                CloneHelper.Clone<BaseClass>(@base);
+                CloneOrMerge<BaseClass>.CloneTo<BaseClass>(@base);
 
             Assert.AreEqual(@base.String, newValue.String);
             Assert.AreEqual(@base.Int, newValue.Int);
@@ -93,8 +98,8 @@ namespace Surrogates.Tests.Utilities.WhizzoDev
         [Test]
         public void ClonningWithNullParameter()
         {
-            Assert.IsNull(CloneHelper.Clone<BaseClass>(null));
-            Assert.IsNull(CloneHelper.Clone<BaseClass>(null, CloneType.ShallowCloning));
+            Assert.IsNull(CloneOrMerge<BaseClass>.CloneTo<BaseClass>(null));
+            Assert.IsNull(CloneOrMerge<BaseClass>.CloneTo<BaseClass>(null, CloneType.Shallow));
         }
 
         [Test]
@@ -109,10 +114,10 @@ namespace Surrogates.Tests.Utilities.WhizzoDev
             var inherited =
                 new InheritedClass { Date = date };
 
-            Assert.IsNull(CloneHelper.Merge(null, null));
-            Assert.AreEqual(CloneHelper.Merge(null, inherited).GetHashCode(), inherited.GetHashCode());
+            Assert.IsNull(CloneOrMerge<BaseClass>.MergeTo(null, null));
+            Assert.AreEqual(CloneOrMerge<BaseClass>.MergeTo(null, inherited).GetHashCode(), inherited.GetHashCode());
 
-            var mergedValue = CloneHelper.Merge(@base, null);
+            var mergedValue = CloneOrMerge<BaseClass>.MergeTo(@base, null);
 
             Assert.AreEqual(@base.String, mergedValue.String);
             Assert.AreEqual(@base.Int, mergedValue.Int);
@@ -130,21 +135,55 @@ namespace Surrogates.Tests.Utilities.WhizzoDev
                 Int = 1, 
                 String = "something", 
                 Date = date, 
-                Numbers = new List<int> { 1, 2, 3 }, 
-                SubClasses = new List<BaseClass.SubClass> { new BaseClass.SubClass() } 
+                Numbers = new List<int> { 1, 2, 3 },
+                List = new List<BaseClass.SubClass> { new BaseClass.SubClass() { Value = 1 } },
+                List2Array = new List<BaseClass.SubClass> { new BaseClass.SubClass() { Value = 2 } },
+                Array = new BaseClass.SubClass[] { new BaseClass.SubClass() { Value = 3 } },
+                //Array2List = new BaseClass.SubClass[] { new BaseClass.SubClass() { Value = 4 } }, 
             };
 
             var inheritedHashCode =
                 inherited.GetHashCode();
 
-            var newValue =
-                CloneHelper.Clone<DifferentClass>(inherited);
+            //Engine.SaveMethod(typeof(DifferentClass), inherited);
+            //Engine.SaveMethod(typeof(InheritedClass), inherited);
 
-            Assert.IsNotNullOrEmpty(newValue.String);
-            Assert.AreEqual(inherited.String, newValue.String);
-            Assert.AreEqual(date, newValue.Data);
+
+            var newValue =
+                CloneOrMerge<InheritedClass>.CloneTo<DifferentClass>(inherited);
+
+            
+
+            //Engine.Clone<DifferentClass>(inherited.Numbers);
+
+
+            //Assert.IsNotNullOrEmpty(newValue.String);
+            //Assert.AreEqual(inherited.String, newValue.String);
+            //Assert.AreEqual(date, newValue.Data);
             
             
         }
+
+        public static ClonningTests.DifferentClass Copy(ClonningTests.InheritedClass inheritedClass)
+        {
+            var differentClass = new ClonningTests.DifferentClass();
+            string heu = "heeey";
+
+            if (inheritedClass.Date != default(DateTime))
+            {
+                differentClass.Data = inheritedClass.Date;
+            }
+
+            if (inheritedClass.String != default(string))
+            {
+                differentClass.String = inheritedClass.String;
+            }
+
+            differentClass.Numbers = inheritedClass.Numbers;
+            //differentClass.SubClasses = Clone<BaseClass.SubClass>.ToArrayOf<DifferentClass.DifferentSubClass>(inheritedClass.SubClasses);
+
+            return differentClass;
+        }
+    
     }
 }

@@ -102,9 +102,11 @@
     <Compile Include="Utilities\Infer.cs" />
     <Compile Include="Utilities\Mixins\StringMixins.cs" />
     <Compile Include="Utilities\Try2Add.cs" />
+    <Compile Include="Utilities\WhizzoDev\TypeMixins.cs" />
+    <Compile Include="Utilities\WhizzoDev\CloneOrMerge.cs" />
     <Compile Include="Utilities\WhizzoDev\CloneType.cs" />
     <Compile Include="Utilities\WhizzoDev\CloneAttribute.cs" />
-    <Compile Include="Utilities\WhizzoDev\CloneHelper.cs" />
+    <Compile Include="Utilities\WhizzoDev\Engine.cs" />
     <Compile Include="Utilities\Set4Property.cs" />
   </ItemGroup>
   <ItemGroup />

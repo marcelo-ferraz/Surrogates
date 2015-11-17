@@ -13,7 +13,7 @@ namespace Surrogates.Utilities.WhizzoDev
     /// </summary>
     public enum CloneType
     {     
-        ShallowCloning,
-        DeepCloning
+        Shallow,
+        Deep
     }
 }
