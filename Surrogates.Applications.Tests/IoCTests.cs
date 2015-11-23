@@ -27,8 +27,10 @@ namespace Surrogates.Aspects.Tests
                 .IoCFor(s => s.List)
                 .Injecting<InjectedList<int>>());
 
-            var proxy = Container.Invoke<Simpleton>();
+            Container.Save();
 
+            var proxy = Container.Invoke<Simpleton>();
+            
             Assert.AreEqual(typeof(InjectedList<int>), proxy.List.GetType()); 
         }
 

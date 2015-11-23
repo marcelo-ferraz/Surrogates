@@ -72,7 +72,7 @@ namespace Surrogates.Tests.Utilities.WhizzoDev
             Assert.IsNullOrEmpty(inherited.String);
 
             var newValue = 
-                CloneOrMerge<BaseClass>.MergeTo(@base, inherited);
+                PassOn<BaseClass>.To(@base, inherited);
 
             Assert.IsNotNullOrEmpty(inherited.String);
             Assert.AreEqual(1, inherited.Int);
@@ -88,7 +88,7 @@ namespace Surrogates.Tests.Utilities.WhizzoDev
                 new BaseClass { Int = 1, String = "something" };
             //Engine.SaveMethod(typeof(BaseClass), @base);
             var newValue =
-                CloneOrMerge<BaseClass>.CloneTo<BaseClass>(@base);
+                PassOn.To<BaseClass>(@base);
 
             Assert.AreEqual(@base.String, newValue.String);
             Assert.AreEqual(@base.Int, newValue.Int);
@@ -98,8 +98,8 @@ namespace Surrogates.Tests.Utilities.WhizzoDev
         [Test]
         public void ClonningWithNullParameter()
         {
-            Assert.IsNull(CloneOrMerge<BaseClass>.CloneTo<BaseClass>(null));
-            Assert.IsNull(CloneOrMerge<BaseClass>.CloneTo<BaseClass>(null, CloneType.Shallow));
+            Assert.IsNull(PassOn.To<BaseClass>(null));
+            Assert.IsNull(PassOn.To<BaseClass>(null, CloneType.Shallow));
         }
 
         [Test]
@@ -114,10 +114,10 @@ namespace Surrogates.Tests.Utilities.WhizzoDev
             var inherited =
                 new InheritedClass { Date = date };
 
-            Assert.IsNull(CloneOrMerge<BaseClass>.MergeTo(null, null));
-            Assert.AreEqual(CloneOrMerge<BaseClass>.MergeTo(null, inherited).GetHashCode(), inherited.GetHashCode());
+            Assert.IsNull(PassOn<BaseClass>.To(null, null));
+            Assert.AreEqual(PassOn<BaseClass>.To(null, inherited).GetHashCode(), inherited.GetHashCode());
 
-            var mergedValue = CloneOrMerge<BaseClass>.MergeTo(@base, null);
+            var mergedValue = PassOn<BaseClass>.To<InheritedClass>(@base, null);
 
             Assert.AreEqual(@base.String, mergedValue.String);
             Assert.AreEqual(@base.Int, mergedValue.Int);
@@ -145,23 +145,12 @@ namespace Surrogates.Tests.Utilities.WhizzoDev
             var inheritedHashCode =
                 inherited.GetHashCode();
 
-            //Engine.SaveMethod(typeof(DifferentClass), inherited);
-            //Engine.SaveMethod(typeof(InheritedClass), inherited);
+            var diffValue =
+                PassOn.To<DifferentClass>(inherited);
 
-
-            var newValue =
-                CloneOrMerge<InheritedClass>.CloneTo<DifferentClass>(inherited);
-
-            
-
-            //Engine.Clone<DifferentClass>(inherited.Numbers);
-
-
-            //Assert.IsNotNullOrEmpty(newValue.String);
-            //Assert.AreEqual(inherited.String, newValue.String);
-            //Assert.AreEqual(date, newValue.Data);
-            
-            
+            Assert.IsNotNullOrEmpty(diffValue.String);
+            Assert.AreEqual(inherited.String, diffValue.String);
+            Assert.AreEqual(date, diffValue.Data);
         }
 
         public static ClonningTests.DifferentClass Copy(ClonningTests.InheritedClass inheritedClass)

@@ -47,7 +47,7 @@ namespace Surrogates.Aspects.NotifyChanges
                 #endregion
 
                 s_args[s_args.Length - 1] =
-                    CloneHelper.Merge(s_args[s_args.Length - 1], newItem);
+                    s_args[s_args.Length - 1].To(newItem);
 
                 var @int = ((IContainsNotifier4<I>)newItem)
                     .NotifierInterceptor;

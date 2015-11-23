@@ -67,7 +67,7 @@ namespace Surrogates.Aspects.Tests
                   .Apply
                   .Contracts(s => (Action<string>)s.Set, Presume.That(new Func<string, bool>((string text) => string.IsNullOrEmpty(text))))
             );
-            
+            Container.Save();
             var proxy = Container.Invoke<Simpleton>();
 
             proxy.Set(null);            

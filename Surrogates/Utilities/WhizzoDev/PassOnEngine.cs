@@ -19,7 +19,7 @@ namespace Surrogates.Utilities.WhizzoDev
     /// -> Clones the objects of the 'Address' list deep
     /// -> Clones the sub-objects of the Address object shallow. (at the moment)
     /// </remarks>
-    public static class Engine
+    public static class PassOnEngine
     {
         // Dictionaries for caching the (pre)compiled generated IL code.
         private static Dictionary<Tuple<Type, Type>, Delegate> _cachedILShallow = new Dictionary<Tuple<Type, Type>, Delegate>();
@@ -78,84 +78,6 @@ namespace Surrogates.Utilities.WhizzoDev
             }
         }
 
-        //public static void SaveMethod(Type returnType, object source)
-        //{
-        //    var ass = AppDomain.CurrentDomain.DefineDynamicAssembly(
-        //        new AssemblyName("nhonho"),
-        //        AssemblyBuilderAccess.RunAndSave);
-
-        //    var mod = ass.DefineDynamicModule(
-        //        "nhonho.dll",
-        //        string.Concat(ass.GetName().Name, ".dll"));
-
-        //    var holderType = mod.DefineType("Holder");
-
-        //    var copyMethod =
-        //        holderType.DefineMethod("Copy", MethodAttributes.Static | MethodAttributes.Public, returnType, new Type[] { source.GetType() });
-
-
-        //    var il = copyMethod.GetILGenerator();
-
-        //    var cloneVariable =
-        //        il.DeclareLocal(returnType);
-
-        //    Construct(returnType, il);
-
-        //    il.Emit(OpCodes.Stloc, cloneVariable);
-
-
-        //    CopyProperties(returnType, source.GetType(), il,
-        //        (src, dest) =>
-        //        {
-        //            if (dest.PropertyType.IsAssignableFrom(src.PropertyType) && 
-        //                (GetCloneTypeForProperty(src) == CloneType.Shallow ||
-        //                src.PropertyType.IsValueType ||
-        //                src.PropertyType == typeof(string)))
-        //            {
-        //                EmitPassOn(il, cloneVariable, src, dest);
-        //            }//CloneType.Deep
-        //            else if (src.PropertyType.IsClass)
-        //            {
-        //                CopyReferenceType(il, cloneVariable, src, dest);
-        //            }
-        //        }, ignoreType: true);
-
-        //    il.Emit(OpCodes.Ldloc, cloneVariable);
-        //    il.Emit(OpCodes.Ret);
-
-
-        //    holderType.CreateType();
-
-        //    ass.Save("nhonho.dll");
-        //}
-
-        //private static void CreateMerger(object source, object destination, ILGenerator il)
-        //{
-        //    LocalBuilder cloneVariable = il.DeclareLocal((source ?? destination).GetType());
-
-        //    il.Emit(OpCodes.Ldarg_1);
-        //    il.Emit(OpCodes.Stloc, cloneVariable);
-
-        //    CopyProperties(destination.GetType(), source.GetType(), il,
-        //        (src, dest) =>
-        //        {
-        //            if ((dest.PropertyType.IsAssignableFrom(src.PropertyType) &&
-        //                             (GetCloneTypeForProperty(src) == CloneType.Shallow ||
-        //                             src.PropertyType.IsValueType ||
-        //                             src.PropertyType == typeof(string))))
-        //            {
-        //                EmitPassOn(il, cloneVariable, src, dest);
-        //            }//CloneType.Deep
-        //            else if (src.PropertyType.IsClass)
-        //            {
-        //                CopyReferenceType(il, cloneVariable, src, dest);
-        //            }
-        //        });
-
-        //    il.Emit(OpCodes.Ldloc_0);
-        //    il.Emit(OpCodes.Ret);
-        //}
-
         private static void EmitPassOn(ILGenerator generator, LocalBuilder cloneVariable, PropertyInfo srcProperty, PropertyInfo destProperty)
         {
             generator.Emit(OpCodes.Ldloc, cloneVariable);
@@ -177,125 +99,12 @@ namespace Surrogates.Utilities.WhizzoDev
             // does not copy a delegate
             if (source.PropertyType.IsSubclassOf(typeof(Delegate))) { return; }
 
-            //if (!destination.PropertyType.IsAssignableFrom(source.PropertyType))
-            //{
             il.Emit(OpCodes.Ldloc, cloneVar);
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Call, source.GetGetMethod());
             il.Emit(OpCodes.Call, GetCorrectClonningMethod(source.PropertyType, destination.PropertyType));
             il.Emit(OpCodes.Call, destination.GetSetMethod());
-            //    return;
-            //}
-
-            //var lbTempVar =
-            //    il.DeclareLocal(source.PropertyType);
-
-            //if (source.PropertyType.GetInterface("IEnumerable") != null && source.PropertyType.GetInterface("IList") != null)
-            //{
-            //    if (source.PropertyType.IsGenericType)
-            //    {
-            //        Type argumentType =
-            //            source.PropertyType.GetGenericArguments()[0];
-
-            //        Type genericTypeEnum =
-            //            typeof(IEnumerable<>).MakeGenericType(argumentType);
-
-            //        ConstructorInfo ci = source.PropertyType.GetConstructor(new Type[] { genericTypeEnum });
-
-            //        if (ci != null && GetCloneTypeForProperty(source) == CloneType.Shallow)
-            //        {
-            //            il.Emit(OpCodes.Ldarg_0);
-            //            il.Emit(OpCodes.Call, source.GetGetMethod());
-            //            il.Emit(OpCodes.Newobj, ci);
-            //            il.Emit(OpCodes.Stloc, lbTempVar);
-            //            il.Emit(OpCodes.Ldloc, cloneVar);
-            //            il.Emit(OpCodes.Ldloc, lbTempVar);
-            //            il.Emit(OpCodes.Call, destination.GetSetMethod());
-            //            return;
-            //        }
-
-            //        ci = source.PropertyType.GetConstructor(Type.EmptyTypes);
-            //        if (ci != null)
-            //        {
-            //            il.Emit(OpCodes.Newobj, ci);
-            //            il.Emit(OpCodes.Stloc, lbTempVar);
-            //            il.Emit(OpCodes.Ldloc, cloneVar);
-            //            il.Emit(OpCodes.Ldloc, lbTempVar);
-            //            il.Emit(OpCodes.Call, destination.GetSetMethod());
-            //            CloneList(il, source, argumentType, lbTempVar);
-            //        }
-            //    }
-            //    return;
-            //}
-
-            //Construct(source.PropertyType, il);
-
-            //il.Emit(OpCodes.Stloc, lbTempVar);
-            //il.Emit(OpCodes.Ldloc, cloneVar);
-            //il.Emit(OpCodes.Ldloc, lbTempVar);
-            //il.Emit(OpCodes.Call, source.GetSetMethod());
-
-            //CopyProperties(cloneVar.LocalType, source.PropertyType, il,
-            //    (src, dest) =>
-            //    {
-            //        if (src.PropertyType.IsValueType || dest.PropertyType == typeof(string))
-            //        {
-            //            il.Emit(OpCodes.Ldloc_1);
-            //            il.Emit(OpCodes.Ldarg_0);
-            //            il.Emit(OpCodes.Call, source.GetGetMethod());
-            //            il.Emit(OpCodes.Call, dest.GetGetMethod());
-            //        }
-            //    });
         }
-
-        ///// <summary>
-        ///// Makes a deep copy of an IList of IEnumerable
-        ///// Creating new objects of the list and containing objects. (using default constructor)
-        ///// And by invoking the deepclone method defined above. (recursive)
-        ///// </summary>
-        ///// <param name="il">IL il to emit code to.</param>
-        ///// <param name="listProperty">Property definition of the reference type of the list to clone.</param>
-        ///// <param name="typeToClone">Base-type to clone (argument of List<T></param>
-        ///// <param name="cloneVar">Local store wheren the clone object is located. (or child of)</param>
-        //private static void CloneList(ILGenerator generator, PropertyInfo listProperty, Type typeToClone, LocalBuilder cloneVar)
-        //{
-        //    Type genIEnumeratorTyp = typeof(IEnumerator<>).MakeGenericType(typeToClone);
-        //    Type genIEnumeratorTypLocal = typeof(List<>.Enumerator).MakeGenericType(typeToClone);
-        //    LocalBuilder lbEnumObject = generator.DeclareLocal(genIEnumeratorTyp);
-        //    LocalBuilder lbCheckStatement = generator.DeclareLocal(typeof(bool));
-        //    Label checkOfWhile = generator.DefineLabel();
-        //    Label startOfWhile = generator.DefineLabel();
-        //    MethodInfo miEnumerator = listProperty.PropertyType.GetMethod("GetEnumerator");
-        //    generator.Emit(OpCodes.Ldarg_0);
-        //    generator.Emit(OpCodes.Call, listProperty.GetGetMethod());
-        //    generator.Emit(OpCodes.Callvirt, miEnumerator);
-        //    if (genIEnumeratorTypLocal != null)
-        //    {
-        //        generator.Emit(OpCodes.Box, genIEnumeratorTypLocal);
-        //    }
-        //    generator.Emit(OpCodes.Stloc, lbEnumObject);
-        //    generator.Emit(OpCodes.Br_S, checkOfWhile);
-        //    generator.MarkLabel(startOfWhile);
-        //    generator.Emit(OpCodes.Nop);
-        //    generator.Emit(OpCodes.Ldloc, cloneVar);
-        //    generator.Emit(OpCodes.Ldloc, lbEnumObject);
-        //    MethodInfo miCurrent = genIEnumeratorTyp.GetProperty("Current").GetGetMethod();
-        //    generator.Emit(OpCodes.Callvirt, miCurrent);
-        //    Type cloneHelper = Type.GetType(typeof(Engine).Namespace + "." + typeof(Engine).Name);
-        //    MethodInfo miDeepClone = cloneHelper.GetMethod("CloneObjectWithILDeep", BindingFlags.Static | BindingFlags.NonPublic);
-        //    generator.Emit(OpCodes.Call, miDeepClone);
-        //    MethodInfo miAdd = listProperty.PropertyType.GetMethod("Add");
-        //    generator.Emit(OpCodes.Callvirt, miAdd);
-        //    generator.Emit(OpCodes.Nop);
-        //    generator.MarkLabel(checkOfWhile);
-        //    generator.Emit(OpCodes.Nop);
-        //    generator.Emit(OpCodes.Ldloc, lbEnumObject);
-        //    MethodInfo miMoveNext = typeof(IEnumerator).GetMethod("MoveNext");
-        //    generator.Emit(OpCodes.Callvirt, miMoveNext);
-        //    generator.Emit(OpCodes.Stloc, lbCheckStatement);
-        //    generator.Emit(OpCodes.Ldloc, lbCheckStatement);
-        //    generator.Emit(OpCodes.Brtrue_S, startOfWhile);
-        //}
 
         /// <summary>
         /// Returns the type of cloning to apply on a certain srcProperty when in custom mode.
@@ -336,8 +145,8 @@ namespace Surrogates.Utilities.WhizzoDev
                 !destination.IsArray &&
                 !source.IsArray)
             {
-                return typeof(Engine)
-                    .GetMethod("Clone", new[] { typeof(object) })
+                return typeof(PassOnEngine)
+                    .GetMethod("To", new[] { typeof(object) })
                     .MakeGenericMethod(destination);
             }
 
@@ -356,7 +165,7 @@ namespace Surrogates.Utilities.WhizzoDev
                 throw new NotSupportedException();
             }
 
-            var cloneType = typeof(CloneOrMerge<>)
+            var cloneType = typeof(PassOn<>)
                 .MakeGenericType(srcItem);
 
             return destination.IsArray ?
@@ -539,6 +348,4 @@ namespace Surrogates.Utilities.WhizzoDev
             return myExec.DynamicInvoke(source);
         }
     }
-
-
 }

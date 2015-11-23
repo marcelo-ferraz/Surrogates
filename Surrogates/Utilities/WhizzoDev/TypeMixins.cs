@@ -12,7 +12,7 @@ namespace Surrogates.Utilities.WhizzoDev
         {
             return GetMethod(
                 type,
-                "ToListOf",
+                "ToAListOf",
                 sourceType,
                 destType);
         }
@@ -21,7 +21,7 @@ namespace Surrogates.Utilities.WhizzoDev
         {
             return GetMethod(
                 type,
-                "ToArrayOf",
+                "ToAnArrayOf",
                 sourceType,
                 destType);
         }
