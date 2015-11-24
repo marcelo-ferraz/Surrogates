@@ -26,5 +26,7 @@ namespace Surrogates.Aspects.NotifyChanges
     {
         public abstract event Action<T, object> Before;
         public abstract event Action<T, object> After;
+
+        internal bool IsTurnedOn { get; set; }
     }
 }

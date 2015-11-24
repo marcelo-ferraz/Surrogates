@@ -117,7 +117,7 @@ namespace Surrogates.Tests.Utilities.WhizzoDev
             Assert.IsNull(PassOn<BaseClass>.To(null, null));
             Assert.AreEqual(PassOn<BaseClass>.To(null, inherited).GetHashCode(), inherited.GetHashCode());
 
-            var mergedValue = PassOn<BaseClass>.To<InheritedClass>(@base, null);
+            var mergedValue = PassOn<BaseClass>.To(@base, null);
 
             Assert.AreEqual(@base.String, mergedValue.String);
             Assert.AreEqual(@base.Int, mergedValue.Int);

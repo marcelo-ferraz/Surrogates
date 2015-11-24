@@ -145,8 +145,8 @@ namespace Surrogates.Utilities.WhizzoDev
                 !destination.IsArray &&
                 !source.IsArray)
             {
-                return typeof(PassOnEngine)
-                    .GetMethod("To", new[] { typeof(object) })
+                return typeof(PassOn)
+                    .GetMethod("To", new Type[] { typeof(object) })
                     .MakeGenericMethod(destination);
             }
 

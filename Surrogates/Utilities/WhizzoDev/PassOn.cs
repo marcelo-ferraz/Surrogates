@@ -63,8 +63,7 @@ namespace Surrogates.Utilities.WhizzoDev
         }
     }
 
-    public static class PassOn<T>
-        where T : class
+    public static class PassOn<T>        
     {
         public static R[] ToAnArrayOf<R>(T[] array)
             where R : class
@@ -82,8 +81,7 @@ namespace Surrogates.Utilities.WhizzoDev
             return result;
         }
 
-        public static R[] ToAnArrayOf<R>(IEnumerable<T> enumerable)
-            where R : class
+        public static R[] ToAnArrayOf<R>(IEnumerable<T> enumerable)            
         {
             if (enumerable == null) { return null; }
 
@@ -112,8 +110,7 @@ namespace Surrogates.Utilities.WhizzoDev
             return result;
         }
 
-        public static IList<R> ToAListOf<R>(IEnumerable<T> enumerable)
-            where R : class
+        public static IList<R> ToAListOf<R>(IEnumerable<T> enumerable)            
         {
             if (enumerable == null)
             { return null; }

@@ -51,6 +51,8 @@ namespace Surrogates.Aspects.NotifyChanges
 
                 var @int = ((IContainsNotifier4<I>)newItem)
                     .NotifierInterceptor;
+                
+                @int.IsTurnedOn = true;
 
                 @int.Before +=
                     (it, val) =>
