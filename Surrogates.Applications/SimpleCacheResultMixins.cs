@@ -108,8 +108,8 @@ namespace Surrogates.Aspects
             var ext = 
                 new ShallowExtension<T>();
 
-            return Pass
-                .On(that, ext)
+            return InternalsInspector
+                .GetInternals(that, ext)
                 .Factory
                 .Replace
                 .This(method)
@@ -131,8 +131,8 @@ namespace Surrogates.Aspects
             var ext =
                 new ShallowExtension<T>();
 
-            return Pass
-                .On(that, ext)
+            return InternalsInspector
+                .GetInternals(that, ext)
                 .Factory
                 .Replace
                 .These(methods)
@@ -154,8 +154,8 @@ namespace Surrogates.Aspects
             var ext =
                 new ShallowExtension<T>();
 
-            return Pass
-                .On(that, ext)
+            return InternalsInspector
+                .GetInternals(that, ext)
                 .Factory
                 .Replace
                 .Method(method)
@@ -177,8 +177,8 @@ namespace Surrogates.Aspects
             var ext =
                 new ShallowExtension<T>();
 
-            return Pass
-                .On(that, ext)
+            return InternalsInspector
+                .GetInternals(that, ext)
                 .Factory
                 .Replace
                 .Methods(methods)
@@ -200,8 +200,8 @@ namespace Surrogates.Aspects
             var ext =
                 new ShallowExtension<T>();
 
-            return Pass
-                .On(that, ext)
+            return InternalsInspector
+                .GetInternals(that, ext)
                 .Factory
                 .Replace
                 .This(prop)
@@ -223,8 +223,8 @@ namespace Surrogates.Aspects
             var ext =
                 new ShallowExtension<T>();
 
-            return Pass
-                .On(that, ext)
+            return InternalsInspector
+                .GetInternals(that, ext)
                 .Factory
                 .Replace
                 .These(properties)
@@ -246,8 +246,8 @@ namespace Surrogates.Aspects
             var ext =
                 new ShallowExtension<T>();
 
-            return Pass
-                .On(that, ext)
+            return InternalsInspector
+                .GetInternals(that, ext)
                 .Factory
                 .Replace
                 .Property(propertyName)
@@ -269,8 +269,8 @@ namespace Surrogates.Aspects
             var ext =
                 new ShallowExtension<T>();
 
-            return Pass
-                .On(that, ext)
+            return InternalsInspector
+                .GetInternals(that, ext)
                 .Factory
                 .Replace
                 .Properties(propertiesNames)

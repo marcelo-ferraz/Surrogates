@@ -1,13 +1,8 @@
-﻿using Surrogates.Model;
-using Surrogates.Model.Collections;
-using Surrogates.Model.Entities;
+﻿using Surrogates.Model.Entities;
 using Surrogates.Tactics;
-using Surrogates.Utilities;
 using Surrogates.Utilities.Mixins;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Runtime;
 
 namespace Surrogates.Executioners
 {

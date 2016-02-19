@@ -69,5 +69,10 @@ namespace Surrogates.Tests.Expressions.Entities
         {
             //s_instance.Text = s_instance.GetType().Name;
         }
+
+        public void Nhonho(dynamic _)
+        { 
+
+        }
     }
 }

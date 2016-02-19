@@ -43,10 +43,14 @@ namespace Surrogates.Tests.Strategies.Methods.Visit
                 m.From<Dummy>()
                 .Visit
                 .This(d => (Func<string, DateTime, Dummy.EvenMore, int>) d.Call_SetPropText_complex_Return_1)
-                .Using<InterferenceObject>(r => (Action<string, Dummy, DateTime, string, Dummy.EvenMore>) r.AddToPropText__MethodName));
+                //.Using(new Action<dynamic>(_ => { })));
+                //.Using<InterferenceObject>(r => (Action<string, Dummy, DateTime, string, Dummy.EvenMore>) r.AddToPropText__MethodName));
+                .Using<InterferenceObject>(r => (Action<dynamic>) r.Nhonho));
 
             var dummy =
                 new Dummy();
+            
+            container.Save();
 
             var proxy =
                 container.Invoke<Dummy>();
@@ -73,7 +77,7 @@ namespace Surrogates.Tests.Strategies.Methods.Visit
             Assert.IsNotNullOrEmpty(proxy.Text);
             Assert.AreEqual(dummyRes, proxyRes);
         }
-
+        
         [Test, ExpectedException(typeof(NullReferenceException))]
         public void NotPassingBaseParameters()
         {

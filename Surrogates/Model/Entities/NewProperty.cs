@@ -1,7 +1,7 @@
-﻿using Surrogates.Utilities.Mixins;
+﻿using Surrogates.Tactics;
+using Surrogates.Utilities.Mixins;
 using System;
 using System.Reflection.Emit;
-using Surrogates.Tactics;
 
 namespace Surrogates.Model.Entities
 {

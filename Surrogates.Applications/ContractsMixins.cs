@@ -22,7 +22,7 @@ namespace Surrogates.Aspects
             var ext =
                 new ShallowExtension<T>();
 
-            Pass.On(that, to: ext);
+            InternalsInspector.GetInternals(that, to: ext);
 
             var validators = validations
                 .SelectMany(ass => 

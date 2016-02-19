@@ -5,6 +5,20 @@ using System.Linq;
 
 namespace Surrogates.Expressions
 {
+    public class InitialExpressionFactory<TBase> : ExpressionFactory<TBase>
+    {
+        public InitialExpressionFactory(BaseContainer4Surrogacy container, Strategy current, Strategies strategies)
+            : base(container, current, strategies)
+        { }
+
+        public ExpressionFactory<TBase> OnConstructor(Delegate invokeOnCtr)
+        {
+            //Strategies.InvokeOnCtr 
+            //new Strategy.ForMethods(null).
+            return new ExpressionFactory<TBase>(Container, CurrentStrategy, Strategies);
+        }
+    }
+
     public class ExpressionFactory<TBase> : Expression<TBase, Strategy>
     {
         public ExpressionFactory(BaseContainer4Surrogacy container, Strategy current, Strategies strategies)

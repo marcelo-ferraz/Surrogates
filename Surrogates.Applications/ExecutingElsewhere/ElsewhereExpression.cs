@@ -53,7 +53,8 @@ namespace Surrogates.Aspects.ExecutingElsewhere
             if (!typeof(T).IsDefined(typeof(SerializableAttribute), true))
             { throw new ArgumentException("The surrogated type must be marked as Serializable"); }
 
-            foreach(var m in Pass.Current<Strategy.ForMethods>(_previous).Methods)
+            foreach (var m in InternalsInspector
+                .Current<Strategy.ForMethods>(_previous).Methods)
             {
                 if (!m.IsPublic) 
                 {                    

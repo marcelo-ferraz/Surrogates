@@ -1,6 +1,5 @@
 ﻿using Surrogates.Model.Collections;
 using Surrogates.Model.Entities;
-using Surrogates.Tactics;
 using Surrogates.Utilities.Mixins;
 using System;
 using System.Collections.Generic;

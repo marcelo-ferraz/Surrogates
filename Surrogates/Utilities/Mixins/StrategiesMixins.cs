@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Surrogates.Tactics;
+using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using Surrogates.Tactics;
 
 namespace Surrogates.Utilities.Mixins
 {

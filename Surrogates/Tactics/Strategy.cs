@@ -12,6 +12,11 @@ namespace Surrogates.Tactics
     {
         public class InterceptorInfo
         {
+            public InterceptorInfo(MethodInfo method)
+            {                
+                this.Method = method;
+            }
+
             public InterceptorInfo(string name, Type declaredType, MethodInfo method)
             {
                 this.Name = string.IsNullOrEmpty(name) ? "interceptor" : name;

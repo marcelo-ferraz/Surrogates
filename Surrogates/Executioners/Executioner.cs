@@ -1,11 +1,9 @@
 ﻿using Surrogates.Model;
-using Surrogates.Model.Collections;
 using Surrogates.Model.Entities;
 using Surrogates.Tactics;
-using Surrogates.Utilities;
+using Surrogates.Utilities.Mixins;
 using System;
 using System.Reflection;
-using Surrogates.Utilities.Mixins;
 using System.Reflection.Emit;
 
 namespace Surrogates.Executioners
@@ -48,14 +46,10 @@ namespace Surrogates.Executioners
             foreach (var property in strategy.Properties)
             {
                 if (strategy.Getter != null)
-                { Execute4Property(strategy, strategy.Getter, property, true); }
-                //else
-                //{ Set4Property.OneSimpleGetter(strategy, property); }
+                { Execute4Property(strategy, strategy.Getter, property, true); }                
 
                 if (strategy.Setter != null)
-                { Execute4Property(strategy, strategy.Setter, property, false); }
-                //else
-                //{ Set4Property.OneSimpleSetter(strategy, property); }
+                { Execute4Property(strategy, strategy.Setter, property, false); }                
             }
         }
 
@@ -75,11 +69,6 @@ namespace Surrogates.Executioners
                 { OverrideWithFunction(baseMethod, strategy, strategy.Interceptor, overriden); }
             }
         }       
-
-        //internal static FieldInfo GetField(Strategy.InterceptorInfo @int, FieldList fields)
-        //{            
-        //    return fields.Get(@int.DeclaredType, @int.Name);
-        //}
 
         internal static MethodBuilder CreateGetter(Strategy.ForProperties strategy, PropertyInfo prop)
         {

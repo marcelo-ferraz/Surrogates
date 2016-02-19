@@ -19,8 +19,8 @@ namespace Surrogates.Aspects
             var loadersProp = ext
                 .Strategies
                 .NewProperties.Find(p => p.Name == "Loaders");
-            
-            var loaders = Pass
+
+            var loaders = InternalsInspector
                 .Current<Strategy.ForProperties>(expr)
                 .MergeProperty("Loaders", p => (Func<string, T, object>)loader);
 
@@ -48,7 +48,7 @@ namespace Surrogates.Aspects
         public static AndExpression<T> LazyLoading<T>(this ApplyExpression<T> that, Func<T, object> prop, Func<string, T, object> loader)
         {
             var ext = new ShallowExtension<T>();
-            Pass.On(that, ext);
+            InternalsInspector.GetInternals(that, ext);
 
             return ext
                 .Factory
@@ -68,7 +68,7 @@ namespace Surrogates.Aspects
         public static AndExpression<T> LazyLoading<T>(this ApplyExpression<T> that, Func<T, object>[] props, Func<string, T, object> loader)
         {
             var ext = new ShallowExtension<T>();
-            Pass.On(that, ext);
+            InternalsInspector.GetInternals(that, ext);
 
             return ext
                 .Factory
@@ -88,7 +88,7 @@ namespace Surrogates.Aspects
         public static AndExpression<T> LazyLoading<T>(this ApplyExpression<T> that, string prop, Func<string, T, object> loader)
         {
             var ext = new ShallowExtension<T>();
-            Pass.On(that, ext);
+            InternalsInspector.GetInternals(that, ext);
 
             return ext
                 .Factory
@@ -108,7 +108,7 @@ namespace Surrogates.Aspects
         public static AndExpression<T> LazyLoading<T>(this ApplyExpression<T> that, string[] props, Func<string, T, object> loader)
         {
             var ext = new ShallowExtension<T>();
-            Pass.On(that, ext);
+            InternalsInspector.GetInternals(that, ext);
 
             return ext
                 .Factory

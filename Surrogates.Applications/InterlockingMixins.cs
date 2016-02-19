@@ -39,7 +39,7 @@ namespace Surrogates.Aspects
             AndExpression<T> exp = null;
 
             Func<ExpressionFactory<T>> getExp = () =>
-                (exp == null) ? Pass.On<T, ShallowExtension<T>>(self).Factory : exp.And;
+                (exp == null) ? InternalsInspector.GetInternals<T, ShallowExtension<T>>(self).Factory : exp.And;
 
             return property.GetPropType().IsValueType ?
                     getExp().RW<T, InterlockedValuePropertyInterceptor>(property) :
@@ -58,7 +58,7 @@ namespace Surrogates.Aspects
             AndExpression<T> exp = null;
 
             Func<ExpressionFactory<T>> getExp = () =>
-                (exp == null) ? Pass.On<T, ShallowExtension<T>>(self).Factory : exp.And;
+                (exp == null) ? InternalsInspector.GetInternals<T, ShallowExtension<T>>(self).Factory : exp.And;
 
             foreach (var prop in properties)
             {
@@ -99,7 +99,7 @@ namespace Surrogates.Aspects
 
             Func<ExpressionFactory<T>> getExp = 
                 () =>
-                    (exp == null) ? Pass.On<T, ShallowExtension<T>>(self).Factory : exp.And;
+                    (exp == null) ? InternalsInspector.GetInternals<T, ShallowExtension<T>>(self).Factory : exp.And;
 
             foreach (var pair in pairs)
             {

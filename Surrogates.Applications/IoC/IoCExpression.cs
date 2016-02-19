@@ -22,7 +22,7 @@ namespace Surrogates.Aspects.IoC
         private AndExpression<T> AddArgs(AndExpression<T> expr, object[] args)
         {
             var strat =
-                Pass.Current(_expression);
+                InternalsInspector.Current(_expression);
 
             var newValues =
                 strat.Properties.ToDictionary(p => p.Original.Name, p => args);

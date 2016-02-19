@@ -1,10 +1,9 @@
-﻿using Surrogates.Tactics;
+﻿using Surrogates.Model.Entities;
+using Surrogates.Tactics;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Surrogates.Utilities.Mixins;
 using System.Reflection.Emit;
-using Surrogates.Model.Entities;
 
 namespace Surrogates.Utilities.Mixins
 {

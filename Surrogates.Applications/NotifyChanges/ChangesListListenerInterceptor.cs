@@ -1,5 +1,4 @@
-﻿using Surrogates.Utilities;
-using Surrogates.Utilities.WhizzoDev;
+﻿using PassOn;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -46,8 +45,8 @@ namespace Surrogates.Aspects.NotifyChanges
                  */
                 #endregion
 
-                s_args[s_args.Length - 1] =
-                    s_args[s_args.Length - 1].To(newItem);
+                s_args[s_args.Length - 1] =                    
+                    Pass.On(s_args[s_args.Length - 1], newItem);
 
                 var @int = ((IContainsNotifier4<I>)newItem)
                     .NotifierInterceptor;

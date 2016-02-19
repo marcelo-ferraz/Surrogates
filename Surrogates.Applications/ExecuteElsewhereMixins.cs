@@ -14,7 +14,7 @@ namespace Surrogates.Aspects
             var ext =
                 new ShallowExtension<T>();
 
-            Pass.On<T>(self, ext);
+            InternalsInspector.GetInternals<T>(self, ext);
             ext.Strategies.Accesses = ~Access.Container;
 
             return new ElsewhereExpression<T>(ext, getExpr(ext));

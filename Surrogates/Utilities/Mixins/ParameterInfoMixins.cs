@@ -1,5 +1,4 @@
-﻿using Surrogates.Tactics;
-using System;
+﻿using System;
 using System.Reflection;
 
 namespace Surrogates.Utilities.Mixins

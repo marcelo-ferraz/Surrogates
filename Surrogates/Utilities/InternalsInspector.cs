@@ -1,20 +1,20 @@
-﻿using System;
-using Surrogates.Expressions;
+﻿using Surrogates.Expressions;
 using Surrogates.Tactics;
+using System;
 
 namespace Surrogates.Utilities
 {
-    public static class Pass
+    public static class InternalsInspector
     {
-        public static IExtension<T> On<T, TExt>(ApplyExpression<T> baseExp)
+        public static IExtension<T> GetInternals<T, TExt>(ApplyExpression<T> baseExp)
             where TExt : IExtension<T>
         {
-            var ext = (IExtension<T>)Activator.CreateInstance(typeof(TExt));
+            var ext = (IExtension<T>) Activator.CreateInstance(typeof(TExt));
 
-            return Pass.On(baseExp, ext);
+            return InternalsInspector.GetInternals(baseExp, ext);
         }
 
-        public static IExtension<T> On<T>(ApplyExpression<T> baseExp, IExtension<T> to)
+        public static IExtension<T> GetInternals<T>(ApplyExpression<T> baseExp, IExtension<T> to)
         {
             to.Container = baseExp.Container;
             to.Strategies = baseExp.Strategies;

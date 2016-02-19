@@ -50,7 +50,7 @@ namespace Surrogates.Expressions
             Strategies = new Strategies(
                 typeof(T), name, ModuleBuilder, p);
             
-            return new ExpressionFactory<T>(
+            return new InitialExpressionFactory<T>(
                 Container,
                 new Strategy(Strategies), 
                 Strategies);

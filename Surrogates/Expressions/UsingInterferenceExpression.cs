@@ -10,6 +10,18 @@ namespace Surrogates.Expressions
         public UsingInterferenceExpression(BaseContainer4Surrogacy container, Strategy.ForMethods current, Strategies strategies)
             : base(container, current, strategies) { }
 
+        public AndExpression<TBase> Using(Delegate @delegate)
+        {
+            Strategies.BaseMethods.Add(@delegate.Method, CurrentStrategy);
+
+            CurrentStrategy.Interceptor =
+               new Strategy.InterceptorInfo(@delegate.Method);
+
+            Strategies.Add(CurrentStrategy);
+
+            return new AndExpression<TBase>(Container, new Strategy(Strategies), Strategies);
+        }
+
         public AndExpression<TBase> Using(Type type, string name, MethodInfo method)
         {
             if (method.IsGenericMethodDefinition)

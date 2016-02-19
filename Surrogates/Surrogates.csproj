@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -89,7 +91,7 @@
     <Compile Include="Utilities\Mixins\PropertyMixins.cs" />
     <Compile Include="Utilities\Mixins\StrategyMixins.cs" />
     <Compile Include="Utilities\Mixins\TypeMixins.cs" />
-    <Compile Include="Utilities\Pass.cs" />
+    <Compile Include="Utilities\InternalsInspector.cs" />
     <Compile Include="Utilities\Mixins\PropGetterMixins.cs" />
     <Compile Include="Utilities\SDILReader\Globals.cs" />
     <Compile Include="Utilities\SDILReader\ILInstruction.cs" />
@@ -102,16 +104,16 @@
     <Compile Include="Utilities\Infer.cs" />
     <Compile Include="Utilities\Mixins\StringMixins.cs" />
     <Compile Include="Utilities\Try2Add.cs" />
-    <Compile Include="Utilities\WhizzoDev\PassOnMixins.cs" />
-    <Compile Include="Utilities\WhizzoDev\TypeMixins.cs" />
-    <Compile Include="Utilities\WhizzoDev\PassOn.cs" />
-    <Compile Include="Utilities\WhizzoDev\CloneType.cs" />
-    <Compile Include="Utilities\WhizzoDev\CloneAttribute.cs" />
-    <Compile Include="Utilities\WhizzoDev\PassOnEngine.cs" />
     <Compile Include="Utilities\Set4Property.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

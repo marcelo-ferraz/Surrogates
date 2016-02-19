@@ -3,7 +3,6 @@ using Surrogates.Aspects.NotifyChanges;
 using Surrogates.Expressions;
 using Surrogates.Tactics;
 using Surrogates.Utilities;
-using Surrogates.Utilities.WhizzoDev;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -45,16 +44,16 @@ namespace Surrogates.Aspects
             where I : class
         {
             var ext = new ShallowExtension<L>();
-            Pass.On(that, ext);
+            InternalsInspector.GetInternals(that, ext);
 
-            var isIList = 
+            var isIList =
                 typeof(IList<I>).IsAssignableFrom(typeof(L));
-            
+
             //ICollection<T>.Add(T item)
             //IList<I>.Insert(int index, T item)
             //IList<I>.set_Item(T item)
 
-            var methodsNames = 
+            var methodsNames =
                 isIList ?
                 new[] { "Add", "Insert" } :
                 new[] { "Add" };
@@ -65,9 +64,9 @@ namespace Surrogates.Aspects
                 .Methods(methodsNames)
                 .Using<ChangesListNotifierInterceptor<L, I>>("ListNotifierInterceptor", "Set", typeParameters: new[] { typeof(L) })
                 .AddBeforeAndAfter(before, after);
-            
+
             if (isIList)
-            { 
+            {
                 expr = expr
                     .And
                     .Replace
@@ -89,26 +88,25 @@ namespace Surrogates.Aspects
                 .AddInterface<IContainsNotifier4<L, I>>();
         }
 
-        public static AndExpression<T> NotifyChanges<T>(this ApplyExpression<T> that, Action<T, object> before = null, Action<T, object> after = null)         
+        public static AndExpression<T> NotifyChanges<T>(this ApplyExpression<T> that, Action<T, object> before = null, Action<T, object> after = null)
             where T : class
         {
             var ext = new ShallowExtension<T>();
-            Pass.On(that, ext);
+            InternalsInspector.GetInternals(that, ext);
 
             var expr = ext
-                .Factory                
+                .Factory
                 .Replace
                 .Properties(p => true) // all forgetProp
                 .Accessors(a =>
                     a.Setter.Using<ChangesNotifierInterceptor<T>>("NotifierInterceptor", "Set"))
                 .AddBeforeAndAfter(before, after);
-            
+
             return expr
                 .And
                 .AddInterface<IContainsNotifier4<T>>()
                 .And
                 .AddProperty<NotifierBeforeAndAfter<T>>("NotifierInterceptor");
         }
-
     }
 }

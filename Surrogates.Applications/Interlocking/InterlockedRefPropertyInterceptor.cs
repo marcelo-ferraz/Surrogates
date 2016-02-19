@@ -7,7 +7,7 @@ namespace Surrogates.Aspects.Interlocking
     {
         protected override object GetField(object field)
         {
-            return field;//Utilities.WhizzoDev.CloneHelper.Clone(srcField);
+            return field;//Utilities.Parser.CloneHelper.Clone(srcField);
         }
     }
 }

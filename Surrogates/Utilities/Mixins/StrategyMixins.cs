@@ -16,8 +16,12 @@ namespace Surrogates.Utilities.Mixins
 
             var attrs = MethodAttributes.Virtual;
 
-            var field = strat.Fields
-                .Get(interceptor.DeclaredType, interceptor.Name);
+            FieldBuilder field = null;
+            if (interceptor.DeclaredType != null)
+            {
+                field = strat.Fields
+                     .Get(interceptor.DeclaredType, interceptor.Name);
+            }
 
             if (baseMethod.Attributes.HasFlag(MethodAttributes.Public))
             { attrs |= MethodAttributes.Public; }
@@ -43,8 +47,11 @@ namespace Surrogates.Utilities.Mixins
             overriden.Return = SetLocals4
                 .AllComplexParameters(strat, interceptor, baseMethod, overriden);
 
-            overriden.Generator.Emit(OpCodes.Ldarg_0);
-            overriden.Generator.Emit(OpCodes.Ldfld, field);
+            if (field != null)
+            {
+                overriden.Generator.Emit(OpCodes.Ldarg_0);
+                overriden.Generator.Emit(OpCodes.Ldfld, field);
+            }
 
             var @params = overriden.Generator.EmitParameters(
                 strat,
