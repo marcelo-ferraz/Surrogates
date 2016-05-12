@@ -1,6 +1,7 @@
 ﻿using Surrogates.Model;
 using Surrogates.Model.Entities;
 using Surrogates.Tactics;
+using Surrogates.Utilities;
 using Surrogates.Utilities.Mixins;
 using System;
 using System.Reflection;
@@ -30,7 +31,7 @@ namespace Surrogates.Executioners
                     );
 
 
-            if (interceptor.Method.ReturnType == typeof(void))
+            if (interceptor.Method.ReturnType == TypeOf.Void)
             { OverrideWithAction(baseMethod, strategy, interceptor, overriden); }
             else
             { OverrideWithFunction(baseMethod, strategy, interceptor, overriden); }
@@ -63,7 +64,7 @@ namespace Surrogates.Executioners
                 (ov, p, i) =>
                     ov.Generator.EmitArgumentsBasedOnOriginal(baseMethod, p, i, strategy.BaseMethods.Field));
 
-                if (strategy.Interceptor.Method.ReturnType == typeof(void))
+                if (strategy.Interceptor.Method.ReturnType == TypeOf.Void)
                 { OverrideWithAction(baseMethod, strategy, strategy.Interceptor, overriden); }
                 else
                 { OverrideWithFunction(baseMethod, strategy, strategy.Interceptor, overriden); }
@@ -84,7 +85,7 @@ namespace Surrogates.Executioners
             return strategy.TypeBuilder.DefineMethod(
                 string.Concat("set_", prop.Name),
                 MethodAttributes.Virtual | MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig,
-                typeof(void),
+                TypeOf.Void,
                 new Type[] { prop.PropertyType });
         }
 

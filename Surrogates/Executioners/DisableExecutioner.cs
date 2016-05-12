@@ -1,4 +1,5 @@
 ﻿using Surrogates.Tactics;
+using Surrogates.Utilities;
 using Surrogates.Utilities.Mixins;
 using System.Linq;
 using System.Reflection;
@@ -18,9 +19,9 @@ namespace Surrogates.Executioners
 
             var gen = builder.GetILGenerator();
 
-            if (method.ReturnType != typeof(void))
+            if (method.ReturnType != TypeOf.Void)
             {
-                gen.EmitDefaultLocalValue(method.ReturnType);
+                gen.EmitDefaultValue(method.ReturnType);
             }
             gen.Emit(OpCodes.Ret);
         }
@@ -43,7 +44,7 @@ namespace Surrogates.Executioners
 
             var gen = getter.GetILGenerator();
 
-            gen.EmitDefaultLocalValue(property.Original.PropertyType);
+            gen.EmitDefaultValue(property.Original.PropertyType);
             gen.Emit(OpCodes.Ret);
 
             property.Builder.SetGetMethod(getter);

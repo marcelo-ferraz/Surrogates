@@ -3,6 +3,7 @@ using Surrogates.Expressions;
 using Surrogates.Model.Entities;
 using Surrogates.Model.Parsers;
 using Surrogates.Tactics;
+using Surrogates.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -115,7 +116,7 @@ namespace Surrogates
         protected virtual void InternalMap<T>(string cmd, params Type[] interceptors)
         {
             string[] aliases = (string[]) 
-                Array.CreateInstance(typeof(string), 0);
+                Array.CreateInstance(TypeOf.String, 0);
             
             var strategies = 
                 ParseStrCmd(cmd, typeof(T), interceptors, ref aliases);

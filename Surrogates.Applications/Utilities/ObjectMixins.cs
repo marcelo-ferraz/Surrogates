@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Surrogates.Utilities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -43,7 +44,7 @@ namespace Surrogates.Aspects.Utilities
                 return new Func<object, object[], object>(self.ParameterType.GetProperty("Count").GetValue);
             }
 
-            if (typeof(Array).IsAssignableFrom(self.ParameterType) || typeof(string).IsAssignableFrom(self.ParameterType))
+            if (typeof(Array).IsAssignableFrom(self.ParameterType) || TypeOf.String.IsAssignableFrom(self.ParameterType))
             {
                 return new Func<object, object[], object>(self.ParameterType.GetProperty("Length").GetValue);
             }

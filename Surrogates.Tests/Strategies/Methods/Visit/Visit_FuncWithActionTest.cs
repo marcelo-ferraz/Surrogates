@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Surrogates.Tests.Expressions.Entities;
+using Surrogates.Utilities;
 using System;
 
 namespace Surrogates.Tests.Strategies.Methods.Visit
@@ -108,7 +109,7 @@ namespace Surrogates.Tests.Strategies.Methods.Visit
                 .From<Dummy>()
                 .Visit
                 .This(d => (Func<int>)d.Call_SetPropText_simple_Return_1)
-                .Using<InterferenceObject>("SetPropText_InstanceAndMethodName", typeof(Dummy), typeof(string)));
+                .Using<InterferenceObject>("SetPropText_InstanceAndMethodName", typeof(Dummy), TypeOf.String));
 
             var dummy =
                 new Dummy();

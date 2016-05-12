@@ -1,5 +1,6 @@
 ﻿using Surrogates.Model.Collections;
 using Surrogates.Model.Entities;
+using Surrogates.Utilities;
 using Surrogates.Utilities.Mixins;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace Surrogates.Tactics
             {
                 Builder = !baseType.IsInterface ?
                     moduleBuilder.DefineType(name, TypeAttributes.Public, baseType) :
-                    moduleBuilder.DefineType(name, TypeAttributes.Public, typeof(object), new [] { baseType });
+                    moduleBuilder.DefineType(name, TypeAttributes.Public, TypeOf.Object, new [] { baseType });
             }
             catch (ArgumentException argEx)
             { throw new ProxyAlreadyMadeException(baseType, name, argEx); }
@@ -77,7 +78,7 @@ namespace Surrogates.Tactics
         {
             if (this.Accesses.HasFlag(Access.StateBag) && !this.NewProperties.Any(p => p.Name == "StateBag"))
             {
-                this.NewInterfaces.Add(typeof(IContainsStateBag));
+                this.NewInterfaces.Add(TypeOf.IContainsStateBag);
                 this.StateBagProperty = this.AddProperty<DynamicObj>("StateBag"); 
             }
 

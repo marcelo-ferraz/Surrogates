@@ -1,5 +1,6 @@
 ﻿using Surrogates.Model.Entities;
 using Surrogates.Tactics;
+using Surrogates.Utilities;
 using System;
 using System.Linq;
 
@@ -128,7 +129,7 @@ namespace Surrogates.Expressions
         /// <returns></returns>
         public AndExpression<TBase> AddAttribute(Type type, string memberName = null, AttributeTargets targets = AttributeTargets.All, params object[] args)            
         {
-            if (type.GetType().IsAssignableFrom(typeof(Attribute)))
+            if (type.GetType().IsAssignableFrom(TypeOf.Attribute))
             {
                 throw new ArgumentException(
                     string.Format("The provided type '{0}' does not inherit from System.Attribute", type.Name));

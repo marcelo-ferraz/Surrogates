@@ -3,6 +3,7 @@ using Surrogates.Aspects.Contracts.Collections;
 using Surrogates.Aspects.Contracts.Model;
 using Surrogates.Aspects.Contracts.Utilities;
 using Surrogates.Aspects.Utilities;
+using Surrogates.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -313,7 +314,7 @@ namespace Surrogates.Aspects
                 {                    
                     var type = p[i].ParameterType;
 
-                    if (p[i].ParameterType == typeof(string))
+                    if (p[i].ParameterType == TypeOf.String)
                     {
                         return args =>
                         {
@@ -344,7 +345,7 @@ namespace Surrogates.Aspects
                 {
                     var type = p[i].ParameterType;
 
-                    if (type == typeof(string))
+                    if (type == TypeOf.String)
                     {
                         return args =>
                         {
@@ -599,7 +600,7 @@ namespace Surrogates.Aspects
                         return a =>
                         {
                             var args = (object[])
-                                Array.CreateInstance(typeof(object), indexes.Count);
+                                Array.CreateInstance(TypeOf.Object, indexes.Count);
 
                             for (int i = 0; i < indexes.Count; i++)
                             { args[i] = a[indexes[i]]; }

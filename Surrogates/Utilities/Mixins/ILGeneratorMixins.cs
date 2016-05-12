@@ -38,16 +38,16 @@ namespace Surrogates.Utilities.Mixins
 
             return false;
         }
-
+            
         internal static void EmitDefaultValue(this ILGenerator gen, Type type)
         {
-            LocalBuilder local4Date = null;
-            EmitDefaultValue(gen, type, ref local4Date);
+            LocalBuilder local = null;
+            EmitDefaultValue(gen, type, ref local);
         }
 
         internal static void EmitDefaultValue(this ILGenerator gen, Type type, ref LocalBuilder local4Date)
         {
-            if (type == typeof(string))
+            if (type == TypeOf.String)
             {
                 gen.Emit(OpCodes.Ldstr, string.Empty);
                 return;
@@ -59,12 +59,12 @@ namespace Surrogates.Utilities.Mixins
             }
 
             bool isInteger =
-                type == typeof(sbyte) || type == typeof(byte) ||
-                type == typeof(ushort) || type == typeof(short) ||
-                type == typeof(uint) || type == typeof(int) ||
-                type == typeof(ulong) || type == typeof(long);
+                type == TypeOf.Sbyte || type == TypeOf.Byte ||
+                type == TypeOf.Ushort || type == TypeOf.Short ||
+                type == TypeOf.Uint || type == TypeOf.Int ||
+                type == TypeOf.Ulong || type == TypeOf.Long;
 
-            if (type == typeof(DateTime) || type == typeof(TimeSpan))
+            if (type == TypeOf.DateTime || type == TypeOf.TimeSpan)
             {
                 if (local4Date == null)
                 { local4Date = gen.DeclareLocal(type); }
@@ -75,21 +75,15 @@ namespace Surrogates.Utilities.Mixins
                 return;
             }
 
-            if (isInteger || type == typeof(decimal) || type == typeof(char) || type == typeof(bool))
+            if (isInteger || type == TypeOf.Decimal || type == TypeOf.Char || type == TypeOf.Boolean)
             {
                 gen.Emit(OpCodes.Ldc_I4_0);
             }
-            else if (type == typeof(float) || type == typeof(double))
+            else if (type == TypeOf.Float || type == TypeOf.Double)
             {
                 gen.Emit(OpCodes.Ldc_R4, 0.0);
             }
             else { throw new NotSupportedException(string.Format("The type {0} is not supporte, yet.", type)); }
-        }
-
-        internal static void EmitDefaultLocalValue(this ILGenerator gen, Type type)
-        {
-            LocalBuilder local = null;
-            EmitDefaultValue(gen, type, ref local);
         }
 
         /// <summary>
@@ -106,7 +100,7 @@ namespace Surrogates.Utilities.Mixins
 
             gen.Emit(OpCodes.Stloc, local);
             gen.Emit(OpCodes.Br_S, local);
-            gen.Emit(OpCodes.Ldloc, local);
+            gen.Emit(OpCodes.Ldloc, local); 
         }
 
         internal static Type[] EmitParameters(this ILGenerator gen, Strategy strategy, Strategy.InterceptorInfo interceptor, OverridenMethod overriden, MethodInfo baseMethod, Func<ParameterInfo, int, bool> interfere = null)
@@ -165,7 +159,7 @@ namespace Surrogates.Utilities.Mixins
                 var ctr = b.PropertyType
                     .GetConstructor(Type.EmptyTypes);
 
-                if (b.PropertyType.IsClass && ctr != null && !typeof(MulticastDelegate).IsAssignableFrom(b.PropertyType))
+                if (b.PropertyType.IsClass && ctr != null && !TypeOf.MulticastDelegate.IsAssignableFrom(b.PropertyType))
                 {
                     gen.Emit(OpCodes.Newobj, ctr);
                 }

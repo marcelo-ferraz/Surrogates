@@ -27,12 +27,12 @@ namespace Surrogates.Utilities
         public static Type DelegateTypeFrom(MethodInfo baseMethod)
         {
             var isFunc =
-                baseMethod.ReturnType != typeof(void);
+                baseMethod.ReturnType != TypeOf.Void;
 
             var baseParams =
                 baseMethod.GetParameters();
             
-            Type[] paramTypes = (Type[])Array.CreateInstance(typeof(Type),
+            Type[] paramTypes = (Type[])Array.CreateInstance(TypeOf.Type,
                 isFunc ?
                 baseParams.Length + 1 :
                 baseParams.Length);
@@ -56,7 +56,7 @@ namespace Surrogates.Utilities
                     .MakeGenericType(paramTypes);
             }
             else
-            { delType = typeof(Action); }
+            { delType = TypeOf.Action; }
 
             return delType;
         }

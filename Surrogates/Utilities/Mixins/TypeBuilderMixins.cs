@@ -12,6 +12,7 @@ namespace Surrogates.Utilities.Mixins
 {
     internal static class TypeBuilderMixins
     {
+        private static MethodInfo _inferDelegateType = TypeOf.Infer.GetMethod("Delegate", new[] { TypeOf.String });
         private static bool Has(this MethodAttributes attrs, MethodAttributes other)
         {
             return (attrs | other) != other;
@@ -22,9 +23,9 @@ namespace Surrogates.Utilities.Mixins
             if (strats.BaseMethods.Count < 1) { return; }
 
             // get the Dictionary type
-            var dicType = typeof(Dictionary<,>).MakeGenericType(
-                typeof(string),
-                typeof(Func<,>).MakeGenericType(typeof(object), typeof(Delegate)));
+            var dicType = TypeOf.Dictionary.MakeGenericType(
+                TypeOf.String,
+                TypeOf.Func2.MakeGenericType(TypeOf.Object, TypeOf.Delegate));
 
             // gets the Add method from _dictionary
             var dicAddMethod = dicType.GetMethod("Add");
@@ -41,8 +42,7 @@ namespace Surrogates.Utilities.Mixins
                 .DefineConstructor(MethodAttributes.Static | MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
 
             // gets the Infer.Delegate method
-            var getDel = typeof(Infer)
-                .GetMethod("Delegate", new[] { typeof(string) })
+            var getDel = _inferDelegateType 
                 .MakeGenericMethod(strats.BaseType);
 
             var gen = cctr.GetILGenerator();
@@ -184,9 +184,9 @@ namespace Surrogates.Utilities.Mixins
             var propBldr = builder.DefineProperty(
                 name, PropertyAttributes.HasDefault, type, null);
 
-            if (type.IsAssignableFrom(typeof(IDynamicMetaObjectProvider)))
+            if (type.IsAssignableFrom(TypeOf.IDynamicMetaObjectProvider))
             {
-                var dynamicAttrCtor = typeof(DynamicAttribute)
+                var dynamicAttrCtor = TypeOf.DynamicAttribute
                     .GetConstructor(Type.EmptyTypes);
 
                 //srcField.SetCustomAttribute(

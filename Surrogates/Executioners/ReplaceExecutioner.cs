@@ -11,7 +11,7 @@ namespace Surrogates.Executioners
         protected override void OverrideWithAction(MethodInfo baseAction, Strategy strategy, Strategy.InterceptorInfo interceptor, OverridenMethod overriden)
         {
             if (overriden.Return != null)
-            { overriden.Generator.EmitDefaultLocalValue(baseAction.ReturnType); }
+            { overriden.Generator.EmitDefaultValue(baseAction.ReturnType); }
 
             overriden.Generator.Emit(OpCodes.Ret);
         }
@@ -30,7 +30,7 @@ namespace Surrogates.Executioners
                 
                 if (!isAssignable)
                 {
-                    overriden.Generator.EmitDefaultLocalValue(interceptor.Method.ReturnType);
+                    overriden.Generator.EmitDefaultValue(interceptor.Method.ReturnType);
                 }
                 else // in case the new method's return needs to be cast 
                     if (interceptor.Method.ReturnType != baseFunction.ReturnType)

@@ -1,5 +1,6 @@
 ﻿
 using Surrogates.Tactics;
+using Surrogates.Utilities;
 using Surrogates.Utilities.Mixins;
 using System;
 using System.Collections.Generic;
@@ -28,13 +29,13 @@ namespace Surrogates.Model.Entities
             foreach (var arg in method.GetParameters())
             {
                 var isDelegate = 
-                    typeof(Delegate).IsAssignableFrom(arg.ParameterType);
+                    TypeOf.Delegate.IsAssignableFrom(arg.ParameterType);
 
                 var refers2Self = 
                     arg.Name.ToLower() == "s_method" && isDelegate;
                     
                 var refers2Dynamic_ = 
-                    arg.Name == "_" && arg.ParameterType == typeof(object);
+                    arg.Name == "_" && arg.ParameterType == TypeOf.Object;
 
                 if (refers2Self || refers2Dynamic_)
                 {

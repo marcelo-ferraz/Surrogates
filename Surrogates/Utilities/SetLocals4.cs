@@ -11,9 +11,12 @@ namespace Surrogates.Utilities
 {
     public static class SetLocals4
     {
+        private static Type _typeOfGet_Item = typeof(Dictionary<string, Func<object, Delegate>>);
+        private static Type _typeOfInvoke = typeof(Func<object, Delegate>);
+
         public static LocalBuilder AllComplexParameters(Strategy strat, Strategy.InterceptorInfo interceptor, MethodInfo baseMethod, OverridenMethod overriden)
         {
-            LocalBuilder returnField = baseMethod.ReturnType != typeof(void) ?
+            LocalBuilder returnField = baseMethod.ReturnType != TypeOf.Void ?
                 overriden.Generator.DeclareLocal(baseMethod.ReturnType) :
                 null;
 
@@ -72,13 +75,13 @@ namespace Surrogates.Utilities
         /// <returns></returns>
         internal static LocalBuilder ArgsParam(ILGenerator gen, ParameterInfo param, ParameterInfo[] baseParams)
         {
-            var local = gen.DeclareLocal(typeof(object[]));
+            var local = gen.DeclareLocal(TypeOf.ObjectArray);
 
             var arguments =
-                gen.DeclareLocal(typeof(object[]));
+                gen.DeclareLocal(TypeOf.ObjectArray);
 
             gen.Emit(OpCodes.Ldc_I4, baseParams.Length);
-            gen.Emit(OpCodes.Newarr, typeof(object));
+            gen.Emit(OpCodes.Newarr, TypeOf.Object);
             gen.Emit(OpCodes.Stloc, local);
 
             if (baseParams.Length < 1) { return local; }
@@ -130,24 +133,25 @@ namespace Surrogates.Utilities
             if (!baseMethod.IsFamily && !baseMethod.IsPrivate && !baseMethod.IsPublic)
             { throw new NotSupportedException("You cannot use an internal property to be passed as a parameter."); }
 
-            var local = gen.DeclareLocal(isDynamic_ ? typeof(Delegate) : param.ParameterType);
+            var local = gen.DeclareLocal(isDynamic_ ? TypeOf.Delegate : param.ParameterType);
 
             var isFunc =
-                baseMethod.ReturnType != typeof(void);
+                baseMethod.ReturnType != TypeOf.Void;
 
             Type delType =
                 Infer.DelegateTypeFrom(baseMethod);
 
             gen.Emit(OpCodes.Ldsfld, baseMethodsField);
             gen.Emit(OpCodes.Ldstr, baseMethod.Name);
-            gen.EmitCall(typeof(Dictionary<string, Func<object, Delegate>>).GetMethod4Surrogacy("get_Item"));
+            gen.EmitCall(_typeOfGet_Item.GetMethod4Surrogacy("get_Item"));
             gen.Emit(OpCodes.Ldarg_0);
-            gen.EmitCall(typeof(Func<object, Delegate>).GetMethod("Invoke", BindingFlags.Public | BindingFlags.Instance), new[] { typeof(object) });
+            gen.EmitCall(_typeOfInvoke.GetMethod("Invoke", BindingFlags.Public | BindingFlags.Instance), new[] { TypeOf.Object });
 
             gen.Emit(OpCodes.Stloc, local);
 
             return local;
         }
+
 
         /// <summary>
         /// It passes any method to a local variable and sets it  
@@ -161,7 +165,7 @@ namespace Surrogates.Utilities
         {
             MethodInfo method = null;
 
-            if (param.ParameterType == typeof(Delegate))
+            if (param.ParameterType == TypeOf.Delegate)
             {
                 method = baseType.GetMethod4Surrogacy(
                      param.Name.Substring(2), throwExWhenNotFound: false);
@@ -179,7 +183,7 @@ namespace Surrogates.Utilities
                 var genParams = param
                     .ParameterType.GetGenericArguments();
 
-                if (genDef == typeof(Func<>))
+                if (genDef == TypeOf.Func)
                 {
                     method = baseType.GetMethod4Surrogacy(
                          param.Name.Substring(2), Type.EmptyTypes, false);
@@ -227,7 +231,7 @@ namespace Surrogates.Utilities
             }
 
             var local =
-                gen.DeclareLocal(typeof(object[]));
+                gen.DeclareLocal(TypeOf.ObjectArray);
 
             bool canSeeContainer =
                    strategy.Accesses.HasFlag(Access.Container);
@@ -239,7 +243,7 @@ namespace Surrogates.Utilities
             int offset = (canSeeInstance ? 1 : 0) + (canSeeContainer ? 1 : 0) + (canSeeStateBag ? 1 : 0);
 
             gen.Emit(OpCodes.Ldc_I4, 4 + offset);
-            gen.Emit(OpCodes.Newarr, typeof(object));
+            gen.Emit(OpCodes.Newarr, TypeOf.Object);
             gen.Emit(OpCodes.Stloc, local);
 
             Action<int, Action> emitAdd =

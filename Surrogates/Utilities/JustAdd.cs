@@ -68,9 +68,9 @@ namespace Surrogates.Utilities
             if (param.IsDynamic_())
             {
                 gen.Emit(OpCodes.Ldstr, strategy.ThisDynamic_Type.FullName);
-                gen.EmitCall(OpCodes.Call, typeof(Type).GetMethod("GetType", new[] { typeof(string) }), new[] { typeof(string) });
+                gen.EmitCall(OpCodes.Call, TypeOf.Type.GetMethod("GetType", new[] { TypeOf.String }), new[] { TypeOf.String });
                 gen.Emit(OpCodes.Ldloc, overriden.Locals["ThisDynamic_"]);
-                gen.EmitCall(OpCodes.Call, typeof(Activator).GetMethod("CreateInstance", new[] { typeof(Type), typeof(object[]) }), new[] { typeof(Type), typeof(object[]) });
+                gen.EmitCall(OpCodes.Call, TypeOf.Activator.GetMethod("CreateInstance", new[] { TypeOf.Type, TypeOf.ObjectArray }), new[] { TypeOf.Type, TypeOf.ObjectArray });
 
                 return;
             }

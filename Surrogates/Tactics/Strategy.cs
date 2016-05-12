@@ -1,6 +1,7 @@
 ﻿using Surrogates.Executioners;
 using Surrogates.Model.Collections;
 using Surrogates.Model.Entities;
+using Surrogates.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -10,6 +11,8 @@ namespace Surrogates.Tactics
 {
     public class Strategy
     {
+        static Type _typeofInterferenceKind = TypeOf.InterferenceKind;
+
         public class InterceptorInfo
         {
             public InterceptorInfo(MethodInfo method)
@@ -82,7 +85,7 @@ namespace Surrogates.Tactics
         }
 
         public class ForMethods : Strategy
-        {
+        {            
             public ForMethods(Strategies parent)
                 : base(parent) 
             { Methods = new List<MethodInfo>(); }
@@ -192,7 +195,7 @@ namespace Surrogates.Tactics
         {
             var executionerName =
                 this.Kind != InterferenceKind.Extensions ?
-                Enum.GetName(typeof(InterferenceKind), Kind).ToLower() : 
+                Enum.GetName(_typeofInterferenceKind, Kind).ToLower() : 
                 KindExtended;
 
             if (this.BaseType.IsInterface &&

@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Surrogates.Tactics;
 using Surrogates.Tests.Expressions.Entities;
+using Surrogates.Utilities;
 using System;
 using System.Reflection;
 
@@ -34,7 +35,7 @@ namespace Surrogates.Tests.Strategies
         public void ReplaceCommand()
         {
             var aliases = (string[])
-                Array.CreateInstance(typeof(string), 0);
+                Array.CreateInstance(TypeOf.String, 0);
 
             var strats = GetStrategies(
                 "as d, i replace d.SetPropText_simple with i.AccomplishNothing",
@@ -54,7 +55,7 @@ namespace Surrogates.Tests.Strategies
         public void WrongCommand()
         {
             var aliases = (string[])
-                Array.CreateInstance(typeof(string), 0);
+                Array.CreateInstance(TypeOf.String, 0);
 
             var strats = GetStrategies(
                 "as d, i replace d.SetPropText_simple = i.AccomplishNothing",
@@ -77,7 +78,7 @@ namespace Surrogates.Tests.Strategies
         public void NotSupportedCommand()
         {
             var aliases = (string[])
-                Array.CreateInstance(typeof(string), 0);
+                Array.CreateInstance(TypeOf.String, 0);
 
             var strats = GetStrategies(
                 "as d, i notSuported d.SetPropText_simple = i.AccomplishNothing",
@@ -90,7 +91,7 @@ namespace Surrogates.Tests.Strategies
         public void DisableCommand()
         {
             var aliases = (string[])
-                Array.CreateInstance(typeof(string), 0);
+                Array.CreateInstance(TypeOf.String, 0);
 
             var strats = GetStrategies(
                 "as d disable d.SetPropText_simple",
@@ -110,7 +111,7 @@ namespace Surrogates.Tests.Strategies
         public void VisitCommand()
         {
             var aliases = (string[])
-                Array.CreateInstance(typeof(string), 0);
+                Array.CreateInstance(TypeOf.String, 0);
 
             var strats = GetStrategies(
                 "as d, i vISit d.SetPropText_simple with i.AccomplishNothing",

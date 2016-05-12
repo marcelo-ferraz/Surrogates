@@ -49,7 +49,7 @@ namespace Surrogates.Utilities
             MethodBuilder setter = strategy.TypeBuilder.DefineMethod(
                 string.Concat("set_", prop.Original.Name),
                 MethodAttributes.Virtual | MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig,
-                typeof(void),
+                TypeOf.Void,
                 new[] { prop.Original.PropertyType });
 
             ILGenerator gen = setter.GetILGenerator();

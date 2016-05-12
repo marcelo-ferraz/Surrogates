@@ -17,11 +17,11 @@ namespace Surrogates.Utilities.SDILReader
         {
             singleByteOpCodes = new OpCode[0x100];
             multiByteOpCodes = new OpCode[0x100];
-            FieldInfo[] infoArray1 = typeof(OpCodes).GetFields();
+            FieldInfo[] infoArray1 = TypeOf.OpCodes.GetFields();
             for (int num1 = 0; num1 < infoArray1.Length; num1++)
             {
                 FieldInfo info1 = infoArray1[num1];
-                if (info1.FieldType == typeof(OpCode))
+                if (info1.FieldType == TypeOf.OpCode)
                 {
                     OpCode code1 = (OpCode)info1.GetValue(null);
                     ushort num2 = (ushort)code1.Value;

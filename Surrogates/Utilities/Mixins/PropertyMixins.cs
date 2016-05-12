@@ -9,7 +9,7 @@ namespace Surrogates.Utilities.Mixins
     {
         public static bool EmitPropertyNameAndFieldAndValue(this SurrogatedProperty property, ILGenerator gen, ParameterInfo p, int pIndex)
         {
-            if (p.Name == "s_name" && p.ParameterType == typeof(string))
+            if (p.Name == "s_name" && p.ParameterType == TypeOf.String)
             {
                 gen.Emit(OpCodes.Ldstr, property.Original.Name);
                 return true;
@@ -45,7 +45,7 @@ namespace Surrogates.Utilities.Mixins
             return builder.DefineMethod(
                 string.Concat("set_", prop.Name),
                 MethodAttributes.Virtual | MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig,
-                typeof(void),
+                TypeOf.Void,
                 new Type[] { prop.PropertyType });
         }
     }
