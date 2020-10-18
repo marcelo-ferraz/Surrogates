@@ -27,7 +27,7 @@ namespace Surrogates.Tests.Expressions.Methods.Disable
             proxy.SetPropText_simple();
 
             Assert.AreEqual("simple", dummy.Text);
-            Assert.IsNullOrEmpty(proxy.Text);
+            Assert.That(proxy.Text, Is.Null.Or.Empty);
         }
         [Test]
         public void WithReturn()
@@ -51,7 +51,7 @@ namespace Surrogates.Tests.Expressions.Methods.Disable
                 proxy.Call_SetPropText_simple_Return_1();
 
             Assert.AreEqual("simple", dummy.Text);
-            Assert.IsNullOrEmpty(proxy.Text);
+            Assert.That(proxy.Text, Is.Null.Or.Empty);
             Assert.AreNotEqual(dummyRes, proxyRes);
             Assert.AreEqual(0, proxyRes);
         }

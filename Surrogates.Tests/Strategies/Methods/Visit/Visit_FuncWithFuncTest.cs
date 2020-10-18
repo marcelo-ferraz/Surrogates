@@ -58,14 +58,14 @@ namespace Surrogates.Tests.Strategies.Methods.Visit
             var proxyRes =
                 proxy.Call_SetPropText_complex_Return_1("this call was not made by the original property", DateTime.Now, new Dummy.EvenMore());
 
-            Assert.IsNotNullOrEmpty(dummy.Text);
+            Assert.That(dummy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual("complex", dummy.Text);
-            Assert.IsNotNullOrEmpty(proxy.Text);
+            Assert.That(proxy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual("complex", proxy.Text);
             Assert.AreEqual(dummyRes, proxyRes);
         }
 
-        [Test, ExpectedException(typeof(NullReferenceException))]
+        [Test]
         public void NotPassingBaseParameters()
         {
             var container = new SurrogatesContainer();
@@ -83,8 +83,10 @@ namespace Surrogates.Tests.Strategies.Methods.Visit
             var proxy =
                 container.Invoke<Dummy>();
 
-            dummy.Call_SetPropText_complex_Return_1("text", DateTime.Now, new Dummy.EvenMore());
-            proxy.Call_SetPropText_complex_Return_1("text", DateTime.Now, new Dummy.EvenMore());
+            Assert.Throws<NullReferenceException>(() => {
+                dummy.Call_SetPropText_complex_Return_1("text", DateTime.Now, new Dummy.EvenMore());
+                proxy.Call_SetPropText_complex_Return_1("text", DateTime.Now, new Dummy.EvenMore());
+            });
         }
 
         [Test]
@@ -110,7 +112,7 @@ namespace Surrogates.Tests.Strategies.Methods.Visit
                 proxy.Call_SetPropText_simple_Return_1();
 
             Assert.AreEqual("simple", dummy.Text);
-            Assert.IsNotNullOrEmpty(proxy.Text);
+            Assert.That(proxy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual("simple", proxy.Text);
             Assert.AreEqual(dummyRes, proxyRes);
         }

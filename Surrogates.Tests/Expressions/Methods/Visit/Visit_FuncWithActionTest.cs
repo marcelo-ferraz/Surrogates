@@ -56,9 +56,9 @@ namespace Surrogates.Tests.Expressions.Methods.Visit
             dummy.SetPropText_simple();
             proxy.SetPropText_simple();
 
-            Assert.IsNotNullOrEmpty(dummy.Text);
+            Assert.That(dummy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual("simple", dummy.Text);
-            Assert.IsNotNullOrEmpty(proxy.Text);
+            Assert.That(proxy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual("simple", proxy.Text);
 
             //and now, the comparison between the two methods
@@ -68,14 +68,14 @@ namespace Surrogates.Tests.Expressions.Methods.Visit
             var proxyRes = 
                 proxy.Call_SetPropText_complex_Return_1("this call was not made by the original property", DateTime.Now, new Dummy.EvenMore());
 
-            Assert.IsNotNullOrEmpty(dummy.Text);
+            Assert.That(dummy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual("complex", dummy.Text);
             Assert.AreEqual("complex", proxy.Text);
-            Assert.IsNotNullOrEmpty(proxy.Text);
+            Assert.That(proxy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual(dummyRes, proxyRes);
         }
 
-        [Test, ExpectedException(typeof(NullReferenceException))]
+        [Test]
         public void NotPassingBaseParameters()
         {
             var container = new SurrogatesContainer();
@@ -93,7 +93,9 @@ namespace Surrogates.Tests.Expressions.Methods.Visit
                 container.Invoke<Dummy>();
 
             dummy.Call_SetPropText_complex_Return_1("text", DateTime.Now, new Dummy.EvenMore());
-            proxy.Call_SetPropText_complex_Return_1("text", DateTime.Now, new Dummy.EvenMore());
+            Assert.Throws<NullReferenceException>(() => {
+                proxy.Call_SetPropText_complex_Return_1("text", DateTime.Now, new Dummy.EvenMore());
+            });
         }
 
         [Test]

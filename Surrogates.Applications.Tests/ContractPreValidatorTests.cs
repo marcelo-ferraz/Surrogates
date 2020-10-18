@@ -7,7 +7,7 @@ namespace Surrogates.Aspects.Tests
     [TestFixture]
     public class ContractPreValidatorTests: AppTestsBase
     {
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void RequiredTest()
         {
             Container.Map(m =>
@@ -17,10 +17,10 @@ namespace Surrogates.Aspects.Tests
 
             var proxy = Container.Invoke<Simpleton>();
 
-            proxy.Set(null);
+            Assert.Throws<ArgumentException>(() => proxy.Set(null));
         }
 
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void HasTobeNullTest()
         {
             Container.Map(m =>
@@ -30,7 +30,7 @@ namespace Surrogates.Aspects.Tests
 
             var proxy = Container.Invoke<Simpleton>();
 
-            proxy.Set("some value");
+            Assert.Throws<ArgumentException>(() => proxy.Set("some value"));
         }
 
         [Test]
@@ -73,7 +73,7 @@ namespace Surrogates.Aspects.Tests
             proxy.Set(null);            
         }
         
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void CompositeTestWrong()
         {
             Container.Map(m =>
@@ -84,10 +84,10 @@ namespace Surrogates.Aspects.Tests
 
             var proxy = Container.Invoke<Simpleton>();
 
-            proxy.Set(null);
+            Assert.Throws<ArgumentException>(() => proxy.Set(null));
         }
 
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void ContainsTest()
         {
             Container.Map(m =>
@@ -98,7 +98,7 @@ namespace Surrogates.Aspects.Tests
             
             var proxy = Container.Invoke<Simpleton>();
 
-            proxy.Set("SuperMeatBallBoy");            
+            Assert.Throws<ArgumentException>(() => proxy.Set("SuperMeatBallBoy"));            
         }
     }
 }

@@ -74,17 +74,20 @@ namespace Surrogates.Tests.Strategies
             Assert.AreEqual(InterferenceKind.Replace, strategy.Kind);
         }
 
-        [Test, ExpectedException(typeof(NotSupportedException))]
+        [Test]
         public void NotSupportedCommand()
         {
             var aliases = (string[])
                 Array.CreateInstance(TypeOf.String, 0);
 
-            var strats = GetStrategies(
-                "as d, i notSuported d.SetPropText_simple = i.AccomplishNothing",
-                typeof(Dummy),
-                new[] { typeof(InterferenceObject) },
-                aliases);
+            Assert.Throws<NotSupportedException>(() =>
+            {
+                var strats = GetStrategies(
+                    "as d, i notSuported d.SetPropText_simple = i.AccomplishNothing",
+                    typeof(Dummy),
+                    new[] { typeof(InterferenceObject) },
+                    aliases);
+            });
         }
 
         [Test]

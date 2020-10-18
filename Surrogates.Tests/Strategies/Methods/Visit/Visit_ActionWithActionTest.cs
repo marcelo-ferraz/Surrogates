@@ -40,22 +40,22 @@ namespace Surrogates.Tests.Strategies.Methods.Visit
             dummy.SetPropText_simple();
             proxy.SetPropText_simple();
 
-            Assert.IsNotNullOrEmpty(dummy.Text);
+            Assert.That(dummy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual("simple", proxy.Text);
-            Assert.IsNotNullOrEmpty(proxy.Text);
+            Assert.That(proxy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual("simple", proxy.Text);
 
             //and now, the comparison between the two methods
             dummy.SetPropText_complex("this call was not made by the original property", DateTime.Now, new Dummy.EvenMore());
             proxy.SetPropText_complex("this call was not made by the original property", DateTime.Now, new Dummy.EvenMore());
 
-            Assert.IsNotNullOrEmpty(dummy.Text);
+            Assert.That(dummy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual("complex", dummy.Text);
-            Assert.IsNotNullOrEmpty(proxy.Text);
+            Assert.That(proxy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual("complex", proxy.Text);
         }
 
-        [Test, ExpectedException(typeof(NullReferenceException))]
+        [Test]
         public void NotPassingBaseParameters()
         {
             var dummy =
@@ -68,7 +68,9 @@ namespace Surrogates.Tests.Strategies.Methods.Visit
             
             
             dummy.SetPropText_complex("text", DateTime.Now, new Dummy.EvenMore());
-            proxy.SetPropText_complex("text", DateTime.Now, new Dummy.EvenMore());
+            Assert.Throws<NullReferenceException>(() => { 
+                proxy.SetPropText_complex("text", DateTime.Now, new Dummy.EvenMore());
+            });
         }
 
         [Test]
@@ -85,7 +87,7 @@ namespace Surrogates.Tests.Strategies.Methods.Visit
             dummy.SetPropText_simple();
             proxy.SetPropText_simple();
 
-            Assert.IsNotNullOrEmpty(dummy.Text);
+            Assert.That(dummy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual("simple", dummy.Text);
             Assert.AreEqual("simple", proxy.Text);
         }

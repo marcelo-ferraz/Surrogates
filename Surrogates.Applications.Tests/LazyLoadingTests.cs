@@ -34,7 +34,7 @@ namespace Surrogates.Aspects.Tests
             Assert.AreEqual(TEXT, proxy.Text);
             Assert.IsTrue(_wasLoaded);
 
-            Assert.IsNullOrEmpty(proxy.Text2);
+            Assert.That(proxy.Text2, Is.Null.Or.Empty);
 
             // validate the interceptor
 

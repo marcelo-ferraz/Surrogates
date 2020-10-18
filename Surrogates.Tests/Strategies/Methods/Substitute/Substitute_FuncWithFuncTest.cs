@@ -25,7 +25,7 @@ namespace Surrogates.Tests.Strategies.Methods.Substitute
                 proxy.Call_SetPropText_simple_Return_1();
 
             Assert.AreEqual("simple", dummy.Text);
-            Assert.IsNullOrEmpty(proxy.Text);
+            Assert.That(proxy.Text, Is.Null.Or.Empty);
             Assert.AreNotEqual(dummyRes, proxyRes);
             Assert.AreEqual(2, proxyRes);
         }
@@ -45,9 +45,9 @@ namespace Surrogates.Tests.Strategies.Methods.Substitute
             dummy.SetPropText_simple();
             proxy.SetPropText_simple();
 
-            Assert.IsNotNullOrEmpty(dummy.Text);
+            Assert.That(dummy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual("simple", dummy.Text);
-            Assert.IsNotNullOrEmpty(proxy.Text);
+            Assert.That(proxy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual("simple", proxy.Text);
 
             //and now, the comparison between the two methods
@@ -57,15 +57,15 @@ namespace Surrogates.Tests.Strategies.Methods.Substitute
             var proxyRes =
                 proxy.Call_SetPropText_complex_Return_1("this call was not made by the original property", DateTime.Now, new Dummy.EvenMore());
 
-            Assert.IsNotNullOrEmpty(dummy.Text);
+            Assert.That(dummy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual("complex", dummy.Text);
-            Assert.IsNotNullOrEmpty(proxy.Text);
+            Assert.That(proxy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual("simple, this call was not made by the original property - property: Call_SetPropText_complex_Return_1", proxy.Text);
             Assert.AreNotEqual(dummyRes, proxyRes);
             Assert.AreEqual(2, proxyRes);
         }
 
-        [Test, ExpectedException(typeof(NullReferenceException))]
+        [Test]
         public void NotPassingBaseParameters()
         {
             var dummy =
@@ -77,7 +77,9 @@ namespace Surrogates.Tests.Strategies.Methods.Substitute
                 (Func<string, Dummy, DateTime, string, Dummy.EvenMore, int>) new InterferenceObject().DontAddToPropText__MethodName_Return2);
             
             dummy.Call_SetPropText_complex_Return_1("text", DateTime.Now, new Dummy.EvenMore());
-            proxy.Call_SetPropText_complex_Return_1("text", DateTime.Now, new Dummy.EvenMore());
+            Assert.Throws<NullReferenceException>(() => { 
+                proxy.Call_SetPropText_complex_Return_1("text", DateTime.Now, new Dummy.EvenMore());
+            });
         }
 
         [Test]
@@ -97,10 +99,10 @@ namespace Surrogates.Tests.Strategies.Methods.Substitute
             var proxyRes =
                 proxy.Call_SetPropText_simple_Return_1();
 
-            Assert.IsNotNullOrEmpty(dummy.Text);
+            Assert.That(dummy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual("simple", dummy.Text);
 
-            Assert.IsNotNullOrEmpty(proxy.Text);
+            Assert.That(proxy.Text, Is.Not.Null.Or.Empty);
             Assert.AreEqual(typeof(Dummy).Name + "Proxy+Call_SetPropText_simple_Return_1", proxy.Text);
             Assert.AreNotEqual(dummyRes, proxyRes);
             Assert.AreEqual(2, proxyRes);
