@@ -306,7 +306,7 @@ asyncResult.AsyncWaitHandle.WaitOne();
 
 ---
 
-#<i class="icon-align-left"></i> Usages
+#Usages
 
 ## Creating a pool aspect
 
