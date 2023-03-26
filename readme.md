@@ -43,7 +43,7 @@ You can find the latest version of this project at [Nuget](#www.nuget.org/packag
 - [How to name it](#how-to-name-it)
 - [How to type it](#how-to-type-it)
 - [How to use it](#how-to-use-it)
-- [ Usages](#-usages)
+- [Applying the aspects](#applying-the-aspects)
 - [Creating a pool aspect](#creating-a-pool-aspect)
 - [Depency Injection](#depency-injection)
 - [Disabling a method](#disabling-a-method)
@@ -306,7 +306,7 @@ asyncResult.AsyncWaitHandle.WaitOne();
 
 ---
 
-#Usages
+# Applying the aspects
 
 ## Creating a pool aspect
 
