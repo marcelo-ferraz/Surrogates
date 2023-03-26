@@ -8,7 +8,7 @@ Those features can be reused for many other porpoises.
 Surrogates is a direct and versatile object masher, which injects aspects and features into any code.
 It hooks on your regular OOP and enables you to add highly abstracted features that otherwise would imply in many replicated lines of code, inheritance, helpers and maintenance.
 
-> <i class="icon-quote-left"></i>_"Apply any immediate, or temporary, changes to a problematic legacy code"_<i class="icon-quote-right"></i>
+> <i class="icon-quote-left"></i>_"Apply any immediate, temporary or not, changes to a problematic legacy code"_<i class="icon-quote-right"></i>
 > Sometimes a legacy class or system, has to have an instrumentation logic, because some method is too expensive, or a page is bloated, or just not working. You can add those behaviors to any class that is not static.
 > Or you need to temporarily add some triggers to a project, so you can run a new one in parallel.
 
