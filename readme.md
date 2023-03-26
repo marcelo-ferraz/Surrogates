@@ -78,14 +78,12 @@ It supports multiple operations for a single expression, to create a very comple
 This expression API has support for methods and properties.
 
 > :exclamation:**Important notes**:
-
-> - Each expression made will be used to create one new proxy.
-
-> - In order to create multiple proxies, from a same type, You have to give it a different name.
+> - Each expression (**map**) made will be a new proxy.
+> - In order to create multiple proxies for a same type you'll have to give it a different name.
 
 Examples:
 
-<i class="icon-pencil"></i> Syntax for replacing:
+:pencil2: Syntax for replacing:
 
 ```c#
 _container.Map(m => m
@@ -99,7 +97,7 @@ _container.Map(m => m
 	}));
 ```
 
-<i class="icon-coffee"></i> Syntax for visiting:
+:coffee: Syntax for visiting:
 
 ```c#
 _container.Map(m => m
@@ -109,7 +107,7 @@ _container.Map(m => m
 	.Using<InterferenceObject>(r => (Action) r.AccomplishNothing));
 ```
 
-<i class="icon-trash"></i> Syntax for disabling:
+:wastebasket: Syntax for disabling:
 
 ```c#
 _container.Map(m => m
@@ -124,21 +122,21 @@ A more _magic_ approach to mapping is by using a loose comand language. It was c
 
 It supports the same three basic operations [to replace](#replacing), [to visit](#visiting) and [to disable](#disabling). Its syntax resambles very much the [expressions mapping](#expressions) api.
 
-<i class="icon-pencil"></i> Syntax for replacing:
+:pencil2: Syntax for replacing:
 
 ```c#
 _container.Map<Dummy, InterferenceObject>(
 	"as d, i replace d.AccessItWillThrowException accessors getter = i.AccomplishNothing and setter = i.AccomplishNothing");
 ```
 
-<i class="icon-coffee"></i> Syntax for visiting:
+:coffee: Syntax for visiting:
 
 ```c#
 _container.Map<Dummy, InterferenceObject>(
 	"as d, i visit d.Call_SetPropText_simple_Return_1 with i.AccomplishNothing");
 ```
 
-<i class="icon-trash"></i> Syntax for disabling:
+:wastebasket: Syntax for disabling:
 
 ```c#
 _container.Map<Dummy>(
@@ -149,19 +147,19 @@ _container.Map<Dummy>(
 
 There are three basic kinds of interception: [replace](#replacing), [visit](#visiting) and [disable](#disabling). Each will intercept and act differently withn the base method or property.
 
-## <i class="icon-pencil"></i> Replacing
+## :pencil2: Replacing
 
 To replace a method means that the new code will be called instead of the original one. You still can call the original method, using the parameter [s_method](#user-content-the-special-s_method-parameter), with wich you can conditionate or alter the its outcome, per example.
 
 > **About the return**: If the new method has a return, and that return is either the same type of the original return or some type that can be deduced from the original, it will be returned. Otherwise, the return will be discarded, and the original will return a default value.
 
-## <i class="icon-coffee"></i> Visiting
+## :coffee: Visiting
 
 To visit a method means that your new code will be called before the original method. \_If the new method has a return, this result will be discarded.
 
 > **About the return**: If the new code does not throws an exception, it will not interrupt the original flow.
 
-## <i class="icon-trash"></i> Disabling
+## :wastebasket: Disabling
 
 It is meant to disable any method, or property.
 
@@ -656,3 +654,4 @@ Container.Map(m => m
  	.Apply
  	.NotifyChanges<SimpletonList, Simpleton>(after: (l, i, v) => TextsAreEqual(i, v)));
 ```
+
